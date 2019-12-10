@@ -3,4 +3,4 @@
 	url = https://github.com/analogdevicesinc/hdl.git
 [submodule "zc706_fmcs2/ip/openofdm_rx"]
 	path = zc706_fmcs2/ip/openofdm_rx
-	url = git@github.com:open-sdr/openofdm.git
+	url = https://github.com/open-sdr/openofdm.git
