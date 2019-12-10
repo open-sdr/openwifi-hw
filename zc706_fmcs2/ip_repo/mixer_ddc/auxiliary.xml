@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xd:acceleratorMap xmlns:xd="http://www.xilinx.com/xidane" xd:functionName="mixer_ddc" xd:componentRef="mixer_ddc" xd:initiationInterval="179" xd:clockPeriod="5.000" xd:sequential="true" xd:hostMachine="64" xd:reset="control">
+  <xd:arg xd:name="d_i[]" xd:originalName="d_i" xd:direction="in" xd:interfaceRef="d_i_V" xd:busTypeRef="acc_fifo" xd:arraySize="160" xd:dataWidth="64"/>
+  <xd:arg xd:name="cfg0" xd:originalName="cfg0" xd:direction="in" xd:interfaceRef="cfg0_V" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="d_o0[]" xd:originalName="d_o0" xd:direction="out" xd:interfaceRef="d_o0_V" xd:busTypeRef="axis" xd:arraySize="160" xd:dataWidth="64"/>
+  <xd:arg xd:name="d_o1[]" xd:originalName="d_o1" xd:direction="out" xd:interfaceRef="d_o1_V" xd:busTypeRef="axis" xd:arraySize="160" xd:dataWidth="128"/>
+  <xd:latencyEstimates xd:best-case="178" xd:worst-case="178" xd:average-case="178"/>
+  <xd:resourceEstimates xd:LUT="3678" xd:FF="8674" xd:BRAM="8" xd:DSP="104"/>
+</xd:acceleratorMap>
