@@ -3,7 +3,7 @@
 
 **openwifi:** The full-stack Wi-Fi design based on SDR (Software Defined Radio). 
 
-This repository includes Hardware/FPGA design. To be used together with [openwifi driver and software repository](https://github.ugent.be/xjiao/openwifi).
+This repository includes Hardware/FPGA design. To be used together with [openwifi driver and software repository](https://github.com/open-sdr/openwifi).
 
 Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opensource license, please contact Filip.Louagie@UGent.be. Openwifi project also leverages some 3rd party modules. It is your duty to check and follow licenses of those modules according to your purpose. You can find [an example explanation from Analog Devices](https://github.com/analogdevicesinc/hdl/blob/master/LICENSE) for this compound license conditions.
 
@@ -109,4 +109,4 @@ You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www
 
 ***Note: openwifi adds necessary modules/modifications on top of [Analog Devices HDL reference design](https://github.com/analogdevicesinc/hdl). For general issues, Analog Devices wiki pages would be helpful!***
 
-***Notes: The 802.11 ofdm receiver is based on [openofdm project](https://github.com/jhshi/openofdm). You can find our patch (bug-fix, improvement) [here](https://github.com/open-sdr/openofdm) which is mapped to zc706_fmcs2/ip/openofdm_rx.***
+***Notes: The 802.11 ofdm receiver is based on [openofdm project](https://github.com/jhshi/openofdm). You can find our patch (bug-fix, improvement) [here](https://github.com/open-sdr/openofdm/tree/dot11zynq) which is mapped to zc706_fmcs2/ip/openofdm_rx.***
