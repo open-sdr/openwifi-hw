@@ -21,6 +21,7 @@ module openofdm_tx #
     input  wire [63:0] bram_din,
     output wire [9:0] bram_addr,
 
+    input  wire        result_iq_hold,
     output wire        result_iq_valid,
     output wire [15:0] result_i,
     output wire [15:0] result_q,
@@ -99,7 +100,7 @@ dot11_tx dot11_tx (
     .bram_din(bram_din),
     .bram_addr(bram_addr),
 
-    .result_iq_ready(1'b1),
+    .result_iq_ready(~result_iq_hold),
     .result_iq_valid(result_iq_valid),
     .result_i(result_i),
     .result_q(result_q)

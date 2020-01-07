@@ -18,6 +18,9 @@ module SRLXE #(DEPTH=128)
 
 reg  [DEPTH-1:0] mem;
 
+// Empty memory initialization (only for simulation purpose)
+initial	mem = {DEPTH{1'b0}};
+
 // Data is latched on the positive edge of the clock
 always @(posedge clk)
 if (wen)

@@ -38,62 +38,51 @@ localparam S1_SIGNAL         = 3;
 localparam S1_DATA           = 4;
 
 reg [2:0] state2;
-localparam S2_PLCP               = 0;
-localparam S2_SCRAM_ENC_CRC      = 1;
-localparam S2_PUNC_INTERLV_MODL  = 2;
-localparam S2_PILOT_DC_SB        = 3;
-localparam S2_IFFT_INPUT         = 4;
-localparam S2_IFFT_RESULT        = 5;
-localparam S2_CYCL_PREFIX        = 6;
+localparam S2_PLCP                   = 0;
+localparam S2_SCRAM_ENC_PUNC_INTERLV = 1;
+localparam S2_PILOT_DC_SB            = 2;
+localparam S2_MOD_IFFT_INPUT         = 3;
+localparam S2_IFFT_RESULT            = 4;
+localparam S2_IQ_FORWARDER           = 5;
 
 reg state3;
 localparam S3_SERVICE = 0;
 localparam S3_PSDU    = 1;
 
-localparam [63:0] SHORT_PREAMBLE_0 = 64'b0001000100010001000100010000000000000001000100010001000100010000;
-localparam [63:0] SHORT_PREAMBLE_1 = 64'b0000000100010000000100000000000000000000000000000000000100010000;
-
-localparam [63:0] LONG_PREAMBLE_0  = 64'b1111111111111111111111111100000000000111111111111111111111111110;
-localparam [63:0] LONG_PREAMBLE_1  = 64'b0000101001100000010100110000000000000000010101100111110101001100;
-
 reg  [2:0]  N_BPSC;
-reg  [2:0]  n_bpsc_cnt;
-reg  [8:0]  N_CBPS;
 reg  [7:0]  N_DBPS;
-reg  [7:0]  n_dbps_cnt;
-reg  [5:0]  plcp_bit_cnt;
 reg  [3:0]  RATE;
 reg  [14:0] PSDU_BIT_LEN;
 reg  [14:0] psdu_bit_cnt;        // Maximum number of PSDU bits = 4095*8 = 32760
 //reg  [10:0] ofdm_cnt;            // Maximum number of OFDM symbols = 1 + ceil((16+4095*8+6)/24) = 1367
 reg  [7:0]  iq_cnt;
 
+wire [15:0] short_preamble_i;
+wire [15:0] short_preamble_q;
+wire [15:0] long_preamble_i;
+wire [15:0] long_preamble_q;
 wire [15:0] sym_i;
 wire [15:0] sym_q;
-//wire        v2fr_empty;
 
-assign result_i        = state2 == S2_CYCL_PREFIX && iq_cnt != 255 ? sym_i : 0;
-assign result_q        = state2 == S2_CYCL_PREFIX && iq_cnt != 255 ? sym_q : 0;
-assign result_iq_valid = state2 == S2_CYCL_PREFIX && iq_cnt != 255 ? 1     : 0;
+assign result_i        = state1 == S1_SHORT_PREAMBLE ? short_preamble_i : (state1 == S1_LONG_PREAMBLE ? long_preamble_i : (state2 == S2_IQ_FORWARDER && iq_cnt != 255 ? sym_i : 0));
+assign result_q        = state1 == S1_SHORT_PREAMBLE ? short_preamble_q : (state1 == S1_LONG_PREAMBLE ? long_preamble_q : (state2 == S2_IQ_FORWARDER && iq_cnt != 255 ? sym_q : 0));
+assign result_iq_valid = state1 == S1_SHORT_PREAMBLE || state1 == S1_LONG_PREAMBLE                    ? ~reset1         : (state2 == S2_IQ_FORWARDER && iq_cnt != 255 ? 1     : 0);
 
 
 // SIGNAL section debugging
 // Scrambling
-//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_CRC) ? {15'd0, bit_scram} : 0;
-//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_CRC) ? 1                 : 0;
+//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? {15'd0, bit_scram} : 0;
+//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? enc_pos            : 0;
 // convolutional encoder
-//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_CRC) ? {14'd0, bits_enc_i} : 0;
-//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_CRC) ? 1                  : 0;
-// puncturing
-//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_CRC) ? {14'd0, bits_enc_i} : 0;
-//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_CRC) ? bits_sreg_en       : 0;
-// Interleaving
-//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_PUNC_INTERLV_MODL) ? {15'd0, bit_enc_o} : 0;
-//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_PUNC_INTERLV_MODL) ? 1                  : 0;
+//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? {15'd0, bits_enc_i[~enc_pos]} : 0;
+//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? 1                             : 0;
+// puncturing and interleaving
+//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? {10'd0, bits_to_mod} : 0;
+//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? 1                    : 0;
 // IFFT input
-//assign result_i        = (state1 == S1_SIGNAL && state2 == S2_IFFT_INPUT && iq_cnt < 63) ? ifft_iq[31:16] : 0;
-//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_IFFT_INPUT && iq_cnt < 63) ? ifft_iq[15:0]  : 0;
-//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_IFFT_INPUT && iq_cnt < 63) ? 1              : 0;
+//assign result_i        = (state1 == S1_SIGNAL && state2 == S2_MOD_IFFT_INPUT && iq_cnt < 63) ? ifft_iq[31:16] : 0;
+//assign result_q        = (state1 == S1_SIGNAL && state2 == S2_MOD_IFFT_INPUT && iq_cnt < 63) ? ifft_iq[15:0]  : 0;
+//assign result_iq_valid = (state1 == S1_SIGNAL && state2 == S2_MOD_IFFT_INPUT && iq_cnt < 63) ? 1              : 0;
 // IFFT result
 //assign result_i        = (state1 == S1_SIGNAL && state2 == S2_IFFT_RESULT) ? ifft_o_result_reg[31:16] : 0;
 //assign result_q        = (state1 == S1_SIGNAL && state2 == S2_IFFT_RESULT) ? ifft_o_result_reg[15:0]  : 0;
@@ -101,26 +90,37 @@ assign result_iq_valid = state2 == S2_CYCL_PREFIX && iq_cnt != 255 ? 1     : 0;
 
 // DATA section debugging
 // Scrambling
-//assign result_q        = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_CRC) ? {15'd0, bit_scram} : 0;
-//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_CRC) ? 1                  : 0;
+//assign result_q        = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? {15'd0, bit_scram} : 0;
+//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? enc_pos            : 0;
 // convolutional encoder
-//assign result_q        = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_CRC) ? {14'd0, bits_enc_i} : 0;
-//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_CRC) ? 1                  : 0;
-// puncturing
-//assign result_q        = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_CRC) ? {14'd0, bits_enc_i} : 0;
-//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_CRC) ? bits_sreg_en       : 0;
-// Interleaving
-//assign result_q        = (state1 == S1_DATA && state2 == S2_PUNC_INTERLV_MODL) ? {15'd0, bit_enc_o} : 0;
-//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_PUNC_INTERLV_MODL) ? 1                  : 0;
+//assign result_q        = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? {15'd0, bits_enc_i[~enc_pos]} : 0;
+//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? 1                             : 0;
+// puncturing and interleaving
+//assign result_q        = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? {10'd0, bits_to_mod} : 0;
+//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_SCRAM_ENC_PUNC_INTERLV) ? 1                    : 0;
 // IFFT input
-//assign result_i        = (state1 == S1_DATA && state2 == S2_IFFT_INPUT && ofdm_cnt == 2 && (iq_cnt < 63 || (iq_cnt == 63 && ifft_o_sync == 1))) ? ifft_iq[31:16] : 0;
-//assign result_q        = (state1 == S1_DATA && state2 == S2_IFFT_INPUT && ofdm_cnt == 2 && (iq_cnt < 63 || (iq_cnt == 63 && ifft_o_sync == 1))) ? ifft_iq[15:0]  : 0;
-//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_IFFT_INPUT && ofdm_cnt == 2 && (iq_cnt < 63 || (iq_cnt == 63 && ifft_o_sync == 1))) ? 1              : 0;
+//assign result_i        = (state1 == S1_DATA && state2 == S2_MOD_IFFT_INPUT && ofdm_cnt == 2 && (iq_cnt < 63 || (iq_cnt == 63 && ifft_o_sync == 1))) ? ifft_iq[31:16] : 0;
+//assign result_q        = (state1 == S1_DATA && state2 == S2_MOD_IFFT_INPUT && ofdm_cnt == 2 && (iq_cnt < 63 || (iq_cnt == 63 && ifft_o_sync == 1))) ? ifft_iq[15:0]  : 0;
+//assign result_iq_valid = (state1 == S1_DATA && state2 == S2_MOD_IFFT_INPUT && ofdm_cnt == 2 && (iq_cnt < 63 || (iq_cnt == 63 && ifft_o_sync == 1))) ? 1              : 0;
 // IFFT result
 //assign result_i        = (state1 == S1_DATA && state2 == S2_IFFT_RESULT && ofdm_cnt == 2) ? ifft_o_result_reg[31:16] : 0;
 //assign result_q        = (state1 == S1_DATA && state2 == S2_IFFT_RESULT && ofdm_cnt == 2) ? ifft_o_result_reg[15:0]  : 0;
 //assign result_iq_valid = (state1 == S1_DATA && state2 == S2_IFFT_RESULT && ofdm_cnt == 2) ? 1                        : 0;
 
+
+//////////////////////////////////////////////////////////////////////////
+// SHORT + LONG PREAMBLE
+//////////////////////////////////////////////////////////////////////////
+reg  [7:0] preamble_addr;
+short_preamble_rom short_preamble_rom (
+    .addr(preamble_addr[3:0]),
+    .dout({short_preamble_i, short_preamble_q})
+);
+
+long_preamble_rom long_preamble_rom (
+    .addr(preamble_addr),
+    .dout({long_preamble_i, long_preamble_q})
+);
 
 //////////////////////////////////////////////////////////////////////////
 // Cyclic redundancy check (CRC32) and frame check sequence (FCS) block
@@ -150,11 +150,12 @@ reg        bit_scram;
 reg        bit_scram_last_val;
 reg  [6:0] pilot_scram_state;
 reg  [6:0] data_scram_state;
+reg  [8:0] dbps_cnt_x2;
 always @*
-if(state2 == S2_SCRAM_ENC_CRC) begin
+if(state2 == S2_SCRAM_ENC_PUNC_INTERLV) begin
     if(state1 == S1_SIGNAL) begin
 
-        bit_scram = bram_din[plcp_bit_cnt[5:0]];
+        bit_scram = bram_din[dbps_cnt_x2[6:1]];
 
     // Scrambling only occurs in DATA section along with data bit selection
     end else if(state1 == S1_DATA) begin
@@ -180,14 +181,14 @@ if(state2 == S2_SCRAM_ENC_CRC) begin
     end else begin
         bit_scram = 0;
     end
-end else if (state2 == S2_CYCL_PREFIX && iq_cnt == 255) begin
+end else if (state2 == S2_IQ_FORWARDER && iq_cnt == 255) begin
     bit_scram = bit_scram_last_val;
 end else begin
     bit_scram = 0;
 end
 
 //////////////////////////////////////////////////////////////////////////
-// Convolutional encoding and bit puncturing
+// Convolutional encoding, bit puncturing and bit interleaving
 //////////////////////////////////////////////////////////////////////////
 reg  [5:0] convenc_curr_state;
 wire [5:0] convenc_next_state;
@@ -199,50 +200,44 @@ convenc convenc (
     .bits_out(bits_enc_i)
 );
 
-// This is a shift register for holding convolutionally encoded bits and to be used for puncturing and interleaving.
-// Bit puncturing is implicitly carried out, such that interleaver_lut only provides the address for the bits to be read
-// For 802.11ag standard, the maximum number of data bits per sysmbol (N_DBPS) is 216, hence the depth of the SRLNXE.
-wire bit_enc_o;
-wire [1:0] bits_enc_o;
-wire [8:0] interlv_addr;
-SRLNXE #(.WIDTH(2), .DEPTH(216)) bits_sreg(
-    .clk(clk),
-    .addr(interlv_addr[8:1]),
-    .wen(state2 == S2_SCRAM_ENC_CRC),
-    .data_i(bits_enc_i),
-    .data_o(bits_enc_o)
+// Puncturing and interleaving index look up table
+wire       punc_bit;
+wire [8:0] bits_ram_waddr;
+punc_interlv_lut punc_interlv_lut(
+    .rate(state1 == S1_DATA ? RATE : 4'b1011),
+    .idx_i(dbps_cnt_x2),
+    .idx_o(bits_ram_waddr),
+    .punc_o(punc_bit)
 );
-assign bit_enc_o = bits_enc_o[interlv_addr[0]];
+
+// This is a RAM module for holding convolutionally encoded, punctured and interleaved bits.
+// Bit puncturing is implicitly carried out, such that punc_interlv_lut provides write address along with puncturing ON/OFF signal
+reg        enc_pos;
+wire       bits_ram_en;
+wire       bit_enc_i;
+reg  [5:0] mod_addr;
+wire [5:0] bits_to_mod;
+ram_simo #(.DEPTH(48)) bits_ram(
+    .clk(clk),
+    .waddr(bits_ram_waddr),
+    .raddr(mod_addr),
+    .wen(bits_ram_en),
+    .data_i(bit_enc_i),
+    .data_o(bits_to_mod)
+);
+assign bits_ram_en = (state2 == S2_SCRAM_ENC_PUNC_INTERLV && ~punc_bit);
+assign bit_enc_i = bits_enc_i[~enc_pos];
 
 //////////////////////////////////////////////////////////////////////////
-// Bit interleaving and modulation
+// Bits modulation
 //////////////////////////////////////////////////////////////////////////
-// Interleaver index look up table
-reg  [8:0] interlv_cnt;
-interleaver_lut interleaver_lut(
-    .rate(state1 == S1_DATA ? RATE : 4'b1011),
-    .idx_i(interlv_cnt[8:0]),
-    .idx_o(interlv_addr)
-);
 
 // BPSK, QPSK, 16-QAM and 64-QAM modulation
-reg  [4:0]  bits_to_mod;
 wire [31:0] mod_IQ;
 modulation modulation(
     .N_BPSC(state1 == S1_DATA ? N_BPSC : 3'd1),
-    .bits_in({bits_to_mod,bit_enc_o}),
+    .bits_in(bits_to_mod),
     .IQ(mod_IQ)
-);
-
-// Store modulated IQ samples into a shift register
-reg         mod_sreg_en;
-reg  [5:0]  mod_addr;
-wire [31:0] mod_sreg_IQ;
-SRLNXE #(.WIDTH(32), .DEPTH(48)) mod_sreg(
-    .clk(clk),
-    .addr(mod_addr),
-    .wen(mod_sreg_en), .data_i(mod_IQ),
-    .data_o(mod_sreg_IQ)
 );
 
 
@@ -259,15 +254,11 @@ wire [31:0] DC_SB_IQ = {16'h0000, 16'h0000};
 //////////////////////////////////////////////////////////////////////////
 reg        ifft_ce;
 reg [31:0] ifft_iq;
-reg [31:0] ifft_iq_reg;
+//reg [31:0] ifft_iq_reg;
 
 always @* begin
     ifft_iq = 0;
-    if(state1 == S1_SHORT_PREAMBLE) begin
-        ifft_iq = {SHORT_PREAMBLE_1[iq_cnt[5:0]], SHORT_PREAMBLE_0[iq_cnt[5:0]]} == 2'b01 ? {16'h2F1A, 16'h2F1A} : ( {SHORT_PREAMBLE_1[iq_cnt[5:0]], SHORT_PREAMBLE_0[iq_cnt[5:0]]} == 2'b11 ? {16'hD0E6, 16'hD0E6} : {16'h0000, 16'h0000} );
-    end else if(state1 == S1_LONG_PREAMBLE) begin
-        ifft_iq = {LONG_PREAMBLE_1[iq_cnt[5:0]], LONG_PREAMBLE_0[iq_cnt[5:0]], 30'd0};
-    end else if(state1 == S1_SIGNAL || state1 == S1_DATA) begin
+    if(state1 == S1_SIGNAL || state1 == S1_DATA) begin
         if(iq_cnt == 0 || (iq_cnt >= 27 && iq_cnt < 38))
             ifft_iq = DC_SB_IQ;
         else if(iq_cnt == 7)
@@ -279,7 +270,7 @@ always @* begin
         else if(iq_cnt == 57)
             ifft_iq = pilot_iq[1];
         else if(iq_cnt < 64)
-            ifft_iq = mod_sreg_IQ;
+            ifft_iq = mod_IQ;
     end
 end
 
@@ -295,7 +286,7 @@ ifftmain ifft64(
 );
 
 always @(posedge clk) begin
-    ifft_iq_reg <= ifft_iq;
+//    ifft_iq_reg <= ifft_iq;
     if(state1 == S1_SHORT_PREAMBLE)
         ifft_o_result_reg <= (ifft_o_result << 1);
     else
@@ -319,22 +310,20 @@ always @(posedge clk)
 if (reset1) begin
     phy_tx_started     <= 0;
     phy_tx_done        <= 0;
+    preamble_addr      <= 0;
     iq_cnt             <= 0;
     ifft_ce            <= 0;
     ifft_sreg_en       <= 0;
-    bits_to_mod        <= 0;
     bram_addr          <= 0;
 //    ofdm_cnt           <= 0;
-    plcp_bit_cnt       <= 0;
     psdu_bit_cnt       <= 0;
     N_BPSC             <= 0;
-    N_CBPS             <= 0;
     N_DBPS             <= 0;
     RATE               <= 0;
     PSDU_BIT_LEN       <= 0;
+    enc_pos            <= 0;
     convenc_curr_state <= 0;
-    interlv_cnt        <= 0;
-    n_dbps_cnt         <= 0;
+    dbps_cnt_x2        <= 0;
     mod_addr           <= 0;
     pilot_iq[0]        <= 0;
     pilot_iq[1]        <= 0;
@@ -353,144 +342,82 @@ end else begin
   case(state1)
     S1_WAIT_FOR_PKT: begin
       if(phy_tx_start) begin
-          ifft_ce <= 1;
-          state1  <= S1_SHORT_PREAMBLE;
-          state2  <= S2_IFFT_INPUT;
+          preamble_addr <= 0;
+          state1        <= S1_SHORT_PREAMBLE;
       end
     end
 
     S1_SHORT_PREAMBLE: begin
-      case(state2)
-        S2_IFFT_INPUT: begin
-            if(iq_cnt < 63) begin
-                iq_cnt <= iq_cnt + 1;
+        if(result_iq_ready == 1) begin
+            // short preamble form 10*16 = 160 samples
+            if(preamble_addr < 159) begin
+                preamble_addr <= preamble_addr + 1;
 
-            end else if(ifft_o_sync == 1) begin
-                iq_cnt       <= 0;
-                ifft_sreg_en <= 1;
-                state2       <= S2_IFFT_RESULT;
+            // After finish generating the short preamble, start generating the long preamble
+            end else begin
+                preamble_addr <= 0;
+                state1        <= S1_LONG_PREAMBLE;
             end
 
             // Send "OPERATION STARTED" message to upper layer
-            if(iq_cnt == 0)
+            if(preamble_addr == 0)
                 phy_tx_started <= 1;
             else
                 phy_tx_started <= 0;
         end
-
-        S2_IFFT_RESULT: begin
-            if(iq_cnt < 63) begin
-                iq_cnt          <= iq_cnt + 1;
-            end else begin
-                iq_cnt          <= 159;
-                ifft_ce         <= 0;
-                ifft_sreg_en    <= 0;
-                after_sym_reset <= 1;
-                state2          <= S2_CYCL_PREFIX;
-            end
-        end
-
-        S2_CYCL_PREFIX: begin
-            if(result_iq_ready == 1) begin
-                if(iq_cnt != 255) begin
-                    iq_cnt <= iq_cnt - 1;
-
-                end else begin
-                    iq_cnt          <= 0;
-                    ifft_ce         <= 1;
-                    state1          <= S1_LONG_PREAMBLE;
-                    state2          <= S2_IFFT_INPUT;
-                end
-            end
-            after_sym_reset <= 0;
-        end
-      endcase
     end
 
     S1_LONG_PREAMBLE: begin
-      case(state2)
-        S2_IFFT_INPUT: begin
-            if(iq_cnt < 63) begin
-                iq_cnt <= iq_cnt + 1;
+        if(result_iq_ready == 1) begin
+            // short and long preamble together form 320 samples
+            if(preamble_addr < 159) begin
+                preamble_addr <= preamble_addr + 1;
 
-            end else if(ifft_o_sync == 1) begin
-                iq_cnt       <= 0;
-                ifft_sreg_en <= 1;
-                state2       <= S2_IFFT_RESULT;
-            end
-        end
-
-        S2_IFFT_RESULT: begin
-            if(iq_cnt < 63) begin
-                iq_cnt          <= iq_cnt + 1;
+            // After finish generating the preamble, start encoding the SIGNAL field
             end else begin
-                iq_cnt          <= 159;
-                ifft_ce         <= 0;
-                ifft_sreg_en    <= 0;
-                after_sym_reset <= 1;
-                state2          <= S2_CYCL_PREFIX;
+                bram_addr <= 0;
+                state1    <= S1_SIGNAL;
+                state2    <= S2_PLCP;
             end
         end
-
-        S2_CYCL_PREFIX: begin
-            if(result_iq_ready == 1) begin
-                if(iq_cnt != 255) begin
-                    iq_cnt <= iq_cnt - 1;
-
-                end else begin
-                    bram_addr       <= 0;            // SIGNAL section starting address
-                    state1          <= S1_SIGNAL;
-                    state2          <= S2_PLCP;
-                end
-            end
-            after_sym_reset <= 0;
-        end
-      endcase
     end
 
     S1_SIGNAL: begin
       case(state2)
-        // Decode N_BPSC, N_CBPS, N_DBPS and PSDU_BIT_LEN from SIGNAL "rate" field. Will only be applied to DATA field
+        // Decode N_BPSC, N_DBPS and PSDU_BIT_LEN from SIGNAL "rate" field. Will only be applied to DATA field
         S2_PLCP: begin
             case(bram_din[3:0])
-                4'b1011: begin  N_BPSC <= 1;  N_CBPS <= 48;   N_DBPS <= 24;   end  //  6 Mbps
-                4'b1111: begin  N_BPSC <= 1;  N_CBPS <= 48;   N_DBPS <= 36;   end  //  9 Mbps
-                4'b1010: begin  N_BPSC <= 2;  N_CBPS <= 96;   N_DBPS <= 48;   end  // 12 Mbps
-                4'b1110: begin  N_BPSC <= 2;  N_CBPS <= 96;   N_DBPS <= 72;   end  // 18 Mbps
-                4'b1001: begin  N_BPSC <= 4;  N_CBPS <= 192;  N_DBPS <= 96;   end  // 24 Mbps
-                4'b1101: begin  N_BPSC <= 4;  N_CBPS <= 192;  N_DBPS <= 144;  end  // 36 Mbps
-                4'b1000: begin  N_BPSC <= 6;  N_CBPS <= 288;  N_DBPS <= 192;  end  // 48 Mbps
-                4'b1100: begin  N_BPSC <= 6;  N_CBPS <= 288;  N_DBPS <= 216;  end  // 54 Mbps
-                default: begin  N_BPSC <= 1;  N_CBPS <= 48;   N_DBPS <= 24;   end  //  6 Mbps
+                4'b1011: begin  N_BPSC <= 1;  N_DBPS <= 24;   end  //  6 Mbps
+                4'b1111: begin  N_BPSC <= 1;  N_DBPS <= 36;   end  //  9 Mbps
+                4'b1010: begin  N_BPSC <= 2;  N_DBPS <= 48;   end  // 12 Mbps
+                4'b1110: begin  N_BPSC <= 2;  N_DBPS <= 72;   end  // 18 Mbps
+                4'b1001: begin  N_BPSC <= 4;  N_DBPS <= 96;   end  // 24 Mbps
+                4'b1101: begin  N_BPSC <= 4;  N_DBPS <= 144;  end  // 36 Mbps
+                4'b1000: begin  N_BPSC <= 6;  N_DBPS <= 192;  end  // 48 Mbps
+                4'b1100: begin  N_BPSC <= 6;  N_DBPS <= 216;  end  // 54 Mbps
+                default: begin  N_BPSC <= 1;  N_DBPS <= 24;   end  //  6 Mbps
             endcase
-            RATE         <= bram_din[3:0];
-            PSDU_BIT_LEN <= ({3'd0, bram_din[16:5]} << 3);
+            RATE               <= bram_din[3:0];
+            PSDU_BIT_LEN       <= ({3'd0, bram_din[16:5]} << 3);
 
-            plcp_bit_cnt       <= 0;
+            dbps_cnt_x2        <= 0;
+            enc_pos            <= 0;
             convenc_curr_state <= 6'b000000;
-            state2             <= S2_SCRAM_ENC_CRC;
+            state2             <= S2_SCRAM_ENC_PUNC_INTERLV;
         end
 
-        S2_SCRAM_ENC_CRC: begin
+        S2_SCRAM_ENC_PUNC_INTERLV: begin
 
-            plcp_bit_cnt       <= plcp_bit_cnt + 1;
-            convenc_curr_state <= convenc_next_state;
+            enc_pos                <= ~enc_pos;
+            dbps_cnt_x2            <= dbps_cnt_x2 + 1;
+            if(enc_pos == 1) begin
+                convenc_curr_state <= convenc_next_state;
+            end
 
             // SIGNAL field contains 24 bits
-            if(plcp_bit_cnt == 23) begin
+            if(dbps_cnt_x2 == 47) begin
                 convenc_curr_state <= 6'b000000;
-                interlv_cnt        <= 0;
-                mod_sreg_en        <= 1;
-                state2             <= S2_PUNC_INTERLV_MODL;
-            end
-        end
-
-        S2_PUNC_INTERLV_MODL: begin
-            if(interlv_cnt < 47) begin
-                interlv_cnt <= interlv_cnt + 1;
-            end else begin
-                mod_sreg_en <= 0;
-                state2      <= S2_PILOT_DC_SB;
+                state2             <= S2_PILOT_DC_SB;
             end
         end
 
@@ -502,23 +429,23 @@ end else begin
 
             iq_cnt  <= 0;
             ifft_ce <= 1;
-            state2  <= S2_IFFT_INPUT;
+            state2  <= S2_MOD_IFFT_INPUT;
         end
 
-        S2_IFFT_INPUT: begin
+        S2_MOD_IFFT_INPUT: begin
             if(iq_cnt < 63) begin
                 if(iq_cnt < 6) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] + 24);
+                    mod_addr <= iq_cnt[5:0] + 24;
                 end else if(iq_cnt < 20) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] + 23);
+                    mod_addr <= iq_cnt[5:0] + 23;
                 end else if(iq_cnt < 26) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] + 22);
+                    mod_addr <= iq_cnt[5:0] + 22;
                 end else if(iq_cnt < 42) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] - 37);
+                    mod_addr <= iq_cnt[5:0] - 37;
                 end else if(iq_cnt < 56) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] - 38);
+                    mod_addr <= iq_cnt[5:0] - 38;
                 end else if(iq_cnt < 63) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] - 39);
+                    mod_addr <= iq_cnt[5:0] - 39;
                 end
                 iq_cnt <= iq_cnt + 1;
 
@@ -537,24 +464,24 @@ end else begin
                 ifft_ce         <= 0;
                 ifft_sreg_en    <= 0;
                 after_sym_reset <= 1;
-                state2          <= S2_CYCL_PREFIX;
+                state2          <= S2_IQ_FORWARDER;
             end
         end
 
-        S2_CYCL_PREFIX: begin
+        S2_IQ_FORWARDER: begin
             if(result_iq_ready == 1) begin
                 if(iq_cnt != 255) begin
                     iq_cnt <= iq_cnt - 1;
 
                 end else begin
-                    n_dbps_cnt         <= 0;
+                    dbps_cnt_x2        <= 0;
                     convenc_curr_state <= 6'b000000;
                     pilot_scram_state  <= init_pilot_scram_state;//7'b1111110;
                     data_scram_state   <= init_data_scram_state;//7'b1111111;
 
 //                    ofdm_cnt           <= ofdm_cnt + 1;
                     state1             <= S1_DATA;
-                    state2             <= S2_SCRAM_ENC_CRC;
+                    state2             <= S2_SCRAM_ENC_PUNC_INTERLV;
                     state3             <= S3_SERVICE;
                 end
             end
@@ -565,20 +492,22 @@ end else begin
 
     S1_DATA: begin
       case(state2)
-        S2_SCRAM_ENC_CRC: begin
+        S2_SCRAM_ENC_PUNC_INTERLV: begin
           case(state3)
             S3_SERVICE: begin
 
-                n_dbps_cnt         <= n_dbps_cnt + 1;
-                plcp_bit_cnt       <= plcp_bit_cnt + 1;
-                convenc_curr_state <= convenc_next_state;
-                data_scram_state   <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
+                enc_pos                <= ~enc_pos;
+                dbps_cnt_x2            <= dbps_cnt_x2 + 1;
+                if(enc_pos == 1) begin
+                    convenc_curr_state <= convenc_next_state;
+                    data_scram_state   <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
+                end
 
                 // DATA section starting address
-                if(plcp_bit_cnt == 38)
+                if(dbps_cnt_x2 == 30)
                     bram_addr <= 2;
 
-                if(plcp_bit_cnt == 39) begin
+                if(dbps_cnt_x2 == 31) begin
                     crc_en <= 1;
                     state3 <= S3_PSDU;
                 end
@@ -588,57 +517,36 @@ end else begin
             S3_PSDU: begin
 
                 // 1 OFDM symbol contains N_DBPS coded bits
-                if(n_dbps_cnt == N_DBPS-1) begin
-                    interlv_cnt        <= 0;
-                    bits_to_mod        <= 5'b00000;
+                if(dbps_cnt_x2 == {N_DBPS,1'b0}-1) begin
                     bit_scram_last_val <= bit_scram;
-                    n_bpsc_cnt         <= (N_BPSC == 1) ? 0 : 1;
-                    mod_sreg_en        <= (N_BPSC == 1) ? 1 : 0;
-                    state2             <= S2_PUNC_INTERLV_MODL;
+                    state2             <= S2_PILOT_DC_SB;
 
                 end else begin
-                    n_dbps_cnt         <= n_dbps_cnt + 1;
-                    psdu_bit_cnt       <= psdu_bit_cnt + 1;
-                    convenc_curr_state <= convenc_next_state;
-                    if(psdu_bit_cnt < PSDU_BIT_LEN || psdu_bit_cnt >= PSDU_BIT_LEN + 6)
-                        data_scram_state <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
+                    enc_pos                <= ~enc_pos;
+                    dbps_cnt_x2            <= dbps_cnt_x2 + 1;
+                    if(enc_pos == 1) begin
+                        psdu_bit_cnt       <= psdu_bit_cnt + 1;
+                        convenc_curr_state <= convenc_next_state;
+                        if(psdu_bit_cnt < PSDU_BIT_LEN || psdu_bit_cnt >= PSDU_BIT_LEN + 6)
+                            data_scram_state <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
 
-                    // Update CRC reading index
-                    if(psdu_bit_cnt >= (PSDU_BIT_LEN - 32) && psdu_bit_cnt < PSDU_BIT_LEN)
-                       pkt_fcs_idx <= pkt_fcs_idx + 1;
+                        // Update CRC reading index
+                        if(psdu_bit_cnt >= (PSDU_BIT_LEN - 32) && psdu_bit_cnt < PSDU_BIT_LEN)
+                           pkt_fcs_idx <= pkt_fcs_idx + 1;
 
-                    // After processing 64 bits, update block ram address
-                    if(psdu_bit_cnt[5:0] == 6'b111110)
+                        // After processing 64 bits, update block ram address
+                    end else if(psdu_bit_cnt[5:0] == 6'b111111) begin
                         bram_addr <= bram_addr + 1;
+                    end
 
                     // While scrambling, encoding and puncturing the PSDU, calculate aggregate cyclic redundancy check (CRC)
-                    if(psdu_bit_cnt < (PSDU_BIT_LEN - 36) && psdu_bit_cnt[1:0] == 2'b11)
+                    if(psdu_bit_cnt <  (PSDU_BIT_LEN - 36) && psdu_bit_cnt[1:0] == 2'b11 && enc_pos == 1)
                         crc_en <= 1;
                     else
                         crc_en <= 0;
-                    end
                end
+             end
           endcase
-        end
-
-        S2_PUNC_INTERLV_MODL: begin
-
-            bits_to_mod <= {bits_to_mod[3:0],bit_enc_o};
-
-            if(interlv_cnt < N_CBPS - 1) begin
-                interlv_cnt <= interlv_cnt + 1;
-                // Count N_CBPS bits and perform IQ modulation
-                if(n_bpsc_cnt < N_BPSC - 1) begin
-                    mod_sreg_en <= 0;
-                    n_bpsc_cnt  <= n_bpsc_cnt + 1;
-                end else begin
-                    mod_sreg_en <= 1;
-                    n_bpsc_cnt  <= 0;
-                end
-            end else begin
-                mod_sreg_en <= 0;
-                state2      <= S2_PILOT_DC_SB;
-            end
         end
 
         S2_PILOT_DC_SB: begin
@@ -657,23 +565,23 @@ end else begin
 
             iq_cnt  <= 0;
             ifft_ce <= 1;
-            state2  <= S2_IFFT_INPUT;
+            state2  <= S2_MOD_IFFT_INPUT;
         end
 
-        S2_IFFT_INPUT: begin
+        S2_MOD_IFFT_INPUT: begin
             if(iq_cnt < 63) begin
                 if(iq_cnt < 6) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] + 24);
+                    mod_addr <= iq_cnt[5:0] + 24;
                 end else if(iq_cnt < 20) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] + 23);
+                    mod_addr <= iq_cnt[5:0] + 23;
                 end else if(iq_cnt < 26) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] + 22);
+                    mod_addr <= iq_cnt[5:0] + 22;
                 end else if(iq_cnt < 42) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] - 37);
+                    mod_addr <= iq_cnt[5:0] - 37;
                 end else if(iq_cnt < 56) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] - 38);
+                    mod_addr <= iq_cnt[5:0] - 38;
                 end else if(iq_cnt < 63) begin
-                    mod_addr <= 47 - (iq_cnt[5:0] - 39);
+                    mod_addr <= iq_cnt[5:0] - 39;
                 end
                 iq_cnt <= iq_cnt + 1;
 
@@ -692,11 +600,11 @@ end else begin
                 ifft_ce         <= 0;
                 ifft_sreg_en    <= 0;
                 after_sym_reset <= 1;
-                state2          <= S2_CYCL_PREFIX;
+                state2          <= S2_IQ_FORWARDER;
             end
         end
 
-        S2_CYCL_PREFIX: begin
+        S2_IQ_FORWARDER: begin
             if(result_iq_ready == 1) begin
                 if(iq_cnt != 255) begin
                     iq_cnt <= iq_cnt - 1;
@@ -705,7 +613,8 @@ end else begin
                     // This is not the last OFDM symbol processed. Issue a soft "SYMBOL" reset
                     if(psdu_bit_cnt <= PSDU_BIT_LEN) begin
 
-                        n_dbps_cnt         <= 0;
+                        enc_pos <= ~enc_pos;
+                        dbps_cnt_x2        <= 0;
                         psdu_bit_cnt       <= psdu_bit_cnt + 1;
                         convenc_curr_state <= convenc_next_state;
                         if(psdu_bit_cnt < PSDU_BIT_LEN || psdu_bit_cnt >= PSDU_BIT_LEN + 6)
@@ -723,7 +632,7 @@ end else begin
 
 //                        ofdm_cnt           <= ofdm_cnt + 1;
                         state1             <= S1_DATA;
-                        state2             <= S2_SCRAM_ENC_CRC;
+                        state2             <= S2_SCRAM_ENC_PUNC_INTERLV;
 
                     // This is the last OFDM symbol processed. Issue a soft "PACKET" reset
                     end else if(psdu_bit_cnt > PSDU_BIT_LEN) begin
