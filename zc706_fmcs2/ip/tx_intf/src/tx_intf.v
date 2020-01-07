@@ -37,6 +37,7 @@
 
 	    // Ports to ACC: PHY_TX
 	    output wire phy_tx_start,
+        output wire tx_hold,
         input wire  [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr,
         (* mark_debug = "true" *) input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_i_from_acc,
 	    input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_q_from_acc,
@@ -502,7 +503,8 @@
         .data_loopback(data_loopback),
         .data_loopback_valid(data_loopback_valid),
 
-        .tx_iq_fifo_empty(tx_iq_fifo_empty)
+        .tx_iq_fifo_empty(tx_iq_fifo_empty),
+        .tx_hold(tx_hold)
     );
     
     tx_intf_pl_to_m_axis # ( 

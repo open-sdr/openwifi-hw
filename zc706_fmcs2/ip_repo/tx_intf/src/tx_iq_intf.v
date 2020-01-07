@@ -39,7 +39,10 @@
       output wire data_loopback_valid,
         
         // to lbt
-      output wire tx_iq_fifo_empty
+      output wire tx_iq_fifo_empty,
+
+      // to tx core
+      output wire tx_hold
 	);
     wire src_sel_rst;
     reg src_sel_rst_reg0;
@@ -55,6 +58,7 @@
     wire [(2*IQ_DATA_WIDTH-1):0] tx_iq_fifo_in;
     wire tx_iq_fifo_rden;
     (* mark_debug = "true" *) wire tx_iq_fifo_full;
+    wire [10:0] data_count;
     
     assign bw02_iq_pack = 0;
     assign bw02_iq_valid = 1'b1;
@@ -64,6 +68,9 @@
     assign data_loopback = (loopback_sel==0?data_from_s_axis:{16'd0, 16'd0, rf_q, rf_i});
     assign data_loopback_valid = (loopback_sel==0?emptyn_from_s_axis:rf_iq_valid);
     
+    //generate tx_hold signal to hold tx_core if we have enough I/Q in FIFO
+    assign tx_hold = (data_count>511?1:0);
+
     //output mux
     assign tx_iq_fifo_out_merge[(2*IQ_DATA_WIDTH-1):0] = (tx_iq_fifo_empty==1?0:tx_iq_fifo_out);
     assign tx_iq_fifo_out_merge[(WIFI_IQ_PACK_DATA_WIDTH-1):(2*IQ_DATA_WIDTH)] = 0;
@@ -97,11 +104,11 @@
 
           rf_i_tmp<=rf_i*bb_gain;
           rf_q_tmp<=rf_q*bb_gain;
-          tx_iq_fifo_wren<=(src_sel==0?rf_iq_valid:1'b0);
+          tx_iq_fifo_wren<=(src_sel==0?(~tx_hold&rf_iq_valid):1'b0);
       end
     end   
           
-    fifo32_1clk fifo32_1clk_i (
+    fifo32_1clk_dep1k fifo32_1clk_dep1k_i (
         .CLK(clk),
         .DATAO(tx_iq_fifo_out),
         .DI(tx_iq_fifo_in),
@@ -110,7 +117,7 @@
         .RDEN(tx_iq_fifo_rden),
         .RST((~rstn)|src_sel_rst),
         .WREN(tx_iq_fifo_wren),
-        .data_count()
+        .data_count(data_count)
     );
 
 	endmodule

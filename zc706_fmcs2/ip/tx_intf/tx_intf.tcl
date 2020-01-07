@@ -30,7 +30,7 @@
 # 3. The following remote source files that were added to the original project:-
 #
 #    "openwifi-hw/zc706_fmcs2/ip_repo/fifo64_1clk/src/fifo64_1clk_fifo_generator_0_0/fifo64_1clk_fifo_generator_0_0.xci"
-#    "openwifi-hw/zc706_fmcs2/ip_repo/fifo32_1clk/src/fifo32_1clk_fifo_generator_0_0/fifo32_1clk_fifo_generator_0_0.xci"
+#    "openwifi-hw/zc706_fmcs2/ip_repo/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k_fifo_generator_0_0/fifo32_1clk_dep1k_fifo_generator_0_0.xci"
 #    "openwifi-hw/zc706_fmcs2/ip_repo/fifo64_1clk_dep64/src/fifo64_1clk_dep64_fifo_generator_0_0/fifo64_1clk_dep64_fifo_generator_0_0.xci"
 #    "openwifi-hw/zc706_fmcs2/ip_repo/duc_bank_core/src/duc_bank_core_mixer_duc_0_0/duc_bank_core_mixer_duc_0_0.xci"
 #    "openwifi-hw/zc706_fmcs2/ip_repo/duc_bank_core/src/duc_bank_core_fir_compiler_1_0/duc_bank_core_fir_compiler_1_0.xci"
@@ -39,7 +39,7 @@
 #    "openwifi-hw/zc706_fmcs2/ip/tx_intf/src/dac_intf.v"
 #    "openwifi-hw/zc706_fmcs2/ip_repo/duc_bank_core/src/duc_bank_core.v"
 #    "openwifi-hw/zc706_fmcs2/ip/tx_intf/src/duc_bank_core_intf.v"
-#    "openwifi-hw/zc706_fmcs2/ip_repo/fifo32_1clk/src/fifo32_1clk.v"
+#    "openwifi-hw/zc706_fmcs2/ip_repo/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k.v"
 #    "openwifi-hw/zc706_fmcs2/ip_repo/fifo64_1clk/src/fifo64_1clk.v"
 #    "openwifi-hw/zc706_fmcs2/ip_repo/fifo64_1clk_dep64/src/fifo64_1clk_dep64.v"
 #    "openwifi-hw/zc706_fmcs2/ip_repo/fifo64_2clk_dep32/src/fifo64_2clk_dep32.v"
@@ -185,7 +185,7 @@ update_ip_catalog -rebuild
 set obj [get_filesets sources_1]
 set files [list \
  "[file normalize "$origin_dir/../../ip_repo/fifo64_1clk/src/fifo64_1clk_fifo_generator_0_0/fifo64_1clk_fifo_generator_0_0.xci"]"\
- "[file normalize "$origin_dir/../../ip_repo/fifo32_1clk/src/fifo32_1clk_fifo_generator_0_0/fifo32_1clk_fifo_generator_0_0.xci"]"\
+ "[file normalize "$origin_dir/../../ip_repo/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k_fifo_generator_0_0/fifo32_1clk_dep1k_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/fifo64_1clk_dep64/src/fifo64_1clk_dep64_fifo_generator_0_0/fifo64_1clk_dep64_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/duc_bank_core/src/duc_bank_core_mixer_duc_0_0/duc_bank_core_mixer_duc_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/duc_bank_core/src/duc_bank_core_fir_compiler_1_0/duc_bank_core_fir_compiler_1_0.xci"]"\
@@ -194,7 +194,7 @@ set files [list \
  "[file normalize "$origin_dir/src/dac_intf.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/duc_bank_core/src/duc_bank_core.v"]"\
  "[file normalize "$origin_dir/src/duc_bank_core_intf.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/fifo32_1clk/src/fifo32_1clk.v"]"\
+ "[file normalize "$origin_dir/../../ip_repo/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/fifo64_1clk/src/fifo64_1clk.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/fifo64_1clk_dep64/src/fifo64_1clk_dep64.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/fifo64_2clk_dep32/src/fifo64_2clk_dep32.v"]"\
@@ -226,7 +226,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/fifo32_1clk/src/fifo32_1clk_fifo_generator_0_0/fifo32_1clk_fifo_generator_0_0.xci"
+set file "$origin_dir/../../ip_repo/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k_fifo_generator_0_0/fifo32_1clk_dep1k_fifo_generator_0_0.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 if { ![get_property "is_locked" $file_obj] } {
@@ -355,7 +355,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/fifo32_1clk/src/fifo32_1clk.v"
+set file "$origin_dir/../../ip_repo/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj

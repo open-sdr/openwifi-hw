@@ -10,12 +10,21 @@
         <Option Id="HW_ILA" value="u_ila_0"/>
         <Option Id="PROBE_PORT" value="0"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="12"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/num_retrans[2]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/num_retrans[1]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/num_retrans[0]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[11]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[10]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[9]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[8]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[7]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[6]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[5]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[4]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[3]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[2]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[1]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_len[0]"/>
       </nets>
     </probe>
     <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
@@ -27,12 +36,28 @@
         <Option Id="HW_ILA" value="u_ila_0"/>
         <Option Id="PROBE_PORT" value="1"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="4"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state[2]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state[1]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state[0]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_rate_1[3]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_rate_1[2]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_rate_1[1]"/>
+        <net name="u_ila_0_openofdm_rx_0_pkt_rate_1[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="1"/>
+        <Option Id="PROBE_PORT_BITS" value="4"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
+      </probeOptions>
+      <nets>
+        <net name="u_ila_0_openofdm_rx_0_pkt_rate[7]"/>
       </nets>
     </probe>
     <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
@@ -44,15 +69,20 @@
         <Option Id="HW_ILA" value="u_ila_0"/>
         <Option Id="PROBE_PORT" value="2"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="8"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state_priv[2]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state_priv[1]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state_priv[0]"/>
+        <net name="u_ila_0_openofdm_tx_0_bram_addr[7]"/>
+        <net name="u_ila_0_openofdm_tx_0_bram_addr[6]"/>
+        <net name="u_ila_0_openofdm_tx_0_bram_addr[5]"/>
+        <net name="u_ila_0_openofdm_tx_0_bram_addr[4]"/>
+        <net name="u_ila_0_openofdm_tx_0_bram_addr[3]"/>
+        <net name="u_ila_0_openofdm_tx_0_bram_addr[2]"/>
+        <net name="u_ila_0_openofdm_tx_0_bram_addr[1]"/>
+        <net name="u_ila_0_openofdm_tx_0_bram_addr[0]"/>
       </nets>
     </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_DATA_V2_RT">
       <probeOptions Id="DebugProbeParams">
         <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
         <Option Id="CORE_LOCATION" value="1:0"/>
@@ -60,261 +90,6 @@
         <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
         <Option Id="HW_ILA" value="u_ila_0"/>
         <Option Id="PROBE_PORT" value="3"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
-      </probeOptions>
-      <nets>
-        <net name="u_ila_0_high_tx_ctl_state[2]"/>
-        <net name="u_ila_0_high_tx_ctl_state[1]"/>
-        <net name="u_ila_0_high_tx_ctl_state[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="4"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/high_tx_ctl_state_old[2]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/high_tx_ctl_state_old[1]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/high_tx_ctl_state_old[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="5"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="8"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[7]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[6]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[5]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[4]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[3]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[2]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[1]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_DATA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="6"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="32"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[31]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[30]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[29]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[28]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[27]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[26]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[25]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[24]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[23]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[22]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[21]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[20]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[19]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[18]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[17]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[16]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[15]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[14]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[13]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[12]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[11]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[10]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[9]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[8]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[7]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[6]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[5]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[4]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[3]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[2]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[1]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_DATA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="7"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="16"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[15]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[14]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[13]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[12]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[11]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[10]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[9]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[8]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[7]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[6]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[5]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[4]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[3]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[2]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[1]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_i_from_acc[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_DATA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="8"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="16"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[15]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[14]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[13]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[12]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[11]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[10]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[9]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[8]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[7]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[6]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[5]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[4]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[3]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[2]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[1]"/>
-        <net name="i_system_wrapper/system_i/tx_intf_0/rf_q_from_acc[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="9"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="2"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI_1[1]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI_1[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="9"/>
-        <Option Id="PROBE_PORT_BITS" value="2"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="6"/>
-      </probeOptions>
-      <nets>
-        <net name="u_ila_0_FC_DI[7]"/>
-        <net name="u_ila_0_FC_DI[6]"/>
-        <net name="u_ila_0_FC_DI[5]"/>
-        <net name="u_ila_0_FC_DI[4]"/>
-        <net name="u_ila_0_FC_DI[3]"/>
-        <net name="u_ila_0_FC_DI[2]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="9"/>
-        <Option Id="PROBE_PORT_BITS" value="8"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="24"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[31]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[30]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[29]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[28]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[27]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[26]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[25]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[24]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[23]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[22]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[21]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[20]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[19]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[18]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[17]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[16]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[15]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[14]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[13]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[12]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[11]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[10]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[9]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[8]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="10"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="5"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[4]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[3]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[2]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[1]"/>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_DATA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="11"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
         <Option Id="PROBE_PORT_BIT_COUNT" value="16"/>
       </probeOptions>
@@ -344,7 +119,7 @@
         <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
         <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
         <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="12"/>
+        <Option Id="PROBE_PORT" value="4"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
         <Option Id="PROBE_PORT_BIT_COUNT" value="64"/>
       </probeOptions>
@@ -422,7 +197,7 @@
         <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
         <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
         <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="13"/>
+        <Option Id="PROBE_PORT" value="5"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
@@ -437,78 +212,19 @@
         <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
         <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
         <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="14"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="12"/>
-      </probeOptions>
-      <nets>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[11]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[10]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[9]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[8]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[7]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[6]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[5]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[4]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[3]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[2]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[1]"/>
-        <net name="u_ila_0_openofdm_rx_0_pkt_len[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="15"/>
-        <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="4"/>
-      </probeOptions>
-      <nets>
-        <net name="i_system_wrapper/system_i/openofdm_rx_0_pkt_rate[3]"/>
-        <net name="i_system_wrapper/system_i/openofdm_rx_0_pkt_rate[2]"/>
-        <net name="i_system_wrapper/system_i/openofdm_rx_0_pkt_rate[1]"/>
-        <net name="i_system_wrapper/system_i/openofdm_rx_0_pkt_rate[0]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="15"/>
-        <Option Id="PROBE_PORT_BITS" value="4"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
-      </probeOptions>
-      <nets>
-        <net name="u_ila_0_openofdm_rx_0_pkt_rate[7]"/>
-      </nets>
-    </probe>
-    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
-      <probeOptions Id="DebugProbeParams">
-        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
-        <Option Id="CORE_LOCATION" value="1:0"/>
-        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
-        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
-        <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="16"/>
+        <Option Id="PROBE_PORT" value="6"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
         <Option Id="PROBE_PORT_BIT_COUNT" value="8"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_openofdm_tx_0_bram_addr[7]"/>
-        <net name="u_ila_0_openofdm_tx_0_bram_addr[6]"/>
-        <net name="u_ila_0_openofdm_tx_0_bram_addr[5]"/>
-        <net name="u_ila_0_openofdm_tx_0_bram_addr[4]"/>
-        <net name="u_ila_0_openofdm_tx_0_bram_addr[3]"/>
-        <net name="u_ila_0_openofdm_tx_0_bram_addr[2]"/>
-        <net name="u_ila_0_openofdm_tx_0_bram_addr[1]"/>
-        <net name="u_ila_0_openofdm_tx_0_bram_addr[0]"/>
+        <net name="gpio_status_IBUF[7]"/>
+        <net name="gpio_status_IBUF[6]"/>
+        <net name="gpio_status_IBUF[5]"/>
+        <net name="gpio_status_IBUF[4]"/>
+        <net name="gpio_status_IBUF[3]"/>
+        <net name="gpio_status_IBUF[2]"/>
+        <net name="gpio_status_IBUF[1]"/>
+        <net name="gpio_status_IBUF[0]"/>
       </nets>
     </probe>
     <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
@@ -518,7 +234,100 @@
         <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
         <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
         <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="17"/>
+        <Option Id="PROBE_PORT" value="7"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="2"/>
+      </probeOptions>
+      <nets>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI_1[1]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI_1[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="7"/>
+        <Option Id="PROBE_PORT_BITS" value="2"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="6"/>
+      </probeOptions>
+      <nets>
+        <net name="u_ila_0_FC_DI[7]"/>
+        <net name="u_ila_0_FC_DI[6]"/>
+        <net name="u_ila_0_FC_DI[5]"/>
+        <net name="u_ila_0_FC_DI[4]"/>
+        <net name="u_ila_0_FC_DI[3]"/>
+        <net name="u_ila_0_FC_DI[2]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="7"/>
+        <Option Id="PROBE_PORT_BITS" value="8"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="24"/>
+      </probeOptions>
+      <nets>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[31]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[30]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[29]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[28]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[27]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[26]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[25]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[24]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[23]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[22]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[21]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[20]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[19]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[18]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[17]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[16]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[15]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[14]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[13]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[12]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[11]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[10]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[9]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI[8]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="8"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="5"/>
+      </probeOptions>
+      <nets>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[4]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[3]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[2]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[1]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_status[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="9"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
         <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
       </probeOptions>
@@ -535,7 +344,7 @@
         <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
         <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
         <Option Id="HW_ILA" value="u_ila_0"/>
-        <Option Id="PROBE_PORT" value="18"/>
+        <Option Id="PROBE_PORT" value="10"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
         <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
       </probeOptions>
@@ -545,7 +354,187 @@
         <net name="i_system_wrapper/system_i/rx_intf_0/inst/rx_intf_pl_to_m_axis_i/rx_state[0]"/>
       </nets>
     </probe>
-    <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="11"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
+      </probeOptions>
+      <nets>
+        <net name="u_ila_0_high_tx_ctl_state[2]"/>
+        <net name="u_ila_0_high_tx_ctl_state[1]"/>
+        <net name="u_ila_0_high_tx_ctl_state[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="12"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
+      </probeOptions>
+      <nets>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/high_tx_ctl_state_old[2]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/high_tx_ctl_state_old[1]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/high_tx_ctl_state_old[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="13"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="8"/>
+      </probeOptions>
+      <nets>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[7]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[6]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[5]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[4]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[3]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[2]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[1]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/tx_bit_intf_i/num_dma_symbol_total_current[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_DATA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="14"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="16"/>
+      </probeOptions>
+      <nets>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[15]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[14]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[13]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[12]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[11]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[10]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[9]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[8]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[7]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[6]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[5]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[4]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[3]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[2]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[1]"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_pack[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_DATA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="15"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="16"/>
+      </probeOptions>
+      <nets>
+        <net name="u_ila_0_rf_i_from_acc[15]"/>
+        <net name="u_ila_0_rf_i_from_acc[14]"/>
+        <net name="u_ila_0_rf_i_from_acc[13]"/>
+        <net name="u_ila_0_rf_i_from_acc[12]"/>
+        <net name="u_ila_0_rf_i_from_acc[11]"/>
+        <net name="u_ila_0_rf_i_from_acc[10]"/>
+        <net name="u_ila_0_rf_i_from_acc[9]"/>
+        <net name="u_ila_0_rf_i_from_acc[8]"/>
+        <net name="u_ila_0_rf_i_from_acc[7]"/>
+        <net name="u_ila_0_rf_i_from_acc[6]"/>
+        <net name="u_ila_0_rf_i_from_acc[5]"/>
+        <net name="u_ila_0_rf_i_from_acc[4]"/>
+        <net name="u_ila_0_rf_i_from_acc[3]"/>
+        <net name="u_ila_0_rf_i_from_acc[2]"/>
+        <net name="u_ila_0_rf_i_from_acc[1]"/>
+        <net name="u_ila_0_rf_i_from_acc[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_DATA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="16"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="16"/>
+      </probeOptions>
+      <nets>
+        <net name="u_ila_0_rf_q_from_acc[15]"/>
+        <net name="u_ila_0_rf_q_from_acc[14]"/>
+        <net name="u_ila_0_rf_q_from_acc[13]"/>
+        <net name="u_ila_0_rf_q_from_acc[12]"/>
+        <net name="u_ila_0_rf_q_from_acc[11]"/>
+        <net name="u_ila_0_rf_q_from_acc[10]"/>
+        <net name="u_ila_0_rf_q_from_acc[9]"/>
+        <net name="u_ila_0_rf_q_from_acc[8]"/>
+        <net name="u_ila_0_rf_q_from_acc[7]"/>
+        <net name="u_ila_0_rf_q_from_acc[6]"/>
+        <net name="u_ila_0_rf_q_from_acc[5]"/>
+        <net name="u_ila_0_rf_q_from_acc[4]"/>
+        <net name="u_ila_0_rf_q_from_acc[3]"/>
+        <net name="u_ila_0_rf_q_from_acc[2]"/>
+        <net name="u_ila_0_rf_q_from_acc[1]"/>
+        <net name="u_ila_0_rf_q_from_acc[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="17"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
+      </probeOptions>
+      <nets>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/num_retrans[2]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/num_retrans[1]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/num_retrans[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
+        <Option Id="CORE_LOCATION" value="1:0"/>
+        <Option Id="CORE_UUID" value="23e7d65a79bc59f7bc47406c1714dfae"/>
+        <Option Id="HUB_CLK_INPUT_FREQ_HZ" value="200000001"/>
+        <Option Id="HW_ILA" value="u_ila_0"/>
+        <Option Id="PROBE_PORT" value="18"/>
+        <Option Id="PROBE_PORT_BITS" value="0"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
+      </probeOptions>
+      <nets>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state[2]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state[1]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state[0]"/>
+      </nets>
+    </probe>
+    <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
       <probeOptions Id="DebugProbeParams">
         <Option Id="BSCAN_SWITCH_INDEX" value="0"/>
         <Option Id="CORE_LOCATION" value="1:0"/>
@@ -554,10 +543,12 @@
         <Option Id="HW_ILA" value="u_ila_0"/>
         <Option Id="PROBE_PORT" value="19"/>
         <Option Id="PROBE_PORT_BITS" value="0"/>
-        <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
+        <Option Id="PROBE_PORT_BIT_COUNT" value="3"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_addr1_valid"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state_priv[2]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state_priv[1]"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/tx_control_i/tx_control_state_priv[0]"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -572,7 +563,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/ch_idle"/>
+        <net name="u_ila_0_addr1_valid"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -587,7 +578,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI_valid"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/ch_idle"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -602,7 +593,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="lopt"/>
+        <net name="i_system_wrapper/system_i/xpu_0/inst/FC_DI_valid"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -692,7 +683,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_phy_tx_started_1"/>
+        <net name="u_ila_0_phy_tx_started"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -722,7 +713,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_rf_iq_valid_from_acc"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/rf_iq_valid_from_acc"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -857,7 +848,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_phy_tx_started"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_ready"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -872,7 +863,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_ready"/>
+        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_valid"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -887,7 +878,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/tx_intf_0/inst/wifi_iq_valid"/>
+        <net name="i_system_wrapper/system_i/xpu_0_block_rx_dma_to_ps"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -902,7 +893,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0_block_rx_dma_to_ps"/>
+        <net name="i_system_wrapper/system_i/xpu_0_block_rx_dma_to_ps_valid"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -917,7 +908,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0_block_rx_dma_to_ps_valid"/>
+        <net name="u_ila_0_xpu_0_high_tx_allowed0"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -932,7 +923,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_xpu_0_high_tx_allowed0"/>
+        <net name="i_system_wrapper/system_i/xpu_0_mute_adc_out_to_bb"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -947,7 +938,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0_mute_adc_out_to_bb"/>
+        <net name="i_system_wrapper/system_i/xpu_0_retrans_in_progress"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -962,7 +953,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0_retrans_in_progress"/>
+        <net name="i_system_wrapper/system_i/xpu_0_start_retrans"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -977,7 +968,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0_start_retrans"/>
+        <net name="i_system_wrapper/system_i/xpu_0_tx_bb_is_ongoing"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -992,7 +983,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/xpu_0_tx_bb_is_ongoing"/>
+        <net name="u_ila_0_xpu_0_tx_try_complete"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
@@ -1007,7 +998,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_xpu_0_tx_try_complete"/>
+        <net name="u_ila_0_tx_intf_0_tx_hold"/>
       </nets>
     </probe>
   </probeset>

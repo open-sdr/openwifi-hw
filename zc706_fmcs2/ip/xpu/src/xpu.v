@@ -230,7 +230,7 @@
     wire [6:0] sifs_time;
     wire [6:0] phy_rx_start_delay_time;
 
-    assign slv_reg63 = 32'h52561112;//version
+    assign slv_reg63 = 32'hf016055a;//version -- internet git commit revision
 
     assign erp_short_slot = slv_reg4[24];
     assign band = slv_reg4[19:16];
