@@ -4,3 +4,6 @@
 [submodule "zc706_fmcs2/ip/openofdm_rx"]
 	path = zc706_fmcs2/ip/openofdm_rx
 	url = https://github.com/open-sdr/openofdm.git
+[submodule "ip/openofdm_rx"]
+	path = ip/openofdm_rx
+	url = https://github.com/open-sdr/openofdm
