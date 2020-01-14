@@ -9,7 +9,15 @@ Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opens
 
 **Pre-compiled FPGA files:**
 
-Directory zc706_fmcs2/sdk/ includes FPGA bit file and other necessary SDK files for openwifi driver and software repository.
+Directory boards/board_name/sdk/ includes FPGA bit file and other necessary SDK files for openwifi driver and software repository.
+
+board_name|actual boards used
+-------|-------
+zc706_fmcs2|Xilinx ZC706 dev board + FMCOMMS2/3/4
+adrv9361z7035|ADRV9361Z7035 SOM + ADRV1CRR-BOB carrier board
+adrv9361z7035_fmc|ADRV9361Z7035 SOM + ADRV1CRR-FMC carrier board
+
+zc706_fmcs2 is taken as example for following operations.
 
 **Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2017.4.1 is needed. Example instructions are verified on Ubuntu 16/18)
 
@@ -25,11 +33,11 @@ git reset --hard 2018_r1
 source $XILINX_DIR/Vivado/2017.4/settings64.sh
 make
 (Will take a while)
-cd ../../zc706_fmcs2
+cd ../../boards/zc706_fmcs2/
 ```
 * Open Vivado, then in Vivado Tcl Console:
 ```
-cd zc706_fmcs2
+cd boards/zc706_fmcs2/
 source ./openwifi.tcl
 ```
 * In Vivado:
@@ -52,38 +60,38 @@ git push
 ```
 **Modify IP cores:**
 
-IP core source files are in zc706_fmcs2/ip directory. After IP is modified, export the IP core into ip_repo directory. Then re-run the full FPGA build procedure.
+IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure.
 
 * ***IP cores designed by HLS (mixer_ddc and mixer_duc). mixer_ddc as example:***
 
 ```
-Create a project "mixer_ddc" with file in zc706_fmcs2/ip/mixer_ddc/src directory in Vivado HLS.
+Create a project "mixer_ddc" with file in ip/mixer_ddc/src directory in Vivado HLS.
 During creating, set mixer_ddc as top, select zc706 board as "Part" and set Clock Period 5 (means 200MHz).
 Run C synthesis.
 Click solution1, Solution --> Export RTL
-Copy project_directory/solution1/impl/ip to zc706_fmcs2/ip_repo/mixer_ddc
+Copy project_directory/solution1/impl/ip to ip_repo/mixer_ddc
 ```
 * ***IP cores designed by block-diagram (ddc_bank_core, fifo32_1clk, etc). fifo32_1clk as example:***
 
 ```
 Open Vivado, then in Vivado Tcl Console:
-cd zc706_fmcs2/ip/fifo32_1clk
+cd ip/fifo32_1clk
 source ./fifo32_1clk.tcl
 In Vivado:
 Open Block Design
 Tools --> Report --> Report IP Status
-Tools --> Create and Package New IP... --> Next --> Package a block design from ... --> Next --> set "zc706_fmcs2/ip_repo/fifo32_1clk" as target directory --> Next --> OK -- Finish
+Tools --> Create and Package New IP... --> Next --> Package a block design from ... --> Next --> set "ip_repo/fifo32_1clk" as target directory --> Next --> OK -- Finish
 In new opened temporary project: Review and Package --> Package IP --> Yes
 ```
 * ***IP cores designed by verilog (rx_intf, xpu, etc). xpu as example:***
 
 ```
 Open Vivado, then in Vivado Tcl Console:
-cd zc706_fmcs2/ip/xpu
+cd ip/xpu
 source ./xpu.tcl
 In Vivado:
 Tools --> Report --> Report IP Status
-Tools --> Create and Package New IP... --> Next --> Next --> set "zc706_fmcs2/ip_repo/xpu" as target directory --> Next --> OK -- Finish
+Tools --> Create and Package New IP... --> Next --> Next --> set "ip_repo/xpu" as target directory --> Next --> OK -- Finish
 In new opened temporary project: Review and Package --> Package IP --> Yes
 ```
 * ***openofdm_rx:***
@@ -91,7 +99,7 @@ You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www
 
   * In Linux:
   
-        cd zc706_fmcs2/ip/
+        cd ip/
         git submodule init openofdm_rx
         git submodule update openofdm_rx
         cd openofdm_rx
@@ -99,14 +107,14 @@ You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www
         git pull
   * Open Vivado, then in Vivado Tcl Console:
         
-        cd zc706_fmcs2/ip/openofdm_rx
+        cd ip/openofdm_rx
         source ./openofdm_rx.tcl
   * In Vivado:
   
         Tools --> Report --> Report IP Status
-        Tools --> Create and Package New IP... --> Next --> Next --> set "zc706_fmcs2/ip_repo/openofdm_rx" as target directory --> Next --> OK -- Finish
+        Tools --> Create and Package New IP... --> Next --> Next --> set "ip_repo/openofdm_rx" as target directory --> Next --> OK -- Finish
         In new opened temporary project: Review and Package --> Package IP --> Yes
 
 ***Note: openwifi adds necessary modules/modifications on top of [Analog Devices HDL reference design](https://github.com/analogdevicesinc/hdl). For general issues, Analog Devices wiki pages would be helpful!***
 
-***Notes: The 802.11 ofdm receiver is based on [openofdm project](https://github.com/jhshi/openofdm). You can find our patch (bug-fix, improvement) [here](https://github.com/open-sdr/openofdm/tree/dot11zynq) which is mapped to zc706_fmcs2/ip/openofdm_rx.***
+***Notes: The 802.11 ofdm receiver is based on [openofdm project](https://github.com/jhshi/openofdm). You can find our patch (bug-fix, improvement) [here](https://github.com/open-sdr/openofdm/tree/dot11zynq) which is mapped to ip/openofdm_rx.***

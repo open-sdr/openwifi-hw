@@ -84,7 +84,7 @@ if { $::argc > 0 } {
 set orig_proj_dir "[file normalize "$origin_dir/"]"
 
 # Create project
-create_project ${project_name} ./${project_name} -part xc7z045ffg900-2 -force
+create_project ${project_name} ./${project_name} -part xc7z045ffg900-2
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
@@ -147,7 +147,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set IP repository paths
 set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../adi-hdl/library"] [file normalize "$origin_dir/ip_repo"]" $obj
+set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo"]" $obj
 
 # Rebuild user ip_repo's index before adding any source files
 update_ip_catalog -rebuild
@@ -155,9 +155,9 @@ update_ip_catalog -rebuild
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- "[file normalize "$origin_dir/../adi-hdl/library/xilinx/common/ad_iobuf.v"]"\
- "[file normalize "$origin_dir/../adi-hdl/projects/common/zc706/zc706_system_constr.xdc"]"\
- "[file normalize "$origin_dir/../adi-hdl/projects/fmcomms2/zc706/system_constr.xdc"]"\
+ "[file normalize "$origin_dir/../../adi-hdl/library/xilinx/common/ad_iobuf.v"]"\
+ "[file normalize "$origin_dir/../../adi-hdl/projects/common/zc706/zc706_system_constr.xdc"]"\
+ "[file normalize "$origin_dir/../../adi-hdl/projects/fmcomms2/zc706/system_constr.xdc"]"\
 ]
 add_files -norecurse -fileset $obj $files
 
@@ -166,18 +166,18 @@ set files [list \
  "[file normalize "$origin_dir/src/system.bd"]"\
  "[file normalize "$origin_dir/src/system_wrapper.v"]"\
  "[file normalize "$origin_dir/src/system_top.v"]"\
- "[file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_8.mem"]"\
- "[file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_16.mem"]"\
- "[file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_32.mem"]"\
- "[file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_64.mem"]"\
- "[file normalize "$origin_dir/ip_repo/openofdm_rx/src/atan_lut.coe"]"\
- "[file normalize "$origin_dir/ip_repo/openofdm_rx/src/deinter_lut.coe"]"\
- "[file normalize "$origin_dir/ip_repo/openofdm_rx/src/rot_lut.coe"]"\
+ "[file normalize "$origin_dir/../../ip_repo/openofdm_tx/src/icmem_8.mem"]"\
+ "[file normalize "$origin_dir/../../ip_repo/openofdm_tx/src/icmem_16.mem"]"\
+ "[file normalize "$origin_dir/../../ip_repo/openofdm_tx/src/icmem_32.mem"]"\
+ "[file normalize "$origin_dir/../../ip_repo/openofdm_tx/src/icmem_64.mem"]"\
+ "[file normalize "$origin_dir/../../ip_repo/openofdm_rx/src/atan_lut.coe"]"\
+ "[file normalize "$origin_dir/../../ip_repo/openofdm_rx/src/deinter_lut.coe"]"\
+ "[file normalize "$origin_dir/../../ip_repo/openofdm_rx/src/rot_lut.coe"]"\
 ]
 set imported_files [import_files -fileset sources_1 $files]
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/../adi-hdl/library/xilinx/common/ad_iobuf.v"
+set file "$origin_dir/../../adi-hdl/library/xilinx/common/ad_iobuf.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
@@ -190,7 +190,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../adi-hdl/projects/common/zc706/zc706_system_constr.xdc"
+set file "$origin_dir/../../adi-hdl/projects/common/zc706/zc706_system_constr.xdc"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "XDC" -objects $file_obj
@@ -205,7 +205,7 @@ set_property -name "used_in" -value "synthesis implementation" -objects $file_ob
 set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../adi-hdl/projects/fmcomms2/zc706/system_constr.xdc"
+set file "$origin_dir/../../adi-hdl/projects/fmcomms2/zc706/system_constr.xdc"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "XDC" -objects $file_obj
