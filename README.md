@@ -17,8 +17,6 @@ zc706_fmcs2|Xilinx ZC706 dev board + FMCOMMS2/3/4
 adrv9361z7035|ADRV9361Z7035 SOM + ADRV1CRR-BOB carrier board
 adrv9361z7035_fmc|ADRV9361Z7035 SOM + ADRV1CRR-FMC carrier board
 
-zc706_fmcs2 is taken as example for following operations.
-
 **Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2017.4.1 is needed. Example instructions are verified on Ubuntu 16/18)
 
 * In Linux:
@@ -33,11 +31,11 @@ git reset --hard 2018_r1
 source $XILINX_DIR/Vivado/2017.4/settings64.sh
 make
 (Will take a while)
-cd ../../boards/zc706_fmcs2/
 ```
 * Open Vivado, then in Vivado Tcl Console:
 ```
-cd boards/zc706_fmcs2/
+export BOARD_NAME=your_board_name
+cd boards/$BOARD_NAME/
 source ./openwifi.tcl
 ```
 * In Vivado:
@@ -51,8 +49,8 @@ File --> Launch SDK --> OK, then close SDK
 ```
 * In Linux:
 ```
-cp openwifi_zc706_fmcs2/openwifi_zc706_fmcs2.sdk/system_top_hw_platform_0 ./sdk/ -rf
-cp openwifi_zc706_fmcs2/openwifi_zc706_fmcs2.runs/impl_1/system_top.ltx ./sdk/
+cp openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.sdk/system_top_hw_platform_0 ./sdk/ -rf
+cp openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.runs/impl_1/system_top.ltx ./sdk/
 (system_top.ltx will be needed if you want to debug FPGA via ila probe later)
 git commit -a -m "new fpga img for openwifi (or comments you want to make)"
 git push
