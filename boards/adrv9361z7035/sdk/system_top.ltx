@@ -559,10 +559,10 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="4"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_pkt_rate_1[3]"/>
-        <net name="u_ila_0_pkt_rate_1[2]"/>
-        <net name="u_ila_0_pkt_rate_1[1]"/>
-        <net name="u_ila_0_pkt_rate_1[0]"/>
+        <net name="i_system_wrapper/system_i/openofdm_rx_0/inst/dot11_i/pkt_rate_1[3]"/>
+        <net name="i_system_wrapper/system_i/openofdm_rx_0/inst/dot11_i/pkt_rate_1[2]"/>
+        <net name="i_system_wrapper/system_i/openofdm_rx_0/inst/dot11_i/pkt_rate_1[1]"/>
+        <net name="i_system_wrapper/system_i/openofdm_rx_0/inst/dot11_i/pkt_rate_1[0]"/>
       </nets>
     </probe>
     <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
@@ -577,7 +577,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="u_ila_0_pkt_rate[7]"/>
+        <net name="i_system_wrapper/system_i/openofdm_rx_0/inst/dot11_i/pkt_rate[7]"/>
       </nets>
     </probe>
     <probe type="ila" busType="bus" source="netlist" spec="ILA_V2_RT">
@@ -933,7 +933,7 @@
         <Option Id="PROBE_PORT_BIT_COUNT" value="1"/>
       </probeOptions>
       <nets>
-        <net name="i_system_wrapper/system_i/openofdm_rx_0/inst/dot11_i/sample_in_strobe"/>
+        <net name="u_ila_0_sample_in_strobe"/>
       </nets>
     </probe>
     <probe type="ila" busType="net" source="netlist" spec="ILA_V2_RT">
