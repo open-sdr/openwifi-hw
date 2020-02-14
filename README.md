@@ -31,11 +31,12 @@ git reset --hard 2018_r1
 source $XILINX_DIR/Vivado/2017.4/settings64.sh
 make
 (Will take a while)
+export BOARD_NAME=board_name
+(See board_name naming in previous table)
+cd boards/$BOARD_NAME/
 ```
 * Open Vivado, then in Vivado Tcl Console:
 ```
-export BOARD_NAME=your_board_name
-cd boards/$BOARD_NAME/
 source ./openwifi.tcl
 ```
 * In Vivado:
