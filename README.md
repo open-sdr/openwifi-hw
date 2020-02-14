@@ -41,7 +41,7 @@ source ./openwifi.tcl
 ```
 * In Vivado:
 ```
-Open Block Desing
+Open Block Design
 Tools --> Report --> Report IP Status
 Generate Bitstream
 (Will take a while)
