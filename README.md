@@ -35,6 +35,7 @@ export BOARD_NAME=board_name
 (See board_name naming in previous table)
 cd ../../boards/$BOARD_NAME/
 ```
+* Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado. Otherwise there will be errors when you build the whole FPGA design. 
 * Open Vivado, then in Vivado Tcl Console:
 ```
 source ./openwifi.tcl
