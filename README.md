@@ -38,6 +38,7 @@ cd ../../boards/$BOARD_NAME/
 * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado. Otherwise there will be errors when you build the whole FPGA design. 
 * Open Vivado, then in Vivado Tcl Console:
 ```
+Change to openwifi-hw/boards/board_name/ directory by "cd" command, if Vivado is launched in different directory.
 source ./openwifi.tcl
 ```
 * In Vivado:
