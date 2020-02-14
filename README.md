@@ -33,7 +33,7 @@ make
 (Will take a while)
 export BOARD_NAME=board_name
 (See board_name naming in previous table)
-cd boards/$BOARD_NAME/
+cd openwifi-hw/boards/$BOARD_NAME/
 ```
 * Open Vivado, then in Vivado Tcl Console:
 ```
