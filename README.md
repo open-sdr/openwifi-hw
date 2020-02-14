@@ -51,8 +51,8 @@ File --> Launch SDK --> OK, then close SDK
 ```
 * In Linux:
 ```
-cp openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.sdk/system_top_hw_platform_0 ./sdk/ -rf
-cp openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.runs/impl_1/system_top.ltx ./sdk/
+cd openwifi-hw/boards
+./sdk_update.sh $BOARD_NAME
 (system_top.ltx will be needed if you want to debug FPGA via ila probe later)
 git commit -a -m "new fpga img for openwifi (or comments you want to make)"
 git push
