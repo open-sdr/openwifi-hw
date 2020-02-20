@@ -25,8 +25,10 @@ module dot11_tx
   output wire [15:0] result_q
 );
 
+reg  convenc_reset;
 reg  after_pkt_reset;        // Reset after transmiting a whole packet
-wire reset1 = phy_tx_arest | after_pkt_reset;
+wire reset1 = phy_tx_arest | convenc_reset;
+wire reset2 = phy_tx_arest | after_pkt_reset;
 
 reg [2:0] state1;
 localparam S1_WAIT_FOR_PKT   = 0;
@@ -91,7 +93,7 @@ assign crc_data[3] = state3 == S3_PSDU ? bram_din[(psdu_bit_cnt[5:2] << 2) + 3] 
 
 crc32_tx fcs_inst (
     .clk(clk),
-    .rst(reset1),
+    .rst(reset2),
     .crc_en(crc_en),
     .data_in(crc_data),
     .crc_out(pkt_fcs)
@@ -144,13 +146,13 @@ end
 //////////////////////////////////////////////////////////////////////////
 // Convolutional encoding, bit puncturing and bit interleaving
 //////////////////////////////////////////////////////////////////////////
-reg  [5:0] convenc_curr_state;
-wire [5:0] convenc_next_state;
+reg        convenc_en;
 wire [1:0] bits_enc;
 convenc convenc (
-    .curr_state(convenc_curr_state),
+    .clk(clk),
+    .rst(reset1),
+    .enc_en(convenc_en),
     .bit_in(bit_scram),
-    .next_state(convenc_next_state),
     .bits_out(bits_enc)
 );
 
@@ -230,7 +232,7 @@ end
 wire        ifft_o_sync;
 wire [31:0] ifft_o_result;
 ifftmain ifft64(
-    .i_clk(clk), .i_reset(reset1),
+    .i_clk(clk), .i_reset(reset2),
     .i_ce(ifft_ce),
     .i_sample(ifft_iq),
     .o_result(ifft_o_result),
@@ -244,7 +246,7 @@ reg [5:0]  ifft_o_cnt;
 reg [15:0] pkt_iq2send;
 reg [13:0] cp_iq2send;
 always @(posedge clk)
-if (reset1) begin
+if (reset2) begin
     ifft_o_cnt  <= 0;
     ifft_status <= NO_OUTPUT_YET;
     pkt_iq2send <= 320;
@@ -274,7 +276,7 @@ wire [31:0] pkt_fifo_idata,  pkt_fifo_odata;
 wire        pkt_fifo_ivalid, pkt_fifo_ovalid;
 wire        pkt_fifo_iready, pkt_fifo_oready;
 axi_fifo_bram #(.WIDTH(32), .SIZE(12)) pkt_fifo(
-    .clk(clk), .reset(reset1), .clear(reset1),
+    .clk(clk), .reset(reset2), .clear(reset2),
     .i_tdata(pkt_fifo_idata), .i_tvalid(pkt_fifo_ivalid), .i_tready(pkt_fifo_iready),
     .o_tdata(pkt_fifo_odata), .o_tvalid(pkt_fifo_ovalid), .o_tready(pkt_fifo_oready),
     .space(), .occupied()
@@ -287,7 +289,7 @@ wire [31:0] CP_fifo_idata,  CP_fifo_odata;
 wire        CP_fifo_ivalid, CP_fifo_ovalid;
 wire        CP_fifo_iready, CP_fifo_oready;
 axi_fifo_bram #(.WIDTH(32), .SIZE(11)) CP_fifo(
-    .clk(clk), .reset(reset1), .clear(reset1),
+    .clk(clk), .reset(reset2), .clear(reset2),
     .i_tdata(CP_fifo_idata), .i_tvalid(CP_fifo_ivalid), .i_tready(CP_fifo_iready),
     .o_tdata(CP_fifo_odata), .o_tvalid(CP_fifo_ovalid), .o_tready(CP_fifo_oready),
     .space(), .occupied()
@@ -300,7 +302,7 @@ reg        fifo_turn;
 reg [15:0] pkt_iq_sent;
 reg [13:0] cp_iq_sent;
 always @(posedge clk)
-if (reset1) begin
+if (reset2) begin
     fifo_turn   <= PKT_FIFO;
     pkt_iq_sent <= 0;
     cp_iq_sent  <= 0;
@@ -326,7 +328,7 @@ assign result_iq_valid = fifo_turn == PKT_FIFO ? pkt_fifo_ovalid       : CP_fifo
 // DOT11 TX STATE MACHINE
 //////////////////////////////////////////////////////////////////////////
 always @(posedge clk)
-if (reset1) begin
+if (reset2) begin
     phy_tx_started     <= 0;
     phy_tx_done        <= 0;
     preamble_addr      <= 0;
@@ -340,7 +342,7 @@ if (reset1) begin
     RATE               <= 0;
     PSDU_BIT_LEN       <= 0;
     enc_pos            <= 0;
-    convenc_curr_state <= 0;
+    convenc_en         <= 0;
     dbps_cnt_x2        <= 0;
     mod_addr           <= 0;
     pilot_iq[0]        <= 0;
@@ -414,28 +416,30 @@ end else begin
                 4'b1100: begin  N_BPSC <= 6;  N_DBPS <= 216;  end  // 54 Mbps
                 default: begin  N_BPSC <= 1;  N_DBPS <= 24;   end  //  6 Mbps
             endcase
-            RATE               <= bram_din[3:0];
-            PSDU_BIT_LEN       <= ({3'd0, bram_din[16:5]} << 3);
+            RATE          <= bram_din[3:0];
+            PSDU_BIT_LEN  <= ({3'd0, bram_din[16:5]} << 3);
 
-            dbps_cnt_x2        <= 0;
-            enc_pos            <= 0;
-            convenc_curr_state <= 6'b000000;
-            state2             <= S2_SCRAM_ENC_PUNC_INTERLV;
+            dbps_cnt_x2   <= 0;
+            enc_pos       <= 0;
+            convenc_reset <= 1;
+            state2        <= S2_SCRAM_ENC_PUNC_INTERLV;
         end
 
         S2_SCRAM_ENC_PUNC_INTERLV: begin
 
-            enc_pos                <= ~enc_pos;
-            dbps_cnt_x2            <= dbps_cnt_x2 + 1;
+            enc_pos     <= ~enc_pos;
+            dbps_cnt_x2 <= dbps_cnt_x2 + 1;
             if(enc_pos == 1) begin
-                convenc_curr_state <= convenc_next_state;
+                convenc_en <= 0;
+            end else begin
+                convenc_en <= 1;
             end
 
             // SIGNAL field contains 24 bits
             if(dbps_cnt_x2 == 47) begin
-                convenc_curr_state <= 6'b000000;
-                state2             <= S2_PILOT_DC_SB;
+                state2  <= S2_PILOT_DC_SB;
             end
+            convenc_reset <= 0;
         end
 
         S2_PILOT_DC_SB: begin
@@ -473,15 +477,15 @@ end else begin
         end
 
         S2_RESET: begin
-            dbps_cnt_x2        <= 0;
-            convenc_curr_state <= 6'b000000;
-            pilot_scram_state  <= init_pilot_scram_state;//7'b1111110;
-            data_scram_state   <= init_data_scram_state;//7'b1111111;
+            dbps_cnt_x2       <= 0;
+            convenc_reset     <= 1;
+            pilot_scram_state <= init_pilot_scram_state;//7'b1111110;
+            data_scram_state  <= init_data_scram_state;//7'b1111111;
 
-//            ofdm_cnt           <= ofdm_cnt + 1;
-            state1             <= S1_DATA;
-            state2             <= S2_SCRAM_ENC_PUNC_INTERLV;
-            state3             <= S3_SERVICE;
+//            ofdm_cnt          <= ofdm_cnt + 1;
+            state1            <= S1_DATA;
+            state2            <= S2_SCRAM_ENC_PUNC_INTERLV;
+            state3            <= S3_SERVICE;
         end
       endcase
     end
@@ -492,11 +496,13 @@ end else begin
           case(state3)
             S3_SERVICE: begin
 
-                enc_pos                <= ~enc_pos;
-                dbps_cnt_x2            <= dbps_cnt_x2 + 1;
+                enc_pos     <= ~enc_pos;
+                dbps_cnt_x2 <= dbps_cnt_x2 + 1;
                 if(enc_pos == 1) begin
-                    convenc_curr_state <= convenc_next_state;
-                    data_scram_state   <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
+                    convenc_en       <= 0;
+                    data_scram_state <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
+                end else begin
+                    convenc_en       <= 1;
                 end
 
                 // DATA section starting address
@@ -507,6 +513,7 @@ end else begin
                     crc_en <= 1;
                     state3 <= S3_PSDU;
                 end
+                convenc_reset <= 0;
             end
 
 
@@ -515,32 +522,35 @@ end else begin
                 // 1 OFDM symbol contains N_DBPS coded bits
                 if(dbps_cnt_x2 == {N_DBPS,1'b0}-1) begin
                     bit_scram_last_val <= bit_scram;
+                    dbps_cnt_x2        <= 0;
+                    crc_en             <= 0;
                     state2             <= S2_PILOT_DC_SB;
-
                 end else begin
-                    enc_pos                <= ~enc_pos;
-                    dbps_cnt_x2            <= dbps_cnt_x2 + 1;
-                    if(enc_pos == 1) begin
-                        psdu_bit_cnt       <= psdu_bit_cnt + 1;
-                        convenc_curr_state <= convenc_next_state;
-                        if(psdu_bit_cnt < PSDU_BIT_LEN || psdu_bit_cnt >= PSDU_BIT_LEN + 6)
-                            data_scram_state <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
-
-                        // Update CRC reading index
-                        if(psdu_bit_cnt >= (PSDU_BIT_LEN - 32) && psdu_bit_cnt < PSDU_BIT_LEN)
-                           pkt_fcs_idx <= pkt_fcs_idx + 1;
-
-                        // After processing 64 bits, update block ram address
-                    end else if(psdu_bit_cnt[5:0] == 6'b111111) begin
-                        bram_addr <= bram_addr + 1;
-                    end
-
-                    // While scrambling, encoding and puncturing the PSDU, calculate aggregate cyclic redundancy check (CRC)
-                    if(psdu_bit_cnt <  (PSDU_BIT_LEN - 36) && psdu_bit_cnt[1:0] == 2'b11 && enc_pos == 1)
+                    dbps_cnt_x2        <= dbps_cnt_x2 + 1;
+                    // enable aggregate cyclic redundancy check (CRC) calculation
+                    if(enc_pos == 1 && psdu_bit_cnt < PSDU_BIT_LEN - 36 && psdu_bit_cnt[1:0] == 2'b11)
                         crc_en <= 1;
                     else
                         crc_en <= 0;
-               end
+                end
+
+                enc_pos <= ~enc_pos;
+                if(enc_pos == 1) begin
+                    psdu_bit_cnt   <= psdu_bit_cnt + 1;
+                    convenc_en <= 0;
+                    if(psdu_bit_cnt < PSDU_BIT_LEN || psdu_bit_cnt >= PSDU_BIT_LEN + 6)
+                        data_scram_state <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
+
+                    // Update CRC reading index
+                    if(psdu_bit_cnt >= (PSDU_BIT_LEN - 32) && psdu_bit_cnt < PSDU_BIT_LEN)
+                        pkt_fcs_idx <= pkt_fcs_idx + 1;
+
+                // After processing 64 bits, update block ram address
+                end else begin
+                    convenc_en <= 1;
+                    if(psdu_bit_cnt[5:0] == 6'b111111)
+                        bram_addr <= bram_addr + 1;
+                end
              end
           endcase
         end
@@ -590,27 +600,11 @@ end else begin
         S2_RESET: begin
             // This is not the last OFDM symbol processed. Issue a soft "SYMBOL" reset
             if(psdu_bit_cnt <= PSDU_BIT_LEN) begin
-
-                enc_pos <= ~enc_pos;
-                dbps_cnt_x2        <= 0;
-                psdu_bit_cnt       <= psdu_bit_cnt + 1;
-                convenc_curr_state <= convenc_next_state;
-                if(psdu_bit_cnt < PSDU_BIT_LEN || psdu_bit_cnt >= PSDU_BIT_LEN + 6)
-                    data_scram_state <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
-
-                // Update CRC reading index
-                if(psdu_bit_cnt >= (PSDU_BIT_LEN - 32) && psdu_bit_cnt < PSDU_BIT_LEN)
-                    pkt_fcs_idx <= pkt_fcs_idx + 1;
-
-                // While scrambling, encoding and puncturing the PSDU, calculate aggregate cyclic redundancy check (CRC)
-                if(psdu_bit_cnt < (PSDU_BIT_LEN - 36) && psdu_bit_cnt[1:0] == 2'b11)
-                    crc_en <= 1;
-                else
-                    crc_en <= 0;
-
+                if(psdu_bit_cnt < PSDU_BIT_LEN - 36)
+                    crc_en   <= 1;
 //                ofdm_cnt <= ofdm_cnt + 1;
-                state1 <= S1_DATA;
-                state2 <= S2_SCRAM_ENC_PUNC_INTERLV;
+                state1   <= S1_DATA;
+                state2   <= S2_SCRAM_ENC_PUNC_INTERLV;
 
             // This is the last OFDM symbol processed. Issue a soft "PACKET" reset
             end else if(psdu_bit_cnt > PSDU_BIT_LEN) begin
