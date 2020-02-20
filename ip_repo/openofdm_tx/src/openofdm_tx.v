@@ -14,17 +14,17 @@ module openofdm_tx #
     input  wire        clk,
     input  wire        phy_tx_arestn,
 
-    input  wire        phy_tx_start,
-    output wire        phy_tx_done,
-    output wire        phy_tx_started,
+    (* mark_debug = "true" *) input  wire        phy_tx_start,
+    (* mark_debug = "true" *) output wire        phy_tx_done,
+    (* mark_debug = "true" *) output wire        phy_tx_started,
 
-    input  wire [63:0] bram_din,
-    output wire [9:0] bram_addr,
+    (* mark_debug = "true" *) input  wire [63:0] bram_din,
+    (* mark_debug = "true" *) output wire [9:0] bram_addr,
 
-    input  wire        result_iq_hold,
-    output wire        result_iq_valid,
-    output wire [15:0] result_i,
-    output wire [15:0] result_q,
+    (* mark_debug = "true" *) input  wire        result_iq_hold,
+    (* mark_debug = "true" *) output wire        result_iq_valid,
+    (* mark_debug = "true" *) output wire [15:0] result_i,
+    (* mark_debug = "true" *) output wire [15:0] result_q,
 
     input  wire s00_axi_aclk,
     input  wire s00_axi_aresetn,
