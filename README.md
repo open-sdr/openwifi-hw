@@ -7,15 +7,15 @@ This repository includes Hardware/FPGA design. To be used together with [openwif
 
 Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opensource license, please contact Filip.Louagie@UGent.be. Openwifi project also leverages some 3rd party modules. It is user's duty to check and follow licenses of those modules according to the purpose/usage. You can find [an example explanation from Analog Devices](https://github.com/analogdevicesinc/hdl/blob/master/LICENSE) for this compound license conditions. [[How to contribute]](https://github.com/open-sdr/openwifi-hw/blob/master/CONTRIBUTING.md).
 
-**Pre-compiled FPGA files:**
+**Pre-compiled FPGA files:** boards/board_name/sdk/ has FPGA bit file, ila .ltx file and some other files might be needed.
 
-Directory boards/board_name/sdk/ includes FPGA bit file and other necessary SDK files for openwifi driver and software repository.
-
-board_name|actual boards used
--------|-------
-zc706_fmcs2|Xilinx ZC706 dev board + FMCOMMS2/3/4
-adrv9361z7035|ADRV9361Z7035 SOM + ADRV1CRR-BOB carrier board
-adrv9361z7035_fmc|ADRV9361Z7035 SOM + ADRV1CRR-FMC carrier board
+**board_name** options:
+- **zc706_fmcs2** (Xilinx ZC706 dev board + FMCOMMS2/3/4)
+- **zed_fmcs2** (Xilinx zed board + FMCOMMS2/3/4)
+- **adrv9361z7035** (ADRV9361Z7035 SOM + ADRV1CRR-BOB carrier board)
+- **adrv9361z7035_fmc** (ADRV9361Z7035 SOM + ADRV1CRR-FMC carrier board)
+- **adrv9364z7020** (ADRV9364Z7020 SOM + ADRV1CRR-BOB carrier board)
+- **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4)
 
 **Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2017.4.1 is needed. Example instructions are verified on Ubuntu 16/18)
 
@@ -54,14 +54,13 @@ File --> Launch SDK --> OK, then close SDK
 ```
 cd openwifi-hw/boards
 ./sdk_update.sh $BOARD_NAME
-(system_top.ltx will be needed if you want to debug FPGA via ila probe later)
 git commit -a -m "new fpga img for openwifi (or comments you want to make)"
 git push
-(Above make sure you can pull this new FPGA from openwifi submodule)
+(Above make sure you can pull this new FPGA from openwifi submodule directory: openwifi-hw)
 ```
 **Modify IP cores:**
 
-IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure.
+IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure. For IP project created by **_high.tcl** or **_low.tcl**, exporting target directory should be **ip_repo/high/** or **ip_repo/low/**. Other IP should be exported to **ip_repo/common/**.
 
 * ***IP cores designed by HLS (mixer_ddc and mixer_duc). mixer_ddc as example:***
 
@@ -70,7 +69,7 @@ Create a project "mixer_ddc" with file in ip/mixer_ddc/src directory in Vivado H
 During creating, set mixer_ddc as top, select zc706 board as "Part" and set Clock Period 5 (means 200MHz).
 Run C synthesis.
 Click solution1, Solution --> Export RTL
-Copy project_directory/solution1/impl/ip to ip_repo/mixer_ddc
+Copy project_directory/solution1/impl/ip to ip_repo/common/mixer_ddc
 ```
 * ***IP cores designed by block-diagram (ddc_bank_core, fifo32_1clk, etc). fifo32_1clk as example:***
 
@@ -81,7 +80,7 @@ source ./fifo32_1clk.tcl
 In Vivado:
 Open Block Design
 Tools --> Report --> Report IP Status
-Tools --> Create and Package New IP... --> Next --> Package a block design from ... --> Next --> set "ip_repo/fifo32_1clk" as target directory --> Next --> OK -- Finish
+Tools --> Create and Package New IP... --> Next --> Package a block design from ... --> Next --> set "ip_repo/common/fifo32_1clk" as target directory --> Next --> OK -- Finish
 In new opened temporary project: Review and Package --> Package IP --> Yes
 ```
 * ***IP cores designed by verilog (rx_intf, xpu, etc). xpu as example:***
@@ -89,10 +88,10 @@ In new opened temporary project: Review and Package --> Package IP --> Yes
 ```
 Open Vivado, then in Vivado Tcl Console:
 cd ip/xpu
-source ./xpu.tcl
+source ./xpu_high.tcl
 In Vivado:
 Tools --> Report --> Report IP Status
-Tools --> Create and Package New IP... --> Next --> Next --> set "ip_repo/xpu" as target directory --> Next --> OK -- Finish
+Tools --> Create and Package New IP... --> Next --> Next --> set "ip_repo/high/xpu" as target directory --> Next --> OK -- Finish
 In new opened temporary project: Review and Package --> Package IP --> Yes
 ```
 * ***openofdm_rx:***
@@ -113,7 +112,7 @@ You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www
   * In Vivado:
   
         Tools --> Report --> Report IP Status
-        Tools --> Create and Package New IP... --> Next --> Next --> set "ip_repo/openofdm_rx" as target directory --> Next --> OK -- Finish
+        Tools --> Create and Package New IP... --> Next --> Next --> set "ip_repo/common/openofdm_rx" as target directory --> Next --> OK -- Finish
         In new opened temporary project: Review and Package --> Package IP --> Yes
 
 ***Note: openwifi adds necessary modules/modifications on top of [Analog Devices HDL reference design](https://github.com/analogdevicesinc/hdl). For general issues, Analog Devices wiki pages would be helpful!***

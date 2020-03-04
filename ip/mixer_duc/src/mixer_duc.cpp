@@ -5,21 +5,13 @@
 
 typedef ap_int<2> int2;
 typedef ap_uint<2> uint2;
-typedef ap_int<3> int3;
-typedef ap_uint<3> uint3;
 typedef ap_int<4> int4;
 typedef ap_int<16> int16;
-typedef ap_uint<16> uint16;
 typedef ap_int<32> int32;
-typedef ap_int<64> int64;
-typedef ap_int<128> int128;
-typedef ap_int<256> int256;
 
 typedef std::complex<int32> cplx32;
 
 // also find gen_mixer_coef_padded.m
-const char i_p2MHz[160] = {64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61};
-const char q_p2MHz[160] = {0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20, 0, 20, 38, 52, 61, 64, 61, 52, 38, 20, 0, -20, -38, -52, -61, -64, -61, -52, -38, -20};
 const char i_p0n5n10n15n20MHz[5][160] = {
 {64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64},
 {64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45, 64, 45, 0, -45, -64, -45, 0, 45},
@@ -37,123 +29,45 @@ const char q_p0n5n10n15n20MHz[5][160] = {
 
 #define INPUT_LENGTH 160
 
-void mixer_duc(int64 d_i0[INPUT_LENGTH], int128 d_i1[INPUT_LENGTH], int32 cfg0,
-		int64 d_o[INPUT_LENGTH])
+void mixer_duc(int32 d_i0[INPUT_LENGTH], int32 cfg0,
+		int32 d_o[INPUT_LENGTH])
 {
 #pragma HLS INTERFACE ap_stable port=cfg0
 #pragma HLS INTERFACE ap_ctrl_none port=return
 //#pragma HLS DATAFLOW
 #pragma HLS INTERFACE ap_fifo port=d_o
 #pragma HLS INTERFACE axis port=d_i0
-#pragma HLS INTERFACE axis port=d_i1
 
 	unsigned char i;
-	int64 tmp64, tmp64_o;
-	int128 tmp128;
-	cplx32 bw20_a0, bw20_a1, bw02_a01, bw02_a02, bw02_a03, bw02_a04, bw02_a11, bw02_a12, bw02_a13, bw02_a14;
-	cplx32 b0, b1;
-	cplx32 c00, c01, c02, c03, c04, c10, c11, c12, c13, c14;
-	cplx32 p00, p01, p02, p03, p04, p10, p11, p12, p13, p14;
-	cplx32 p0_sum, p1_sum;
+	int32 tmp32, tmp32_o;
+	cplx32 bw20_a0, c00, p00;
 
-	int2 bw20_ant0_conj_flag, bw20_ant1_conj_flag;
-	int2 bw02_ant0_2M_conj_flag, bw02_ant1_2M_conj_flag;
-	int2 bw02_ant0_ch0_conj_flag, bw02_ant0_ch1_conj_flag, bw02_ant0_ch2_conj_flag, bw02_ant0_ch3_conj_flag;
-	int2 bw02_ant1_ch0_conj_flag, bw02_ant1_ch1_conj_flag, bw02_ant1_ch2_conj_flag, bw02_ant1_ch3_conj_flag;
-	uint2 bw20_ant0_ch_idx, bw20_ant1_ch_idx;
-	uint3 bw02_ant0_ch0_idx, bw02_ant0_ch1_idx, bw02_ant0_ch2_idx, bw02_ant0_ch3_idx;
-	uint3 bw02_ant1_ch0_idx, bw02_ant1_ch1_idx, bw02_ant1_ch2_idx, bw02_ant1_ch3_idx;
-	int4 bw20_num_shift_to_left, bw02_num_shift_to_left;
+	int2 bw20_ant0_conj_flag;
+	uint2 bw20_ant0_ch_idx;
+	int4 bw20_num_shift_to_left;
 
 	bw20_ant0_ch_idx = cfg0(1,0);
 	bw20_ant0_conj_flag = (cfg0[2])?(-1):1;
-	bw02_ant0_2M_conj_flag = (cfg0[3])?(-1):1;
-	bw02_ant0_ch0_conj_flag = (cfg0[4])?(-1):1;
-	bw02_ant0_ch1_conj_flag = (cfg0[5])?(-1):1;
-	bw02_ant0_ch2_conj_flag = (cfg0[6])?(-1):1;
-	bw02_ant0_ch3_conj_flag = (cfg0[7])?(-1):1;
-
-	bw20_ant1_ch_idx = cfg0(9,8);
-	bw20_ant1_conj_flag = (cfg0[10])?(-1):1;
-	bw02_ant1_2M_conj_flag = (cfg0[11])?(-1):1;
-	bw02_ant1_ch0_conj_flag = (cfg0[12])?(-1):1;
-	bw02_ant1_ch1_conj_flag = (cfg0[13])?(-1):1;
-	bw02_ant1_ch2_conj_flag = (cfg0[14])?(-1):1;
-	bw02_ant1_ch3_conj_flag = (cfg0[15])?(-1):1;
-
-	bw02_ant0_ch0_idx = 0 + cfg0[16];
-	bw02_ant0_ch1_idx = 1 + cfg0[16];
-	bw02_ant0_ch2_idx = 2 + cfg0[16];
-	bw02_ant0_ch3_idx = 3 + cfg0[16];
-
-	bw02_ant1_ch0_idx = 0 + cfg0[17];
-	bw02_ant1_ch1_idx = 1 + cfg0[17];
-	bw02_ant1_ch2_idx = 2 + cfg0[17];
-	bw02_ant1_ch3_idx = 3 + cfg0[17];
-
 	bw20_num_shift_to_left = cfg0(31,28);
-	bw02_num_shift_to_left = cfg0(27,24);
 
 	for (i=0; i<INPUT_LENGTH; i++)
 	{
 #pragma HLS PIPELINE
-		tmp64 = d_i0[i];
+		tmp32 = d_i0[i];
 
-		bw20_a0  = cplx32((int16)tmp64(15,0),(int16)tmp64(31,16));
-		bw20_a1  = cplx32((int16)tmp64(47,32),(int16)tmp64(63,48));
-
-		tmp128 = d_i1[i];
-		bw02_a01  = cplx32((int16)tmp128(15,0),(int16)tmp128(31,16));
-		bw02_a02  = cplx32((int16)tmp128(47,32),(int16)tmp128(63,48));
-		bw02_a11  = cplx32((int16)tmp128(79,64),(int16)tmp128(95,80));
-		bw02_a12  = cplx32((int16)tmp128(111,96),(int16)tmp128(127,112));
-
-		// gain module for bw02
-		bw02_a01  = cplx32(real(bw02_a01)<<bw02_num_shift_to_left,imag(bw02_a01)<<bw02_num_shift_to_left);
-		bw02_a02  = cplx32(real(bw02_a02)<<bw02_num_shift_to_left,imag(bw02_a02)<<bw02_num_shift_to_left);
-		bw02_a11  = cplx32(real(bw02_a11)<<bw02_num_shift_to_left,imag(bw02_a11)<<bw02_num_shift_to_left);
-		bw02_a12  = cplx32(real(bw02_a12)<<bw02_num_shift_to_left,imag(bw02_a12)<<bw02_num_shift_to_left);
-
-		// bw02 first stage 2M mixer
-		b0 = cplx32(i_p2MHz[i], bw02_ant0_2M_conj_flag*q_p2MHz[i]);
-		b1 = cplx32(i_p2MHz[i], bw02_ant1_2M_conj_flag*q_p2MHz[i]);
+		bw20_a0  = cplx32((int16)tmp32(15,0),(int16)tmp32(31,16));
 
 		// bw20 mixer
 		c00 = cplx32(i_p0n5n10n15n20MHz[bw20_ant0_ch_idx][i], bw20_ant0_conj_flag*q_p0n5n10n15n20MHz[bw20_ant0_ch_idx][i]);
-		c10 = cplx32(i_p0n5n10n15n20MHz[bw20_ant1_ch_idx][i], bw20_ant1_conj_flag*q_p0n5n10n15n20MHz[bw20_ant1_ch_idx][i]);
-
-		// bw02 mixer
-		c01 = cplx32(i_p0n5n10n15n20MHz[bw02_ant0_ch0_idx][i], bw02_ant0_ch0_conj_flag*q_p0n5n10n15n20MHz[bw02_ant0_ch0_idx][i]);
-		c02 = cplx32(i_p0n5n10n15n20MHz[bw02_ant0_ch1_idx][i], bw02_ant0_ch1_conj_flag*q_p0n5n10n15n20MHz[bw02_ant0_ch1_idx][i]);
-		//c03 = cplx32(i_p0n5n10n15n20MHz[bw02_ant0_ch2_idx][i], bw02_ant0_ch2_conj_flag*q_p0n5n10n15n20MHz[bw02_ant0_ch2_idx][i]);
-		//c04 = cplx32(i_p0n5n10n15n20MHz[bw02_ant0_ch3_idx][i], bw02_ant0_ch3_conj_flag*q_p0n5n10n15n20MHz[bw02_ant0_ch3_idx][i]);
-		c11 = cplx32(i_p0n5n10n15n20MHz[bw02_ant1_ch0_idx][i], bw02_ant1_ch0_conj_flag*q_p0n5n10n15n20MHz[bw02_ant1_ch0_idx][i]);
-		c12 = cplx32(i_p0n5n10n15n20MHz[bw02_ant1_ch1_idx][i], bw02_ant1_ch1_conj_flag*q_p0n5n10n15n20MHz[bw02_ant1_ch1_idx][i]);
-		//c13 = cplx32(i_p0n5n10n15n20MHz[bw02_ant1_ch2_idx][i], bw02_ant1_ch2_conj_flag*q_p0n5n10n15n20MHz[bw02_ant1_ch2_idx][i]);
-		//c14 = cplx32(i_p0n5n10n15n20MHz[bw02_ant1_ch3_idx][i], bw02_ant1_ch3_conj_flag*q_p0n5n10n15n20MHz[bw02_ant1_ch3_idx][i]);
 
 		p00 = bw20_a0*c00;
-		p01 = bw02_a01*b0*c01;
-		p02 = bw02_a02*b0*c02;
-		//p03 = bw02_a03*b0*c03;
-		//p04 = bw02_a04*b0*c04;
-		p10 = bw20_a1*c10;
-		p11 = bw02_a11*b1*c11;
-		p12 = bw02_a12*b1*c12;
-		//p13 = bw02_a13*b1*c13;
-		//p14 = bw02_a14*b1*c14;
 
 		// gain module for bw20
 		p00  = cplx32((((int32)real(p00))<<bw20_num_shift_to_left)/64,(((int32)imag(p00))<<bw20_num_shift_to_left)/64);
-		p10  = cplx32((((int32)real(p10))<<bw20_num_shift_to_left)/64,(((int32)imag(p10))<<bw20_num_shift_to_left)/64);
 
-		p0_sum = p00+p01+p02;
-		p1_sum = p10+p11+p12;
-		tmp64_o(15,0)  = real(p0_sum);
-		tmp64_o(31,16) = imag(p0_sum);
-		tmp64_o(47,32) = real(p1_sum);
-		tmp64_o(63,48) = imag(p1_sum);
+		tmp32_o(15,0)  = real(p00);
+		tmp32_o(31,16) = imag(p00);
 
-		d_o[i] = tmp64_o;
+		d_o[i] = tmp32_o;
 	}
 }
