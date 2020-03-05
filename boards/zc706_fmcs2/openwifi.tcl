@@ -14,8 +14,6 @@
 #
 #*****************************************************************************************
 
-#*****************************************************************************************
-
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
 
@@ -147,7 +145,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set IP repository paths
 set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo"]" $obj
+set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo/common"] [file normalize "$origin_dir/../../ip_repo/high"]" $obj
 
 # Rebuild user ip_repo's index before adding any source files
 update_ip_catalog -rebuild
@@ -166,13 +164,13 @@ set files [list \
  "[file normalize "$origin_dir/src/system.bd"]"\
  "[file normalize "$origin_dir/src/system_wrapper.v"]"\
  "[file normalize "$origin_dir/src/system_top.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/openofdm_tx/src/icmem_8.mem"]"\
- "[file normalize "$origin_dir/../../ip_repo/openofdm_tx/src/icmem_16.mem"]"\
- "[file normalize "$origin_dir/../../ip_repo/openofdm_tx/src/icmem_32.mem"]"\
- "[file normalize "$origin_dir/../../ip_repo/openofdm_tx/src/icmem_64.mem"]"\
- "[file normalize "$origin_dir/../../ip_repo/openofdm_rx/src/atan_lut.coe"]"\
- "[file normalize "$origin_dir/../../ip_repo/openofdm_rx/src/deinter_lut.coe"]"\
- "[file normalize "$origin_dir/../../ip_repo/openofdm_rx/src/rot_lut.coe"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/openofdm_tx/src/icmem_8.mem"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/openofdm_tx/src/icmem_16.mem"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/openofdm_tx/src/icmem_32.mem"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/openofdm_tx/src/icmem_64.mem"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/openofdm_rx/src/atan_lut.coe"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/openofdm_rx/src/deinter_lut.coe"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/openofdm_rx/src/rot_lut.coe"]"\
 ]
 set imported_files [import_files -fileset sources_1 $files]
 

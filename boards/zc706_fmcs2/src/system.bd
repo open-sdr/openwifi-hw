@@ -706,6 +706,7 @@
           <spirit:configurableElementValue spirit:referenceId="PCW_I2C_PERIPHERAL_FREQMHZ">133.333328</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_FPGA0_PERIPHERAL_FREQMHZ">100.0</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_FPGA1_PERIPHERAL_FREQMHZ">200.0</spirit:configurableElementValue>
+          <spirit:configurableElementValue spirit:referenceId="PCW_FPGA2_PERIPHERAL_FREQMHZ">200</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_APU_PERIPHERAL_FREQMHZ">800.000000</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_UIPARAM_ACT_DDR_FREQ_MHZ">533.333374</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_DCI_PERIPHERAL_FREQMHZ">10.158730</spirit:configurableElementValue>
@@ -722,7 +723,7 @@
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_TPIU_PERIPHERAL_FREQMHZ">200.000000</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_FPGA0_PERIPHERAL_FREQMHZ">100.000000</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_FPGA1_PERIPHERAL_FREQMHZ">200.000000</spirit:configurableElementValue>
-          <spirit:configurableElementValue spirit:referenceId="PCW_ACT_FPGA2_PERIPHERAL_FREQMHZ">50.000000</spirit:configurableElementValue>
+          <spirit:configurableElementValue spirit:referenceId="PCW_ACT_FPGA2_PERIPHERAL_FREQMHZ">200.000000</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_FPGA3_PERIPHERAL_FREQMHZ">10.000000</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_TTC0_CLK0_PERIPHERAL_FREQMHZ">133.333344</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_TTC0_CLK1_PERIPHERAL_FREQMHZ">133.333344</spirit:configurableElementValue>
@@ -732,7 +733,7 @@
           <spirit:configurableElementValue spirit:referenceId="PCW_ACT_TTC1_CLK2_PERIPHERAL_FREQMHZ">133.333344</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_CLK0_FREQ">100000000</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_CLK1_FREQ">200000000</spirit:configurableElementValue>
-          <spirit:configurableElementValue spirit:referenceId="PCW_CLK2_FREQ">50000000</spirit:configurableElementValue>
+          <spirit:configurableElementValue spirit:referenceId="PCW_CLK2_FREQ">200000000</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_CLK3_FREQ">10000000</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_SDIO_PERIPHERAL_VALID">1</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_SPI_PERIPHERAL_VALID">1</spirit:configurableElementValue>
@@ -1321,13 +1322,6 @@
         </spirit:configurableElementValues>
       </spirit:componentInstance>
       <spirit:componentInstance>
-        <spirit:instanceName>rx_intf_0</spirit:instanceName>
-        <spirit:componentRef spirit:library="user" spirit:name="rx_intf" spirit:vendor="user.org" spirit:version="1.0"/>
-        <spirit:configurableElementValues>
-          <spirit:configurableElementValue spirit:referenceId="bd:xciName">system_rx_intf_0_0</spirit:configurableElementValue>
-        </spirit:configurableElementValues>
-      </spirit:componentInstance>
-      <spirit:componentInstance>
         <spirit:instanceName>xpu_0</spirit:instanceName>
         <spirit:componentRef spirit:library="user" spirit:name="xpu" spirit:vendor="user.org" spirit:version="1.0"/>
         <spirit:configurableElementValues>
@@ -1347,6 +1341,13 @@
         <spirit:componentRef spirit:library="user" spirit:name="tx_intf" spirit:vendor="user.org" spirit:version="1.0"/>
         <spirit:configurableElementValues>
           <spirit:configurableElementValue spirit:referenceId="bd:xciName">system_tx_intf_0_0</spirit:configurableElementValue>
+        </spirit:configurableElementValues>
+      </spirit:componentInstance>
+      <spirit:componentInstance>
+        <spirit:instanceName>rx_intf_0</spirit:instanceName>
+        <spirit:componentRef spirit:library="user" spirit:name="rx_intf" spirit:vendor="user.org" spirit:version="1.0"/>
+        <spirit:configurableElementValues>
+          <spirit:configurableElementValue spirit:referenceId="bd:xciName">system_rx_intf_0_0</spirit:configurableElementValue>
         </spirit:configurableElementValues>
       </spirit:componentInstance>
     </spirit:componentInstances>
@@ -1584,10 +1585,7 @@
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>sys_200m_clk</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="sys_ps7" spirit:portRef="FCLK_CLK1"/>
-        <spirit:internalPortReference spirit:componentRef="axi_hdmi_clkgen" spirit:portRef="clk"/>
-        <spirit:internalPortReference spirit:componentRef="sys_audio_clkgen" spirit:portRef="clk_in1"/>
-        <spirit:internalPortReference spirit:componentRef="axi_ad9361" spirit:portRef="delay_clk"/>
+        <spirit:internalPortReference spirit:componentRef="sys_ps7" spirit:portRef="FCLK_CLK2"/>
         <spirit:internalPortReference spirit:componentRef="sys_ps7" spirit:portRef="M_AXI_GP1_ACLK"/>
         <spirit:internalPortReference spirit:componentRef="sys_ps7" spirit:portRef="S_AXI_HP3_ACLK"/>
         <spirit:internalPortReference spirit:componentRef="sys_ps7" spirit:portRef="S_AXI_ACP_ACLK"/>
@@ -1601,15 +1599,15 @@
         <spirit:internalPortReference spirit:componentRef="axi_dma_0" spirit:portRef="m_axi_sg_aclk"/>
         <spirit:internalPortReference spirit:componentRef="axi_dma_1" spirit:portRef="m_axi_sg_aclk"/>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="s00_axi_aclk"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="s00_axi_aclk"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="s00_axis_aclk"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="m00_axis_aclk"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="s00_axi_aclk"/>
         <spirit:internalPortReference spirit:componentRef="openofdm_tx_0" spirit:portRef="clk"/>
         <spirit:internalPortReference spirit:componentRef="openofdm_tx_0" spirit:portRef="s00_axi_aclk"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="s00_axi_aclk"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="s00_axis_aclk"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="m00_axis_aclk"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="s00_axi_aclk"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="s00_axis_aclk"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="m00_axis_aclk"/>
         <spirit:internalPortReference spirit:componentRef="axi_interconnect_0" spirit:portRef="ACLK"/>
         <spirit:internalPortReference spirit:componentRef="axi_interconnect_0" spirit:portRef="S00_ACLK"/>
         <spirit:internalPortReference spirit:componentRef="axi_interconnect_0" spirit:portRef="M00_ACLK"/>
@@ -2008,8 +2006,8 @@
         <spirit:internalPortReference spirit:componentRef="axi_ad9361_dac_fifo" spirit:portRef="din_clk"/>
         <spirit:internalPortReference spirit:componentRef="util_ad9361_dac_upack" spirit:portRef="dac_clk"/>
         <spirit:internalPortReference spirit:componentRef="axi_ad9361_dac_dma" spirit:portRef="fifo_rd_clk"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="adc_clk"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="dac_clk"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="adc_clk"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>axi_ad9361_rst</spirit:name>
@@ -2093,6 +2091,7 @@
         <spirit:internalPortReference spirit:componentRef="util_ad9361_divclk_reset" spirit:portRef="peripheral_reset"/>
         <spirit:internalPortReference spirit:componentRef="util_ad9361_adc_pack" spirit:portRef="adc_rst"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="dac_rst"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="adc_rst"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>util_ad9361_adc_fifo_dout_enable_0</spirit:name>
@@ -2374,25 +2373,20 @@
         <spirit:internalPortReference spirit:componentRef="axi_ad9361_dac_fifo" spirit:portRef="din_unf"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
-        <spirit:name>sys_ps7_FCLK_RESET1_N</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="sys_ps7" spirit:portRef="FCLK_RESET1_N"/>
-        <spirit:internalPortReference spirit:componentRef="sys_rstgen1" spirit:portRef="ext_reset_in"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
         <spirit:name>sys_rstgen1_peripheral_aresetn</spirit:name>
         <spirit:internalPortReference spirit:componentRef="sys_rstgen1" spirit:portRef="peripheral_aresetn"/>
         <spirit:internalPortReference spirit:componentRef="axi_dma_0" spirit:portRef="axi_resetn"/>
         <spirit:internalPortReference spirit:componentRef="axi_dma_1" spirit:portRef="axi_resetn"/>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="s00_axi_aresetn"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="s00_axi_aresetn"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="s00_axis_aresetn"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="m00_axis_aresetn"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="s00_axi_aresetn"/>
         <spirit:internalPortReference spirit:componentRef="openofdm_tx_0" spirit:portRef="phy_tx_arestn"/>
         <spirit:internalPortReference spirit:componentRef="openofdm_tx_0" spirit:portRef="s00_axi_aresetn"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="s00_axi_aresetn"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="s00_axis_aresetn"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="m00_axis_aresetn"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="s00_axi_aresetn"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="s00_axis_aresetn"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="m00_axis_aresetn"/>
         <spirit:internalPortReference spirit:componentRef="axi_interconnect_1" spirit:portRef="M05_ARESETN"/>
         <spirit:internalPortReference spirit:componentRef="axi_interconnect_1" spirit:portRef="M04_ARESETN"/>
         <spirit:internalPortReference spirit:componentRef="axi_interconnect_1" spirit:portRef="M03_ARESETN"/>
@@ -2547,56 +2541,56 @@
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_fcs_ok</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="fcs_ok"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="fcs_ok"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="fcs_ok"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="fcs_ok"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_pkt_len</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="pkt_len"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="pkt_len"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="pkt_len"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="pkt_len"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_pkt_header_valid</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="pkt_header_valid"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="pkt_header_valid"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="pkt_header_valid"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="pkt_header_valid"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_pkt_header_valid_strobe</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="pkt_header_valid_strobe"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="pkt_header_valid_strobe"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="pkt_header_valid_strobe"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="pkt_header_valid_strobe"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_pkt_rate</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="pkt_rate"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="pkt_rate"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="pkt_rate"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="pkt_rate"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_byte_out_strobe</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="byte_out_strobe"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="byte_in_strobe"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="byte_in_strobe"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="byte_in_strobe"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_byte_out</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="byte_out"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="byte_in"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="byte_in"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="byte_in"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_byte_count</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="byte_count"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="byte_count"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="byte_count"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="byte_count"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_fcs_out_strobe</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="fcs_out_strobe"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="fcs_in_strobe"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="fcs_in_strobe"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="fcs_in_strobe"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>xpu_0_rssi_half_db</spirit:name>
@@ -2624,8 +2618,8 @@
       <spirit:adHocConnection>
         <spirit:name>openofdm_rx_0_ht_unsupport</spirit:name>
         <spirit:internalPortReference spirit:componentRef="openofdm_rx_0" spirit:portRef="ht_unsupport"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="ht_unsupport"/>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="ht_unsupport"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="ht_unsupport"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>xpu_0_block_rx_dma_to_ps_valid</spirit:name>
@@ -2650,8 +2644,8 @@
       <spirit:adHocConnection>
         <spirit:name>xpu_0_tsf_pulse_1M</spirit:name>
         <spirit:internalPortReference spirit:componentRef="xpu_0" spirit:portRef="tsf_pulse_1M"/>
-        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="tsf_pulse_1M"/>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="tsf_pulse_1M"/>
+        <spirit:internalPortReference spirit:componentRef="rx_intf_0" spirit:portRef="tsf_pulse_1M"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>tx_intf_0_cts_toself_bb_is_ongoing</spirit:name>
@@ -2712,6 +2706,18 @@
         <spirit:name>tx_intf_0_tx_hold</spirit:name>
         <spirit:internalPortReference spirit:componentRef="tx_intf_0" spirit:portRef="tx_hold"/>
         <spirit:internalPortReference spirit:componentRef="openofdm_tx_0" spirit:portRef="result_iq_hold"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>sys_ps7_FCLK_CLK1</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="sys_ps7" spirit:portRef="FCLK_CLK1"/>
+        <spirit:internalPortReference spirit:componentRef="sys_audio_clkgen" spirit:portRef="clk_in1"/>
+        <spirit:internalPortReference spirit:componentRef="axi_hdmi_clkgen" spirit:portRef="clk"/>
+        <spirit:internalPortReference spirit:componentRef="axi_ad9361" spirit:portRef="delay_clk"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>sys_ps7_FCLK_RESET2_N</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="sys_ps7" spirit:portRef="FCLK_RESET2_N"/>
+        <spirit:internalPortReference spirit:componentRef="sys_rstgen1" spirit:portRef="ext_reset_in"/>
       </spirit:adHocConnection>
     </spirit:adHocConnections>
     <spirit:hierConnections>
@@ -10659,19 +10665,19 @@
         <spirit:abstractionType spirit:library="interface" spirit:name="aximm_rtl" spirit:vendor="xilinx.com" spirit:version="1.0"/>
       </spirit:busInterface>
       <spirit:busInterface>
-        <spirit:name>M_AXI_GP0</spirit:name>
+        <spirit:name>M_AXI_GP1</spirit:name>
         <spirit:master>
           <spirit:addressSpaceRef spirit:addressSpaceRef="Data"/>
-          <spirit:baseAddress spirit:maximum="0x7FFFFFFF" spirit:minimum="0x40000000">0x40000000</spirit:baseAddress>
+          <spirit:baseAddress spirit:maximum="0xBFFFFFFF" spirit:minimum="0x80000000">0x80000000</spirit:baseAddress>
         </spirit:master>
         <spirit:busType spirit:library="interface" spirit:name="aximm" spirit:vendor="xilinx.com" spirit:version="1.0"/>
         <spirit:abstractionType spirit:library="interface" spirit:name="aximm_rtl" spirit:vendor="xilinx.com" spirit:version="1.0"/>
       </spirit:busInterface>
       <spirit:busInterface>
-        <spirit:name>M_AXI_GP1</spirit:name>
+        <spirit:name>M_AXI_GP0</spirit:name>
         <spirit:master>
           <spirit:addressSpaceRef spirit:addressSpaceRef="Data"/>
-          <spirit:baseAddress spirit:maximum="0xBFFFFFFF" spirit:minimum="0x80000000">0x80000000</spirit:baseAddress>
+          <spirit:baseAddress spirit:maximum="0x7FFFFFFF" spirit:minimum="0x40000000">0x40000000</spirit:baseAddress>
         </spirit:master>
         <spirit:busType spirit:library="interface" spirit:name="aximm" spirit:vendor="xilinx.com" spirit:version="1.0"/>
         <spirit:abstractionType spirit:library="interface" spirit:name="aximm_rtl" spirit:vendor="xilinx.com" spirit:version="1.0"/>
