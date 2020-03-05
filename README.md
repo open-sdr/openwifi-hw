@@ -19,21 +19,11 @@ Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opens
 
 **Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2017.4.1 is needed. Example instructions are verified on Ubuntu 16/18)
 
-* In Linux:
+* In Linux, prepare Analgo Devices HDL library (only run once):
 
 ```
 export XILINX_DIR=your_Xilinx_directory
-git submodule init adi-hdl
-git submodule update adi-hdl
-(Will take a while)
-cd adi-hdl/library
-git reset --hard 2018_r1
-source $XILINX_DIR/Vivado/2017.4/settings64.sh
-make
-(Will take a while)
-export BOARD_NAME=board_name
-(See board_name naming in previous table)
-cd ../../boards/$BOARD_NAME/
+./prepare_adi_lib.sh $XILINX_DIR
 ```
 * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado. Otherwise there will be errors when you build the whole FPGA design. 
 * Open Vivado, then in Vivado Tcl Console:
@@ -53,7 +43,7 @@ File --> Launch SDK --> OK, then close SDK
 * In Linux:
 ```
 cd openwifi-hw/boards
-./sdk_update.sh $BOARD_NAME
+./sdk_update.sh board_name
 git commit -a -m "new fpga img for openwifi (or comments you want to make)"
 git push
 (Above make sure you can pull this new FPGA from openwifi submodule directory: openwifi-hw)
