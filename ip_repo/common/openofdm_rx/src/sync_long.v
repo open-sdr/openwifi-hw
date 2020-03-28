@@ -415,10 +415,10 @@ task do_mult; begin
         sum_q <= 0;
         sum_stb <= 0;
 
-        stage_X0 <= cross_corr_buf[1];
-        stage_X1 <= cross_corr_buf[2];
-        stage_X2 <= cross_corr_buf[3];
-        stage_X3 <= cross_corr_buf[4];
+        stage_X0 <= cross_corr_buf[0];
+        stage_X1 <= cross_corr_buf[1];
+        stage_X2 <= cross_corr_buf[2];
+        stage_X3 <= cross_corr_buf[3];
 
         stage_Y0[31:16] <= 156;
         stage_Y0[15:0] <= 0;

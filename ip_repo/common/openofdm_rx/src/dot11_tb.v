@@ -90,10 +90,8 @@ integer byte_out_fd;
 integer file_i, file_q, file_rssi_half_db, iq_sample_file;
 
 //`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11n_65mbps_98_5f_d3_c7_06_27_e8_de_27_90_6e_42_openwifi.txt" 
-//`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11a_48mbps_qos_data_e4_90_7e_15_2a_16_e8_de_27_90_6e_42_openwifi.txt" 
-//`define NUM_SAMPLE 4560
-`define SAMPLE_FILE "../../../../../testing_inputs/simulated/openofdm_tx/PL_100Bytes/54Mbps.txt"
-`define NUM_SAMPLE 2048
+`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11a_48mbps_qos_data_e4_90_7e_15_2a_16_e8_de_27_90_6e_42_openwifi.txt" 
+`define NUM_SAMPLE 4560
 
 initial begin
     $dumpfile("dot11.vcd");
@@ -152,12 +150,10 @@ always @(posedge clock) begin
     end else if (enable) begin
         if (clk_count == 9) begin
             sample_in_strobe <= 1;
-            //$fscanf(iq_sample_file, "%d %d %d", file_i, file_q, file_rssi_half_db);
-            $fscanf(iq_sample_file, "%d %d", file_i, file_q);
+            $fscanf(iq_sample_file, "%d %d %d", file_i, file_q, file_rssi_half_db);
             sample_in[15:0] <= file_q;
             sample_in[31:16]<= file_i;
-            //rssi_half_db <= file_rssi_half_db;
-            rssi_half_db <= 0;
+            rssi_half_db <= file_rssi_half_db;
             addr <= addr + 1;
             clk_count <= 0;
         end else begin
