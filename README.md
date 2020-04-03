@@ -32,14 +32,46 @@ Change to openwifi-hw/boards/board_name/ directory by "cd" command, if Vivado is
 source ./openwifi.tcl
 ```
 * In Vivado:
-```
-Open Block Design
-Tools --> Report --> Report IP Status
-Generate Bitstream
-(Will take a while)
-File --> Export --> Export Hardware... --> Include bitstream --> OK
-File --> Launch SDK --> OK, then close SDK
-```
+
+* Open Block Design
+* Modify XDC files as follows:
+ * in zc706_system_constr.xdc file
+   * replace `set_property  -dict {PACKAGE_PIN  Y21   IOSTANDARD LVCMOS25} [get_ports gpio_bd[7]];` by `set_property  -dict {PACKAGE_PIN  Y23   IOSTANDARD LVCMOS25} [get_ports gpio_bd[7]] ;`
+   * replace `set_property  -dict {PACKAGE_PIN  W23   IOSTANDARD LVCMOS25} [get_ports gpio_bd[9]]; by set_property  -dict {PACKAGE_PIN  W23   IOSTANDARD LVCMOS25} [get_ports gpio_bd[9]] ;`
+ * in system_constr.xdc add the following contents:
+  ```
+  # sfp specific constraints
+
+set_property LOC Y21 [get_ports sfp_link_status]
+set_property IOSTANDARD LVCMOS25 [get_ports sfp_link_status]
+set_property LOC W21 [get_ports clk125_heartbeat]
+set_property IOSTANDARD LVCMOS25 [get_ports clk125_heartbeat]
+set_property LOC AA18 [get_ports sfp_tx_disable]
+set_property IOSTANDARD LVCMOS25 [get_ports sfp_tx_disable]
+
+# SI5324 output to MGTREFCLK1
+set_property LOC AC8 [get_ports sfp_125_clk_p]
+set_property LOC AC7 [get_ports sfp_125_clk_n]
+
+create_clock -name sfp_125_clk_p -period 8.0 [get_ports sfp_125_clk_p]
+
+set_property LOC W4 [get_ports sfp_txp]
+set_property LOC W3 [get_ports sfp_txn]
+set_property LOC Y6 [get_ports sfp_rxp]
+set_property LOC Y5 [get_ports sfp_rxn]
+
+set_property LOC H9 [get_ports clk_200_p]
+set_property IOSTANDARD DIFF_SSTL15 [get_ports clk_200_p]
+set_property LOC G9 [get_ports clk_200_n]
+set_property IOSTANDARD DIFF_SSTL15 [get_ports clk_200_n]
+
+create_clock -name clk_200_p -period 5.0 [get_ports clk_200_p]
+ ```  
+ * Then Tools --> Report --> Report IP Status
+ * Generate Bitstream (Will take a while)
+ * File --> Export --> Export Hardware... --> Include bitstream --> OK
+ * File --> Launch SDK --> OK, then close SDK
+
 * In Linux:
 ```
 cd openwifi-hw/boards
