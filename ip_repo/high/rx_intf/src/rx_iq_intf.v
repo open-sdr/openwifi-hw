@@ -5,6 +5,8 @@
 
 `timescale 1 ns / 1 ps
 
+`define COUNT_TOP_20M  ((`NUM_CLK_PER_SAMPLE)-1)
+
 	module rx_iq_intf #
 	(
 	    parameter integer C_S00_AXIS_TDATA_WIDTH	= 64,
@@ -46,24 +48,39 @@
     output wire wifi_rx_iq_fifo_emptyn
 	);
     
-    (* mark_debug = "true" *) wire empty;
-    (* mark_debug = "true" *) wire full;
+    wire empty;
+    wire full;
     wire rden;
     wire wren;
     reg wren_selected;
     wire bb_en;
-    (* mark_debug = "true" *) wire [5:0] data_count;
+    wire [5:0] data_count;
     reg [((2*IQ_DATA_WIDTH)-1):0] data_selected;
-    (* mark_debug = "true" *) reg [3:0] counter;
-    (* mark_debug = "true" *) reg [3:0] counter_top;
+    reg [4:0] counter;
+    reg [4:0] counter_top;
     reg rf_iq_valid_reg;
+    wire fractional_flag;
+    reg counter_top_flag;
 
 // ---------for debug purpose------------
-    (* mark_debug = "true" *) reg [3:0] rden_count;
-    (* mark_debug = "true" *) reg [3:0] wren_count;
+    // (* mark_debug = "true" *) wire [8:0] num_clk_per_sample;
+    // (* mark_debug = "true" *) wire [8:0] sampling_rate_mhz;
+    // (* mark_debug = "true" *) wire [8:0] num_clk_per_us;
+    // (* mark_debug = "true" *) wire [8:0] num_clk_per_us_new;
+    // (* mark_debug = "true" *) wire fractional_flag_shadow;
+    // (* mark_debug = "true" *) wire fractional_flag_shadow1;
+    // assign num_clk_per_sample = `NUM_CLK_PER_SAMPLE;
+    // assign sampling_rate_mhz = `SAMPLING_RATE_MHZ;
+    // assign num_clk_per_us = `NUM_CLK_PER_US;
+    // assign num_clk_per_us_new = (num_clk_per_sample*sampling_rate_mhz);
+    // assign fractional_flag_shadow = ((`NUM_CLK_PER_SAMPLE*`SAMPLING_RATE_MHZ) != `NUM_CLK_PER_US);
+    // assign fractional_flag_shadow1 = ((num_clk_per_sample*sampling_rate_mhz) != num_clk_per_us);
+
+    reg [4:0] rden_count;
+    reg [4:0] wren_count;
     reg rden_reg;
     reg wren_reg;
-    reg [3:0] counter_top_old;
+    reg [4:0] counter_top_old;
     always @( posedge clk )
     begin
       if ( rstn == 1'b0 ) begin
@@ -103,21 +120,36 @@
     assign ask_data_from_s_axis = ( ( (bb_en && (~full) && emptyn_from_s_axis ) )&ask_data_from_s_axis_en );
 //    assign ask_data_from_adc = (~full);
     assign wifi_rx_iq_fifo_emptyn = (~empty);
+
+    // assign fractional_flag = (num_clk_per_us_new != num_clk_per_us);
+    assign fractional_flag = ((`NUM_CLK_PER_SAMPLE*`SAMPLING_RATE_MHZ) != `NUM_CLK_PER_US);
     
     // rate control to make sure ofdm rx get I/Q as uniform as possible
     always @( posedge clk )
     begin
-      if ( rstn == 0 )
+      if ( rstn == 0 ) begin
         counter_top <= `COUNT_TOP_20M; // COUNT_TOP_20M is the expected value when there is no drift between front-end and baseband clock
-      else
+        counter_top_flag <= 0;
+      end else begin
         if (counter == 0) begin // do the check and action when an I/Q is read
-          if (data_count<11) // if less amount of data in fifo, read slower by making counter period longer
-            counter_top <= (`COUNT_TOP_20M+1);
-          else if (data_count<22) // if normal amount of data in fifo, read at normal speed: baseband 20Msps
-            counter_top <= `COUNT_TOP_20M;
-          else // if more amount of data in fifo, read faster by making counter period shorter
-            counter_top <= (`COUNT_TOP_20M-1);
+          counter_top_flag <= (~counter_top_flag);
+          if (fractional_flag) begin
+            if (data_count<11) // if less amount of data in fifo, read slower by making counter period longer
+              counter_top <= (`COUNT_TOP_20M+1);
+            else if (data_count<22) // if normal amount of data in fifo, read at normal speed: baseband 20Msps
+              counter_top <= (counter_top_flag?(`COUNT_TOP_20M):(`COUNT_TOP_20M+1));
+            else // if more amount of data in fifo, read faster by making counter period shorter
+              counter_top <= (`COUNT_TOP_20M);
+          end else begin
+            if (data_count<11) // if less amount of data in fifo, read slower by making counter period longer
+              counter_top <= (`COUNT_TOP_20M+1);
+            else if (data_count<22) // if normal amount of data in fifo, read at normal speed: baseband 20Msps
+              counter_top <= `COUNT_TOP_20M;
+            else // if more amount of data in fifo, read faster by making counter period shorter
+              counter_top <= (`COUNT_TOP_20M-1);
+          end
         end
+      end
     end
     
     // 20MHz en

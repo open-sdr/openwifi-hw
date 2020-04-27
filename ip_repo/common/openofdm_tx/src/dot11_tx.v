@@ -207,17 +207,17 @@ end else if(bits_enc_fifo_iready == 1) begin
 
     S1_SIGNAL: begin
         case(bram_din[3:0])
-            4'b1011: begin  N_BPSC <= 1;  N_DBPS <= 24;  end  //  6 Mbps
-            4'b1111: begin  N_BPSC <= 1;  N_DBPS <= 36;  end  //  9 Mbps
-            4'b1010: begin  N_BPSC <= 2;  N_DBPS <= 48;  end  // 12 Mbps
-            4'b1110: begin  N_BPSC <= 2;  N_DBPS <= 72;  end  // 18 Mbps
-            4'b1001: begin  N_BPSC <= 4;  N_DBPS <= 96;  end  // 24 Mbps
-            4'b1101: begin  N_BPSC <= 4;  N_DBPS <= 144; end  // 36 Mbps
-            4'b1000: begin  N_BPSC <= 6;  N_DBPS <= 192; end  // 48 Mbps
-            4'b1100: begin  N_BPSC <= 6;  N_DBPS <= 216; end  // 54 Mbps
-            default: begin  N_BPSC <= 1;  N_DBPS <= 24;  end  //  6 Mbps
+            4'b1011: begin  N_BPSC <= 1;  N_DBPS <= 24;  RATE <= 4'b1011; end  //  6 Mbps
+            4'b1111: begin  N_BPSC <= 1;  N_DBPS <= 36;  RATE <= 4'b1111; end  //  9 Mbps
+            4'b1010: begin  N_BPSC <= 2;  N_DBPS <= 48;  RATE <= 4'b1010; end  // 12 Mbps
+            4'b1110: begin  N_BPSC <= 2;  N_DBPS <= 72;  RATE <= 4'b1110; end  // 18 Mbps
+            4'b1001: begin  N_BPSC <= 4;  N_DBPS <= 96;  RATE <= 4'b1001; end  // 24 Mbps
+            4'b1101: begin  N_BPSC <= 4;  N_DBPS <= 144; RATE <= 4'b1101; end  // 36 Mbps
+            4'b1000: begin  N_BPSC <= 6;  N_DBPS <= 192; RATE <= 4'b1000; end  // 48 Mbps
+            4'b1100: begin  N_BPSC <= 6;  N_DBPS <= 216; RATE <= 4'b1100; end  // 54 Mbps
+            default: begin  N_BPSC <= 6;  N_DBPS <= 216; RATE <= 4'b1100; end  // 54 Mbps
+//            default: begin  N_BPSC <= 1;  N_DBPS <= 24;  RATE <= 4'b1011; end  //  6 Mbps
         endcase
-        RATE <= bram_din[3:0];
         PSDU_BIT_LEN <= ({3'd0, bram_din[16:5]} << 3);
 
         plcp_bit_cnt <= plcp_bit_cnt + 1;

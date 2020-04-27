@@ -12,32 +12,33 @@
 	  input wire clk,
 	    
 	  output wire [(2*IQ_DATA_WIDTH-1):0] wifi_iq_pack,
-    input  wire wifi_iq_ready,
-    output wire wifi_iq_valid,
+      input  wire wifi_iq_ready,
+      output wire wifi_iq_valid,
         
-    input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] data_from_s_axis,
-    input wire emptyn_from_s_axis,
-    output wire ask_data_from_s_axis,
+      input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] data_from_s_axis,
+      input wire emptyn_from_s_axis,
+      output wire ask_data_from_s_axis,
 
-    input wire signed [9:0] bb_gain,
+      input wire [10:0] tx_hold_threshold,
+      input wire signed [9:0] bb_gain,
 
 	  input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_i,
-    input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_q,
-    input wire rf_iq_valid,
+      input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_q,
+      input wire rf_iq_valid,
 
-//      input wire ch_sel, //not used
-    input wire src_sel, //0-acc; 1-s_axis
-    input wire loopback_sel,
+      // input wire ch_sel, //not used
+      input wire src_sel, //0-acc; 1-s_axis
+      input wire loopback_sel,
       
       // to m_axis for loop back test
-    output wire [(C_S00_AXIS_TDATA_WIDTH-1):0] data_loopback,
-    output wire data_loopback_valid,
+      output wire [(C_S00_AXIS_TDATA_WIDTH-1):0] data_loopback,
+      output wire data_loopback_valid,
       
       // to lbt
-    output wire tx_iq_fifo_empty,
+      output wire tx_iq_fifo_empty,
 
-    // to tx core
-    output wire tx_hold
+      // to tx core
+      output wire tx_hold
 	);
     wire src_sel_rst;
     reg src_sel_rst_reg0;
@@ -52,7 +53,7 @@
     wire [(2*IQ_DATA_WIDTH-1):0] tx_iq_fifo_out;
     wire [(2*IQ_DATA_WIDTH-1):0] tx_iq_fifo_in;
     wire tx_iq_fifo_rden;
-    (* mark_debug = "true" *) wire tx_iq_fifo_full;
+    wire tx_iq_fifo_full;
     wire [10:0] data_count;
     
     assign bw02_iq_pack = 0;
@@ -64,7 +65,7 @@
     assign data_loopback_valid = (loopback_sel==0?emptyn_from_s_axis:rf_iq_valid);
     
     //generate tx_hold signal to hold tx_core if we have enough I/Q in FIFO
-    assign tx_hold = (data_count>511?1:0);
+    assign tx_hold = (data_count>tx_hold_threshold?1:0);
 
     //output mux
     assign tx_iq_fifo_out_merge[(2*IQ_DATA_WIDTH-1):0] = (tx_iq_fifo_empty==1?0:tx_iq_fifo_out);
@@ -101,7 +102,7 @@
       end
     end   
           
-    fifo32_1clk_dep1k fifo32_1clk_dep1k_i (
+    fifo32_1clk_dep512 fifo32_1clk_dep512_i (
         .CLK(clk),
         .DATAO(tx_iq_fifo_out),
         .DI(tx_iq_fifo_in),

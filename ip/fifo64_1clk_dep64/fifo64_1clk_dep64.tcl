@@ -267,10 +267,10 @@ set_property -name "xsim.simulate.xsim.more_options" -value "" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7z045ffg900-2 -flow {Vivado Synthesis 2017} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part xc7z045ffg900-2 -flow {Vivado Synthesis 2018} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
 } else {
   set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
-  set_property flow "Vivado Synthesis 2017" [get_runs synth_1]
+  set_property flow "Vivado Synthesis 2018" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
 set_property set_report_strategy_name 1 $obj
@@ -296,11 +296,11 @@ set_property -name "options.more_options" -value "" -objects $obj
 set obj [get_runs synth_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
 set_property -name "description" -value "Vivado Synthesis Defaults" -objects $obj
-set_property -name "flow" -value "Vivado Synthesis 2017" -objects $obj
+set_property -name "flow" -value "Vivado Synthesis 2018" -objects $obj
 set_property -name "name" -value "synth_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
-set_property -name "incremental_checkpoint" -value "" -objects $obj
+# set_property -name "incremental_checkpoint" -value "" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 set_property -name "steps.synth_design.tcl.pre" -value "" -objects $obj
@@ -332,10 +332,10 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xc7z045ffg900-2 -flow {Vivado Implementation 2017} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part xc7z045ffg900-2 -flow {Vivado Implementation 2018} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Vivado Implementation Defaults" [get_runs impl_1]
-  set_property flow "Vivado Implementation 2017" [get_runs impl_1]
+  set_property flow "Vivado Implementation 2018" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
 set_property set_report_strategy_name 1 $obj
@@ -682,12 +682,12 @@ set_property -name "options.more_options" -value "" -objects $obj
 set obj [get_runs impl_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
 set_property -name "description" -value "Default settings for Implementation." -objects $obj
-set_property -name "flow" -value "Vivado Implementation 2017" -objects $obj
+set_property -name "flow" -value "Vivado Implementation 2018" -objects $obj
 set_property -name "name" -value "impl_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
 set_property -name "pr_configuration" -value "" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
-set_property -name "incremental_checkpoint" -value "" -objects $obj
+# set_property -name "incremental_checkpoint" -value "" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.opt_design.is_enabled" -value "1" -objects $obj

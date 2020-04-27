@@ -21,7 +21,7 @@
     input wire acc_ask_data
 	);
     wire FULL_internal;
-    (* mark_debug = "true" *) wire EMPTY_internal;
+    wire EMPTY_internal;
     wire RST_internal;
     wire [(2*IQ_DATA_WIDTH-1) : 0] data_to_acc_internal;
     
@@ -29,45 +29,45 @@
     reg adc_valid_count;
     wire adc_valid_decimate;
 
-// ---------for debug purpose------------
-    (* mark_debug = "true" *) reg adc_clk_in_bb_domain;
-    (* mark_debug = "true" *) reg adc_valid_in_bb_domain;
-    (* mark_debug = "true" *) reg FULL_internal_in_bb_domain;
-    (* mark_debug = "true" *) reg [3:0] wren_count;
-    (* mark_debug = "true" *) reg [3:0] rden_count;
-    reg adc_valid_decimate_reg;
-    wire valid;
-    reg  valid_reg;
-    assign valid = (!EMPTY_internal);
-    always @( posedge acc_clk )
-    begin
-      if ( acc_rstn == 1'b0 ) begin
-        adc_clk_in_bb_domain <= 0;
-        adc_valid_in_bb_domain <= 0;
-        FULL_internal_in_bb_domain <= 0;
-        wren_count <= 0;
-        rden_count <= 0;
-        adc_valid_decimate_reg <= 0;
-        valid_reg <= 0;
-      end
-      else begin
-        adc_clk_in_bb_domain <= adc_clk;
-        adc_valid_in_bb_domain <= adc_valid;
-        FULL_internal_in_bb_domain <= FULL_internal;
-        adc_valid_decimate_reg <= adc_valid_decimate;
-        valid_reg <= valid;
-        if (adc_valid_decimate==1 && adc_valid_decimate_reg==0)
-          wren_count <= 0;
-        else
-          wren_count <= wren_count + 1;
+// // ---------for debug purpose------------
+//     (* mark_debug = "true" *) reg adc_clk_in_bb_domain;
+//     (* mark_debug = "true" *) reg adc_valid_in_bb_domain;
+//     (* mark_debug = "true" *) reg FULL_internal_in_bb_domain;
+//     (* mark_debug = "true" *) reg [3:0] wren_count;
+//     (* mark_debug = "true" *) reg [3:0] rden_count;
+//     reg adc_valid_decimate_reg;
+//     wire valid;
+//     reg  valid_reg;
+//     assign valid = (!EMPTY_internal);
+//     always @( posedge acc_clk )
+//     begin
+//       if ( acc_rstn == 1'b0 ) begin
+//         adc_clk_in_bb_domain <= 0;
+//         adc_valid_in_bb_domain <= 0;
+//         FULL_internal_in_bb_domain <= 0;
+//         wren_count <= 0;
+//         rden_count <= 0;
+//         adc_valid_decimate_reg <= 0;
+//         valid_reg <= 0;
+//       end
+//       else begin
+//         adc_clk_in_bb_domain <= adc_clk;
+//         adc_valid_in_bb_domain <= adc_valid;
+//         FULL_internal_in_bb_domain <= FULL_internal;
+//         adc_valid_decimate_reg <= adc_valid_decimate;
+//         valid_reg <= valid;
+//         if (adc_valid_decimate==1 && adc_valid_decimate_reg==0)
+//           wren_count <= 0;
+//         else
+//           wren_count <= wren_count + 1;
 
-        if (valid==1 && valid_reg==0)
-          rden_count <= 0;
-        else
-          rden_count <= rden_count + 1;
-      end
-    end
-// ------------end of debug----------
+//         if (valid==1 && valid_reg==0)
+//           rden_count <= 0;
+//         else
+//           rden_count <= rden_count + 1;
+//       end
+//     end
+// // ------------end of debug----------
 
     assign adc_valid_decimate = (adc_valid_count==1);
 

@@ -24,8 +24,8 @@
 	)
 	(
         // -------------debug purpose----------------
-        (* mark_debug = "true" *) output wire trigger_out,
-        (* mark_debug = "true" *) output wire trigger_out1,
+        output wire trigger_out,
+        output wire trigger_out1,
         // -------------debug purpose----------------
 
 	    // from ad9361_adc_pack
@@ -50,7 +50,7 @@
 		input  wire fcs_ok,
 
 	    // interrupt to PS
-        (* mark_debug = "true" *) output wire rx_pkt_intr,
+        output wire rx_pkt_intr,
         
         // interrupt from xilixn axi dma
         input wire s2mm_intr,
@@ -173,24 +173,24 @@
     
     wire [(2*IQ_DATA_WIDTH-1) : 0] rf_iq_loopback;
     
-	(* mark_debug = "true" *) wire start_1trans_from_acc_to_m_axis;
+	wire start_1trans_from_acc_to_m_axis;
     wire [(C_M00_AXIS_TDATA_WIDTH-1):0] data_from_acc_to_m_axis;
-    (* mark_debug = "true" *) wire data_ready_from_acc_to_m_axis;
-    (* mark_debug = "true" *) wire fulln_from_m_axis_to_acc;
-    (* mark_debug = "true" *) wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_fifo_data_count;
+    wire data_ready_from_acc_to_m_axis;
+    wire fulln_from_m_axis_to_acc;
+    wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_fifo_data_count;
     wire fcs_valid_internal;
     wire rx_pkt_intr_internal;
     wire intr_internal;
     
-    (* mark_debug = "true" *) wire wifi_rx_iq_fifo_emptyn;
+    wire wifi_rx_iq_fifo_emptyn;
     
     //wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] monitor_num_dma_symbol_to_pl;
     wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] monitor_num_dma_symbol_to_ps;
     wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] num_dma_symbol_to_pl;
-    (* mark_debug = "true" *) wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] num_dma_symbol_to_ps;
+    wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] num_dma_symbol_to_ps;
 
     //wire fcs_invalid_from_acc_delay;
-    (* mark_debug = "true" *) wire m_axis_auto_rst;
+    wire m_axis_auto_rst;
     wire m_axis_rst;
     wire enable_m_axis_auto_rst;
     
@@ -200,7 +200,7 @@
     wire [(2*IQ_DATA_WIDTH-1) : 0] adc_data_after_sel;
 
     wire [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_from_acc;
-	(* mark_debug = "true" *) wire data_ready_from_acc;
+	wire data_ready_from_acc;
 
     wire fcs_valid;
     wire fcs_invalid;

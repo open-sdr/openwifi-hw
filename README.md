@@ -12,18 +12,23 @@ Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opens
 **board_name** options:
 - **zc706_fmcs2** (Xilinx ZC706 dev board + FMCOMMS2/3/4)
 - **zed_fmcs2** (Xilinx zed board + FMCOMMS2/3/4)
-- **adrv9361z7035** (ADRV9361Z7035 SOM + ADRV1CRR-BOB carrier board)
-- **adrv9361z7035_fmc** (ADRV9361Z7035 SOM + ADRV1CRR-FMC carrier board)
-- **adrv9364z7020** (ADRV9364Z7020 SOM + ADRV1CRR-BOB carrier board)
+- **adrv9361z7035** (ADRV9361Z7035 SOM)
+- **adrv9364z7020** (ADRV9364Z7020 SOM)
 - **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4)
+- **zcu102_fmcs2** (Xilinx ZCU102 dev board + FMCOMMS2/3/4)
 
-**Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2017.4.1 is needed. Example instructions are verified on Ubuntu 16/18)
+**Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2018.3 is needed. Example instructions are verified on Ubuntu 18)
 
 * In Linux, prepare Analgo Devices HDL library (only run once):
 
 ```
 export XILINX_DIR=your_Xilinx_directory
 ./prepare_adi_lib.sh $XILINX_DIR
+```
+* In Linux, prepare Analgo Devices board specific ip (only run once for each board you have):
+
+```
+./prepare_adi_board_ip.sh $XILINX_DIR $BOARD_NAME
 ```
 * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado. Otherwise there will be errors when you build the whole FPGA design. 
 * Open Vivado, then in Vivado Tcl Console:
@@ -50,7 +55,7 @@ git push
 ```
 **Modify IP cores:**
 
-IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure. For IP project created by **_high.tcl** or **_low.tcl**, exporting target directory should be **ip_repo/high/** or **ip_repo/low/**. Other IP should be exported to **ip_repo/common/**.
+IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure. For IP project created by **_high.tcl** or **_low.tcl** or **_ultra_scale.tcl**, exporting target directory should be **ip_repo/high/** or **ip_repo/low/** or **ip_repo/ultra_scale/** (for ZynqMP SoC, like zcu102 board). Other IP should be exported to **ip_repo/common/**.
 
 * ***IP cores designed by HLS (mixer_ddc and mixer_duc). mixer_ddc as example:***
 

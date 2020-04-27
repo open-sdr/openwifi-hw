@@ -20,7 +20,7 @@ set script_folder [_tcl::get_script_folder]
 ################################################################
 # Check if script is running in correct Vivado version.
 ################################################################
-set scripts_vivado_version 2017.4
+set scripts_vivado_version 2018.3
 set current_vivado_version [version -short]
 
 if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
@@ -126,12 +126,12 @@ proc create_hier_cell_openwifi_ip { parentCell nameHier } {
   create_bd_pin -dir I -type rst adc_rst
   create_bd_pin -dir I adc_valid
   create_bd_pin -dir O -from 63 -to 0 dac_data
-  create_bd_pin -dir O dac_dunf
-  create_bd_pin -dir I dac_valid
+  create_bd_pin -dir I dac_ready
+  create_bd_pin -dir O dac_valid
+  create_bd_pin -dir I -from 63 -to 0 dma_data
+  create_bd_pin -dir O dma_ready
+  create_bd_pin -dir I dma_valid
   create_bd_pin -dir I -type rst ext_reset_in
-  create_bd_pin -dir I -from 63 -to 0 fifo_rd_dout
-  create_bd_pin -dir O fifo_rd_en
-  create_bd_pin -dir I fifo_rd_underflow
   create_bd_pin -dir I -from 7 -to 0 gpio_status
   create_bd_pin -dir I -type clk m_axi_mm2s_aclk
   create_bd_pin -dir O -type intr mm2s_introut
@@ -289,8 +289,13 @@ proc create_hier_cell_openwifi_ip { parentCell nameHier } {
   connect_bd_intf_net -intf_net tx_intf_0_m00_axis [get_bd_intf_pins axi_dma_0/S_AXIS_S2MM] [get_bd_intf_pins tx_intf_0/m00_axis]
 
   # Create port connections
-  connect_bd_net -net fifo_rd_dout_1 [get_bd_pins fifo_rd_dout] [get_bd_pins tx_intf_0/fifo_rd_dout]
-  connect_bd_net -net fifo_rd_underflow_1 [get_bd_pins fifo_rd_underflow] [get_bd_pins tx_intf_0/fifo_rd_underflow]
+  connect_bd_net -net adc_clk_1 [get_bd_pins adc_clk] [get_bd_pins rx_intf_0/adc_clk] [get_bd_pins tx_intf_0/dac_clk]
+  connect_bd_net -net adc_data_1 [get_bd_pins adc_data] [get_bd_pins rx_intf_0/adc_data]
+  connect_bd_net -net adc_rst_1 [get_bd_pins adc_rst] [get_bd_pins rx_intf_0/adc_rst] [get_bd_pins tx_intf_0/dac_rst]
+  connect_bd_net -net adc_valid_1 [get_bd_pins adc_valid] [get_bd_pins rx_intf_0/adc_valid]
+  connect_bd_net -net dac_ready_1 [get_bd_pins dac_ready] [get_bd_pins tx_intf_0/dac_ready]
+  connect_bd_net -net dma_data_1 [get_bd_pins dma_data] [get_bd_pins tx_intf_0/dma_data]
+  connect_bd_net -net dma_valid_1 [get_bd_pins dma_valid] [get_bd_pins tx_intf_0/dma_valid]
   connect_bd_net -net gpio_status_1 [get_bd_pins gpio_status] [get_bd_pins xpu_0/gpio_status]
   connect_bd_net -net openofdm_rx_0_byte_count [get_bd_pins openofdm_rx_0/byte_count] [get_bd_pins rx_intf_0/byte_count] [get_bd_pins xpu_0/byte_count]
   connect_bd_net -net openofdm_rx_0_byte_out [get_bd_pins openofdm_rx_0/byte_out] [get_bd_pins rx_intf_0/byte_in] [get_bd_pins xpu_0/byte_in]
@@ -307,9 +312,6 @@ proc create_hier_cell_openwifi_ip { parentCell nameHier } {
   connect_bd_net -net openofdm_tx_0_result_i [get_bd_pins openofdm_tx_0/result_i] [get_bd_pins tx_intf_0/rf_i_from_acc]
   connect_bd_net -net openofdm_tx_0_result_iq_valid [get_bd_pins openofdm_tx_0/result_iq_valid] [get_bd_pins tx_intf_0/rf_iq_valid_from_acc]
   connect_bd_net -net openofdm_tx_0_result_q [get_bd_pins openofdm_tx_0/result_q] [get_bd_pins tx_intf_0/rf_q_from_acc]
-  connect_bd_net -net openwifi_ip_dac_data [get_bd_pins dac_data] [get_bd_pins tx_intf_0/dac_data]
-  connect_bd_net -net openwifi_ip_dac_dunf [get_bd_pins dac_dunf] [get_bd_pins tx_intf_0/dac_dunf]
-  connect_bd_net -net openwifi_ip_fifo_rd_en [get_bd_pins fifo_rd_en] [get_bd_pins tx_intf_0/fifo_rd_en]
   connect_bd_net -net openwifi_ip_mm2s_introut [get_bd_pins mm2s_introut] [get_bd_pins axi_dma_0/mm2s_introut]
   connect_bd_net -net openwifi_ip_mm2s_introut1 [get_bd_pins mm2s_introut1] [get_bd_pins axi_dma_1/mm2s_introut]
   connect_bd_net -net openwifi_ip_rx_pkt_intr [get_bd_pins rx_pkt_intr] [get_bd_pins rx_intf_0/rx_pkt_intr]
@@ -326,18 +328,16 @@ proc create_hier_cell_openwifi_ip { parentCell nameHier } {
   connect_bd_net -net sys_rstgen1_peripheral_aresetn [get_bd_pins axi_dma_0/axi_resetn] [get_bd_pins axi_dma_1/axi_resetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins axi_interconnect_0/S01_ARESETN] [get_bd_pins axi_interconnect_0/S02_ARESETN] [get_bd_pins axi_interconnect_1/ARESETN] [get_bd_pins axi_interconnect_1/M00_ARESETN] [get_bd_pins axi_interconnect_1/M01_ARESETN] [get_bd_pins axi_interconnect_1/M02_ARESETN] [get_bd_pins axi_interconnect_1/M03_ARESETN] [get_bd_pins axi_interconnect_1/M04_ARESETN] [get_bd_pins axi_interconnect_1/M05_ARESETN] [get_bd_pins axi_interconnect_1/M06_ARESETN] [get_bd_pins axi_interconnect_1/S00_ARESETN] [get_bd_pins axi_interconnect_2/ARESETN] [get_bd_pins axi_interconnect_2/M00_ARESETN] [get_bd_pins axi_interconnect_2/S00_ARESETN] [get_bd_pins axi_interconnect_2/S01_ARESETN] [get_bd_pins axi_interconnect_2/S02_ARESETN] [get_bd_pins openofdm_rx_0/s00_axi_aresetn] [get_bd_pins openofdm_tx_0/phy_tx_arestn] [get_bd_pins openofdm_tx_0/s00_axi_aresetn] [get_bd_pins rx_intf_0/m00_axis_aresetn] [get_bd_pins rx_intf_0/s00_axi_aresetn] [get_bd_pins rx_intf_0/s00_axis_aresetn] [get_bd_pins sys_rstgen1/peripheral_aresetn] [get_bd_pins tx_intf_0/m00_axis_aresetn] [get_bd_pins tx_intf_0/s00_axi_aresetn] [get_bd_pins tx_intf_0/s00_axis_aresetn] [get_bd_pins xpu_0/s00_axi_aresetn]
   connect_bd_net -net tx_intf_0_cts_toself_bb_is_ongoing [get_bd_pins tx_intf_0/cts_toself_bb_is_ongoing] [get_bd_pins xpu_0/cts_toself_bb_is_ongoing]
   connect_bd_net -net tx_intf_0_cts_toself_rf_is_ongoing [get_bd_pins tx_intf_0/cts_toself_rf_is_ongoing] [get_bd_pins xpu_0/cts_toself_rf_is_ongoing]
+  connect_bd_net -net tx_intf_0_dac_data [get_bd_pins dac_data] [get_bd_pins tx_intf_0/dac_data]
+  connect_bd_net -net tx_intf_0_dac_valid [get_bd_pins dac_valid] [get_bd_pins tx_intf_0/dac_valid]
   connect_bd_net -net tx_intf_0_data_to_acc [get_bd_pins openofdm_tx_0/bram_din] [get_bd_pins tx_intf_0/data_to_acc]
+  connect_bd_net -net tx_intf_0_dma_ready [get_bd_pins dma_ready] [get_bd_pins tx_intf_0/dma_ready]
   connect_bd_net -net tx_intf_0_douta [get_bd_pins tx_intf_0/douta] [get_bd_pins xpu_0/douta]
   connect_bd_net -net tx_intf_0_phy_tx_start [get_bd_pins openofdm_tx_0/phy_tx_start] [get_bd_pins tx_intf_0/phy_tx_start]
   connect_bd_net -net tx_intf_0_tx_hold [get_bd_pins openofdm_tx_0/result_iq_hold] [get_bd_pins tx_intf_0/tx_hold]
   connect_bd_net -net tx_intf_0_tx_iq_fifo_empty [get_bd_pins tx_intf_0/tx_iq_fifo_empty] [get_bd_pins xpu_0/tx_iq_fifo_empty]
   connect_bd_net -net tx_intf_0_tx_pkt_need_ack [get_bd_pins tx_intf_0/tx_pkt_need_ack] [get_bd_pins xpu_0/tx_pkt_need_ack]
   connect_bd_net -net tx_intf_0_tx_pkt_retrans_limit [get_bd_pins tx_intf_0/tx_pkt_retrans_limit] [get_bd_pins xpu_0/tx_pkt_retrans_limit]
-  connect_bd_net -net util_ad9361_adc_pack_adc_data [get_bd_pins adc_data] [get_bd_pins rx_intf_0/adc_data]
-  connect_bd_net -net util_ad9361_adc_pack_adc_valid [get_bd_pins adc_valid] [get_bd_pins rx_intf_0/adc_valid]
-  connect_bd_net -net util_ad9361_dac_upack_dac_valid [get_bd_pins dac_valid] [get_bd_pins tx_intf_0/dac_valid]
-  connect_bd_net -net util_ad9361_divclk_clk_out [get_bd_pins adc_clk] [get_bd_pins rx_intf_0/adc_clk] [get_bd_pins tx_intf_0/dac_clk]
-  connect_bd_net -net util_ad9361_divclk_reset_peripheral_reset [get_bd_pins adc_rst] [get_bd_pins rx_intf_0/adc_rst] [get_bd_pins tx_intf_0/dac_rst]
   connect_bd_net -net xlslice_0_Dout [get_bd_pins xlslice_0/Dout] [get_bd_pins xpu_0/ddc_i]
   connect_bd_net -net xlslice_1_Dout [get_bd_pins xlslice_1/Dout] [get_bd_pins xpu_0/ddc_q]
   connect_bd_net -net xpu_0_ack_tx_flag [get_bd_pins tx_intf_0/ack_tx_flag] [get_bd_pins xpu_0/ack_tx_flag]

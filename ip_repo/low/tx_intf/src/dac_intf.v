@@ -9,25 +9,27 @@
 	)
 	(
 	  input wire dac_rst,
-      input wire dac_clk,
-        
-      output wire [DAC_PACK_DATA_WIDTH-1 : 0] dac_data,
-      input wire dac_valid,
-      output wire dac_dunf,
-        
-      output wire fifo_rd_en,
-      input wire [DAC_PACK_DATA_WIDTH-1 : 0] fifo_rd_dout,
-      input wire fifo_rd_underflow,
-        
-      input wire src_sel,
+    input wire dac_clk,
+    
+    //connect util_ad9361_dac_upack
+    output wire [DAC_PACK_DATA_WIDTH-1 : 0] dac_data,
+    output wire dac_valid,
+    input  wire dac_ready,
+    
+    //connect axi_ad9361_dac_dma
+    input  wire [DAC_PACK_DATA_WIDTH-1 : 0] dma_data,
+    input  wire dma_valid,
+    output wire dma_ready,
+      
+    input wire src_sel,
 
-      input wire ant_flag,
-		
-      input wire acc_clk,
+    input wire ant_flag,
+  
+    input wire acc_clk,
 	  input wire acc_rstn,
-      input wire [(2*IQ_DATA_WIDTH-1) : 0] data_from_acc,
-      input wire data_valid_from_acc,
-      output wire fulln_to_acc
+    input wire [(2*IQ_DATA_WIDTH-1) : 0] data_from_acc,
+    input wire data_valid_from_acc,
+    output wire fulln_to_acc
 	);
 
     wire ALMOSTEMPTY;
@@ -66,14 +68,14 @@
     wire wren_internal;
         
     assign dac_data_internal_after_sel = (ant_flag_in_rf_domain?{dac_data_internal,32'd0}:{32'd0,dac_data_internal});
-    assign dac_data = ((src_sel_in_rf_domain==1'b0)?fifo_rd_dout:dac_data_internal_after_sel);
-    assign fifo_rd_en = ((src_sel_in_rf_domain==1'b0)?dac_valid:1'b0);
-    assign dac_dunf = ((src_sel_in_rf_domain==1'b0)?fifo_rd_underflow:EMPTY_internal);
+    assign dac_data  = ((src_sel_in_rf_domain==1'b0)?dma_data:dac_data_internal_after_sel);
+    assign dac_valid = ((src_sel_in_rf_domain==1'b0)?dma_valid:(!EMPTY_internal));
+    assign dma_ready = ((src_sel_in_rf_domain==1'b0)?dac_ready:1'b0);
     
     assign RST_internal = (!acc_rstn);
     assign fulln_to_acc = (!FULL_internal);
 
-    assign rden_internal = ((src_sel_in_rf_domain==1'b0)?1'b0:dac_valid);
+    assign rden_internal = ((src_sel_in_rf_domain==1'b0)?1'b0:dac_ready);
     assign wren_internal = ((src_sel_in_rf_domain==1'b0)?1'b0:data_valid_from_acc);
 
     xpm_cdc_array_single #(

@@ -39,8 +39,8 @@
 
     wire signed [(IQ_DATA_WIDTH-1):0] iq_rssi;
     wire iq_rssi_valid;
-    (* mark_debug = "true" *) wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_delay;
-    (* mark_debug = "true" *) wire gpio_status_delay_valid;
+    wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_delay;
+    wire gpio_status_delay_valid;
 
     iq_abs_avg # (
         .IQ_DATA_WIDTH(IQ_DATA_WIDTH)

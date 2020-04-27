@@ -1,8 +1,8 @@
-//Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+//Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
-//Tool Version: Vivado v.2017.4.1 (lin64) Build 2117270 Tue Jan 30 15:31:13 MST 2018
-//Date        : Mon Feb 17 11:53:37 2020
-//Host        : jxj-pc running 64-bit Ubuntu 18.04.3 LTS
+//Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+//Date        : Sat Apr 18 15:32:10 2020
+//Host        : jxj-xps running 64-bit Ubuntu 18.04.4 LTS
 //Command     : generate_target duc_bank_core.bd
 //Design      : duc_bank_core
 //Purpose     : IP block netlist
@@ -23,12 +23,12 @@ module duc_bank_core
   (* X_INTERFACE_INFO = "xilinx.com:interface:acc_fifo_write:1.0 ant_data FULL_N" *) input ant_data_full_n;
   (* X_INTERFACE_INFO = "xilinx.com:interface:acc_fifo_write:1.0 ant_data WR_DATA" *) output [31:0]ant_data_wr_data;
   (* X_INTERFACE_INFO = "xilinx.com:interface:acc_fifo_write:1.0 ant_data WR_EN" *) output ant_data_wr_en;
-  (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 bw20_data TDATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME bw20_data, CLK_DOMAIN duc_bank_core_clk, FREQ_HZ 200000000, HAS_TKEEP 0, HAS_TLAST 0, HAS_TREADY 1, HAS_TSTRB 0, LAYERED_METADATA undef, PHASE 0.000, TDATA_NUM_BYTES 4, TDEST_WIDTH 0, TID_WIDTH 0, TUSER_WIDTH 0" *) input [31:0]bw20_data_tdata;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 bw20_data TDATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME bw20_data, CLK_DOMAIN duc_bank_core_clk, FREQ_HZ 200000000, HAS_TKEEP 0, HAS_TLAST 0, HAS_TREADY 1, HAS_TSTRB 0, INSERT_VIP 0, LAYERED_METADATA undef, PHASE 0.000, TDATA_NUM_BYTES 4, TDEST_WIDTH 0, TID_WIDTH 0, TUSER_WIDTH 0" *) input [31:0]bw20_data_tdata;
   (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 bw20_data TREADY" *) output bw20_data_tready;
   (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 bw20_data TVALID" *) input bw20_data_tvalid;
   (* X_INTERFACE_INFO = "xilinx.com:signal:data:1.0 DATA.CFG0 DATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME DATA.CFG0, LAYERED_METADATA xilinx.com:interface:datatypes:1.0 {DATA {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 32} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0} integer {signed {attribs {resolve_type immediate dependency {} format bool minimum {} maximum {}} value true}}}}}" *) input [31:0]cfg0;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.CLK, ASSOCIATED_BUSIF bw20_data, ASSOCIATED_RESET rstn, CLK_DOMAIN duc_bank_core_clk, FREQ_HZ 200000000, PHASE 0.000" *) input clk;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.RSTN RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.RSTN, POLARITY ACTIVE_LOW" *) input rstn;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.CLK, ASSOCIATED_BUSIF bw20_data, ASSOCIATED_RESET rstn, CLK_DOMAIN duc_bank_core_clk, FREQ_HZ 200000000, INSERT_VIP 0, PHASE 0.000" *) input clk;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.RSTN RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.RSTN, INSERT_VIP 0, POLARITY ACTIVE_LOW" *) input rstn;
 
   wire [31:0]bw20_data_1_TDATA;
   wire bw20_data_1_TREADY;

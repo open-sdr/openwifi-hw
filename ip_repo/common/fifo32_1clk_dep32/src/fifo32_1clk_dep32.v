@@ -1,8 +1,8 @@
-//Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+//Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
-//Tool Version: Vivado v.2017.4.1 (lin64) Build 2117270 Tue Jan 30 15:31:13 MST 2018
-//Date        : Thu Jan 30 14:27:51 2020
-//Host        : jxj-pc running 64-bit Ubuntu 18.04.3 LTS
+//Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+//Date        : Fri Apr 10 17:50:20 2020
+//Host        : jxj-xps running 64-bit Ubuntu 18.04.4 LTS
 //Command     : generate_target fifo32_1clk_dep32.bd
 //Design      : fifo32_1clk_dep32
 //Purpose     : IP block netlist
@@ -20,7 +20,7 @@ module fifo32_1clk_dep32
     RST,
     WREN,
     data_count);
-  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.CLK, CLK_DOMAIN fifo32_1clk_dep32_CLK, FREQ_HZ 100000000, PHASE 0.000" *) input CLK;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.CLK, CLK_DOMAIN fifo32_1clk_dep32_CLK, FREQ_HZ 100000000, INSERT_VIP 0, PHASE 0.000" *) input CLK;
   output [31:0]DATAO;
   input [31:0]DI;
   output EMPTY;

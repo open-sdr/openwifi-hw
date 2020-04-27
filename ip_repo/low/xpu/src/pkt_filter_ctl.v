@@ -57,19 +57,19 @@
                        FILTER_ACTION   = 3'b100,
                        ABNORMAL_STATE  = 3'b101;
 
-    (* mark_debug = "true" *) reg [2:0] filter_state;
-    (* mark_debug = "true" *) reg [2:0] filter_state_pre;
+    reg [2:0] filter_state;
+    reg [2:0] filter_state_pre;
 
     reg [47:0] filter_bssid;
     reg filter_bssid_valid;
 
-    (* mark_debug = "true" *) reg abnormal_flag;
+    reg abnormal_flag;
 
     // low 9 bits are the same as mac80211 definition. [9] - unicast, [10] - broadcast ALL 0xFF, [11] - broadcast ALL 0x00, [12] monitor ALL!
-    (* mark_debug = "true" *) reg [13:0] allow_rx_dma_to_ps_reg;
-    (* mark_debug = "true" *) reg [8:0] high_priority_discard_reg;
-    (* mark_debug = "true" *) wire block_rx_dma_to_ps_tmp;
-    (* mark_debug = "true" *) wire high_priority_discard_flag;
+    reg [13:0] allow_rx_dma_to_ps_reg;
+    reg [8:0] high_priority_discard_reg;
+    wire block_rx_dma_to_ps_tmp;
+    wire high_priority_discard_flag;
 
     assign high_priority_discard_flag =((high_priority_discard_mask[0]&high_priority_discard_reg[0])|
                                         (high_priority_discard_mask[1]&high_priority_discard_reg[1])|

@@ -163,7 +163,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>60f82515</spirit:value>
+            <spirit:value>8fa400ed</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -182,7 +182,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>c1bda53a</spirit:value>
+            <spirit:value>b960f311</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -377,20 +377,12 @@
         <spirit:userFileType>xdc</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>SCOPED_TO_REF_fifo64_2clk_dep32</spirit:userFileType>
-        <spirit:userFileType>USED_IN_implementation</spirit:userFileType>
         <spirit:userFileType>USED_IN_out_of_context</spirit:userFileType>
-        <spirit:userFileType>USED_IN_synthesis</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_2clk_dep32.hwdef</spirit:name>
-        <spirit:userFileType>hwdef</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-        <spirit:userFileType>USED_IN_hw_handoff</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/fifo64_2clk_dep32.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_dfb4ea9b</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_37d879ea</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -413,12 +405,12 @@
         <spirit:userFileType>CELL_NAME_fifo_generator_0</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/fifo64_2clk_dep32.hwdef</spirit:name>
-        <spirit:userFileType>hwdef</spirit:userFileType>
+        <spirit:name>sim/fifo64_2clk_dep32.protoinst</spirit:name>
+        <spirit:fileType>unknown</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/fifo64_2clk_dep32.v</spirit:name>
+        <spirit:name>sim/fifo64_2clk_dep32.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -460,10 +452,14 @@
       </xilinx:taxonomies>
       <xilinx:displayName>fifo64_2clk_dep32_v1_0</xilinx:displayName>
       <xilinx:definitionSource>IPI</xilinx:definitionSource>
-      <xilinx:coreRevision>3</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2019-11-22T21:53:37Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>2</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2020-04-10T15:58:48Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="user.org:user:fifo64_2clk_dep32:1.0_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/zc706_fmcs2/ip_repo/fifo64_2clk_dep32</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7551f8a2_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/fifo64_2clk_dep32</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@e6aac85_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/fifo64_2clk_dep32</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@46341d6e_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/fifo64_2clk_dep32</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@11479a5e_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/fifo64_2clk_dep32</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@368df8ac_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/fifo64_2clk_dep32</xilinx:tag>
       </xilinx:tags>
       <xilinx:configElementInfos>
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.CLK.RDCLK.FREQ_HZ" xilinx:valueSource="user"/>
@@ -474,9 +470,9 @@
       </xilinx:configElementInfos>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2017.4.1</xilinx:xilinxVersion>
+      <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="b2fb4953"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="0bfda7f7"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="e0730c99"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="32dc4ccc"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="235a593c"/>
     </xilinx:packagingInfo>

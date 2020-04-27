@@ -214,7 +214,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>3d3ddc3a</spirit:value>
+            <spirit:value>b2a597fd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -236,7 +236,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>18926007</spirit:value>
+            <spirit:value>eb082ce3</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -395,53 +395,25 @@
         <spirit:userFileType>xci</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>CELL_NAME_fir_compiler_0</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/duc_bank_core_mixer_duc_0_0/duc_bank_core_mixer_duc_0_0.xci</spirit:name>
         <spirit:userFileType>xci</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>CELL_NAME_mixer_duc_0</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/duc_bank_core_ooc.xdc</spirit:name>
         <spirit:userFileType>xdc</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>SCOPED_TO_REF_duc_bank_core</spirit:userFileType>
-        <spirit:userFileType>USED_IN_implementation</spirit:userFileType>
         <spirit:userFileType>USED_IN_out_of_context</spirit:userFileType>
-        <spirit:userFileType>USED_IN_synthesis</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/duc_bank_core.hwdef</spirit:name>
-        <spirit:userFileType>hwdef</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-        <spirit:userFileType>USED_IN_hw_handoff</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/duc_bank_core.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_ba0722d3</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_926f5d66</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -471,45 +443,29 @@
         <spirit:userFileType>xci</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>CELL_NAME_fir_compiler_0</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/duc_bank_core_mixer_duc_0_0/duc_bank_core_mixer_duc_0_0.xci</spirit:name>
         <spirit:userFileType>xci</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>CELL_NAME_mixer_duc_0</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/duc_bank_core.hwdef</spirit:name>
-        <spirit:userFileType>hwdef</spirit:userFileType>
+        <spirit:name>sim/duc_bank_core.protoinst</spirit:name>
+        <spirit:fileType>unknown</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/duc_bank_core.v</spirit:name>
+        <spirit:name>sim/duc_bank_core.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-        <spirit:define>
-          <spirit:name>processing_order</spirit:name>
-          <spirit:value>early</spirit:value>
-        </spirit:define>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_xilinx_com_ip_fir_compiler_7_2__ref_view_fileset</spirit:name>
       <spirit:vendorExtensions>
         <xilinx:subCoreRef>
-          <xilinx:componentRef xsi:type="xilinx:componentRefType" xilinx:vendor="xilinx.com" xilinx:library="ip" xilinx:name="fir_compiler" xilinx:version="7.2">
+          <xilinx:componentRef xilinx:vendor="xilinx.com" xilinx:library="ip" xilinx:name="fir_compiler" xilinx:version="7.2">
             <xilinx:mode xilinx:name="create_mode"/>
           </xilinx:componentRef>
         </xilinx:subCoreRef>
@@ -553,9 +509,13 @@
       <xilinx:displayName>duc_bank_core_v1_0</xilinx:displayName>
       <xilinx:definitionSource>IPI</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-02-05T15:22:59Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-04-10T20:22:04Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="user.org:user:duc_bank_core:1.0_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3cb4ed8b_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5576478c_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e98b103_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7b5b15cc_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4bbff9c1_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/duc_bank_core</xilinx:tag>
       </xilinx:tags>
       <xilinx:configElementInfos>
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.BW20_DATA.HAS_TKEEP" xilinx:valueSource="user"/>
@@ -573,9 +533,9 @@
       </xilinx:configElementInfos>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2017.4.1</xilinx:xilinxVersion>
+      <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="54cdbe85"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="373e0b95"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="aba03b22"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="e60b5186"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="e231c060"/>
     </xilinx:packagingInfo>

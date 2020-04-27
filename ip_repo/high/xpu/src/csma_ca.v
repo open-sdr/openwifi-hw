@@ -46,7 +46,7 @@
     input wire slice_en0,
     input wire slice_en1,
 
-    (* mark_debug = "true" *) output wire high_tx_allowed0,
+    output wire high_tx_allowed0,
     output wire high_tx_allowed1
 	);
 
@@ -60,37 +60,37 @@
                       NAV_CHECK_RA =          2'b10,
                       NAV_UPDATE =            2'b11;
 
-    (* mark_debug = "true" *) reg [1:0]  backoff_state;
-    (* mark_debug = "true" *) reg [1:0]  backoff_state_old;
+    reg [1:0]  backoff_state;
+    reg [1:0]  backoff_state_old;
 
-    (* mark_debug = "true" *) reg [1:0]  nav_state;
-    (* mark_debug = "true" *) reg [1:0]  nav_state_old;
+    reg [1:0]  nav_state;
+    reg [1:0]  nav_state_old;
 
     wire ch_idle_final;
 
-    (* mark_debug = "true" *) reg [14:0] nav;
-    (* mark_debug = "true" *) reg [14:0] nav_new;
-    (* mark_debug = "true" *) reg nav_reset;
-    (* mark_debug = "true" *) reg nav_set;
+    reg [14:0] nav;
+    reg [14:0] nav_new;
+    reg nav_reset;
+    reg nav_set;
     wire [14:0] nav_for_mac;
 
     wire [7:0] ackcts_n_sym;
-    (* mark_debug = "true" *) wire [7:0] ackcts_time;
-    (* mark_debug = "true" *) reg  is_rts_received;
-    (* mark_debug = "true" *) reg  [14:0] nav_reset_timeout_count;
-    (* mark_debug = "true" *) reg  [14:0] nav_reset_timeout_top_after_rts;
+    wire [7:0] ackcts_time;
+    reg  is_rts_received;
+    reg  [14:0] nav_reset_timeout_count;
+    reg  [14:0] nav_reset_timeout_top_after_rts;
     wire is_pspoll;
     wire is_rts;
 
     wire [11:0] longest_ack_time;
     wire [11:0] difs_time;
     wire [11:0] eifs_time;
-    (* mark_debug = "true" *) reg last_fcs_valid;
-    (* mark_debug = "true" *) reg take_new_random_number;
-    (* mark_debug = "true" *) reg [7:0]  num_slot_random;
-    (* mark_debug = "true" *) reg [31:0] random_number = 32'h0b00a001;
-    (* mark_debug = "true" *) reg [12:0] backoff_timer;
-    (* mark_debug = "true" *) reg [11:0] backoff_wait_timer;
+    reg last_fcs_valid;
+    reg take_new_random_number;
+    reg [7:0]  num_slot_random;
+    reg [31:0] random_number = 32'h0b00a001;
+    reg [12:0] backoff_timer;
+    reg [11:0] backoff_wait_timer;
     wire backoff_done;
 
     assign is_pspoll = (((FC_type==2'b01) && (FC_subtype==4'b1010))?1:0);

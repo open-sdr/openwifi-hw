@@ -214,7 +214,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>28da5bb6</spirit:value>
+            <spirit:value>94f84c22</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -236,7 +236,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>8029858b</spirit:value>
+            <spirit:value>c71a2fa1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -407,20 +407,12 @@
         <spirit:userFileType>xdc</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:userFileType>SCOPED_TO_REF_duc_bank_core</spirit:userFileType>
-        <spirit:userFileType>USED_IN_implementation</spirit:userFileType>
         <spirit:userFileType>USED_IN_out_of_context</spirit:userFileType>
-        <spirit:userFileType>USED_IN_synthesis</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/duc_bank_core.hwdef</spirit:name>
-        <spirit:userFileType>hwdef</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-        <spirit:userFileType>USED_IN_hw_handoff</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/duc_bank_core.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_0119d120</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_951fc92d</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -459,12 +451,12 @@
         <spirit:userFileType>CELL_NAME_mixer_duc_0</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/duc_bank_core.hwdef</spirit:name>
-        <spirit:userFileType>hwdef</spirit:userFileType>
+        <spirit:name>sim/duc_bank_core.protoinst</spirit:name>
+        <spirit:fileType>unknown</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/duc_bank_core.v</spirit:name>
+        <spirit:name>sim/duc_bank_core.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -517,9 +509,13 @@
       <xilinx:displayName>duc_bank_core_v1_0</xilinx:displayName>
       <xilinx:definitionSource>IPI</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-02-17T10:53:44Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-04-18T13:32:23Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="user.org:user:duc_bank_core:1.0_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3387d296_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ce88d3a_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4716a004_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@9dc6883_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5fbeb923_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/duc_bank_core</xilinx:tag>
       </xilinx:tags>
       <xilinx:configElementInfos>
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.BW20_DATA.HAS_TKEEP" xilinx:valueSource="user"/>
@@ -537,9 +533,9 @@
       </xilinx:configElementInfos>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2017.4.1</xilinx:xilinxVersion>
+      <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="54cdbe85"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="825a905f"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="b11ef76b"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="e60b5186"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="e231c060"/>
     </xilinx:packagingInfo>
