@@ -1,8 +1,8 @@
-//Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+//Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
-//Tool Version: Vivado v.2017.4.1 (lin64) Build 2117270 Tue Jan 30 15:31:13 MST 2018
-//Date        : Fri Nov 22 22:53:25 2019
-//Host        : jxj-xps running 64-bit Ubuntu 18.04.3 LTS
+//Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+//Date        : Fri Apr 10 17:58:41 2020
+//Host        : jxj-xps running 64-bit Ubuntu 18.04.4 LTS
 //Command     : generate_target fifo64_2clk_dep32.bd
 //Design      : fifo64_2clk_dep32
 //Purpose     : IP block netlist
@@ -26,11 +26,11 @@ module fifo64_2clk_dep32
   (* X_INTERFACE_INFO = "xilinx.com:signal:data:1.0 DATA.DI DATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME DATA.DI, LAYERED_METADATA undef" *) input [63:0]DI;
   output EMPTY;
   output FULL;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.RDCLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.RDCLK, CLK_DOMAIN fifo64_2clk_dep32_RDCLK, FREQ_HZ 200000000, PHASE 0.000" *) input RDCLK;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.RDCLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.RDCLK, CLK_DOMAIN fifo64_2clk_dep32_RDCLK, FREQ_HZ 200000000, INSERT_VIP 0, PHASE 0.000" *) input RDCLK;
   input RDEN;
   (* X_INTERFACE_INFO = "xilinx.com:signal:data:1.0 DATA.RD_DATA_COUNT DATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME DATA.RD_DATA_COUNT, LAYERED_METADATA undef" *) output [5:0]RD_DATA_COUNT;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.RST RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.RST, POLARITY ACTIVE_HIGH" *) input RST;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.WRCLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.WRCLK, CLK_DOMAIN fifo64_2clk_dep32_WRCLK, FREQ_HZ 200000000, PHASE 0.000" *) input WRCLK;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.RST RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.RST, INSERT_VIP 0, POLARITY ACTIVE_HIGH" *) input RST;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.WRCLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.WRCLK, CLK_DOMAIN fifo64_2clk_dep32_WRCLK, FREQ_HZ 200000000, INSERT_VIP 0, PHASE 0.000" *) input WRCLK;
   input WREN;
   (* X_INTERFACE_INFO = "xilinx.com:signal:data:1.0 DATA.WR_DATA_COUNT DATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME DATA.WR_DATA_COUNT, LAYERED_METADATA undef" *) output [5:0]WR_DATA_COUNT;
 

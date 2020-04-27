@@ -155,18 +155,18 @@ update_ip_catalog -rebuild
 set obj [get_filesets sources_1]
 set files [list \
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk/src/fifo64_1clk_fifo_generator_0_0/fifo64_1clk_fifo_generator_0_0.xci"]"\
- "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep1k/src/fifo64_1clk_dep1k_fifo_generator_0_0/fifo64_1clk_dep1k_fifo_generator_0_0.xci"]"\
- "[file normalize "$origin_dir/../../ip_repo/common/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k_fifo_generator_0_0/fifo32_1clk_dep1k_fifo_generator_0_0.xci"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep512/src/fifo64_1clk_dep512_fifo_generator_0_0/fifo64_1clk_dep512_fifo_generator_0_0.xci"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/fifo32_1clk_dep512/src/fifo32_1clk_dep512_fifo_generator_0_0/fifo32_1clk_dep512_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep64/src/fifo64_1clk_dep64_fifo_generator_0_0/fifo64_1clk_dep64_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/low/duc_bank_core/src/duc_bank_core_mixer_duc_0_0/duc_bank_core_mixer_duc_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/low/duc_bank_core/src/duc_bank_core_fir_compiler_0_0/duc_bank_core_fir_compiler_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo32_2clk_dep32/src/fifo32_2clk_dep32_fifo_generator_0_0/fifo32_2clk_dep32_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/src/dac_intf.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/low/duc_bank_core/src/duc_bank_core.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/common/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k.v"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/fifo32_1clk_dep512/src/fifo32_1clk_dep512.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk/src/fifo64_1clk.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep64/src/fifo64_1clk_dep64.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep1k/src/fifo64_1clk_dep1k.v"]"\
+ "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep512/src/fifo64_1clk_dep512.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo32_2clk_dep32/src/fifo32_2clk_dep32.v"]"\
  "[file normalize "$origin_dir/src/tx_bit_intf.v"]"\
  "[file normalize "$origin_dir/src/tx_interrupt_selection.v"]"\
@@ -195,7 +195,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/common/fifo64_1clk_dep1k/src/fifo64_1clk_dep1k_fifo_generator_0_0/fifo64_1clk_dep1k_fifo_generator_0_0.xci"
+set file "$origin_dir/../../ip_repo/common/fifo64_1clk_dep512/src/fifo64_1clk_dep512_fifo_generator_0_0/fifo64_1clk_dep512_fifo_generator_0_0.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 if { ![get_property "is_locked" $file_obj] } {
@@ -210,7 +210,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/common/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k_fifo_generator_0_0/fifo32_1clk_dep1k_fifo_generator_0_0.xci"
+set file "$origin_dir/../../ip_repo/common/fifo32_1clk_dep512/src/fifo32_1clk_dep512_fifo_generator_0_0/fifo32_1clk_dep512_fifo_generator_0_0.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 if { ![get_property "is_locked" $file_obj] } {
@@ -311,7 +311,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/common/fifo32_1clk_dep1k/src/fifo32_1clk_dep1k.v"
+set file "$origin_dir/../../ip_repo/common/fifo32_1clk_dep512/src/fifo32_1clk_dep512.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
@@ -350,7 +350,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/common/fifo64_1clk_dep1k/src/fifo64_1clk_dep1k.v"
+set file "$origin_dir/../../ip_repo/common/fifo64_1clk_dep512/src/fifo64_1clk_dep512.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
@@ -570,10 +570,10 @@ set_property -name "xsim.simulate.xsim.more_options" -value "" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7z045ffg900-2 -flow {Vivado Synthesis 2017} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part xc7z045ffg900-2 -flow {Vivado Synthesis 2018} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
 } else {
   set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
-  set_property flow "Vivado Synthesis 2017" [get_runs synth_1]
+  set_property flow "Vivado Synthesis 2018" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
 set_property set_report_strategy_name 1 $obj
@@ -599,11 +599,11 @@ set_property -name "options.more_options" -value "" -objects $obj
 set obj [get_runs synth_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
 set_property -name "description" -value "Vivado Synthesis Defaults" -objects $obj
-set_property -name "flow" -value "Vivado Synthesis 2017" -objects $obj
+set_property -name "flow" -value "Vivado Synthesis 2018" -objects $obj
 set_property -name "name" -value "synth_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
-set_property -name "incremental_checkpoint" -value "" -objects $obj
+# set_property -name "incremental_checkpoint" -value "" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 set_property -name "steps.synth_design.tcl.pre" -value "" -objects $obj
@@ -635,10 +635,10 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xc7z045ffg900-2 -flow {Vivado Implementation 2017} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part xc7z045ffg900-2 -flow {Vivado Implementation 2018} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Vivado Implementation Defaults" [get_runs impl_1]
-  set_property flow "Vivado Implementation 2017" [get_runs impl_1]
+  set_property flow "Vivado Implementation 2018" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
 set_property set_report_strategy_name 1 $obj
@@ -985,12 +985,12 @@ set_property -name "options.more_options" -value "" -objects $obj
 set obj [get_runs impl_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
 set_property -name "description" -value "Default settings for Implementation." -objects $obj
-set_property -name "flow" -value "Vivado Implementation 2017" -objects $obj
+set_property -name "flow" -value "Vivado Implementation 2018" -objects $obj
 set_property -name "name" -value "impl_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
 set_property -name "pr_configuration" -value "" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
-set_property -name "incremental_checkpoint" -value "" -objects $obj
+# set_property -name "incremental_checkpoint" -value "" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
 set_property -name "steps.opt_design.is_enabled" -value "1" -objects $obj

@@ -1417,17 +1417,6 @@ Enable DDR Controller of Zynq PS
 </TR>
 <TR valign="top">
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>Enable DDR</B>
-</TD>
-<TD width=10% BGCOLOR=#FBF5EF>
-1
-</TD>
-<TD width=10% BGCOLOR=#FBF5EF>
-Enable DDR Controller of Zynq PS
-</TD>
-</TR>
-<TR valign="top">
-<TD width=10% BGCOLOR=#FBF5EF>
 <B>Memory Part</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
@@ -1801,7 +1790,7 @@ The average of the data midpoint delay, of the data delays associated with a byt
 ARM PLL
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-800.000000
+666.666687
 </TD>
 </TR>
 <TR valign="top">
@@ -2642,10 +2631,10 @@ SLCR_LOCK
 <B>f0</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>2</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>40</B>
+<B>20</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Drive the PLL_RES[3:0] input of the PLL to set the PLL loop filter resistor control</B>
@@ -2705,7 +2694,7 @@ SLCR_LOCK
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>fa240</B>
+<B>fa220</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>ARM PLL Configuration</B>
@@ -2790,10 +2779,10 @@ SLCR_LOCK
 <B>7f000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>30</B>
+<B>28</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>30000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Provide the feedback divisor for the PLL. Note: Before changing this value, the PLL must first be bypassed and then put into reset mode. Refer to the Zynq-7000 TRM, UG585, Clocks chapter for CP/RES/CNT values for the PLL.</B>
@@ -2813,7 +2802,7 @@ SLCR_LOCK
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>30000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>ARM PLL Control</B>
@@ -10754,10 +10743,10 @@ ddrc_ctrl
 <B>fff</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>81</B>
+<B>82</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>81</B>
+<B>82</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tREFI - Average time between refreshes. Unit: in multiples of 32 clocks. DRAM related. Default value is set for DDR3. Dynamic Bit Field.</B>
@@ -10817,7 +10806,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>1081</B>
+<B>1082</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>Two Rank Configuration</B>
@@ -11342,10 +11331,10 @@ ddrc_ctrl
 <B>3f</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>1a</B>
+<B>1b</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>1a</B>
+<B>1b</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tRC - Min time between activates to same bank (spec: 65 ns for DDR2-400 and smaller for faster parts). DRAM Related. Default value is set for DDR3.</B>
@@ -11362,10 +11351,10 @@ ddrc_ctrl
 <B>3fc0</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>a0</B>
+<B>a1</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>2800</B>
+<B>2840</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tRFC(min) - Minimum time from refresh to refresh or activate (spec: 75nS to 195nS). DRAM Related. Default value is set for DDR3. Dynamic Bit Field.</B>
@@ -11405,7 +11394,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>4281a</B>
+<B>4285b</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters 0</B>
@@ -11489,10 +11478,10 @@ ddrc_ctrl
 <B>1f</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>12</B>
+<B>13</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>12</B>
+<B>13</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time between write and precharge to same bank DDR and DDR3: WL + BL/2 + tWR LPDDR2: WL + BL/2 + tWR + 1 Unit: Clocks where, WL: write latency. BL: burst length. This must match the value programmed in the BL bit of the mode register to the DRAM. BST is not supported at present. tWR: write recovery time. This comes directly from the DRAM specs.</B>
@@ -11612,7 +11601,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>44e458d2</B>
+<B>44e458d3</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters 1</B>
@@ -11736,10 +11725,10 @@ ddrc_ctrl
 <B>7c00</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>e</B>
+<B>f</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>3800</B>
+<B>3c00</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time from write command to read command. Includes time for bus turnaround and recovery times and all per-bank, per-rank, and global constraints. DDR2 and DDR3: WL + tWTR + BL/2 LPDDR2: WL + tWTR + BL/2 + 1 Unit: clocks. Where, WL: Write latency, BL: burst length. This should match the value. Programmed in the BL bit of the mode register to the DRAM. tWTR: internal WRITE to READ command delay. This comes directly from the DRAM specs.</B>
@@ -11756,10 +11745,10 @@ ddrc_ctrl
 <B>f8000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>5</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>20000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tXP: Minimum time after power down exit to any operation. DRAM related.</B>
@@ -11796,10 +11785,10 @@ ddrc_ctrl
 <B>f800000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>5</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>2000000</B>
+<B>2800000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time from read to precharge of same bank DDR2: AL + BL/2 + max(tRTP, 2) - 2 DDR3: AL + max (tRTP, 4) LPDDR2: BL/2 + tRTP - 1 AL: Additive Latency; BL: DRAM Burst Length; tRTP: value from spec. DRAM related.</B>
@@ -11839,7 +11828,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>720238e5</B>
+<B>7282bce5</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters 2</B>
@@ -12731,10 +12720,10 @@ ddrc_ctrl
 <B>ffff</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>930</B>
+<B>b30</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>930</B>
+<B>b30</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>DDR2: Value loaded into MR register. (Bit[8] is for DLL and the setting here is ignored. Controller sets this bit appropriately DDR3: Value loaded into MR0 register. LPDDR2: Value loaded into MR1 register</B>
@@ -12774,7 +12763,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>40930</B>
+<B>40b30</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM EMR, MR access</B>
@@ -46868,24 +46857,6 @@ MASK_DATA_1_MSW
 <H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
 <H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
 <H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>USB1 RESET</H1>
-<H1>DIR MODE BANK 0</H1>
-<H1>DIR MODE BANK 1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE BANK 0</H1>
-<H1>OUTPUT ENABLE BANK 1</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
 <H1>ENET RESET</H1>
 <H1>ENET0 RESET</H1>
 <H1>DIR MODE BANK 0</H1>
@@ -48114,42 +48085,6 @@ MASK_DATA_1_MSW
 </TABLE>
 <P>
 <H1>I2C RESET</H1>
-<H1>I2C0 RESET</H1>
-<H1>DIR MODE GPIO BANK0</H1>
-<H1>DIR MODE GPIO BANK1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>I2C1 RESET</H1>
-<H1>DIR MODE GPIO BANK0</H1>
-<H1>DIR MODE GPIO BANK1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
 <H1>NOR CHIP SELECT</H1>
 <H1>DIR MODE BANK 0</H1>
 <H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
@@ -50349,10 +50284,10 @@ SLCR_LOCK
 <B>f0</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>2</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>40</B>
+<B>20</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Drive the PLL_RES[3:0] input of the PLL to set the PLL loop filter resistor control</B>
@@ -50412,7 +50347,7 @@ SLCR_LOCK
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>fa240</B>
+<B>fa220</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>ARM PLL Configuration</B>
@@ -50497,10 +50432,10 @@ SLCR_LOCK
 <B>7f000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>30</B>
+<B>28</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>30000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Provide the feedback divisor for the PLL. Note: Before changing this value, the PLL must first be bypassed and then put into powerdown or reset state.</B>
@@ -50520,7 +50455,7 @@ SLCR_LOCK
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>30000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>ARM PLL Control</B>
@@ -58483,10 +58418,10 @@ ddrc_ctrl
 <B>fff</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>81</B>
+<B>82</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>81</B>
+<B>82</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tREFI - Average time between refreshes. Unit: in multiples of 32 clocks. DRAM related. Default value is set for DDR3. Dynamic Bit Field.</B>
@@ -58646,7 +58581,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>81081</B>
+<B>81082</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>Two Rank Configuration</B>
@@ -59171,10 +59106,10 @@ ddrc_ctrl
 <B>3f</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>1a</B>
+<B>1b</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>1a</B>
+<B>1b</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tRC - Min time between activates to same bank (spec: 65 ns for DDR2-400 and smaller for faster parts). DRAM Related. Default value is set for DDR3.</B>
@@ -59191,10 +59126,10 @@ ddrc_ctrl
 <B>3fc0</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>a0</B>
+<B>a1</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>2800</B>
+<B>2840</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tRFC(min) - Minimum time from refresh to refresh or activate (spec: 75nS to 195nS). DRAM Related. Default value is set for DDR3. Dynamic Bit Field.</B>
@@ -59234,7 +59169,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>4281a</B>
+<B>4285b</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters 0</B>
@@ -59318,10 +59253,10 @@ ddrc_ctrl
 <B>1f</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>12</B>
+<B>13</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>12</B>
+<B>13</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time between write and precharge to same bank DDR and DDR3: WL + BL/2 + tWR LPDDR2: WL + BL/2 + tWR + 1 Unit: Clocks where, WL: write latency. BL: burst length. This must match the value programmed in the BL bit of the mode register to the DRAM. BST is not supported at present. tWR: write recovery time. This comes directly from the DRAM specs.</B>
@@ -59441,7 +59376,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>44e458d2</B>
+<B>44e458d3</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters 1</B>
@@ -59565,10 +59500,10 @@ ddrc_ctrl
 <B>7c00</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>e</B>
+<B>f</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>3800</B>
+<B>3c00</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time from write command to read command. Includes time for bus turnaround and recovery times and all per-bank, per-rank, and global constraints. DDR2 and DDR3: WL + tWTR + BL/2 LPDDR2: WL + tWTR + BL/2 + 1 Unit: clocks. Where, WL: Write latency, BL: burst length. This should match the value. Programmed in the BL bit of the mode register to the DRAM. tWTR: internal WRITE to READ command delay. This comes directly from the DRAM specs.</B>
@@ -59585,10 +59520,10 @@ ddrc_ctrl
 <B>f8000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>5</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>20000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tXP: Minimum time after power down exit to any operation. DRAM related.</B>
@@ -59625,10 +59560,10 @@ ddrc_ctrl
 <B>f800000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>5</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>2000000</B>
+<B>2800000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time from read to precharge of same bank DDR2: AL + BL/2 + max(tRTP, 2) - 2 DDR3: AL + max (tRTP, 4) LPDDR2: BL/2 + tRTP - 1 AL: Additive Latency; BL: DRAM Burst Length; tRTP: value from spec. DRAM related.</B>
@@ -59668,7 +59603,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>720238e5</B>
+<B>7282bce5</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters 2</B>
@@ -60620,10 +60555,10 @@ ddrc_ctrl
 <B>ffff</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>930</B>
+<B>b30</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>930</B>
+<B>b30</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>DDR2 and DDR3: Value written into the DRAM Mode register. Bit 8 is for DLL and the setting here is ignored. The controller sets appropriately. LPDDR2: Value written into the DRAM MR1 register</B>
@@ -60663,7 +60598,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>40930</B>
+<B>40b30</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM EMR, MR access</B>
@@ -95744,24 +95679,6 @@ MASK_DATA_1_MSW
 <H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
 <H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
 <H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>USB1 RESET</H1>
-<H1>DIR MODE BANK 0</H1>
-<H1>DIR MODE BANK 1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE BANK 0</H1>
-<H1>OUTPUT ENABLE BANK 1</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
 <H1>ENET RESET</H1>
 <H1>ENET0 RESET</H1>
 <H1>DIR MODE BANK 0</H1>
@@ -96990,42 +96907,6 @@ MASK_DATA_1_MSW
 </TABLE>
 <P>
 <H1>I2C RESET</H1>
-<H1>I2C0 RESET</H1>
-<H1>DIR MODE GPIO BANK0</H1>
-<H1>DIR MODE GPIO BANK1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>I2C1 RESET</H1>
-<H1>DIR MODE GPIO BANK0</H1>
-<H1>DIR MODE GPIO BANK1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
 <H1>NOR CHIP SELECT</H1>
 <H1>DIR MODE BANK 0</H1>
 <H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
@@ -99184,10 +99065,10 @@ SLCR_LOCK
 <B>f0</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>2</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>40</B>
+<B>20</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Drives the PLL_RES[3:0] input of the PLL to set the PLL loop filter resistor control</B>
@@ -99247,7 +99128,7 @@ SLCR_LOCK
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>fa240</B>
+<B>fa220</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>ARM PLL Configuration</B>
@@ -99332,10 +99213,10 @@ SLCR_LOCK
 <B>7f000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>30</B>
+<B>28</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>30000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Provides the feedback divisor for the PLL. NOTE: Before changing this value the PLL must first be bypassed and then put into powerdown or reset state.</B>
@@ -99355,7 +99236,7 @@ SLCR_LOCK
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>30000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>ARM PLL Control</B>
@@ -107274,10 +107155,10 @@ ddrc_ctrl
 <B>fff</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>81</B>
+<B>82</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>81</B>
+<B>82</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tREFI - Average time between refreshes. Unit: in multiples of 32 clocks. DRAM RELATED. Default value is set for DDR3.</B>
@@ -107437,7 +107318,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>81081</B>
+<B>81082</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>Two rank configuration register</B>
@@ -107962,10 +107843,10 @@ ddrc_ctrl
 <B>3f</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>1a</B>
+<B>1b</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>1a</B>
+<B>1b</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tRC - Min time between activates to same bank (spec: 65 ns for DDR2-400 and smaller for faster parts). DRAM RELATED. Default value is set for DDR3.</B>
@@ -107982,10 +107863,10 @@ ddrc_ctrl
 <B>3fc0</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>a0</B>
+<B>a1</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>2800</B>
+<B>2840</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tRFC(min) - Minimum time from refresh to refresh or activate (spec: 75ns to 195ns). DRAM RELATED. Default value is set for DDR3.</B>
@@ -108025,7 +107906,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>4281a</B>
+<B>4285b</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters register 0</B>
@@ -108109,10 +107990,10 @@ ddrc_ctrl
 <B>1f</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>12</B>
+<B>13</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>12</B>
+<B>13</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time between write and precharge to same bank Non-LPDDR2 -> WL + BL/2 + tWR LPDDR2 -> WL + BL/2 + tWR + 1 Unit: Clocks where, WL = write latency. BL = burst length. This must match the value programmed in the BL bit of the mode register to the DRAM. BST is not supported at present. tWR = write recovery time. This comes directly from the DRAM specs.</B>
@@ -108232,7 +108113,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>44e458d2</B>
+<B>44e458d3</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters register 1</B>
@@ -108356,10 +108237,10 @@ ddrc_ctrl
 <B>7c00</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>e</B>
+<B>f</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>3800</B>
+<B>3c00</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time from write command to read command. Includes time for bus turnaround and recovery times and all per-bank, per-rank, and global constraints. non-LPDDR2 -> WL + tWTR + BL/2 LPDDR2 -> WL + tWTR + BL/2 + 1 Unit: clocks. Where, WL = Write latency, BL = burst length. This should match the value. Programmed in the BL bit of the mode register to the DRAM. tWTR = internal WRITE to READ command delay. This comes directly from the DRAM specs.</B>
@@ -108376,10 +108257,10 @@ ddrc_ctrl
 <B>f8000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>5</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>20000</B>
+<B>28000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>tXP: Minimum time after power down exit to any operation. DRAM RELATED.</B>
@@ -108416,10 +108297,10 @@ ddrc_ctrl
 <B>f800000</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>4</B>
+<B>5</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>2000000</B>
+<B>2800000</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Minimum time from read to precharge of same bank DDR2 -> AL + BL/2 + max(tRTP, 2) - 2 DDR3 -> AL + max (tRTP, 4) mDDR -> BL/2 LPDDR2 -> BL/2 + tRTP - 1 AL = Additive Latency BL = DRAM Burst Length tRTP = value from spec DRAM RELATED</B>
@@ -108459,7 +108340,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>720238e5</B>
+<B>7282bce5</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM Parameters register 2</B>
@@ -109411,10 +109292,10 @@ ddrc_ctrl
 <B>ffff</B>
 </TD>
 <TD width=10% BGCOLOR=#FBF5EF>
-<B>930</B>
+<B>b30</B>
 </TD>
 <TD width=15% BGCOLOR=#FBF5EF>
-<B>930</B>
+<B>b30</B>
 </TD>
 <TD width=35% BGCOLOR=#FBF5EF>
 <B>Non LPDDR2-Value to be loaded into the DRAM Mode register. Bit 8 is for DLL and the setting here is ignored. The controller sets appropriately. For LPDDR2 - Value to Write to the MR1 register</B>
@@ -109454,7 +109335,7 @@ ddrc_ctrl
 <B></B>
 </TD>
 <TD width=15% BGCOLOR=#C0C0C0>
-<B>40930</B>
+<B>40b30</B>
 </TD>
 <TD width=35% BGCOLOR=#C0C0C0>
 <B>DRAM EMR, MR access register</B>
@@ -143941,24 +143822,6 @@ MASK_DATA_1_MSW
 <H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
 <H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
 <H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>USB1 RESET</H1>
-<H1>DIR MODE BANK 0</H1>
-<H1>DIR MODE BANK 1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE BANK 0</H1>
-<H1>OUTPUT ENABLE BANK 1</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
 <H1>ENET RESET</H1>
 <H1>ENET0 RESET</H1>
 <H1>DIR MODE BANK 0</H1>
@@ -145187,42 +145050,6 @@ MASK_DATA_1_MSW
 </TABLE>
 <P>
 <H1>I2C RESET</H1>
-<H1>I2C0 RESET</H1>
-<H1>DIR MODE GPIO BANK0</H1>
-<H1>DIR MODE GPIO BANK1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>I2C1 RESET</H1>
-<H1>DIR MODE GPIO BANK0</H1>
-<H1>DIR MODE GPIO BANK1</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>OUTPUT ENABLE</H1>
-<H1>MASK_DATA_0_LSW LOW BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW LOW BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW LOW BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW LOW BANK [53:48]</H1>
-<H1>ADD 1 MS DELAY</H1>
-<H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>
-<H1>MASK_DATA_0_MSW HIGH BANK [31:16]</H1>
-<H1>MASK_DATA_1_LSW HIGH BANK [47:32]</H1>
-<H1>MASK_DATA_1_MSW HIGH BANK [53:48]</H1>
 <H1>NOR CHIP SELECT</H1>
 <H1>DIR MODE BANK 0</H1>
 <H1>MASK_DATA_0_LSW HIGH BANK [15:0]</H1>

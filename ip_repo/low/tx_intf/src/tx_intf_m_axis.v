@@ -166,7 +166,7 @@
 	      end                                                                        
 	end                                                                              
 
-    fifo64_1clk_dep1k fifo64_1clk_dep1k_i (
+    fifo64_1clk_dep512 fifo64_1clk_dep512_i (
         .CLK(M_AXIS_ACLK),
         .DATAO(M_AXIS_TDATA),
         .DI(DATA_FROM_ACC),

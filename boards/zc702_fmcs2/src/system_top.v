@@ -119,6 +119,7 @@ module system_top (
   wire            tdd_sync_o;
   wire            tdd_sync_i;
   wire    [7:0]   gpio_status_dummy;
+
   // instantiations
 
   ad_iobuf #(.DATA_WIDTH(17)) i_iobuf (
@@ -138,6 +139,11 @@ module system_top (
     .dio_i ({gpio_o[15:12], gpio_o[7:0]}),
     .dio_o ({gpio_i[15:12], gpio_i[7:0]}),
     .dio_p ({gpio_bd[7:4], gpio_bd[11:8], gpio_bd[3:0]}));
+
+  assign gpio_i[63:51] = gpio_o[63:51];
+  assign gpio_i[48:47] = gpio_o[48:47];
+  assign gpio_i[31:16] = gpio_o[31:16];
+  assign gpio_i[11: 8] = gpio_o[11: 8];
 
   system_wrapper i_system_wrapper (
     .ddr_addr (ddr_addr),
@@ -172,18 +178,6 @@ module system_top (
     .hdmi_vsync (hdmi_vsync),
     .iic_main_scl_io (iic_scl),
     .iic_main_sda_io (iic_sda),
-    .ps_intr_00 (1'b0),
-    .ps_intr_01 (1'b0),
-    .ps_intr_10 (1'b0),
-    .ps_intr_11 (1'b0),
-    .ps_intr_02 (1'b0),
-    .ps_intr_03 (1'b0),
-    .ps_intr_04 (1'b0),
-    .ps_intr_05 (1'b0),
-    .ps_intr_06 (1'b0),
-    .ps_intr_07 (1'b0),
-    .ps_intr_08 (1'b0),
-    .ps_intr_09 (1'b0),
     .rx_clk_in_n (rx_clk_in_n),
     .rx_clk_in_p (rx_clk_in_p),
     .rx_data_in_n (rx_data_in_n),
@@ -206,6 +200,9 @@ module system_top (
     .tx_data_out_p (tx_data_out_p),
     .tx_frame_out_n (tx_frame_out_n),
     .tx_frame_out_p (tx_frame_out_p),
+    .tdd_sync_i (1'b0),
+    .tdd_sync_o (),
+    .tdd_sync_t (),
     .spi1_clk_i (1'b0),
     .spi1_clk_o (spi_udc_sclk),
     .spi1_csn_i (1'b1),

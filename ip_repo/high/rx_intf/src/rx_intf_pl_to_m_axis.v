@@ -31,7 +31,7 @@
 	    output reg [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] monitor_num_dma_symbol_to_ps,
 	    output reg m_axis_rst,
       input  wire m_axis_tlast,
-      (* mark_debug = "true" *) output reg  m_axis_tlast_auto_recover,
+      output reg  m_axis_tlast_auto_recover,
 
 	    // port to xilinx axi dma
 	    input wire s2mm_intr,
@@ -79,18 +79,22 @@
                        WAIT_DMA_TLAST =                    3'b100,
                        WAIT_RST_DONE =                     3'b101;
 
-    (* mark_debug = "true" *) reg [2:0] rx_state;
-    (* mark_debug = "true" *) reg [2:0] old_rx_state;
-    (* mark_debug = "true" *) reg start_m_axis;
+    reg [2:0] rx_state;
+    reg [2:0] old_rx_state;
+    reg start_m_axis;
     reg [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_to_m_axis;
     reg data_ready_to_m_axis;
     reg [2:0] rst_count;
     reg [(TSF_TIMER_WIDTH-1):0] tsf_val_lock_by_sig;
 
-    reg [0:0] delay_intr_state;
     reg [14:0] count;
 
-    (* mark_debug = "true" *) reg [12:0] timeout_timer_1M;
+    reg [12:0] timeout_timer_1M;
+
+    reg s2mm_intr_reg;
+
+    reg [14:0] count_top_scale;
+    reg [14:0] count_top_scale_plus1;
     
 	  assign data_to_m_axis_out =       (start_1trans_mode==3'b101)? data_to_m_axis:( (src_sel==1'b0)?data_from_acc:{32'd0,rf_iq} );
     assign data_ready_to_m_axis_out = (start_1trans_mode==3'b101)? data_ready_to_m_axis:( (src_sel==1'b0)?data_ready_from_acc:rf_iq_valid );
@@ -158,9 +162,13 @@
           rx_state <= WAIT_FOR_PKT;
           old_rx_state <= WAIT_FOR_PKT;
           timeout_timer_1M<=0;
+          s2mm_intr_reg <= 0;
       end
       else begin
         old_rx_state <= rx_state;
+        s2mm_intr_reg <= s2mm_intr;
+        count_top_scale <= (count_top*`COUNT_SCALE);
+        count_top_scale_plus1 <= (count_top_scale+1);
         case (rx_state)
           WAIT_FOR_PKT: begin
             timeout_timer_1M<=0;
@@ -177,89 +185,89 @@
           end
 
           DMA_HEADER0_INSERT: begin // data is calculated by calc_phy_header C program
-            timeout_timer_1M<=timeout_timer_1M;
-            rst_count <= rst_count;
+            // timeout_timer_1M<=timeout_timer_1M;
+            // rst_count <= rst_count;
             //data_to_m_axis <= (pad_test==1?64'h0123456789abcdef:tsf_val_lock_by_sig);
             data_to_m_axis <= tsf_val_lock_by_sig;
             data_ready_to_m_axis <= 1;
-            start_m_axis <= start_m_axis;
-            monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
-            m_axis_rst<=m_axis_rst;
-            m_axis_tlast_auto_recover<=m_axis_tlast_auto_recover;
+            // start_m_axis <= start_m_axis;
+            // monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
+            // m_axis_rst<=m_axis_rst;
+            // m_axis_tlast_auto_recover<=m_axis_tlast_auto_recover;
             rx_state <= DMA_HEADER1_INSERT_AND_START;
           end
 
           DMA_HEADER1_INSERT_AND_START: begin // data is calculated by calc_phy_header C program
-            timeout_timer_1M<=timeout_timer_1M;
-            rst_count <= rst_count;
+            // timeout_timer_1M<=timeout_timer_1M;
+            // rst_count <= rst_count;
             //data_to_m_axis <= (pad_test==1?64'hfedcba9876543210:{11'd0, pkt_rate[7],pkt_rate[3:0],pkt_len, 8'd0, gpio_status_lock_by_sig_valid, 5'd0, rssi_half_db_lock_by_sig_valid});
             data_to_m_axis <= {11'd0, pkt_rate[7],pkt_rate[3:0],pkt_len, 8'd0, gpio_status_lock_by_sig_valid, 5'd0, rssi_half_db_lock_by_sig_valid};
-            data_ready_to_m_axis <= data_ready_to_m_axis;
-            start_m_axis <= start_m_axis;
-            monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
-            m_axis_rst<=m_axis_rst;
-            m_axis_tlast_auto_recover<=m_axis_tlast_auto_recover;
+            // data_ready_to_m_axis <= data_ready_to_m_axis;
+            // start_m_axis <= start_m_axis;
+            // monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
+            // m_axis_rst<=m_axis_rst;
+            // m_axis_tlast_auto_recover<=m_axis_tlast_auto_recover;
             rx_state <= WAIT_FILTER_FLAG;
           end
 
           WAIT_FILTER_FLAG: begin
-            rst_count <= rst_count;
+            // rst_count <= rst_count;
             data_to_m_axis <= data_from_acc;
             data_ready_to_m_axis <= data_ready_from_acc;
-            monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
+            // monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
             if ( (timeout_timer_1M>m_axis_tlast_auto_recover_timeout_top) && m_axis_tlast_auto_recover_enable) begin//tlast timeout, let's generate a fake tlast to release ARM dma and reset our m_axis
-              start_m_axis <= start_m_axis;
-              timeout_timer_1M<=timeout_timer_1M;
+              // start_m_axis <= start_m_axis;
+              // timeout_timer_1M<=timeout_timer_1M;
               m_axis_rst<=1;
               m_axis_tlast_auto_recover<=1;
               rx_state <= WAIT_RST_DONE;
             end else begin
-              m_axis_tlast_auto_recover<=m_axis_tlast_auto_recover;
+              // m_axis_tlast_auto_recover<=m_axis_tlast_auto_recover;
               if (block_rx_dma_to_ps_valid==1 && block_rx_dma_to_ps==0) begin
                 timeout_timer_1M<=0;
                 start_m_axis <= 1;
-                m_axis_rst<=m_axis_rst;
+                // m_axis_rst<=m_axis_rst;
                 rx_state <= WAIT_DMA_TLAST;
               end else if (block_rx_dma_to_ps_valid==1 && block_rx_dma_to_ps==1) begin
-                timeout_timer_1M<=timeout_timer_1M;
-                start_m_axis <= start_m_axis;
+                // timeout_timer_1M<=timeout_timer_1M;
+                // start_m_axis <= start_m_axis;
                 m_axis_rst<=1;
                 rx_state <= WAIT_RST_DONE;
               end else begin
                 timeout_timer_1M<=(tsf_pulse_1M?(timeout_timer_1M+1):timeout_timer_1M);
-                start_m_axis <= start_m_axis;
-                m_axis_rst<=m_axis_rst;
-                rx_state <= rx_state;
+                // start_m_axis <= start_m_axis;
+                // m_axis_rst<=m_axis_rst;
+                // rx_state <= rx_state;
               end
             end
           end
 
           WAIT_DMA_TLAST: begin
-            rst_count <= rst_count;
+            // rst_count <= rst_count;
             data_to_m_axis <= data_from_acc;
             data_ready_to_m_axis <= data_ready_from_acc;
             start_m_axis <= 0;
-            monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
+            // monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
             if ( (timeout_timer_1M>m_axis_tlast_auto_recover_timeout_top) && m_axis_tlast_auto_recover_enable) begin//tlast timeout, let's generate a fake tlast to release ARM dma and reset our m_axis
-              timeout_timer_1M<=timeout_timer_1M;
+              // timeout_timer_1M<=timeout_timer_1M;
               m_axis_rst<=1;
               m_axis_tlast_auto_recover<=1;
               rx_state <= WAIT_RST_DONE;
             end else begin
               timeout_timer_1M<=(tsf_pulse_1M?(timeout_timer_1M+1):timeout_timer_1M);
-              m_axis_rst<=m_axis_rst;
-              m_axis_tlast_auto_recover<=m_axis_tlast_auto_recover;
+              // m_axis_rst<=m_axis_rst;
+              // m_axis_tlast_auto_recover<=m_axis_tlast_auto_recover;
               rx_state <= (m_axis_tlast?WAIT_FOR_PKT:rx_state);
             end
           end
 
           WAIT_RST_DONE: begin
-            timeout_timer_1M<=timeout_timer_1M;
+            // timeout_timer_1M<=timeout_timer_1M;
             m_axis_tlast_auto_recover<=0;
             rst_count <= rst_count+1;
             data_to_m_axis <= 0;
             data_ready_to_m_axis <= 0;
-            start_m_axis <= start_m_axis;
+            // start_m_axis <= start_m_axis;
             monitor_num_dma_symbol_to_ps<=0;
             if (rst_count==7) begin
               m_axis_rst<=0;
@@ -274,38 +282,14 @@
     end
 
     // process to generate delayed interrupt after receive s2mm_intr
-    always @(posedge clk)                                             
-    begin                                                                     
-      if (!rstn)                                                    
-      // Synchronous reset (active low)                                       
-        begin
-          count    <= 0;    
-          rx_pkt_intr<=0;
-          delay_intr_state <= WAIT_S2MM_INTR;                                             
-        end                                                                   
-      else
-        case (delay_intr_state)
-          WAIT_S2MM_INTR: begin
-            count    <= 0;
-            rx_pkt_intr<=0;
-            delay_intr_state<=(s2mm_intr?COUNT_TO_TOP:WAIT_S2MM_INTR);
-          end
-          
-          COUNT_TO_TOP: begin
-            if (count == (count_top/`COUNT_SCALE))                                                      
-                begin                                                           
-                count    <= 0;            
-                rx_pkt_intr <= 1;
-                delay_intr_state <= WAIT_S2MM_INTR;
-                end                                                             
-            else                                                              
-                begin                                                           
-                count <= count + 1;         
-                rx_pkt_intr <= 0;               
-                delay_intr_state <= COUNT_TO_TOP;   
-                end
-          end
-        endcase                                                               
+    always @(posedge clk) begin                                                                     
+      if ( (!rstn) || (s2mm_intr==1 && s2mm_intr_reg==0) ) begin
+        count    <= 0;
+        rx_pkt_intr<=0;
+      end else begin
+        count <= (count!=count_top_scale_plus1?(count+1):count);
+        rx_pkt_intr <= (count==count_top_scale);
+      end
     end
 
 	endmodule

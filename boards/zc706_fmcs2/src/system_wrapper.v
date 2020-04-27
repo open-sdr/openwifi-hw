@@ -1,10 +1,10 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 // based on Xilinx Vivado auto generated script. openwifi add necessary modifications.
-//Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+//Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
-//Tool Version: Vivado v.2017.4.1 (lin64) Build 2117270 Tue Jan 30 15:31:13 MST 2018
-//Date        : Mon Jul  9 14:18:53 2018
-//Host        : jxj-pc running 64-bit Ubuntu 16.04.4 LTS
+//Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+//Date        : Fri Apr 10 09:59:35 2020
+//Host        : jxj-xps running 64-bit Ubuntu 18.04.4 LTS
 //Command     : generate_target system_wrapper.bd
 //Design      : system_wrapper
 //Purpose     : IP block netlist
@@ -45,18 +45,6 @@ module system_wrapper
     hdmi_vsync,
     iic_main_scl_io,
     iic_main_sda_io,
-    ps_intr_00,
-    ps_intr_01,
-    ps_intr_02,
-    ps_intr_03,
-    ps_intr_04,
-    ps_intr_05,
-    ps_intr_06,
-    ps_intr_07,
-    ps_intr_08,
-    ps_intr_09,
-    ps_intr_10,
-    ps_intr_11,
     rx_clk_in_n,
     rx_clk_in_p,
     rx_data_in_n,
@@ -127,18 +115,6 @@ module system_wrapper
   output hdmi_vsync;
   inout iic_main_scl_io;
   inout iic_main_sda_io;
-  input ps_intr_00;
-  input ps_intr_01;
-  input ps_intr_02;
-  input ps_intr_03;
-  input ps_intr_04;
-  input ps_intr_05;
-  input ps_intr_06;
-  input ps_intr_07;
-  input ps_intr_08;
-  input ps_intr_09;
-  input ps_intr_10;
-  input ps_intr_11;
   input rx_clk_in_n;
   input rx_clk_in_p;
   input [5:0]rx_data_in_n;
@@ -215,18 +191,6 @@ module system_wrapper
   wire iic_main_sda_io;
   wire iic_main_sda_o;
   wire iic_main_sda_t;
-  wire ps_intr_00;
-  wire ps_intr_01;
-  wire ps_intr_02;
-  wire ps_intr_03;
-  wire ps_intr_04;
-  wire ps_intr_05;
-  wire ps_intr_06;
-  wire ps_intr_07;
-  wire ps_intr_08;
-  wire ps_intr_09;
-  wire ps_intr_10;
-  wire ps_intr_11;
   wire rx_clk_in_n;
   wire rx_clk_in_p;
   wire [5:0]rx_data_in_n;
@@ -313,18 +277,6 @@ module system_wrapper
         .iic_main_sda_i(iic_main_sda_i),
         .iic_main_sda_o(iic_main_sda_o),
         .iic_main_sda_t(iic_main_sda_t),
-        .ps_intr_00(ps_intr_00),
-        .ps_intr_01(ps_intr_01),
-        .ps_intr_02(ps_intr_02),
-        .ps_intr_03(ps_intr_03),
-        .ps_intr_04(ps_intr_04),
-        .ps_intr_05(ps_intr_05),
-        .ps_intr_06(ps_intr_06),
-        .ps_intr_07(ps_intr_07),
-        .ps_intr_08(ps_intr_08),
-        .ps_intr_09(ps_intr_09),
-        .ps_intr_10(ps_intr_10),
-        .ps_intr_11(ps_intr_11),
         .rx_clk_in_n(rx_clk_in_n),
         .rx_clk_in_p(rx_clk_in_p),
         .rx_data_in_n(rx_data_in_n),

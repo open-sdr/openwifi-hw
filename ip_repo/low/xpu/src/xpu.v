@@ -20,19 +20,19 @@
 	    (* mark_debug = "true" *) input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
 
 	    // Ports to rx_intf
-	    (* mark_debug = "true" *) input  wire signed [(IQ_DATA_WIDTH-1):0] ddc_i,
+	    input  wire signed [(IQ_DATA_WIDTH-1):0] ddc_i,
         input  wire signed [(IQ_DATA_WIDTH-1):0] ddc_q,
-        (* mark_debug = "true" *) input  wire ddc_iq_valid,
-        (* mark_debug = "true" *) output wire mute_adc_out_to_bb, // when tx, mute self rx
-        (* mark_debug = "true" *) output wire block_rx_dma_to_ps, // should valid from filter on to fcs valid
-        (* mark_debug = "true" *) output wire block_rx_dma_to_ps_valid, // should valid from filter on to fcs valid
+        input  wire ddc_iq_valid,
+        output wire mute_adc_out_to_bb, // when tx, mute self rx
+        output wire block_rx_dma_to_ps, // should valid from filter on to fcs valid
+        output wire block_rx_dma_to_ps_valid, // should valid from filter on to fcs valid
         output wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_lock_by_sig_valid,
         output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_lock_by_sig_valid,
         output wire [(TSF_TIMER_WIDTH-1):0]  tsf_runtime_val,
         output wire tsf_pulse_1M,
         
 		// Ports to openofdm rx
-        (* mark_debug = "true" *) output wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
+        output wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
         input  wire demod_is_ongoing,
         //input  wire pkt_begin,
 		//input  wire pkt_ht,
@@ -50,24 +50,24 @@
 		input  wire fcs_ok,
 
         // Ports to phy_tx
-        (* mark_debug = "true" *) input  wire phy_tx_started,
-        (* mark_debug = "true" *) input  wire phy_tx_done,
+        input  wire phy_tx_started,
+        input  wire phy_tx_done,
 
 	    // Ports to tx_intf
         output wire [47:0] mac_addr,
-        (* mark_debug = "true" *) output wire retrans_in_progress,
-        (* mark_debug = "true" *) output wire start_retrans,
-        (* mark_debug = "true" *) output wire tx_try_complete,
-	    (* mark_debug = "true" *) input  wire tx_iq_fifo_empty,
-        (* mark_debug = "true" *) output wire high_tx_allowed0,
-        (* mark_debug = "true" *) output wire high_tx_allowed1,
-        (* mark_debug = "true" *) output wire tx_bb_is_ongoing,
-        (* mark_debug = "true" *) output wire ack_tx_flag,
-        (* mark_debug = "true" *) output wire wea,
+        output wire retrans_in_progress,
+        output wire start_retrans,
+        output wire tx_try_complete,
+	    input  wire tx_iq_fifo_empty,
+        output wire high_tx_allowed0,
+        output wire high_tx_allowed1,
+        output wire tx_bb_is_ongoing,
+        output wire ack_tx_flag,
+        output wire wea,
         output wire [9:0] addra,
         output wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina,
-        (* mark_debug = "true" *) input  wire tx_pkt_need_ack,
-        (* mark_debug = "true" *) input  wire [3:0] tx_pkt_retrans_limit,
+        input  wire tx_pkt_need_ack,
+        input  wire [3:0] tx_pkt_retrans_limit,
         input  wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] douta,//from dpram of tx_intf, for tx_control changing some bits to indicate it is the 1st pkt or retransmitted pkt
         input  wire cts_toself_bb_is_ongoing,//this should rise before the phy tx end valid of phy tx IP core to avoid tx_control waiting ack for this tx
         input  wire cts_toself_rf_is_ongoing,//just need to cover the SIFS gap between cts tx and following packet tx
@@ -171,8 +171,8 @@
     wire tx_control_state_idle;
     wire ch_idle;
 
-    (* mark_debug = "true" *) wire [31:0] FC_DI;
-    (* mark_debug = "true" *) wire FC_DI_valid;
+    wire [31:0] FC_DI;
+    wire FC_DI_valid;
     
     wire [1:0] FC_version;
     wire [1:0] FC_type;
@@ -187,28 +187,28 @@
     wire       FC_order;
     wire [15:0] duration;
         
-    (* mark_debug = "true" *) wire [47:0] addr1;
-    (* mark_debug = "true" *) wire addr1_valid;
-    (* mark_debug = "true" *) wire [47:0] addr2;
-    (* mark_debug = "true" *) wire addr2_valid;
-    (* mark_debug = "true" *) wire [47:0] addr3;
-    (* mark_debug = "true" *) wire addr3_valid;
+    wire [47:0] addr1;
+    wire addr1_valid;
+    wire [47:0] addr2;
+    wire addr2_valid;
+    wire [47:0] addr3;
+    wire addr3_valid;
     
-    (* mark_debug = "true" *) wire [15:0] SC;
-    (* mark_debug = "true" *) wire SC_valid;
+    wire [15:0] SC;
+    wire SC_valid;
     wire [3:0] SC_fragment_number;
     wire [11:0] SC_sequence_number;
     
     wire [47:0] addr4;
     wire addr4_valid;
     
-    (* mark_debug = "true" *) wire pulse_tx_bb_end_almost;
+    wire pulse_tx_bb_end;
 
     wire signed [(IQ_RSSI_HALF_DB_WIDTH-1):0] iq_rssi_half_db;
     wire iq_rssi_half_db_valid;
     wire rssi_half_db_valid;
 
-    (* mark_debug = "true" *) wire [4:0] tx_status;
+    wire [4:0] tx_status;
 
     wire slice_en0;
     wire slice_en1;
@@ -301,14 +301,16 @@
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[0])),
 
-        .bb_rf_delay_count_top(slv_reg10[11:0]),
+        .bb_rf_delay_count_top(slv_reg10[13:0]),
         .phy_tx_started(phy_tx_started),
         .phy_tx_done(phy_tx_done),
 	    .tx_iq_fifo_empty(tx_iq_fifo_empty),
 
+        // .tsf_pulse_1M(tsf_pulse_1M),
+        
         .tx_bb_is_ongoing(tx_bb_is_ongoing),
         .tx_rf_is_ongoing(tx_rf_is_ongoing),
-        .pulse_tx_bb_end_almost(pulse_tx_bb_end_almost)
+        .pulse_tx_bb_end(pulse_tx_bb_end)
     );
 
     cca # (
@@ -388,7 +390,7 @@
         .recv_ack_timeout_top_adj(recv_ack_timeout_top_adj),
         .recv_ack_sig_valid_timeout_top(recv_ack_sig_valid_timeout_top),
         .recv_ack_fcs_valid_disable(recv_ack_fcs_valid_disable),
-        .pulse_tx_bb_end_almost(pulse_tx_bb_end_almost),
+        .pulse_tx_bb_end(pulse_tx_bb_end),
         .phy_tx_done(phy_tx_done),
         .sig_valid(sig_valid),
         .signal_rate(pkt_rate),

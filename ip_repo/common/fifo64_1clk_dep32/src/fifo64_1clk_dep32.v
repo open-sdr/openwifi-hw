@@ -1,8 +1,8 @@
-//Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+//Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
-//Tool Version: Vivado v.2017.4.1 (lin64) Build 2117270 Tue Jan 30 15:31:13 MST 2018
-//Date        : Fri Nov 22 22:56:43 2019
-//Host        : jxj-xps running 64-bit Ubuntu 18.04.3 LTS
+//Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+//Date        : Fri Apr 10 17:56:06 2020
+//Host        : jxj-xps running 64-bit Ubuntu 18.04.4 LTS
 //Command     : generate_target fifo64_1clk_dep32.bd
 //Design      : fifo64_1clk_dep32
 //Purpose     : IP block netlist
@@ -20,13 +20,13 @@ module fifo64_1clk_dep32
     RST,
     WREN,
     data_count);
-  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.CLK, CLK_DOMAIN fifo64_1clk_dep32_CLK, FREQ_HZ 200000000, PHASE 0.000" *) input CLK;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.CLK, CLK_DOMAIN fifo64_1clk_dep32_CLK, FREQ_HZ 200000000, INSERT_VIP 0, PHASE 0.000" *) input CLK;
   (* X_INTERFACE_INFO = "xilinx.com:signal:data:1.0 DATA.DATAO DATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME DATA.DATAO, LAYERED_METADATA undef" *) output [63:0]DATAO;
   (* X_INTERFACE_INFO = "xilinx.com:signal:data:1.0 DATA.DI DATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME DATA.DI, LAYERED_METADATA undef" *) input [63:0]DI;
   output EMPTY;
   output FULL;
   input RDEN;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.RST RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.RST, POLARITY ACTIVE_HIGH" *) input RST;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.RST RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.RST, INSERT_VIP 0, POLARITY ACTIVE_HIGH" *) input RST;
   input WREN;
   (* X_INTERFACE_INFO = "xilinx.com:signal:data:1.0 DATA.DATA_COUNT DATA" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME DATA.DATA_COUNT, LAYERED_METADATA undef" *) output [5:0]data_count;
 

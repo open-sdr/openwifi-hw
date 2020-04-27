@@ -4,6 +4,8 @@
 
 `timescale 1 ns / 1 ps
 
+`define WAIT_FOR_TX_IQ_FILL_COUNT_TOP (20*`NUM_CLK_PER_US)
+
 	module tx_bit_intf #
 	(
         parameter integer C_S00_AXIS_TDATA_WIDTH	= 64,
@@ -33,7 +35,7 @@
 
       input wire tx_iq_fifo_empty,
       input wire [31:0] cts_toself_config,
-      input wire [11:0] send_cts_toself_wait_sifs_top, //between cts and following frame, there should be a sifs waiting period
+      input wire [13:0] send_cts_toself_wait_sifs_top, //between cts and following frame, there should be a sifs waiting period
       input wire [47:0] mac_addr,
       input wire tx_try_complete,
       input wire retrans_in_progress,
@@ -50,8 +52,8 @@
       output reg [11:0] tx_pkt_sn,
       output reg [15:0] tx_pkt_num_dma_byte,
       output wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] douta,
-      (* mark_debug = "true" *) output reg cts_toself_bb_is_ongoing,
-      (* mark_debug = "true" *) output reg cts_toself_rf_is_ongoing,
+      output reg cts_toself_bb_is_ongoing,
+      output reg cts_toself_rf_is_ongoing,
 	    
 	    // port to phy_tx
 	    input wire tx_end_from_acc,
@@ -67,17 +69,17 @@
                        DO_CTS_TOSELF=                   3'b011,
                        WAIT_SIFS =                      3'b100,
                        DO_TX =                          3'b101;
-    (* mark_debug = "true" *) reg [2:0] high_tx_ctl_state;
-    (* mark_debug = "true" *) reg [2:0] high_tx_ctl_state_old;
+    reg [2:0] high_tx_ctl_state;
+    reg [2:0] high_tx_ctl_state_old;
     
-    (* mark_debug = "true" *) reg  [11:0] send_cts_toself_wait_count;
+    reg  [13:0] send_cts_toself_wait_count;
     reg  [12:0] wr_counter;
-    (* mark_debug = "true" *) reg read_from_s_axis_en;
+    reg read_from_s_axis_en;
     
     wire wea_high;
-    (* mark_debug = "true" *) wire wea;
-    (* mark_debug = "true" *) wire [9:0] addra;
-    (* mark_debug = "true" *) wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina;
+    wire wea;
+    wire [9:0] addra;
+    wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina;
 
     reg wea_internal;
     reg [12:0] addra_internal;
@@ -85,7 +87,7 @@
     
     wire [63:0] num_dma_symbol_fifo_rd_data0;
     wire [63:0] num_dma_symbol_fifo_rd_data1;
-    (* mark_debug = "true" *) reg [63:0] num_dma_symbol_total_current;
+    reg [63:0] num_dma_symbol_total_current;
     reg num_dma_symbol_total_rden0;
     reg num_dma_symbol_total_rden1;
     reg num_dma_symbol_total_wren0;
@@ -98,7 +100,6 @@
     wire s_axis_recv_data_from_high_valid;
     reg tx_queue_idx_reg;
     
-    (* mark_debug = "true" *) reg [9:0] timeout_timer_1M;
     reg start_delay0;
     reg start_delay1;
     reg start_delay2;
@@ -108,9 +109,13 @@
     
     reg s_axis_recv_data_from_high_delay;
 
-    wire [3:0] cts_toself_rate;
+    reg [3:0] cts_toself_rate;
     wire cts_toself_signal_parity;
     wire [11:0] cts_toself_signal_len;
+
+    reg [47:0] mac_addr_reg;
+
+    reg [13:0] send_cts_toself_wait_sifs_top_scale;
 
     assign ask_data_from_s_axis = read_from_s_axis_en;
     assign start = ( (auto_start_mode==1'b0)?(1'b0): (start_delay0|start_delay1|start_delay2|start_delay3|start_delay4|start_delay5) );
@@ -127,12 +132,6 @@
     
     assign tx_queue_idx = tx_queue_idx_reg;
 
-    //cts_toself_config[31:0] restored to num_dma_symbol_total_current[63:32] before actual tx
-    //cts_toself_config[31]/num_dma_symbol_total_current[63] enable/disable cts to self
-    //cts_toself_config[30]/num_dma_symbol_total_current[62] select cts to self rate. 1 select the actual traffic pkt rate that is in cts_toself_config[3:0]/num_dma_symbol_total_current[35:32]
-    //cts_toself_config[30]/num_dma_symbol_total_current[62] select cts to self rate. 0 select specified cts to self rate by mac80211 in cts_toself_config[7:4]/num_dma_symbol_total_current[39:36]
-    //cts_toself_config[23:8]/num_dma_symbol_total_current[55:40] cts to self duration 
-    assign cts_toself_rate = (num_dma_symbol_total_current[62]?num_dma_symbol_total_current[35:32]:num_dma_symbol_total_current[39:36]);//cts_toself_config[23:8]
     assign cts_toself_signal_parity = (~(^cts_toself_rate)); //because the cts and ack pkt length field is always 14: 1110 that always has 3 1s
     assign cts_toself_signal_len = 14;
     
@@ -146,23 +145,36 @@
           addra_internal<=0;
           dina_internal<=0;
 
+          cts_toself_rate<=0;
+          send_cts_toself_wait_sifs_top_scale <= 0;
+
           read_from_s_axis_en <= 0;      
           num_dma_symbol_total_current <= 0;                            
           num_dma_symbol_total_rden0<= 0;   
           num_dma_symbol_total_rden1<= 0;   
           high_tx_ctl_state <= WAIT_CHANCE;
           high_tx_ctl_state_old<=WAIT_CHANCE;
-          timeout_timer_1M<=0;
           wr_counter <= 13'b0;
           tx_queue_idx_reg<=0;
           send_cts_toself_wait_count<=0;
 
           cts_toself_bb_is_ongoing<=0;
           cts_toself_rf_is_ongoing<=0;
+
+          mac_addr_reg<=0;
         end                                                                   
       else begin
         high_tx_ctl_state_old <= high_tx_ctl_state;
-        timeout_timer_1M<=( high_tx_ctl_state_old!=high_tx_ctl_state?0:(tsf_pulse_1M?(timeout_timer_1M+1):timeout_timer_1M) );
+        //cts_toself_config[31:0] restored to num_dma_symbol_total_current[63:32] before actual tx
+        //cts_toself_config[31]/num_dma_symbol_total_current[63] enable/disable cts to self
+        //cts_toself_config[30]/num_dma_symbol_total_current[62] select cts to self rate. 1 select the actual traffic pkt rate that is in cts_toself_config[3:0]/num_dma_symbol_total_current[35:32]
+        //cts_toself_config[30]/num_dma_symbol_total_current[62] select cts to self rate. 0 select specified cts to self rate by mac80211 in cts_toself_config[7:4]/num_dma_symbol_total_current[39:36]
+        //cts_toself_config[23:8]/num_dma_symbol_total_current[55:40] cts to self duration 
+        cts_toself_rate <= (num_dma_symbol_total_current[62]?num_dma_symbol_total_current[35:32]:num_dma_symbol_total_current[39:36]);//cts_toself_config[23:8]
+        mac_addr_reg <= mac_addr;
+
+        send_cts_toself_wait_sifs_top_scale <= (send_cts_toself_wait_sifs_top*`COUNT_SCALE);
+
         case (high_tx_ctl_state)                                                 
           WAIT_CHANCE: begin
             wea_internal<=0;
@@ -173,7 +185,7 @@
             cts_toself_rf_is_ongoing<=0;
 
             read_from_s_axis_en <= 0;
-            num_dma_symbol_total_current <= num_dma_symbol_total_current;
+            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
             if ( high_tx_allowed0 && (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag) )
               begin
                   num_dma_symbol_total_rden0<= 1;
@@ -188,165 +200,132 @@
                   high_tx_ctl_state  <= PREPARE_TX_FETCH;
                   tx_queue_idx_reg<=1;
               end
-            else
-              begin
-                  num_dma_symbol_total_rden0<= 0;
-                  num_dma_symbol_total_rden1<= 0;
-                  high_tx_ctl_state  <= high_tx_ctl_state;
-                  tx_queue_idx_reg<=tx_queue_idx_reg; // keep it as tx_pkt_sn in num_dma_symbol_total_current for SW to check
-              end
+            // else
+            //   begin
+            //       num_dma_symbol_total_rden0<= 0;
+            //       num_dma_symbol_total_rden1<= 0;
+            //       high_tx_ctl_state  <= high_tx_ctl_state;
+            //       tx_queue_idx_reg<=tx_queue_idx_reg; // keep it as tx_pkt_sn in num_dma_symbol_total_current for SW to check
+            //   end
             wr_counter <= 13'b0;
             send_cts_toself_wait_count<=0;
           end
 
           PREPARE_TX_FETCH: begin
-            wea_internal<=wea_internal;
-            addra_internal<=addra_internal;
-            dina_internal<=dina_internal;
+            // wea_internal<=wea_internal;
+            // addra_internal<=addra_internal;
+            // dina_internal<=dina_internal;
     
-            cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
-            cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
+            // cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
+            // cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
 
             num_dma_symbol_total_current <= (tx_queue_idx_reg==0?num_dma_symbol_fifo_rd_data0:num_dma_symbol_fifo_rd_data1);
             num_dma_symbol_total_rden0<= 0;
             num_dma_symbol_total_rden1<= 0;
-            read_from_s_axis_en <= read_from_s_axis_en;
-            wr_counter <= wr_counter;
-            tx_queue_idx_reg<=tx_queue_idx_reg;
-            send_cts_toself_wait_count<=send_cts_toself_wait_count;
+            // read_from_s_axis_en <= read_from_s_axis_en;
+            // wr_counter <= wr_counter;
+            // tx_queue_idx_reg<=tx_queue_idx_reg;
+            // send_cts_toself_wait_count<=send_cts_toself_wait_count;
             high_tx_ctl_state  <= PREPARE_TX_JUDGE;
           end
 
           PREPARE_TX_JUDGE: begin
-            num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
-            num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
+            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
+            // num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
+            // num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
 
-            cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
-            cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
+            // cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
+            // cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
 
             if (num_dma_symbol_total_current[63]==1) begin // from cts_toself_config[31] in tx queue
-              read_from_s_axis_en <= read_from_s_axis_en;
+              // read_from_s_axis_en <= read_from_s_axis_en;
               high_tx_ctl_state  <= DO_CTS_TOSELF;
 
-              wea_internal<=wea_internal;
-              addra_internal<=addra_internal;
-              dina_internal<=dina_internal;
+              // wea_internal<=wea_internal;
+              // addra_internal<=addra_internal;
+              // dina_internal<=dina_internal;
             end else begin
               read_from_s_axis_en <= 1;
               high_tx_ctl_state  <= DO_TX;
 
-              wea_internal<=wea_high;
-              addra_internal<=wr_counter;
-              dina_internal<=data_from_s_axis;
+              // wea_internal<=wea_high;
+              // addra_internal<=wr_counter;
+              // dina_internal<=data_from_s_axis;
             end
-            wr_counter <= wr_counter;
-            tx_queue_idx_reg<=tx_queue_idx_reg;
-            send_cts_toself_wait_count<=send_cts_toself_wait_count;
+            // wr_counter <= wr_counter;
+            // tx_queue_idx_reg<=tx_queue_idx_reg;
+            // send_cts_toself_wait_count<=send_cts_toself_wait_count;
           end
 
           DO_CTS_TOSELF: begin
-            num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
-            num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
-            read_from_s_axis_en <= read_from_s_axis_en;
+            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
+            // num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
+            // num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
+            // read_from_s_axis_en <= read_from_s_axis_en;
+
+            send_cts_toself_wait_count <= ( ( send_cts_toself_wait_count != (`WAIT_FOR_TX_IQ_FILL_COUNT_TOP) )?(send_cts_toself_wait_count + 1): (tx_iq_fifo_empty?0:send_cts_toself_wait_count) );
+            wea_internal <= (send_cts_toself_wait_count<4?1:0);
+            //addra_internal <= (send_cts_toself_wait_count<4?send_cts_toself_wait_count:0);
+            addra_internal <= send_cts_toself_wait_count;
+            cts_toself_bb_is_ongoing <= (send_cts_toself_wait_count<4?cts_toself_bb_is_ongoing:(tx_iq_fifo_empty?0:1));
+            cts_toself_rf_is_ongoing <= (send_cts_toself_wait_count==(`WAIT_FOR_TX_IQ_FILL_COUNT_TOP)?1:cts_toself_rf_is_ongoing);
+            high_tx_ctl_state <= (send_cts_toself_wait_count!=(`WAIT_FOR_TX_IQ_FILL_COUNT_TOP)?high_tx_ctl_state:(tx_iq_fifo_empty?WAIT_SIFS:high_tx_ctl_state));
+
             if (send_cts_toself_wait_count==0) begin
-                cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
-                cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
-                wea_internal<=1;
-                addra_internal<=0;
                 //dina_internal<={32'h0, 32'h000001cb};
                 dina_internal<={32'h0, 14'd0, cts_toself_signal_parity, cts_toself_signal_len, 1'b0, cts_toself_rate};
-                send_cts_toself_wait_count <= send_cts_toself_wait_count + 1;
-                high_tx_ctl_state  <= high_tx_ctl_state;
-            end else if (send_cts_toself_wait_count==1) begin
-                cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
-                cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
-                wea_internal<=1;
-                addra_internal<=1;
-                dina_internal<={32'h0, 32'h0};
-                send_cts_toself_wait_count <= send_cts_toself_wait_count + 1;
-                high_tx_ctl_state  <= high_tx_ctl_state;
             end else if (send_cts_toself_wait_count==2)begin
-                cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
-                cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
-                wea_internal<=1;
-                addra_internal<=2;
-                dina_internal<={mac_addr[31:0], num_dma_symbol_total_current[55:40], 8'd0, 4'b1100, 2'b01, 2'd0};//CTS FC_type 2'b01 FC_subtype 4'b1100 duration num_dma_symbol_total_current[55:40] from cts_toself_config[23:8] in tx queue
-                send_cts_toself_wait_count <= send_cts_toself_wait_count + 1;
-                high_tx_ctl_state  <= high_tx_ctl_state;
+                dina_internal<={mac_addr_reg[31:0], num_dma_symbol_total_current[55:40], 8'd0, 4'b1100, 2'b01, 2'd0};//CTS FC_type 2'b01 FC_subtype 4'b1100 duration num_dma_symbol_total_current[55:40] from cts_toself_config[23:8] in tx queue
             end else if (send_cts_toself_wait_count==3) begin
-                cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
-                cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
-                wea_internal<=1;
-                addra_internal<=3;
-                dina_internal<={48'h0,mac_addr[47:32]};
-                send_cts_toself_wait_count <= send_cts_toself_wait_count + 1;
-                high_tx_ctl_state  <= high_tx_ctl_state;
-            end else if (send_cts_toself_wait_count<(20*`NUM_CLK_PER_US)) begin //let's wait for 20us to fill tx_iq fifo with preamble and SIGNAL
-                cts_toself_bb_is_ongoing<=1;
-                cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
-                wea_internal<=0;
-                addra_internal<=0;
-                dina_internal<=0;
-                send_cts_toself_wait_count <= send_cts_toself_wait_count + 1;
-                high_tx_ctl_state  <= high_tx_ctl_state;
-            end else begin
-                wea_internal<=wea_internal;
-                addra_internal<=addra_internal;
-                dina_internal<=dina_internal;
-                cts_toself_rf_is_ongoing<=1; // to fill the gap between cts and following traffic packet for muting RX
-                if (tx_iq_fifo_empty) begin
-                  send_cts_toself_wait_count <= 0; // the counter will be resued for WAIT SIFS
-                  high_tx_ctl_state  <= WAIT_SIFS;
-                  cts_toself_bb_is_ongoing<=0;//this tx_iq_fifo_empty is after the phy_tx_done, so tx_control of xpu won't start waiting ack action triggered by phy_tx_done, because cts_toself_bb_is_ongoing is 1
-                end else begin
-                  send_cts_toself_wait_count <= send_cts_toself_wait_count; // the counter will be resued for WAIT SIFS
-                  high_tx_ctl_state  <= high_tx_ctl_state;
-                  cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
-                end
-            end
-            wr_counter <= wr_counter;
-            tx_queue_idx_reg<=tx_queue_idx_reg;
+                dina_internal<={48'h0,mac_addr_reg[47:32]};
+            end 
+            // else begin
+            //     dina_internal<=dina_internal;
+            // end
+
+            // wr_counter <= wr_counter;
+            // tx_queue_idx_reg<=tx_queue_idx_reg;
           end
 
           WAIT_SIFS: begin
-            num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
-            num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
+            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
+            // num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
+            // num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
             
-            cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
-            cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
+            // cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
+            // cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
 
-            if (send_cts_toself_wait_count == (send_cts_toself_wait_sifs_top/`COUNT_SCALE) ) begin
+            send_cts_toself_wait_count <= send_cts_toself_wait_count+1;
+            if (send_cts_toself_wait_count == send_cts_toself_wait_sifs_top_scale ) begin
               read_from_s_axis_en <= 1;
               high_tx_ctl_state  <= DO_TX;
 
-              wea_internal<=wea_high;
-              addra_internal<=wr_counter;
-              dina_internal<=data_from_s_axis;
-              send_cts_toself_wait_count <= send_cts_toself_wait_count;
-            end else begin
-              read_from_s_axis_en <= read_from_s_axis_en;
-              high_tx_ctl_state  <= high_tx_ctl_state;
+              // wea_internal<=wea_high;
+              // addra_internal<=wr_counter;
+              // dina_internal<=data_from_s_axis;
+              // send_cts_toself_wait_count <= send_cts_toself_wait_count;
+            end 
+            // else begin
+            //   read_from_s_axis_en <= read_from_s_axis_en;
+            //   high_tx_ctl_state  <= high_tx_ctl_state;
 
-              wea_internal<=wea_internal;
-              addra_internal<=addra_internal;
-              dina_internal<=dina_internal;
-              send_cts_toself_wait_count <= send_cts_toself_wait_count+1;
-            end
-            wr_counter <= wr_counter;
-            tx_queue_idx_reg<=tx_queue_idx_reg;
+            //   wea_internal<=wea_internal;
+            //   addra_internal<=addra_internal;
+            //   dina_internal<=dina_internal;
+            //   send_cts_toself_wait_count <= send_cts_toself_wait_count+1;
+            // end
+            // wr_counter <= wr_counter;
+            // tx_queue_idx_reg<=tx_queue_idx_reg;
           end
           
           DO_TX: begin
-            num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
-            num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
-            send_cts_toself_wait_count<=send_cts_toself_wait_count;
-            tx_queue_idx_reg<=tx_queue_idx_reg;
+            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
+            // num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
+            // num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
+            // send_cts_toself_wait_count<=send_cts_toself_wait_count;
+            // tx_queue_idx_reg<=tx_queue_idx_reg;
 
-            cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
+            // cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
 
             wea_internal<=wea_high;
             addra_internal<=wr_counter;

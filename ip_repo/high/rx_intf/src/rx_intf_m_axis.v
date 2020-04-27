@@ -53,13 +53,11 @@
     reg     axis_tlast_delay;
 	wire  	tx_en;
 	reg     tx_done;
-	(* mark_debug = "true" *) wire    EMPTY;
+	wire    EMPTY;
     reg       init_txn_ff;
     wire      init_txn_pulse;
-    (* mark_debug = "true" *) wire      FULL;
+    wire      FULL;
     
-    wire      fifo_rst;
-
     assign FULLN_TO_ACC     = (~FULL);
 	assign M_AXIS_TVALID	= axis_tvalid;
 	assign M_AXIS_TLAST	    = axis_tlast&&(!axis_tlast_delay);
