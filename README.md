@@ -15,6 +15,7 @@ Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opens
 - **adrv9361z7035** (ADRV9361Z7035 SOM)
 - **adrv9364z7020** (ADRV9364Z7020 SOM)
 - **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4)
+- **zcu102_fmcs2** (Xilinx ZCU102 dev board + FMCOMMS2/3/4)
 
 **Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2018.3 is needed. Example instructions are verified on Ubuntu 18)
 
