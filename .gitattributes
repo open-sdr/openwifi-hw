@@ -1,0 +1,4 @@
+*.html linguist-detectable=false
+*.htm linguist-detectable=false
+*.c linguist-detectable=false
+*.tcl linguist-detectable=false
