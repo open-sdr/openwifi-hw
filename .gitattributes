@@ -3,7 +3,7 @@
 *.htm linguist-generated
 *.c linguist-generated
 *.h linguist-generated
-*.project linguist-generated
-.xml linguist-generated
-.xci linguist-generated
+.project linguist-generated
+*.xml linguist-generated
+*.xci linguist-generated
 *.tcl linguist-generated
