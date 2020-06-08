@@ -50,7 +50,7 @@ if { [info exists ::user_project_name] } {
 }
 
 variable script_file
-set script_file "fifo32_1clk_dep32.tcl"
+set script_file "fifo32_1clk_dep32_ultra_scale.tcl"
 
 # Help information for this script
 proc help {} {
