@@ -94,7 +94,6 @@
             tx_iq_running<=0;
     end
 
-    // process to generate delayed interrupt after receive s2mm_intr
     always @(posedge clk) begin                                                                     
       if ( rstn == 0 ) begin 
         bb_rf_delay_count    <= 0;
