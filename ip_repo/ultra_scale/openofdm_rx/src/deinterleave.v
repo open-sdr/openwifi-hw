@@ -164,7 +164,7 @@ localparam S_INPUT = 0;
 localparam S_GET_BASE = 1;
 localparam S_OUTPUT = 2;
 
-(* mark_debug = "true" *) reg [1:0] state;
+reg [1:0] state;
 
 always @(posedge clock) begin
     if (reset) begin

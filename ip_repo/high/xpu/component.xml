@@ -248,7 +248,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>75dff0ad</spirit:value>
+            <spirit:value>31b3154f</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -270,7 +270,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>75dff0ad</spirit:value>
+            <spirit:value>31b3154f</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -660,6 +660,23 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
+        <spirit:name>tx_status</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">4</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
         <spirit:name>mac_addr</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
@@ -743,6 +760,32 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>high_tx_allowed1</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>high_tx_allowed2</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>high_tx_allowed3</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -1460,7 +1503,7 @@
       <spirit:file>
         <spirit:name>src/xpu.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_a8c27f7d</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_68da1697</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1700,9 +1743,6 @@
     <xilinx:coreExtensions>
       <xilinx:supportedFamilies>
         <xilinx:family xilinx:lifeCycle="Production">zynq</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">qzynq</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">azynq</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">zynquplus</xilinx:family>
       </xilinx:supportedFamilies>
       <xilinx:taxonomies>
         <xilinx:taxonomy>/UserIP</xilinx:taxonomy>
@@ -1714,21 +1754,21 @@
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-04-18T19:13:33Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-06-08T14:08:14Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5cd90fae_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@693235dd_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@7d0a36d0_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a0a0afd_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@b221943_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@608f087_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3f9f5d12_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31b5cdd6_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@dff656_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2b2b237a_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/xpu</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="9add38af"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="871c369d"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="59872a77"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="a7358a3d"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="a16484ee"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="88ffbdd7"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="8af0eff1"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="542ed757"/>
     </xilinx:packagingInfo>

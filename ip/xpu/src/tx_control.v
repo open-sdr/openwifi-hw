@@ -59,7 +59,7 @@
                       SEND_ACK_DO=               3'b010,
                       RECV_ACK_JUDGE =           3'b011,
                       RECV_ACK_WAIT_TX_BB_DONE = 3'b100,
-                      RECV_ACK_WATI_SIG_VALID  = 3'b101,
+                      RECV_ACK_WAIT_SIG_VALID  = 3'b101,
                       RECV_ACK       =           3'b110;
 
   wire [3:0] retrans_limit;
@@ -69,6 +69,7 @@
   reg [47:0] ack_addr;
   reg [15:0] duration_received;
   reg FC_more_frag_received;
+  //(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
   reg [2:0] tx_control_state;
   reg tx_fail_lock;
   reg [3:0] num_retrans_lock;
@@ -359,7 +360,7 @@
             // retrans_in_progress<=retrans_in_progress;
 
             if (pulse_tx_bb_end) begin
-                tx_control_state<= RECV_ACK_WATI_SIG_VALID;
+                tx_control_state<= RECV_ACK_WAIT_SIG_VALID;
             end 
             // else begin
             //     tx_control_state<= tx_control_state;
@@ -367,7 +368,7 @@
             
           end
 
-          RECV_ACK_WATI_SIG_VALID: begin
+          RECV_ACK_WAIT_SIG_VALID: begin
             // ack_tx_flag<=ack_tx_flag;
             // wea<=wea;
             // addra<=addra;

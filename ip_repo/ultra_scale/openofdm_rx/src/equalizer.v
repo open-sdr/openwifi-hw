@@ -22,7 +22,7 @@ module equalizer
     output reg [31:0] sample_out,
     output reg sample_out_strobe,
     
-    (* mark_debug = "true" *) output reg [2:0] state
+    output reg [2:0] state
 );
 
 

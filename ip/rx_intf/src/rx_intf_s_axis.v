@@ -11,12 +11,12 @@
 	)
 	(
 		input wire endless_mode,
-    output wire [C_S_AXIS_TDATA_WIDTH-1 : 0] DATA_TO_ACC,
-    output wire EMPTYN_TO_ACC,
-    input  wire ACC_ASK_DATA,
-    output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count,
+		output wire [C_S_AXIS_TDATA_WIDTH-1 : 0] DATA_TO_ACC,
+		output wire EMPTYN_TO_ACC,
+		input  wire ACC_ASK_DATA,
+		output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count,
     
-    input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] S_AXIS_NUM_DMA_SYMBOL,
+    	input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] S_AXIS_NUM_DMA_SYMBOL,
 
 		input wire  S_AXIS_ACLK,
 		input wire  S_AXIS_ARESETN,
@@ -36,7 +36,7 @@
 	localparam integer bit_num  = clogb2(MAX_NUM_DMA_SYMBOL);
 
 	localparam [1:0] IDLE = 1'b0,        // This is the initial/idle state 
-	                WRITE_FIFO  = 1'b1; // In this state FIFO is written with the
+	                 WRITE_FIFO  = 1'b1; // In this state FIFO is written with the
 
 	wire  	axis_tready;
 	reg mst_exec_state;  

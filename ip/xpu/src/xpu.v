@@ -17,7 +17,7 @@
 	)
 	(
 	    // ad9361 status and ctrl
-	    (* mark_debug = "true" *) input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
+	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
 
 	    // Ports to rx_intf
 	    input  wire signed [(IQ_DATA_WIDTH-1):0] ddc_i,
@@ -54,6 +54,7 @@
         input  wire phy_tx_done,
 
 	    // Ports to tx_intf
+        output wire [4:0] tx_status,
         output wire [47:0] mac_addr,
         output wire retrans_in_progress,
         output wire start_retrans,
@@ -61,6 +62,8 @@
 	    input  wire tx_iq_fifo_empty,
         output wire high_tx_allowed0,
         output wire high_tx_allowed1,
+        output wire high_tx_allowed2,
+        output wire high_tx_allowed3,
         output wire tx_bb_is_ongoing,
         output wire ack_tx_flag,
         output wire wea,
@@ -98,6 +101,7 @@
 		input  wire s00_axi_rready
 	);
 
+    wire slv_reg_wren_signal;
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg0; // rst
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg1; // some source selection
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg2; // tsf load value low
@@ -118,12 +122,12 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg17; // receive ack time count top -- 5GHz
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg18; // before actual ack sending, wait until counter reach this value -- related to SIFS in different band. low 16bit 2.4GHz, high 16bit 5GHz
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg19;
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg20; // slice 0 count_total
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg21; // slice 0 count_start
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg22; // slice 0 count_end
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg23; // slice 1 count_total
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg24; // slice 1 count_start
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg25; // slice 1 count_end
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg20; // slice count_total in bit [19:0]; slice selection in bit [21:20]
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg21; // slice count_start in bit [19:0]; slice selection in bit [21:20]
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg22; // slice count_end   in bit [19:0]; slice selection in bit [21:20]
+    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg23; //
+    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg24; //
+    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg25; //
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg26; // extra duration in CTS frame (response to RTS)
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg27; // filter flags
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg28; // self bssid and filter enable
@@ -150,7 +154,7 @@
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg48;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg49;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg50;// trx status
-	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg51;// tx status, bit4 0-OK,1-fail, bit3~0 number of retrans
+	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg51;// tx status, not goes to tx_intf
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg52;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg53;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg54;
@@ -167,6 +171,8 @@
 	wire block_rx_dma_to_ps_internal;
 	wire high_tx_allowed_internal0;
 	wire high_tx_allowed_internal1;
+	wire high_tx_allowed_internal2;
+	wire high_tx_allowed_internal3;
 
     wire tx_control_state_idle;
     wire ch_idle;
@@ -208,10 +214,12 @@
     wire iq_rssi_half_db_valid;
     wire rssi_half_db_valid;
 
-    wire [4:0] tx_status;
+    // wire [4:0] tx_status;
 
     wire slice_en0;
     wire slice_en1;
+    wire slice_en2;
+    wire slice_en3;
 
     wire fcs_valid;
     wire sig_valid;
@@ -255,10 +263,12 @@
 	assign block_rx_dma_to_ps = (block_rx_dma_to_ps_internal&(~slv_reg1[2]));	
 	assign high_tx_allowed0 = (  slv_reg1[4]==0?high_tx_allowed_internal0:slv_reg1[1] );
 	assign high_tx_allowed1 = ( slv_reg1[12]==0?high_tx_allowed_internal1:slv_reg1[8] );
+	assign high_tx_allowed2 = ( slv_reg1[20]==0?high_tx_allowed_internal2:slv_reg1[16] );
+	assign high_tx_allowed3 = ( slv_reg1[28]==0?high_tx_allowed_internal3:slv_reg1[24] );
 	assign mac_addr = {slv_reg31[15:0], slv_reg30};
 	
 	// assign slv_reg50 = {high_tx_allowed_internal1, high_tx_allowed_internal0, 4'h0,ack_tx_flag,demod_is_ongoing,tx_rf_is_ongoing,tx_bb_is_ongoing}; // we should use ack_tx_flag to disable tx interrupt to linux!
-	assign slv_reg51[4:0] = tx_status;
+	// assign slv_reg51[4:0] = tx_status;
 
 	// assign slv_reg34 =  FC_DI;
 	assign FC_version = FC_DI[1:0];
@@ -368,9 +378,13 @@
 
         .slice_en0(slice_en0),
         .slice_en1(slice_en1),
+        .slice_en2(slice_en2),
+        .slice_en3(slice_en3),
 
         .high_tx_allowed0(high_tx_allowed_internal0),
-        .high_tx_allowed1(high_tx_allowed_internal1)
+        .high_tx_allowed1(high_tx_allowed_internal1),
+        .high_tx_allowed2(high_tx_allowed_internal2),
+        .high_tx_allowed3(high_tx_allowed_internal3)
     );
 
     tx_control # (
@@ -517,15 +531,18 @@
         .rstn(s00_axi_aresetn&(~slv_reg0[7])),
         .tsf_pulse_1M(tsf_pulse_1M),
 
-        .count_total0(slv_reg20[19:0]),
-        .count_start0(slv_reg21[19:0]),
-        .count_end0  (slv_reg22[19:0]),
-        .count_total1(slv_reg23[19:0]),
-        .count_start1(slv_reg24[19:0]),
-        .count_end1  (slv_reg25[19:0]),
+        .slv_reg_wren_signal(slv_reg_wren_signal),
+        .count_total_slice_idx(slv_reg20[21:20]),
+        .count_total          (slv_reg20[19:0]),
+        .count_start_slice_idx(slv_reg21[21:20]),
+        .count_start          (slv_reg21[19:0]),
+        .count_end_slice_idx  (slv_reg22[21:20]),
+        .count_end            (slv_reg22[19:0]),
 
         .slice_en0(slice_en0),
-        .slice_en1(slice_en1)
+        .slice_en1(slice_en1),
+        .slice_en2(slice_en2),
+        .slice_en3(slice_en3)
 	);
 
 	tsf_timer # (
@@ -566,6 +583,7 @@
 		.S_AXI_RVALID(s00_axi_rvalid),
 		.S_AXI_RREADY(s00_axi_rready),
 
+        .slv_reg_wren_signal(slv_reg_wren_signal),
 		.SLV_REG0(slv_reg0),
 		.SLV_REG1(slv_reg1),
 		.SLV_REG2(slv_reg2),
@@ -589,9 +607,9 @@
         .SLV_REG20(slv_reg20),
         .SLV_REG21(slv_reg21),
         .SLV_REG22(slv_reg22),
-        .SLV_REG23(slv_reg23),
-		.SLV_REG24(slv_reg24),
-        .SLV_REG25(slv_reg25),
+//        .SLV_REG23(slv_reg23),
+//		.SLV_REG24(slv_reg24),
+//        .SLV_REG25(slv_reg25),
         .SLV_REG26(slv_reg26),
         .SLV_REG27(slv_reg27),
         .SLV_REG28(slv_reg28),
@@ -617,9 +635,9 @@
         .SLV_REG46(slv_reg46),
         .SLV_REG47(slv_reg47),
         .SLV_REG48(slv_reg48),
-        .SLV_REG49(slv_reg49),*/
-        //.SLV_REG50(slv_reg50),
-        .SLV_REG51(slv_reg51),/*
+        .SLV_REG49(slv_reg49),
+        .SLV_REG50(slv_reg50),
+        .SLV_REG51(slv_reg51),
         .SLV_REG52(slv_reg52),
         .SLV_REG53(slv_reg53),
         .SLV_REG54(slv_reg54),

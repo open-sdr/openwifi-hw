@@ -17,34 +17,34 @@ module dot11 (
     // INPUT: RSSI
     input [10:0] rssi_half_db,
     // INPUT: I/Q sample
-    (* mark_debug = "true" *) input [31:0] sample_in,
-    (* mark_debug = "true" *) input sample_in_strobe,
-    (* mark_debug = "true" *) input soft_decoding,
+    input [31:0] sample_in,
+    input sample_in_strobe,
+    input soft_decoding,
 
     // OUTPUT: bytes and FCS status
-    (* mark_debug = "true" *) output reg demod_is_ongoing,
-    (* mark_debug = "true" *) output reg pkt_begin,
-    (* mark_debug = "true" *) output reg pkt_ht,
-    (* mark_debug = "true" *) output reg pkt_header_valid,
-    (* mark_debug = "true" *) output reg pkt_header_valid_strobe,
-    (* mark_debug = "true" *) output reg ht_unsupport,
-    (* mark_debug = "true" *) output reg [7:0] pkt_rate,
-    (* mark_debug = "true" *) output reg [15:0] pkt_len,
-    (* mark_debug = "true" *) output reg [15:0] pkt_len_total,
-    (* mark_debug = "true" *) output byte_out_strobe,
-    (* mark_debug = "true" *) output [7:0] byte_out,
-    (* mark_debug = "true" *) output reg [15:0] byte_count_total,
-    (* mark_debug = "true" *) output reg [15:0] byte_count,
-    (* mark_debug = "true" *) output reg fcs_out_strobe,
-    (* mark_debug = "true" *) output reg fcs_ok,
+    output reg demod_is_ongoing,
+    output reg pkt_begin,
+    output reg pkt_ht,
+    output reg pkt_header_valid,
+    output reg pkt_header_valid_strobe,
+    output reg ht_unsupport,
+    output reg [7:0] pkt_rate,
+    output reg [15:0] pkt_len,
+    output reg [15:0] pkt_len_total,
+    output byte_out_strobe,
+    output [7:0] byte_out,
+    output reg [15:0] byte_count_total,
+    output reg [15:0] byte_count,
+    output reg fcs_out_strobe,
+    output reg fcs_ok,
 
     /////////////////////////////////////////////////////////
     // DEBUG PORTS
     /////////////////////////////////////////////////////////
     
     // decode status
-    (* mark_debug = "true" *) output reg [3:0] state,
-    (* mark_debug = "true" *) output reg [3:0] status_code,
+    output reg [3:0] state,
+    output reg [3:0] status_code,
     output state_changed,
 
     // power trigger
@@ -205,13 +205,13 @@ reg do_descramble;
 reg [31:0] num_bits_to_decode;
 reg short_gi;
 
-(* mark_debug = "true" *) reg [3:0] old_state;
+reg [3:0] old_state;
 
 assign power_trigger = (rssi_half_db>=power_thres? 1: 0);
 assign state_changed = state != old_state;
 
 // SIGNAL information
-(* mark_debug = "true" *) reg [23:0] signal_bits;
+reg [23:0] signal_bits;
 
 assign legacy_rate = signal_bits[3:0];
 assign legacy_sig_rsvd = signal_bits[4];
@@ -222,8 +222,8 @@ assign legacy_sig_parity_ok = ~^signal_bits[17:0];
 
 
 // HT-SIG information
-(* mark_debug = "true" *) reg [23:0] ht_sig1;
-(* mark_debug = "true" *) reg [23:0] ht_sig2;
+reg [23:0] ht_sig1;
+reg [23:0] ht_sig2;
 
 assign ht_mcs = ht_sig1[6:0];
 assign ht_cbw = ht_sig1[7];
