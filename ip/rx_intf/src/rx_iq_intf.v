@@ -14,7 +14,7 @@
 	)
 	(
     // -------------debug purpose----------------
-    output reg trigger_out,
+    // output reg trigger_out,
     // -------------debug purpose----------------
 
     input wire rstn,
@@ -62,54 +62,54 @@
     wire fractional_flag;
     reg counter_top_flag;
 
-// ---------for debug purpose------------
-    // (* mark_debug = "true" *) wire [8:0] num_clk_per_sample;
-    // (* mark_debug = "true" *) wire [8:0] sampling_rate_mhz;
-    // (* mark_debug = "true" *) wire [8:0] num_clk_per_us;
-    // (* mark_debug = "true" *) wire [8:0] num_clk_per_us_new;
-    // (* mark_debug = "true" *) wire fractional_flag_shadow;
-    // (* mark_debug = "true" *) wire fractional_flag_shadow1;
-    // assign num_clk_per_sample = `NUM_CLK_PER_SAMPLE;
-    // assign sampling_rate_mhz = `SAMPLING_RATE_MHZ;
-    // assign num_clk_per_us = `NUM_CLK_PER_US;
-    // assign num_clk_per_us_new = (num_clk_per_sample*sampling_rate_mhz);
-    // assign fractional_flag_shadow = ((`NUM_CLK_PER_SAMPLE*`SAMPLING_RATE_MHZ) != `NUM_CLK_PER_US);
-    // assign fractional_flag_shadow1 = ((num_clk_per_sample*sampling_rate_mhz) != num_clk_per_us);
+// // ---------for debug purpose------------
+//     // (* mark_debug = "true" *) wire [8:0] num_clk_per_sample;
+//     // (* mark_debug = "true" *) wire [8:0] sampling_rate_mhz;
+//     // (* mark_debug = "true" *) wire [8:0] num_clk_per_us;
+//     // (* mark_debug = "true" *) wire [8:0] num_clk_per_us_new;
+//     // (* mark_debug = "true" *) wire fractional_flag_shadow;
+//     // (* mark_debug = "true" *) wire fractional_flag_shadow1;
+//     // assign num_clk_per_sample = `NUM_CLK_PER_SAMPLE;
+//     // assign sampling_rate_mhz = `SAMPLING_RATE_MHZ;
+//     // assign num_clk_per_us = `NUM_CLK_PER_US;
+//     // assign num_clk_per_us_new = (num_clk_per_sample*sampling_rate_mhz);
+//     // assign fractional_flag_shadow = ((`NUM_CLK_PER_SAMPLE*`SAMPLING_RATE_MHZ) != `NUM_CLK_PER_US);
+//     // assign fractional_flag_shadow1 = ((num_clk_per_sample*sampling_rate_mhz) != num_clk_per_us);
 
-    reg [4:0] rden_count;
-    reg [4:0] wren_count;
-    reg rden_reg;
-    reg wren_reg;
-    reg [4:0] counter_top_old;
-    always @( posedge clk )
-    begin
-      if ( rstn == 1'b0 ) begin
-        rden_count <= 0;
-        wren_count <= 0;
-        rden_reg <= 0;
-        wren_reg <= 0;
-        counter_top_old <= 0;
-        trigger_out <= 0;
-      end else begin
-        rden_reg <= rden;
-        wren_reg <= wren;
-        if (rden==1 && rden_reg==0)
-          rden_count <= 0;
-        else
-          rden_count <= rden_count + 1;
+//     reg [4:0] rden_count;
+//     reg [4:0] wren_count;
+//     reg rden_reg;
+//     reg wren_reg;
+//     reg [4:0] counter_top_old;
+//     always @( posedge clk )
+//     begin
+//       if ( rstn == 1'b0 ) begin
+//         rden_count <= 0;
+//         wren_count <= 0;
+//         rden_reg <= 0;
+//         wren_reg <= 0;
+//         counter_top_old <= 0;
+//         trigger_out <= 0;
+//       end else begin
+//         rden_reg <= rden;
+//         wren_reg <= wren;
+//         if (rden==1 && rden_reg==0)
+//           rden_count <= 0;
+//         else
+//           rden_count <= rden_count + 1;
 
-        if (wren==1 && wren_reg==0)
-          wren_count <= 0;
-        else
-          wren_count <= wren_count + 1;
+//         if (wren==1 && wren_reg==0)
+//           wren_count <= 0;
+//         else
+//           wren_count <= wren_count + 1;
         
-        if (counter == 0) begin // do the check and action when an I/Q is read
-          counter_top_old <= counter_top;
-          trigger_out <= (counter_top_old!=counter_top);
-        end
-      end
-    end
-// ------------end of debug----------
+//         if (counter == 0) begin // do the check and action when an I/Q is read
+//           counter_top_old <= counter_top;
+//           trigger_out <= (counter_top_old!=counter_top);
+//         end
+//       end
+//     end
+// // ------------end of debug----------
 
     assign rf_i = rf_iq[    (IQ_DATA_WIDTH-1) : 0];
     assign rf_q = rf_iq[((2*IQ_DATA_WIDTH)-1) : IQ_DATA_WIDTH];

@@ -45,9 +45,13 @@
 
     input wire slice_en0,
     input wire slice_en1,
+    input wire slice_en2,
+    input wire slice_en3,
 
     output wire high_tx_allowed0,
-    output wire high_tx_allowed1
+    output wire high_tx_allowed1,
+    output wire high_tx_allowed2,
+    output wire high_tx_allowed3
 	);
 
     localparam [1:0]  BACKOFF_CH_BUSY =      2'b00,
@@ -107,6 +111,8 @@
     assign backoff_done =  ( (backoff_state==BACKOFF_RUN) && (backoff_timer==0));
     assign high_tx_allowed0 = (backoff_done && slice_en0);
     assign high_tx_allowed1 = (backoff_done && slice_en1);
+    assign high_tx_allowed2 = (backoff_done && slice_en2);
+    assign high_tx_allowed3 = (backoff_done && slice_en3);
 
     n_sym_len14_pkt # (
     ) n_sym_ackcts_pkt_i (

@@ -1879,13 +1879,13 @@
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-04-21T12:23:40Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-06-08T14:15:04Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f5d543b_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@2ae5cc27_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@189bec21_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@672a9bc_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@54793b75_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@586e3d36_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3243f57b_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3ee705ea_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f477d5b_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@14931a46_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/rx_intf</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>

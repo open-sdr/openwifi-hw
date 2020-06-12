@@ -18,6 +18,18 @@
 #
 #*****************************************************************************************
 
+# -----------generate openwifi_rev.coe---------------
+set  fd  [open  "openwifi_rev.coe"  w]
+set HASHCODE [exec git log -1 --pretty=%h]
+puts $fd "memory_initialization_radix=16;"
+puts $fd "memory_initialization_vector="
+puts $fd $HASHCODE,
+puts $fd $HASHCODE,
+puts $fd $HASHCODE,
+puts $fd $HASHCODE,
+close $fd
+# ----end of generate openwifi_rev.coe---------------
+
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
 
@@ -385,9 +397,9 @@ set_property -name "name" -value "utils_1" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7z045ffg900-2 -flow {Vivado Synthesis 2018} -strategy "Flow_PerfOptimized_high" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part xc7z045ffg900-2 -flow {Vivado Synthesis 2018} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
 } else {
-  set_property strategy "Flow_PerfOptimized_high" [get_runs synth_1]
+  set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
   set_property flow "Vivado Synthesis 2018" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
@@ -414,28 +426,29 @@ set_property -name "options.more_options" -value "" -objects $obj
 }
 set obj [get_runs synth_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
-set_property -name "description" -value "Higher performance designs, resource sharing is turned off, the global fanout guide is set to a lower number, FSM extraction forced to one-hot, LUT combining is disabled, equivalent registers are preserved, SRL are inferred  with a larger threshold" -objects $obj
+set_property -name "description" -value "Vivado Synthesis Defaults" -objects $obj
 set_property -name "flow" -value "Vivado Synthesis 2018" -objects $obj
 set_property -name "name" -value "synth_1" -objects $obj
-set_property -name "needs_refresh" -value "1" -objects $obj
+set_property -name "needs_refresh" -value "0" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
-set_property -name "strategy" -value "Flow_PerfOptimized_high" -objects $obj
+set_property -name "gen_full_bitstream" -value "1" -objects $obj
+set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 set_property -name "steps.synth_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.synth_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.synth_design.args.flatten_hierarchy" -value "rebuilt" -objects $obj
 set_property -name "steps.synth_design.args.gated_clock_conversion" -value "off" -objects $obj
 set_property -name "steps.synth_design.args.bufg" -value "12" -objects $obj
-set_property -name "steps.synth_design.args.fanout_limit" -value "400" -objects $obj
+set_property -name "steps.synth_design.args.fanout_limit" -value "10000" -objects $obj
 set_property -name "steps.synth_design.args.directive" -value "Default" -objects $obj
-set_property -name "steps.synth_design.args.retiming" -value "1" -objects $obj
-set_property -name "steps.synth_design.args.fsm_extraction" -value "one_hot" -objects $obj
-set_property -name "steps.synth_design.args.keep_equivalent_registers" -value "1" -objects $obj
-set_property -name "steps.synth_design.args.resource_sharing" -value "off" -objects $obj
+set_property -name "steps.synth_design.args.retiming" -value "0" -objects $obj
+set_property -name "steps.synth_design.args.fsm_extraction" -value "auto" -objects $obj
+set_property -name "steps.synth_design.args.keep_equivalent_registers" -value "0" -objects $obj
+set_property -name "steps.synth_design.args.resource_sharing" -value "auto" -objects $obj
 set_property -name "steps.synth_design.args.control_set_opt_threshold" -value "auto" -objects $obj
-set_property -name "steps.synth_design.args.no_lc" -value "1" -objects $obj
+set_property -name "steps.synth_design.args.no_lc" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.no_srlextract" -value "0" -objects $obj
-set_property -name "steps.synth_design.args.shreg_min_size" -value "5" -objects $obj
+set_property -name "steps.synth_design.args.shreg_min_size" -value "3" -objects $obj
 set_property -name "steps.synth_design.args.max_bram" -value "-1" -objects $obj
 set_property -name "steps.synth_design.args.max_uram" -value "-1" -objects $obj
 set_property -name "steps.synth_design.args.max_dsp" -value "-1" -objects $obj
@@ -450,9 +463,9 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xc7z045ffg900-2 -flow {Vivado Implementation 2018} -strategy "Performance_ExtraTimingOpt" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part xc7z045ffg900-2 -flow {Vivado Implementation 2018} -strategy "Performance_Explore" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
-  set_property strategy "Performance_ExtraTimingOpt" [get_runs impl_1]
+  set_property strategy "Performance_Explore" [get_runs impl_1]
   set_property flow "Vivado Implementation 2018" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
@@ -863,7 +876,7 @@ set_property -name "options.more_options" -value "" -objects $obj
 }
 set obj [get_runs impl_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
-set_property -name "description" -value "To compensate for optimistic delay estimation, add extra delay cost to long distance and high fanout connections. (high setting, most pessimistic)" -objects $obj
+set_property -name "description" -value "Uses multiple algorithms for optimization, placement, and routing to get potentially better results." -objects $obj
 set_property -name "flow" -value "Vivado Implementation 2018" -objects $obj
 set_property -name "name" -value "impl_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
@@ -873,12 +886,15 @@ set_property -name "auto_incremental_checkpoint" -value "0" -objects $obj
 set_property -name "incremental_checkpoint" -value "" -objects $obj
 set_property -name "incremental_checkpoint.more_options" -value "" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
-set_property -name "strategy" -value "Performance_ExtraTimingOpt" -objects $obj
+set_property -name "gen_full_bitstream" -value "1" -objects $obj
+set_property -name "strategy" -value "Performance_Explore" -objects $obj
+set_property -name "steps.init_design.tcl.pre" -value "" -objects $obj
+set_property -name "steps.init_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.opt_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.opt_design.args.verbose" -value "0" -objects $obj
-set_property -name "steps.opt_design.args.directive" -value "ExploreWithRemap" -objects $obj
+set_property -name "steps.opt_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.power_opt_design.is_enabled" -value "0" -objects $obj
 set_property -name "steps.power_opt_design.tcl.pre" -value "" -objects $obj
@@ -886,7 +902,7 @@ set_property -name "steps.power_opt_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.power_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.place_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.place_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.place_design.args.directive" -value "ExtraTimingOpt" -objects $obj
+set_property -name "steps.place_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.place_design.args.more options" -value "" -objects $obj
 set_property -name "steps.post_place_power_opt_design.is_enabled" -value "0" -objects $obj
 set_property -name "steps.post_place_power_opt_design.tcl.pre" -value "" -objects $obj
@@ -895,16 +911,16 @@ set_property -name "steps.post_place_power_opt_design.args.more options" -value 
 set_property -name "steps.phys_opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.phys_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.phys_opt_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.phys_opt_design.args.directive" -value "AlternateFlowWithRetiming" -objects $obj
+set_property -name "steps.phys_opt_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.phys_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.route_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.route_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.route_design.args.directive" -value "MoreGlobalIterations" -objects $obj
+set_property -name "steps.route_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.route_design.args.more options" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "1" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "0" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.args.directive" -value "AddRetime" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.args.directive" -value "Default" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.pre" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.post" -value "" -objects $obj

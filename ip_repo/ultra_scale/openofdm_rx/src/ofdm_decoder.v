@@ -13,17 +13,17 @@ module ofdm_decoder
     input do_descramble,
     input [31:0] num_bits_to_decode,
 
-    (* mark_debug = "false" *) output [5:0] demod_out,
-    (* mark_debug = "false" *) output demod_out_strobe,
+    output [5:0] demod_out,
+    output demod_out_strobe,
 
-    (* mark_debug = "false" *) output [7:0] deinterleave_erase_out,
-    (* mark_debug = "false" *) output deinterleave_erase_out_strobe,
+    output [7:0] deinterleave_erase_out,
+    output deinterleave_erase_out_strobe,
 
-    (* mark_debug = "false" *) output conv_decoder_out,
-    (* mark_debug = "false" *) output conv_decoder_out_stb,
+    output conv_decoder_out,
+    output conv_decoder_out_stb,
 
-    (* mark_debug = "false" *) output descramble_out,
-    (* mark_debug = "false" *) output descramble_out_strobe,
+    output descramble_out,
+    output descramble_out_strobe,
 
     output [7:0] byte_out,
     output byte_out_strobe

@@ -18,7 +18,7 @@ module sync_long (
     output reg [31:0] sample_out,
     output reg sample_out_strobe,
 
-    (* mark_debug = "true" *) output reg [2:0] state
+    output reg [2:0] state
 );
 `include "common_params.v"
 
@@ -127,16 +127,16 @@ localparam S_FFT = 4;
 reg fft_start;
 //wire fft_start_delayed;
 
-(* mark_debug = "false" *) wire fft_in_stb;
-(* mark_debug = "false" *) reg fft_loading;
-(* mark_debug = "false" *) wire signed [15:0] fft_in_re;
-(* mark_debug = "false" *) wire signed [15:0] fft_in_im;
-(* mark_debug = "false" *) wire [22:0] fft_out_re;
-(* mark_debug = "false" *) wire [22:0] fft_out_im;
-(* mark_debug = "false" *) wire fft_ready;
-(* mark_debug = "false" *) wire fft_done;
-(* mark_debug = "false" *) wire fft_busy;
-(* mark_debug = "false" *) wire fft_valid;
+wire fft_in_stb;
+reg fft_loading;
+wire signed [15:0] fft_in_re;
+wire signed [15:0] fft_in_im;
+wire [22:0] fft_out_re;
+wire [22:0] fft_out_im;
+wire fft_ready;
+wire fft_done;
+wire fft_busy;
+wire fft_valid;
 
 wire [31:0] fft_out = {fft_out_re[22:7], fft_out_im[22:7]};
 
@@ -145,15 +145,15 @@ wire signed [15:0] raw_q;
 reg raw_stb;
 wire idle_line1, idle_line2 ;
 reg fft_din_data_tlast ;
-(* mark_debug = "false" *) wire fft_din_data_tlast_delayed ;
-(* mark_debug = "false" *) wire event_frame_started;
-(* mark_debug = "false" *) wire event_tlast_unexpected;
-(* mark_debug = "false" *) wire event_tlast_missing;
-(* mark_debug = "false" *) wire event_status_channel_halt;
-(* mark_debug = "false" *) wire event_data_in_channel_halt;
-(* mark_debug = "false" *) wire event_data_out_channel_halt;
-(* mark_debug = "false" *) wire s_axis_config_tready;
-(* mark_debug = "false" *) wire m_axis_data_tlast;
+wire fft_din_data_tlast_delayed ;
+wire event_frame_started;
+wire event_tlast_unexpected;
+wire event_tlast_missing;
+wire event_status_channel_halt;
+wire event_data_in_channel_halt;
+wire event_data_out_channel_halt;
+wire s_axis_config_tready;
+wire m_axis_data_tlast;
 
 ram_2port  #(.DWIDTH(32), .AWIDTH(IN_BUF_LEN_SHIFT)) in_buf (
     .clka(clock),

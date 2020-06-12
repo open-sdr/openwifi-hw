@@ -18,7 +18,9 @@
         input  wire ACC_ASK_DATA,
         output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count0,
         output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count1,
-    
+        output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count2,
+        output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count3,
+
         input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] S_AXIS_NUM_DMA_SYMBOL,
         output wire s_axis_recv_data_from_high,
 
@@ -43,34 +45,57 @@
 	                WRITE_FIFO  = 1'b1; // In this state FIFO is written with the
 
 	reg  mst_exec_state;  
+	
 	wire axis_tready0;
 	wire axis_tready1;
+	wire axis_tready2;
+	wire axis_tready3;
+
 	wire fifo_wren0;
 	wire fifo_wren1;
+	wire fifo_wren2;
+	wire fifo_wren3;
+
 	reg  [bit_num-1:0] write_pointer;
 	reg  writes_done;
-    wire EMPTY0;
-    wire FULL0;
-    wire EMPTY1;
-    wire FULL1;
     
+	wire EMPTY0;
+    wire EMPTY1;
+	wire EMPTY2;
+    wire EMPTY3;
+
+    wire FULL0;
+    wire FULL1;
+    wire FULL2;
+    wire FULL3;
+
     wire [C_S_AXIS_TDATA_WIDTH-1 : 0] DATA_TO_ACC0;
     wire [C_S_AXIS_TDATA_WIDTH-1 : 0] DATA_TO_ACC1;
+    wire [C_S_AXIS_TDATA_WIDTH-1 : 0] DATA_TO_ACC2;
+    wire [C_S_AXIS_TDATA_WIDTH-1 : 0] DATA_TO_ACC3;
     wire ACC_ASK_DATA0;
     wire ACC_ASK_DATA1;
-    
-    assign fifo_wren0 = (tx_queue_idx_indication_from_ps[0]==0?(S_AXIS_TVALID && axis_tready0):0);
-    assign fifo_wren1 = (tx_queue_idx_indication_from_ps[0]==1?(S_AXIS_TVALID && axis_tready1):0);
-	assign S_AXIS_TREADY	= (tx_queue_idx_indication_from_ps[0]==0?axis_tready0:axis_tready1);
+    wire ACC_ASK_DATA2;
+    wire ACC_ASK_DATA3;
+
+    assign fifo_wren0 = (tx_queue_idx_indication_from_ps==0?(S_AXIS_TVALID && axis_tready0):0);
+    assign fifo_wren1 = (tx_queue_idx_indication_from_ps==1?(S_AXIS_TVALID && axis_tready1):0);
+    assign fifo_wren2 = (tx_queue_idx_indication_from_ps==2?(S_AXIS_TVALID && axis_tready2):0);
+	assign fifo_wren3 = (tx_queue_idx_indication_from_ps==3?(S_AXIS_TVALID && axis_tready3):0);
+	assign S_AXIS_TREADY= ( tx_queue_idx_indication_from_ps[1]?(tx_queue_idx_indication_from_ps[0]?axis_tready3:axis_tready2):(tx_queue_idx_indication_from_ps[0]?axis_tready1:axis_tready0) );
 	assign axis_tready0 = ( (mst_exec_state == WRITE_FIFO) && (write_pointer <= S_AXIS_NUM_DMA_SYMBOL || (endless_mode==1)) ) && (!FULL0);
 	assign axis_tready1 = ( (mst_exec_state == WRITE_FIFO) && (write_pointer <= S_AXIS_NUM_DMA_SYMBOL || (endless_mode==1)) ) && (!FULL1);
+	assign axis_tready2 = ( (mst_exec_state == WRITE_FIFO) && (write_pointer <= S_AXIS_NUM_DMA_SYMBOL || (endless_mode==1)) ) && (!FULL2);
+	assign axis_tready3 = ( (mst_exec_state == WRITE_FIFO) && (write_pointer <= S_AXIS_NUM_DMA_SYMBOL || (endless_mode==1)) ) && (!FULL3);
 
 	assign s_axis_recv_data_from_high = mst_exec_state;
 	
-	assign DATA_TO_ACC =   (tx_queue_idx[0]==0?DATA_TO_ACC0:DATA_TO_ACC1);
-    assign EMPTYN_TO_ACC = (tx_queue_idx[0]==0?(!EMPTY0):(!EMPTY1));
-    assign ACC_ASK_DATA0 = (tx_queue_idx[0]==0?ACC_ASK_DATA:0);
-    assign ACC_ASK_DATA1 = (tx_queue_idx[0]==1?ACC_ASK_DATA:0);
+	assign DATA_TO_ACC =   (tx_queue_idx[1]?(tx_queue_idx[0]?DATA_TO_ACC3:DATA_TO_ACC2):(tx_queue_idx[0]?DATA_TO_ACC1:DATA_TO_ACC0));
+    assign EMPTYN_TO_ACC = (tx_queue_idx[1]?(tx_queue_idx[0]?(!EMPTY3):(!EMPTY2)):(tx_queue_idx[0]?(!EMPTY1):(!EMPTY0)));
+    assign ACC_ASK_DATA0 = (tx_queue_idx==0?ACC_ASK_DATA:0);
+    assign ACC_ASK_DATA1 = (tx_queue_idx==1?ACC_ASK_DATA:0);
+    assign ACC_ASK_DATA2 = (tx_queue_idx==2?ACC_ASK_DATA:0);
+    assign ACC_ASK_DATA3 = (tx_queue_idx==3?ACC_ASK_DATA:0);
 
 	always @(posedge S_AXIS_ACLK) 
 	begin  
@@ -123,7 +148,7 @@
 	      end  
 	end
 
-    fifo64_1clk fifo64_1clk_i0 ( //queue0
+    fifo64_1clk_dep4k fifo64_1clk_dep4k_i0 ( //queue0
         .CLK(S_AXIS_ACLK),
         .DATAO(DATA_TO_ACC0),
         .DI(S_AXIS_TDATA),
@@ -135,7 +160,7 @@
         .data_count(data_count0)
     );
 
-    fifo64_1clk fifo64_1clk_i1 ( //queue1
+    fifo64_1clk_dep4k fifo64_1clk_dep4k_i1 ( //queue1
         .CLK(S_AXIS_ACLK),
         .DATAO(DATA_TO_ACC1),
         .DI(S_AXIS_TDATA),
@@ -145,6 +170,30 @@
         .RST(!S_AXIS_ARESETN),
         .WREN(fifo_wren1),
         .data_count(data_count1)
+    );
+
+    fifo64_1clk fifo64_1clk_dep4k_i2 ( //queue2
+        .CLK(S_AXIS_ACLK),
+        .DATAO(DATA_TO_ACC2),
+        .DI(S_AXIS_TDATA),
+        .EMPTY(EMPTY2),
+        .FULL(FULL2),
+        .RDEN(ACC_ASK_DATA2),
+        .RST(!S_AXIS_ARESETN),
+        .WREN(fifo_wren2),
+        .data_count(data_count2)
+    );
+
+    fifo64_1clk fifo64_1clk_dep4k_i3 ( //queue3
+        .CLK(S_AXIS_ACLK),
+        .DATAO(DATA_TO_ACC3),
+        .DI(S_AXIS_TDATA),
+        .EMPTY(EMPTY3),
+        .FULL(FULL3),
+        .RDEN(ACC_ASK_DATA3),
+        .RST(!S_AXIS_ARESETN),
+        .WREN(fifo_wren3),
+        .data_count(data_count3)
     );
 
 	endmodule

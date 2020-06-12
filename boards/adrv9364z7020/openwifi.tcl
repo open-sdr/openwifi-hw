@@ -18,6 +18,18 @@
 #   run results please launch the synthesis/implementation runs as needed.
 #*****************************************************************************************
 
+# -----------generate openwifi_rev.coe---------------
+set  fd  [open  "openwifi_rev.coe"  w]
+set HASHCODE [exec git log -1 --pretty=%h]
+puts $fd "memory_initialization_radix=16;"
+puts $fd "memory_initialization_vector="
+puts $fd $HASHCODE,
+puts $fd $HASHCODE,
+puts $fd $HASHCODE,
+puts $fd $HASHCODE,
+close $fd
+# ----end of generate openwifi_rev.coe---------------
+
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
 

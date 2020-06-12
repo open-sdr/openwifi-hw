@@ -10,7 +10,7 @@ module dot11_tx
   input  wire        phy_tx_arest,
 
   input  wire        phy_tx_start,
-  output reg         phy_tx_done,
+  output wire        phy_tx_done,
   output reg         phy_tx_started,
 
   input  wire [6:0]  init_pilot_scram_state,
@@ -25,8 +25,49 @@ module dot11_tx
   output wire [15:0] result_q
 );
 
-reg  FSM3_reset;        // Reset after transmiting a whole packet
-wire reset_int = phy_tx_arest | FSM3_reset;
+reg        FSM3_reset_old;
+// (* mark_debug = "true" *) reg        FSM3_reset;        // Reset after transmiting a whole packet
+reg        FSM3_reset;        // Reset after transmiting a whole packet
+reg  [2:0] safe_reset_counter;
+wire       reset_int;
+
+// decouple FSM3_reset and reset_int. generate safe/longer reset signal
+always @(posedge clk)
+if (phy_tx_arest) begin
+    FSM3_reset_old <= 0;
+end else begin
+    FSM3_reset_old <= FSM3_reset;
+end
+
+always @(posedge clk)
+if ( phy_tx_arest | (FSM3_reset_old==0 && FSM3_reset==1) ) begin
+    safe_reset_counter <= 0;
+end else begin
+    safe_reset_counter <= (safe_reset_counter<7?(safe_reset_counter+1):safe_reset_counter);
+end
+
+assign reset_int = (safe_reset_counter>0 && safe_reset_counter<7);
+
+// make sure phy_tx_done is a pulse and ready for next packet
+reg         phy_tx_done_reg0;
+reg         phy_tx_done_reg1;
+reg         phy_tx_done_reg2;
+reg         phy_tx_done_reg3;
+
+always @(posedge clk)
+if (phy_tx_arest) begin
+    phy_tx_done_reg0 <= 0;
+    phy_tx_done_reg1 <= 0;
+    phy_tx_done_reg2 <= 0;
+    phy_tx_done_reg3 <= 0;
+end else begin
+    phy_tx_done_reg0 <= (FSM3_reset_old==1 && FSM3_reset==0);
+    phy_tx_done_reg1 <= phy_tx_done_reg0;
+    phy_tx_done_reg2 <= phy_tx_done_reg1;
+    phy_tx_done_reg3 <= phy_tx_done_reg2;
+end
+
+assign phy_tx_done = phy_tx_done_reg3;
 
 // Data collection states
 reg [1:0] state1;
@@ -167,7 +208,7 @@ convenc convenc (
     .bit_in(bit_scram),
     .bits_out(bits_enc)
 );
-assign enc_reset = phy_tx_arest | state1 == S1_WAIT_PKT | plcp_bit_cnt == 23;
+assign enc_reset = reset_int | state1 == S1_WAIT_PKT | plcp_bit_cnt == 23;
 assign enc_en = state1 >= S1_SIGNAL && state11 != S11_RESET && bits_enc_fifo_iready;
 
 //////////////////////////////////////////////////////////////////////////
@@ -602,7 +643,7 @@ end
 always @(posedge clk)
 if (reset_int) begin
     preamble_addr <= 0;
-    phy_tx_done <= 0;
+//    phy_tx_done_reg <= 0;
     FSM3_reset <= 0;
 
     state3 <= S3_WAIT_PKT;
@@ -644,7 +685,7 @@ end else if(result_iq_ready == 1) begin
 
     S3_DATA: begin
         if(pkt_iq_sent == pkt_iq2send-2 && CP_iq_sent == CP_iq2send) begin
-            phy_tx_done <= 1;
+            // phy_tx_done_reg <= 1;
             FSM3_reset <= 1;
         end
     end

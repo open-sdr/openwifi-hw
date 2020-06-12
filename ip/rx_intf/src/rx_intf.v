@@ -210,7 +210,7 @@
     wire rx_pkt_sn_plus_one;
 
     // -------------debug purpose----------------
-    wire trigger_out_internal;
+    wire trigger_out_internal = 1;
     assign trigger_out1 = slv_reg1[4];
     assign trigger_out = (slv_reg1[0]&trigger_out_internal);
     // -------------debug purpose----------------
@@ -383,7 +383,7 @@
         .IQ_DATA_WIDTH(IQ_DATA_WIDTH)
     ) rx_iq_intf_i (
         // ----------- debug purpose ---------------
-        .trigger_out(trigger_out_internal),
+        //.trigger_out(trigger_out_internal),
         // ----------- debug purpose ---------------
 
         .rstn(s00_axis_aresetn&(~slv_reg0[3])),

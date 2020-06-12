@@ -12,31 +12,31 @@
         input wire rstn,
 
         input wire [13:0] bb_rf_delay_count_top,
-        (* mark_debug = "true" *) input wire phy_tx_started,
-        (* mark_debug = "true" *) input wire phy_tx_done,
-	    (* mark_debug = "true" *) input wire tx_iq_fifo_empty,
+        input wire phy_tx_started,
+        input wire phy_tx_done,
+	    input wire tx_iq_fifo_empty,
 
         // input wire tsf_pulse_1M, // for debug
 
-        (* mark_debug = "true" *) output wire tx_bb_is_ongoing,
-        (* mark_debug = "true" *) output reg  tx_rf_is_ongoing,
-        (* mark_debug = "true" *) output wire pulse_tx_bb_end
+        output wire tx_bb_is_ongoing,
+        output reg  tx_rf_is_ongoing,
+        output wire pulse_tx_bb_end
 	);
 
-    (* mark_debug = "true" *) reg tx_bb_is_ongoing_internal;
+    reg tx_bb_is_ongoing_internal;
     reg tx_bb_is_ongoing_internal0;
     reg tx_bb_is_ongoing_internal1;
     reg tx_bb_is_ongoing_internal2;
     reg tx_bb_is_ongoing_internal3;
-    (* mark_debug = "true" *) reg search_indication;
-    (* mark_debug = "true" *) reg tx_iq_fifo_empty_reg;
-    (* mark_debug = "true" *) reg [13:0] bb_rf_delay_count;
+    reg search_indication;
+    reg tx_iq_fifo_empty_reg;
+    reg [13:0] bb_rf_delay_count;
 
-    (* mark_debug = "true" *) wire pulse_tx_bb_start;
-    (* mark_debug = "true" *) reg tx_iq_running;
+    wire pulse_tx_bb_start;
+    reg tx_iq_running;
 
-    (* mark_debug = "true" *) reg [13:0] bb_rf_delay_count_top_scale;
-    (* mark_debug = "true" *) reg [13:0] bb_rf_delay_count_top_scale_plus1;
+    reg [13:0] bb_rf_delay_count_top_scale;
+    reg [13:0] bb_rf_delay_count_top_scale_plus1;
 
     // make sure tx_control.v state machine can make decision before the end of tx
     assign tx_bb_is_ongoing = (tx_bb_is_ongoing_internal|tx_bb_is_ongoing_internal0|tx_bb_is_ongoing_internal1|tx_bb_is_ongoing_internal2|tx_bb_is_ongoing_internal3);//extended version to make sure pulse_tx_bb_end is inside tx_bb_is_ongoing
