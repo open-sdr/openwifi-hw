@@ -3,4 +3,4 @@
 	url = https://github.com/analogdevicesinc/hdl.git
 [submodule "ip/openofdm_rx"]
 	path = ip/openofdm_rx
-	url = https://github.com/open-sdr/openofdm
+	url = https://github.com/open-sdr/openofdm.git

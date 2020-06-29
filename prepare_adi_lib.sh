@@ -23,7 +23,9 @@ git submodule update adi-hdl
 cd ./adi-hdl/library
 # git reset --hard 2019_r1
 git reset --hard f61d9707eb0a62533efd6facab59ab2444da94c9
-source $XILINX_DIR/Vivado/2018.3/settings64.sh
-make
+
+# # the lib will be built when needed
+# source $XILINX_DIR/Vivado/2018.3/settings64.sh
+# make
 
 cd $home_dir

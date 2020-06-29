@@ -29,6 +29,7 @@ export XILINX_DIR=your_Xilinx_directory
 
 ```
 ./prepare_adi_board_ip.sh $XILINX_DIR $BOARD_NAME
+(Don't need to wait till the building end. When you see "Building ABCD project [...", you can stop it.)
 ```
 * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado. Otherwise there will be errors when you build the whole FPGA design. 
 * Open Vivado, then in Vivado Tcl Console:
