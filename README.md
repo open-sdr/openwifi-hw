@@ -12,8 +12,8 @@ Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opens
 **board_name** options:
 - **zc706_fmcs2** (Xilinx ZC706 dev board + FMCOMMS2/3/4)
 - **zed_fmcs2** (Xilinx zed board + FMCOMMS2/3/4)
-- **adrv9361z7035** (ADRV9361Z7035 SOM)
-- **adrv9364z7020** (ADRV9364Z7020 SOM)
+- **adrv9361z7035** (ADRV9361-Z7035 + ADRV1CRR-BOB/FMC)
+- **adrv9364z7020** (ADRV9364-Z7020 + ADRV1CRR-BOB)
 - **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4)
 - **zcu102_fmcs2** (Xilinx ZCU102 dev board + FMCOMMS2/3/4)
 
