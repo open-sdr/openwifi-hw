@@ -1,7 +1,7 @@
 //Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
 //Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
-//Date        : Mon Mar  9 20:33:56 2020
+//Date        : Tue Jun 16 10:28:12 2020
 //Host        : jxj-xps running 64-bit Ubuntu 18.04.4 LTS
 //Command     : generate_target duc_bank_core.bd
 //Design      : duc_bank_core

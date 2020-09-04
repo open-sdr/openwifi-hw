@@ -1036,7 +1036,7 @@ e false}}}}}}} TUSER_WIDTH 0}</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_LATENCY</spirit:name>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_LATENCY">60</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_LATENCY">36</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>ALGORITHM_TYPE</spirit:name>
@@ -1244,11 +1244,11 @@ e false}}}}}}} TUSER_WIDTH 0}</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>latency_configuration</spirit:name>
-      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.latency_configuration" spirit:choiceRef="choice_list_93ab811d" spirit:order="20">Automatic</spirit:value>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.latency_configuration" spirit:choiceRef="choice_list_93ab811d" spirit:order="20">Manual</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>latency</spirit:name>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.latency" spirit:order="21" spirit:minimum="60" spirit:maximum="60" spirit:rangeType="long">60</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.latency" spirit:order="21" spirit:minimum="0" spirit:maximum="60" spirit:rangeType="long">36</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>ACLKEN</spirit:name>
@@ -1302,6 +1302,7 @@ e false}}}}}}} TUSER_WIDTH 0}</spirit:value>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.divisor_width" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.fractional_width" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.latency" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.latency_configuration" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.operand_sign" xilinx:valueSource="propagated" xilinx:valuePermission="bd_and_user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.remainder_type" xilinx:valueSource="user"/>
       </xilinx:configElementInfos>

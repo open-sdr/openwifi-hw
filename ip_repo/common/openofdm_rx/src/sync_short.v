@@ -77,6 +77,62 @@ reg has_neg;
     .clk(clock), .rst(reset), .strobe(set_stb), .addr(set_addr), .in(set_data),
     .out(min_plateau), .changed());*/
 
+/*
+// =============save signal to file for matlab bit-true comparison===========
+integer file_open_trigger = 0;
+integer mag_sq_fd, mag_sq_avg_fd, prod_fd, prod_avg_fd, phase_in_fd, phase_out_fd, delay_prod_avg_mag_fd;
+wire signed [31:0] prod_i, prod_q, prod_avg_i, prod_avg_q, phase_in_i_signed, phase_in_q_signed, phase_out_signed;
+assign prod_i = prod[63:32];
+assign prod_q = prod[31:0];
+assign prod_avg_i = prod_avg[63:32];
+assign prod_avg_q = prod_avg[31:0];
+assign phase_in_i_signed = phase_in_i;
+assign phase_in_q_signed = phase_in_q;
+assign phase_out_signed = phase_out;
+
+always @(posedge clock) begin
+    file_open_trigger = file_open_trigger + 1;
+    if (file_open_trigger==1) begin
+        mag_sq_fd = $fopen("./mag_sq.txt", "w");
+        mag_sq_avg_fd = $fopen("./mag_sq_avg.txt", "w");
+        prod_fd = $fopen("./prod.txt", "w");
+        prod_avg_fd = $fopen("./prod_avg.txt", "w");
+        phase_in_fd = $fopen("./phase_in.txt", "w");
+        phase_out_fd = $fopen("./phase_out.txt", "w");
+        delay_prod_avg_mag_fd = $fopen("./delay_prod_avg_mag.txt", "w");
+    end
+
+    if (mag_sq_stb && enable && (~reset) ) begin
+        $fwrite(mag_sq_fd, "%d\n", mag_sq);
+        $fflush(mag_sq_fd);
+    end
+    if (mag_sq_avg_stb && enable && (~reset) ) begin
+        $fwrite(mag_sq_avg_fd, "%d\n", mag_sq_avg);
+        $fflush(mag_sq_avg_fd);
+    end
+    if (prod_stb && enable && (~reset) ) begin
+        $fwrite(prod_fd, "%d %d\n", prod_i, prod_q);
+        $fflush(prod_fd);
+    end
+    if (prod_avg_stb && enable && (~reset) ) begin
+        $fwrite(prod_avg_fd, "%d %d\n", prod_avg_i, prod_avg_q);
+        $fflush(prod_avg_fd);
+    end
+    if (phase_in_stb && enable && (~reset) ) begin
+        $fwrite(phase_in_fd, "%d %d\n", phase_in_i_signed, phase_in_q_signed);
+        $fflush(phase_in_fd);
+    end
+    if (phase_out_stb && enable && (~reset) ) begin
+        $fwrite(phase_out_fd, "%d\n", phase_out_signed);
+        $fflush(phase_out_fd);
+    end
+    if (delay_prod_avg_mag_stb && enable && (~reset) ) begin
+        $fwrite(delay_prod_avg_mag_fd, "%d\n", delay_prod_avg_mag);
+        $fflush(delay_prod_avg_mag_fd);
+    end
+end
+// ==========end of save signal to file for matlab bit-true comparison===========
+*/
 
 complex_to_mag_sq mag_sq_inst (
     .clock(clock),

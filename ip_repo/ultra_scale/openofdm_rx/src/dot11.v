@@ -178,6 +178,7 @@ reg sync_short_reset;
 reg sync_long_reset;
 wire sync_short_enable = state == S_SYNC_SHORT;
 reg sync_long_enable;
+wire [15:0] num_ofdm_symbol;
 
 reg equalizer_reset;
 reg equalizer_enable;
@@ -325,7 +326,8 @@ sync_long sync_long_inst (
     .state(sync_long_state),
 
     .sample_out(sync_long_out),
-    .sample_out_strobe(sync_long_out_strobe)
+    .sample_out_strobe(sync_long_out_strobe),
+    .num_ofdm_symbol(num_ofdm_symbol)
 );
 
 equalizer equalizer_inst (
@@ -781,7 +783,16 @@ always @(posedge clock) begin
                     state <= S_HT_SIG_ERROR;
                 end else begin
                     sync_long_out_count <= 0;
-                    state <= S_HT_STS;
+                    // When decoding 80211n packets, a lower clock running platform (i.e. zedboard @ 100MHz) will spend more than 4usec to decode an entire OFDM symbol.
+                    // This creates misalignment between the control state and the actual decoding process since a feedback mechanism is not applied.
+                    // By the time the 1st OFDM DATA symbol is being decoded, the control is in HT-LTS state and the equalizer module mistakenly calculates the channel gain.
+                    // A quick fix for this is to bypass the HT-STS symbol to re-establish the alignment. Afterall, HT-STS is not used in this module.
+                    if (num_ofdm_symbol == 5) begin
+                        state <= S_HT_STS;
+                    end else begin
+                        ht_next <= 1;
+                        state <= S_HT_LTS;
+                    end
                 end
             end
 

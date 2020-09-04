@@ -34,7 +34,7 @@ wire div_out_stb;
 wire [`ATAN_LUT_LEN_SHIFT-1:0] atan_addr;
 wire [`ATAN_LUT_SCALE_SHIFT-1:0] atan_data;
 
-assign atan_addr = quotient[`ATAN_LUT_LEN_SHIFT-1:0];
+assign atan_addr = (quotient>255?255:quotient[`ATAN_LUT_LEN_SHIFT-1:0]);
 wire signed [`ATAN_LUT_SCALE_SHIFT:0] _phase = {1'b0, atan_data};
 
 reg [2:0] quadrant;

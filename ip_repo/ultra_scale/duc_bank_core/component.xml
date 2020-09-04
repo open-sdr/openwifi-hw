@@ -214,7 +214,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>fdba139d</spirit:value>
+            <spirit:value>bd530721</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -236,7 +236,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>448bffe3</spirit:value>
+            <spirit:value>636599a9</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -412,7 +412,7 @@
       <spirit:file>
         <spirit:name>src/duc_bank_core.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_e2e8a7ec</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_6795832a</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -509,13 +509,13 @@
       <xilinx:displayName>duc_bank_core_v1_0</xilinx:displayName>
       <xilinx:definitionSource>IPI</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-03-09T19:34:07Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-06-16T08:28:23Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@33fbdfe7_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@49636d62_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@18417b58_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5672fa85_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3bc7f77d_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6c24b4e6_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5968f12a_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7c489beb_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@26d9c42_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39f6492_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/duc_bank_core</xilinx:tag>
       </xilinx:tags>
       <xilinx:configElementInfos>
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.BW20_DATA.HAS_TKEEP" xilinx:valueSource="user"/>
@@ -535,7 +535,7 @@
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="54cdbe85"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="d6f8cf56"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="7ddc09c1"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="e60b5186"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="e231c060"/>
     </xilinx:packagingInfo>
