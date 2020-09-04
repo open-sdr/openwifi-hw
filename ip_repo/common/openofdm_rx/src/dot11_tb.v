@@ -55,8 +55,8 @@ wire [15:0] byte_count_total;
 wire [15:0] byte_count;
 wire [15:0] pkt_len_total;
 wire [15:0] pkt_len;
-wire [63:0] word_out;
-wire word_out_strobe;
+// wire [63:0] word_out;
+// wire word_out_strobe;
 
 reg set_stb;
 reg [7:0] set_addr;
@@ -92,6 +92,7 @@ integer file_i, file_q, file_rssi_half_db, iq_sample_file;
 //`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11n_65mbps_98_5f_d3_c7_06_27_e8_de_27_90_6e_42_openwifi.txt" 
 //`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11a_48mbps_qos_data_e4_90_7e_15_2a_16_e8_de_27_90_6e_42_openwifi.txt" 
 //`define NUM_SAMPLE 4560
+
 `define SAMPLE_FILE "../../../../../testing_inputs/simulated/openofdm_tx/PL_100Bytes/54Mbps.txt"
 `define NUM_SAMPLE 2048
 
@@ -115,33 +116,44 @@ initial begin
     set_data = 0;
 
     # 20 set_stb = 0;
-
-    iq_sample_file = $fopen(`SAMPLE_FILE, "r");
-
-    bb_sample_fd = $fopen("./sample_in.txt", "w");
-    power_trigger_fd = $fopen("./power_trigger.txt", "w");
-    short_preamble_detected_fd = $fopen("./short_preamble_detected.txt", "w");
-
-    sync_long_metric_fd = $fopen("./sync_long_metric.txt", "w");
-    long_preamble_detected_fd = $fopen("./sync_long_frame_detected.txt", "w");
-    sync_long_out_fd = $fopen("./sync_long_out.txt", "w");
-
-    equalizer_out_fd = $fopen("./equalizer_out.txt", "w");
-
-    demod_out_fd = $fopen("./demod_out.txt", "w");
-    deinterleave_erase_out_fd = $fopen("./deinterleave_erase_out.txt", "w");
-    conv_out_fd = $fopen("./conv_out.txt", "w");
-    descramble_out_fd = $fopen("./descramble_out.txt", "w");
-
-    signal_fd = $fopen("./signal_out.txt", "w");
-
-    byte_out_fd = $fopen("./byte_out.txt", "w");
 end
 
+integer file_open_trigger = 0;
+always @(posedge clock) begin
+    file_open_trigger = file_open_trigger + 1;
+    if (file_open_trigger==1) begin
+        iq_sample_file = $fopen(`SAMPLE_FILE, "r");
 
+        bb_sample_fd = $fopen("./sample_in.txt", "w");
+        power_trigger_fd = $fopen("./power_trigger.txt", "w");
+        short_preamble_detected_fd = $fopen("./short_preamble_detected.txt", "w");
+
+        sync_long_metric_fd = $fopen("./sync_long_metric.txt", "w");
+        long_preamble_detected_fd = $fopen("./sync_long_frame_detected.txt", "w");
+        sync_long_out_fd = $fopen("./sync_long_out.txt", "w");
+
+        equalizer_out_fd = $fopen("./equalizer_out.txt", "w");
+
+        demod_out_fd = $fopen("./demod_out.txt", "w");
+        deinterleave_erase_out_fd = $fopen("./deinterleave_erase_out.txt", "w");
+        conv_out_fd = $fopen("./conv_out.txt", "w");
+        descramble_out_fd = $fopen("./descramble_out.txt", "w");
+
+        signal_fd = $fopen("./signal_out.txt", "w");
+
+        byte_out_fd = $fopen("./byte_out.txt", "w");
+    end
+end
+
+always begin //100MHz
+    #5 clock = !clock;
+end
+
+/*
 always begin //200MHz
     #2.5 clock = !clock;
 end
+*/
 
 always @(posedge clock) begin
     if (reset) begin
@@ -150,7 +162,8 @@ always @(posedge clock) begin
         sample_in_strobe <= 0;
         addr <= 0;
     end else if (enable) begin
-        if (clk_count == 9) begin
+	if (clk_count == 4) begin  // for 100M; 100/20 = 5
+        // if (clk_count == 9) begin // for 200M; 200/20 = 10
             sample_in_strobe <= 1;
             //$fscanf(iq_sample_file, "%d %d %d", file_i, file_q, file_rssi_half_db);
             $fscanf(iq_sample_file, "%d %d", file_i, file_q);
@@ -275,6 +288,7 @@ dot11 dot11_inst (
     .rssi_half_db(rssi_half_db),
     .sample_in(sample_in),
     .sample_in_strobe(sample_in_strobe),
+    .soft_decoding(1'b1),
 
     .state(dot11_state),
 
@@ -321,6 +335,7 @@ dot11 dot11_inst (
     .legacy_sig_stb(legacy_sig_stb)
 );
 
+/*
 byte_to_word_fcs_sn_insert byte_to_word_fcs_sn_insert_inst (
     .clk(clock),
     .rstn((~reset)&(~pkt_header_valid_strobe)),
@@ -336,4 +351,6 @@ byte_to_word_fcs_sn_insert byte_to_word_fcs_sn_insert_inst (
     .word_out(word_out),
     .word_out_strobe(word_out_strobe)
 );
+*/
+
 endmodule

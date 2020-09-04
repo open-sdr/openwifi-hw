@@ -16,6 +16,8 @@
         parameter integer TSF_TIMER_WIDTH = 64 // according to 802.11 standard
 	)
 	(
+        //(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
+        input  wire [31:0] git_rev,
 	    // ad9361 status and ctrl
 	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
 
@@ -238,7 +240,7 @@
     wire [6:0] sifs_time;
     wire [6:0] phy_rx_start_delay_time;
 
-    assign slv_reg63 = 32'hf016055a;//version -- internet git commit revision
+    assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
 
     assign erp_short_slot = slv_reg4[24];
     assign band = slv_reg4[19:16];

@@ -417,9 +417,9 @@ set_property -name "name" -value "utils_1" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7z020clg400-1 -flow {Vivado Synthesis 2018} -strategy "Flow_AreaOptimized_high" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part xc7z020clg400-1 -flow {Vivado Synthesis 2018} -strategy "Flow_AreaOptimized_medium" -report_strategy {No Reports} -constrset constrs_1
 } else {
-  set_property strategy "Flow_AreaOptimized_high" [get_runs synth_1]
+  set_property strategy "Flow_AreaOptimized_medium" [get_runs synth_1]
   set_property flow "Vivado Synthesis 2018" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
@@ -446,7 +446,7 @@ set_property -name "options.more_options" -value "" -objects $obj
 }
 set obj [get_runs synth_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
-set_property -name "description" -value "Performs general area optimizations including changing the threshold for control set optimizations, forcing ternary adder implementation, applying lower thresholds for use of carry chain in comparators and also area optimized mux optimizations." -objects $obj
+set_property -name "description" -value "Performs general area optimizations including changing the threshold for control set optimizations, forcing ternary adder implementation, lowering multiplier threshold of inference into DSP blocks, moving  shift register into BRAM, applying lower thresholds for use of carry chain in comparators and also area optimized mux optimizations" -objects $obj
 set_property -name "flow" -value "Vivado Synthesis 2018" -objects $obj
 set_property -name "name" -value "synth_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
@@ -454,19 +454,19 @@ set_property -name "part" -value "xc7z020clg400-1" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "gen_full_bitstream" -value "1" -objects $obj
-set_property -name "strategy" -value "Flow_AreaOptimized_high" -objects $obj
+set_property -name "strategy" -value "Flow_AreaOptimized_medium" -objects $obj
 set_property -name "steps.synth_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.synth_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.synth_design.args.flatten_hierarchy" -value "rebuilt" -objects $obj
 set_property -name "steps.synth_design.args.gated_clock_conversion" -value "off" -objects $obj
 set_property -name "steps.synth_design.args.bufg" -value "12" -objects $obj
 set_property -name "steps.synth_design.args.fanout_limit" -value "10000" -objects $obj
-set_property -name "steps.synth_design.args.directive" -value "AreaOptimized_high" -objects $obj
+set_property -name "steps.synth_design.args.directive" -value "AreaOptimized_medium" -objects $obj
 set_property -name "steps.synth_design.args.retiming" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.fsm_extraction" -value "auto" -objects $obj
 set_property -name "steps.synth_design.args.keep_equivalent_registers" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.resource_sharing" -value "auto" -objects $obj
-set_property -name "steps.synth_design.args.control_set_opt_threshold" -value "auto" -objects $obj
+set_property -name "steps.synth_design.args.control_set_opt_threshold" -value "1" -objects $obj
 set_property -name "steps.synth_design.args.no_lc" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.no_srlextract" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.shreg_min_size" -value "3" -objects $obj
@@ -484,9 +484,9 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xc7z020clg400-1 -flow {Vivado Implementation 2018} -strategy "Performance_Explore" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part xc7z020clg400-1 -flow {Vivado Implementation 2018} -strategy "Area_ExploreWithRemap" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
-  set_property strategy "Performance_Explore" [get_runs impl_1]
+  set_property strategy "Area_ExploreWithRemap" [get_runs impl_1]
   set_property flow "Vivado Implementation 2018" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
@@ -897,7 +897,7 @@ set_property -name "options.more_options" -value "" -objects $obj
 }
 set obj [get_runs impl_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
-set_property -name "description" -value "Uses multiple algorithms for optimization, placement, and routing to get potentially better results." -objects $obj
+set_property -name "description" -value "Adds the remap optimization to reduce logic" -objects $obj
 set_property -name "flow" -value "Vivado Implementation 2018" -objects $obj
 set_property -name "name" -value "impl_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
@@ -909,14 +909,14 @@ set_property -name "incremental_checkpoint" -value "" -objects $obj
 set_property -name "incremental_checkpoint.more_options" -value "" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "gen_full_bitstream" -value "1" -objects $obj
-set_property -name "strategy" -value "Performance_Explore" -objects $obj
+set_property -name "strategy" -value "Area_ExploreWithRemap" -objects $obj
 set_property -name "steps.init_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.init_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.opt_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.opt_design.args.verbose" -value "0" -objects $obj
-set_property -name "steps.opt_design.args.directive" -value "Explore" -objects $obj
+set_property -name "steps.opt_design.args.directive" -value "ExploreWithRemap" -objects $obj
 set_property -name "steps.opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.power_opt_design.is_enabled" -value "0" -objects $obj
 set_property -name "steps.power_opt_design.tcl.pre" -value "" -objects $obj
@@ -939,10 +939,10 @@ set_property -name "steps.route_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.route_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.route_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.route_design.args.more options" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "0" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.args.directive" -value "Default" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.pre" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.post" -value "" -objects $obj

@@ -17,6 +17,7 @@ module sync_long (
 
     output reg [31:0] sample_out,
     output reg sample_out_strobe,
+    output reg [15:0] num_ofdm_symbol,
 
     output reg [2:0] state
 );
@@ -52,6 +53,53 @@ reg signed [31:0] next_phase_correction;
 
 reg reset_delay ; // add reset signal for fft, somehow all kinds of event flag raises when feeding real rf signal, maybe reset will help
 wire fft_resetn ;
+
+/*
+// =============save signal to file for matlab bit-true comparison===========
+integer file_open_trigger = 0;
+integer sum_fd, metric_fd, phase_correction_fd, next_phase_correction_fd, fft_in_fd, fft_out_fd;
+wire signed [15:0] fft_out_re_signed, fft_out_im_signed;
+// wire signed [31:0] prod_i, prod_q, prod_avg_i, prod_avg_q, phase_in_i_signed, phase_in_q_signed, phase_out_signed;
+// assign prod_i = prod[63:32];
+assign fft_out_re_signed = fft_out_re[22:7];
+assign fft_out_im_signed = fft_out_im[22:7];
+
+always @(posedge clock) begin
+    file_open_trigger = file_open_trigger + 1;
+    if (file_open_trigger==1) begin
+        sum_fd = $fopen("./sum.txt", "w");
+        metric_fd = $fopen("./metric.txt", "w");
+        phase_correction_fd = $fopen("./phase_correction.txt", "w");
+        next_phase_correction_fd = $fopen("./next_phase_correction.txt", "w");
+        fft_in_fd = $fopen("./fft_in.txt", "w");
+        fft_out_fd = $fopen("./fft_out.txt", "w");
+    end
+
+    if (sum_stb && enable && (~reset) ) begin
+        $fwrite(sum_fd, "%d %d\n", sum_i, sum_q);
+        $fflush(sum_fd);
+    end
+    if (metric_stb && enable && (~reset) ) begin
+        $fwrite(metric_fd, "%d\n", metric);
+        $fflush(metric_fd);
+    end
+    if (raw_stb && enable && (~reset) ) begin
+        $fwrite(phase_correction_fd, "%d\n", phase_correction);
+        $fflush(phase_correction_fd);
+        $fwrite(next_phase_correction_fd, "%d\n", next_phase_correction);
+        $fflush(next_phase_correction_fd);
+    end
+    if (fft_in_stb && enable && (~reset) ) begin
+        $fwrite(fft_in_fd, "%d %d\n", fft_in_re, fft_in_im);
+        $fflush(fft_in_fd);
+    end
+    if (fft_valid && enable && (~reset) ) begin
+        $fwrite(fft_out_fd, "%d %d\n", fft_out_re_signed, fft_out_im_signed);
+        $fflush(fft_out_fd);
+    end
+end
+// ==========end of save signal to file for matlab bit-true comparison===========
+*/
 
 always @(posedge clock) begin
     reset_delay = reset ;
@@ -237,7 +285,6 @@ xfft_v9 dft_inst (
 );
 
 reg [15:0] num_sample;
-reg [15:0] num_ofdm_symbol;
 
 integer i;
 integer j;
@@ -352,10 +399,10 @@ always @(posedge clock) begin
                     end else begin
                         if (next_phase_correction < -PI) begin
                             phase_correction <= next_phase_correction + DOUBLE_PI;
-                            phase_correction <= next_phase_correction + DOUBLE_PI + phase_offset;
+                            next_phase_correction <= next_phase_correction + DOUBLE_PI + phase_offset;
                         end else begin
                             phase_correction <= next_phase_correction;
-                            phase_correction <= next_phase_correction + phase_offset;
+                            next_phase_correction <= next_phase_correction + phase_offset;
                         end
                     end
                 end
