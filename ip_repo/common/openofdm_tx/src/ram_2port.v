@@ -1,131 +1,66 @@
 //
 // Copyright 2011 Ettus Research LLC
-// Copyright 2018 Ettus Research, a National Instruments Company
 //
-// SPDX-License-Identifier: LGPL-3.0-or-later
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// Description
-// This code implements a parameterizable true dual port memory 
-// (both ports can read and write). If an enable is not necessary
-// it may be tied off
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
 
-module ram_2port #(
-  parameter DWIDTH    = 32,           // Width of the memory block
-  parameter AWIDTH    = 9,            // log2 of the depth of the memory block
-  parameter RW_MODE   = "READ-FIRST", // Read-write mode {READ-FIRST, WRITE-FIRST, NO-CHANGE}
-  parameter OUT_REG   = 0,            // Instantiate an output register? (+1 cycle of read latency)
-  parameter INIT_FILE = ""            // Optionally initialize memory with this file
-) (
-  input  wire              clka,
-  input  wire              ena,
-  input  wire              wea,
-  input  wire [AWIDTH-1:0] addra,
-  input  wire [DWIDTH-1:0] dia,
-  output wire [DWIDTH-1:0] doa,
 
-  input  wire              clkb,
-  input  wire              enb,
-  input  wire              web,
-  input  wire [AWIDTH-1:0] addrb,
-  input  wire [DWIDTH-1:0] dib,
-  output wire [DWIDTH-1:0] dob
+
+module ram_2port
+#(
+    parameter DWIDTH=32,
+    parameter AWIDTH=9
+)
+(
+    input clka,
+    input ena,
+    input wea,
+    input [AWIDTH-1:0] addra,
+    input [DWIDTH-1:0] dia,
+    output reg [DWIDTH-1:0] doa,
+
+    input clkb,
+    input enb,
+    input web,
+    input [AWIDTH-1:0] addrb,
+    input [DWIDTH-1:0] dib,
+    output reg [DWIDTH-1:0] dob
 );
 
-  reg [DWIDTH-1:0] ram [(1<<AWIDTH)-1:0];
+reg [DWIDTH-1:0] ram [(1<<AWIDTH)-1:0];
+integer 	    i;
+initial begin
+    for(i=0;i<(1<<AWIDTH);i=i+1)
+        ram[i] <= {DWIDTH{1'b0}};
+    doa <= 0;
+    dob <= 0;
+end
 
-  // Initialize ram to a specified file or to all zeros to match hardware
-  generate if (INIT_FILE != "") begin
-    initial
-      $readmemh(INIT_FILE, ram, 0, (1<<AWIDTH)-1);
-  end else begin
-    integer i;
-    initial
-      for (i = 0; i < (1<<AWIDTH); i = i + 1)
-        ram[i] = {DWIDTH{1'b0}};
-  end endgenerate
-
-  reg [DWIDTH-1:0] doa_r = 'h0, dob_r = 'h0;
-  generate if (OUT_REG == 1) begin
-    // A 2 clock cycle read latency with improve clock-to-out timing
-    reg [DWIDTH-1:0] doa_rr = 'h0, dob_rr = 'h0;
-
-    always @(posedge clka)
-      if (ena)
-        doa_rr <= doa_r;
-
-    always @(posedge clkb)
-      if (enb)
-        dob_rr <= dob_r;
-
-    assign doa = doa_rr;
-    assign dob = dob_rr;
-  end else begin
-    // A 1 clock cycle read latency at the cost of a longer clock-to-out timing
-    assign doa = doa_r;
-    assign dob = dob_r;
-  end endgenerate
-
-  generate if (RW_MODE == "READ-FIRST") begin
-    // When data is written, the prior memory contents at the write
-    // address are presented on the output port.
-    always @(posedge clka) begin
-      if (ena) begin
+always @(posedge clka) begin
+    if (ena) 
+    begin
         if (wea)
-          ram[addra] <= dia;
-        doa_r <= ram[addra];
-      end
+            ram[addra] <= dia;
+        doa <= ram[addra];
     end
-    always @(posedge clkb) begin
-      if (enb) begin
+end
+always @(posedge clkb) begin
+    if (enb)
+    begin
         if (web)
-          ram[addrb] <= dib;
-        dob_r <= ram[addrb];
-      end
+            ram[addrb] <= dib;
+        dob <= ram[addrb];
     end
-
-  end else if (RW_MODE == "WRITE-FIRST") begin
-    // The data being written to the RAM also resides on the output port.
-    always @(posedge clka) begin
-      if (ena) begin
-        if (wea) begin
-          ram[addra] <= dia;
-          doa_r <= dia;
-        end else begin
-          doa_r <= ram[addra];
-        end
-      end
-    end
-    always @(posedge clkb) begin
-      if (enb) begin
-        if (web) begin
-          ram[addrb] <= dib;
-          dob_r <= dib;
-        end else begin
-          dob_r <= ram[addrb];
-        end
-      end
-    end
-
-  end else begin
-    // This is a no change RAM which retains the last read value on the output during writes
-    // which is the most power efficient mode.
-    always @(posedge clka) begin
-      if (ena) begin
-        if (wea)
-          ram[addra] <= dia;
-        else
-          doa_r <= ram[addra];
-      end
-    end
-    always @(posedge clkb) begin
-      if (enb) begin
-        if (web)
-          ram[addrb] <= dib;
-        else
-          dob_r <= ram[addrb];
-      end
-    end
-
-  end endgenerate
-
-endmodule
+end
+endmodule // ram_2port
