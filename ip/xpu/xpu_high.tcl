@@ -34,7 +34,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "xpu"
+set project_name "xpu_high"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -42,7 +42,7 @@ if { [info exists ::user_project_name] } {
 }
 
 variable script_file
-set script_file "xpu.tcl"
+set script_file "xpu_high.tcl"
 
 # Help information for this script
 proc help {} {
@@ -90,7 +90,7 @@ if { $::argc > 0 } {
 }
 
 # Set the directory path for the original project from where this script was exported
-set orig_proj_dir "[file normalize "$origin_dir/xpu"]"
+set orig_proj_dir "[file normalize "$origin_dir/xpu_high"]"
 
 # Create project
 create_project ${project_name} ./${project_name} -part xc7z045ffg900-2

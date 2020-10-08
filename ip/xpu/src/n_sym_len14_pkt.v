@@ -20,7 +20,7 @@ module n_sym_len14_pkt #
   always @( ht_flag, rate_mcs )
   begin
       case ({ht_flag,rate_mcs})
-        5'b01011 : begin //6Mbps
+        5'b01011 : begin //non-ht 6Mbps
               num_data_ofdm_symbol = 6;
               end
         5'b01111 : begin //non-ht 9Mbps

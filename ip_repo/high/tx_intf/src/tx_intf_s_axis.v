@@ -21,7 +21,7 @@
         output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count2,
         output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count3,
 
-        input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] S_AXIS_NUM_DMA_SYMBOL,
+        input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] S_AXIS_NUM_DMA_SYMBOL_raw,
         output wire s_axis_recv_data_from_high,
 
 		input wire  S_AXIS_ACLK,
@@ -45,6 +45,7 @@
 	                WRITE_FIFO  = 1'b1; // In this state FIFO is written with the
 
 	reg  mst_exec_state;  
+	reg [bit_num-1 : 0] S_AXIS_NUM_DMA_SYMBOL;
 	
 	wire axis_tready0;
 	wire axis_tready1;
@@ -99,31 +100,26 @@
 
 	always @(posedge S_AXIS_ACLK) 
 	begin  
-	  if (!S_AXIS_ARESETN) 
-	    begin
-	      mst_exec_state <= IDLE;
-	    end  
-	  else
-	    case (mst_exec_state)
-	      IDLE: 
-	          if (S_AXIS_TVALID)
-	            begin
-	              mst_exec_state <= WRITE_FIFO;
-	            end
-	          else
-	            begin
-	              mst_exec_state <= IDLE;
-	            end
-	      WRITE_FIFO: 
-	        if (writes_done)
-	          begin
-	            mst_exec_state <= IDLE;
-	          end
-	        else
-	          begin
-	            mst_exec_state <= WRITE_FIFO;
-	          end
-	    endcase
+		if (!S_AXIS_ARESETN) begin
+			mst_exec_state <= IDLE;
+			S_AXIS_NUM_DMA_SYMBOL <= 0;
+		end else begin
+			S_AXIS_NUM_DMA_SYMBOL <= S_AXIS_NUM_DMA_SYMBOL_raw - 1;
+			case (mst_exec_state)
+			IDLE: 
+				if (S_AXIS_TVALID) begin
+					mst_exec_state <= WRITE_FIFO;
+				end else begin
+					mst_exec_state <= IDLE;
+				end
+			WRITE_FIFO: 
+				if (writes_done) begin
+					mst_exec_state <= IDLE;
+				end else begin
+					mst_exec_state <= WRITE_FIFO;
+				end
+			endcase
+		end
 	end
 
 	always@(posedge S_AXIS_ACLK)
@@ -136,7 +132,7 @@
 	  else
 	    if ( write_pointer <= S_AXIS_NUM_DMA_SYMBOL || (endless_mode==1) )
 	      begin
-	        if (fifo_wren0||fifo_wren1||fifo_wren2||fifo_wren3)
+	        if (fifo_wren0||fifo_wren1)
 	          begin
 	            write_pointer <= write_pointer + 1;
 	            writes_done <= 1'b0;
