@@ -9,6 +9,7 @@ module equalizer
     input [31:0] sample_in,
     input sample_in_strobe,
     input ht_next,
+    input pkt_ht,
 
     output [31:0] phase_in_i,
     output [31:0] phase_in_q,
@@ -22,7 +23,11 @@ module equalizer
     output reg [31:0] sample_out,
     output reg sample_out_strobe,
     
-    output reg [2:0] state
+    output reg [2:0] state,
+
+    // for side channel
+    output wire [31:0] csi,
+    output wire csi_valid
 );
 
 
@@ -168,12 +173,16 @@ wire lts_div_out_stb = div_out_stb;
 reg prod_in_strobe;
 wire prod_out_strobe;
 
+// for side channel
+reg sample_in_strobe_dly;
+assign csi = {lts_i_out, lts_q_out};
+assign csi_valid = ( (num_ofdm_sym == 1 || (pkt_ht==1 && num_ofdm_sym==5)) && state == S_CALC_FREQ_OFFSET && sample_in_strobe_dly == 1 && enable && (~reset) );
+
 /*
 // =============save signal to file for matlab bit-true comparison===========
 integer file_open_trigger = 0;
 integer new_lts_fd, phase_offset_pilot_input_fd, phase_offset_lts_input_fd, phase_offset_pilot_fd, phase_offset_pilot_sum_fd, phase_offset_phase_out_fd, rot_out_fd, equalizer_prod_fd, equalizer_prod_scaled_fd, equalizer_mag_sq_fd, equalizer_out_fd;
 
-reg sample_in_strobe_dly;
 wire signed [15:0] norm_i_signed, norm_q_signed;
 assign norm_i_signed = sample_out[31:16];
 assign norm_q_signed = sample_out[15:0];
@@ -201,7 +210,6 @@ always @(posedge clock) begin
         equalizer_out_fd = $fopen("./equalizer_out.txt", "w");
     end
 
-    sample_in_strobe_dly <= sample_in_strobe;
     if (num_ofdm_sym == 1 && state == S_CALC_FREQ_OFFSET && sample_in_strobe_dly == 1 && enable && (~reset) ) begin
         $fwrite(new_lts_fd, "%d %d\n", lts_i_out, lts_q_out);
         $fflush(new_lts_fd);
@@ -455,6 +463,7 @@ always @(posedge clock) begin
 
         state <= S_FIRST_LTS;
     end else if (enable) begin
+        sample_in_strobe_dly <= sample_in_strobe;
         case(state)
             S_FIRST_LTS: begin
                 // store first LTS as is

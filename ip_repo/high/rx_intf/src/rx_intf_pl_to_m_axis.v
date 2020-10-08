@@ -45,8 +45,6 @@
       input wire [12:0] m_axis_tlast_auto_recover_timeout_top,
 	    input wire [2:0] start_1trans_mode,
 	    input wire start_1trans_ext_trigger,
-	    input wire start_1trans_s_axis_tlast_trigger,
-	    input wire start_1trans_s_axis_tready_trigger,
 
 	    input wire src_sel,
 	    input wire [(TSF_TIMER_WIDTH-1):0]  tsf_runtime_val,
@@ -101,7 +99,7 @@
 
     assign rx_pkt_sn_plus_one = (rx_state==WAIT_FILTER_FLAG && block_rx_dma_to_ps_valid==1 && block_rx_dma_to_ps==0);
     
-    always @( start_1trans_mode,sig_valid,fcs_valid,start_1trans_ext_trigger,start_1trans_s_axis_tlast_trigger,start_m_axis,start_1trans_s_axis_tready_trigger)
+    always @( start_1trans_mode,sig_valid,fcs_valid,start_1trans_ext_trigger,start_m_axis)
     begin
        case (start_1trans_mode)
           3'b000 : begin
@@ -114,22 +112,22 @@
                         start_1trans_to_m_axis = start_1trans_ext_trigger;
                    end
           3'b011 : begin
-                        start_1trans_to_m_axis = start_1trans_s_axis_tlast_trigger;
+                        start_1trans_to_m_axis = 0;
                    end
           3'b100 : begin
-                        start_1trans_to_m_axis = start_1trans_s_axis_tready_trigger;
+                        start_1trans_to_m_axis = 0;
                    end
           3'b101 : begin
                         start_1trans_to_m_axis = start_m_axis;
                    end
           3'b110 : begin
-                        start_1trans_to_m_axis = start_1trans_ext_trigger;
+                        start_1trans_to_m_axis = 0;
                    end
           3'b111 : begin
-                        start_1trans_to_m_axis = start_1trans_ext_trigger;
+                        start_1trans_to_m_axis = 0;
                    end
           default: begin
-                        start_1trans_to_m_axis = start_1trans_ext_trigger;
+                        start_1trans_to_m_axis = 0;
                    end
        endcase
     end
