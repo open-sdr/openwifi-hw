@@ -136,7 +136,7 @@
 	  else
 	    if ( write_pointer <= S_AXIS_NUM_DMA_SYMBOL || (endless_mode==1) )
 	      begin
-	        if (fifo_wren0||fifo_wren1)
+	        if (fifo_wren0||fifo_wren1||fifo_wren2||fifo_wren3)
 	          begin
 	            write_pointer <= write_pointer + 1;
 	            writes_done <= 1'b0;
