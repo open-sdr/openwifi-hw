@@ -31,55 +31,8 @@
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 0,
-                                "portIndex": 0,
-                                "nets": [
-                                    {
-                                        "name": "u_ila_0_state[0]",
-                                        "isBus": false,
-                                        "parentNetId": 0
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe0",
-                                "id": 1,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": true,
-                                "leftIndex": 1,
-                                "rightIndex": 3,
-                                "portIndex": 0,
-                                "nets": [
-                                    {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state",
-                                        "isBus": true,
-                                        "subnets": [
-                                            {
-                                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[3]",
-                                                "parentNetId": 1
-                                            },
-                                            {
-                                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[2]",
-                                                "parentNetId": 2
-                                            },
-                                            {
-                                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[1]",
-                                                "parentNetId": 3
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe1",
-                                "id": 2,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": true,
-                                "leftIndex": 0,
                                 "rightIndex": 1,
-                                "portIndex": 1,
+                                "portIndex": 0,
                                 "nets": [
                                     {
                                         "name": "i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/side_ch_control_i/ofdm_rx_state",
@@ -96,14 +49,14 @@
                                 ]
                             },
                             {
-                                "name": "probe2",
-                                "id": 3,
+                                "name": "probe1",
+                                "id": 1,
                                 "type": "DATA",
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
                                 "rightIndex": 31,
-                                "portIndex": 2,
+                                "portIndex": 1,
                                 "nets": [
                                     {
                                         "name": "i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps",
@@ -210,14 +163,14 @@
                                 ]
                             },
                             {
-                                "name": "probe3",
-                                "id": 4,
+                                "name": "probe2",
+                                "id": 2,
                                 "type": "DATA",
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
                                 "rightIndex": 15,
-                                "portIndex": 3,
+                                "portIndex": 2,
                                 "nets": [
                                     {
                                         "name": "i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata",
@@ -276,14 +229,14 @@
                                 ]
                             },
                             {
-                                "name": "probe4",
-                                "id": 5,
+                                "name": "probe3",
+                                "id": 3,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
                                 "rightIndex": 2,
-                                "portIndex": 4,
+                                "portIndex": 3,
                                 "nets": [
                                     {
                                         "name": "i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state",
@@ -303,8 +256,30 @@
                                 ]
                             },
                             {
+                                "name": "probe4",
+                                "id": 4,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": false,
+                                "leftIndex": 0,
+                                "rightIndex": 0,
+                                "portIndex": 4,
+                                "nets": [
+                                    {
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[1]",
+                                                "parentNetId": 53
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
                                 "name": "probe5",
-                                "id": 6,
+                                "id": 5,
                                 "type": "DATA",
                                 "direction": "IN",
                                 "isVector": true,
@@ -370,7 +345,7 @@
                             },
                             {
                                 "name": "probe6",
-                                "id": 7,
+                                "id": 6,
                                 "type": "DATA",
                                 "direction": "IN",
                                 "isVector": true,
@@ -436,7 +411,7 @@
                             },
                             {
                                 "name": "probe7",
-                                "id": 8,
+                                "id": 7,
                                 "type": "DATA",
                                 "direction": "IN",
                                 "isVector": true,
@@ -480,7 +455,7 @@
                             },
                             {
                                 "name": "probe7",
-                                "id": 9,
+                                "id": 8,
                                 "type": "DATA",
                                 "direction": "IN",
                                 "isVector": true,
@@ -522,7 +497,7 @@
                             },
                             {
                                 "name": "probe7",
-                                "id": 10,
+                                "id": 9,
                                 "type": "DATA",
                                 "direction": "IN",
                                 "isVector": true,
@@ -564,7 +539,7 @@
                             },
                             {
                                 "name": "probe8",
-                                "id": 11,
+                                "id": 10,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -573,14 +548,14 @@
                                 "portIndex": 8,
                                 "nets": [
                                     {
-                                        "name": "u_ila_0_data_to_ps_valid",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps_valid",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe9",
-                                "id": 12,
+                                "id": 11,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -596,7 +571,7 @@
                             },
                             {
                                 "name": "probe10",
-                                "id": 13,
+                                "id": 12,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -612,7 +587,7 @@
                             },
                             {
                                 "name": "probe11",
-                                "id": 14,
+                                "id": 13,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -628,7 +603,7 @@
                             },
                             {
                                 "name": "probe12",
-                                "id": 15,
+                                "id": 14,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -637,14 +612,14 @@
                                 "portIndex": 12,
                                 "nets": [
                                     {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/m_axis_start_1trans",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_csi_valid",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe13",
-                                "id": 16,
+                                "id": 15,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -653,36 +628,20 @@
                                 "portIndex": 13,
                                 "nets": [
                                     {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_csi_valid",
-                                        "isBus": false
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe14",
-                                "id": 17,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": false,
-                                "leftIndex": 0,
-                                "rightIndex": 0,
-                                "portIndex": 14,
-                                "nets": [
-                                    {
                                         "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_demod_is_ongoing",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
-                                "name": "probe15",
-                                "id": 18,
+                                "name": "probe14",
+                                "id": 16,
                                 "type": "DATA",
                                 "direction": "IN",
                                 "isVector": false,
                                 "leftIndex": 0,
                                 "rightIndex": 0,
-                                "portIndex": 15,
+                                "portIndex": 14,
                                 "nets": [
                                     {
                                         "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_equalizer_valid",
@@ -691,8 +650,24 @@
                                 ]
                             },
                             {
+                                "name": "probe15",
+                                "id": 17,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": false,
+                                "leftIndex": 0,
+                                "rightIndex": 0,
+                                "portIndex": 15,
+                                "nets": [
+                                    {
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_fcs_ok",
+                                        "isBus": false
+                                    }
+                                ]
+                            },
+                            {
                                 "name": "probe16",
-                                "id": 19,
+                                "id": 18,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -701,14 +676,14 @@
                                 "portIndex": 16,
                                 "nets": [
                                     {
-                                        "name": "u_ila_0_openofdm_rx_0_fcs_ok",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_fcs_out_strobe",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe17",
-                                "id": 20,
+                                "id": 19,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -717,14 +692,14 @@
                                 "portIndex": 17,
                                 "nets": [
                                     {
-                                        "name": "u_ila_0_openofdm_rx_0_fcs_out_strobe",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_ht_unsupport",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe18",
-                                "id": 21,
+                                "id": 20,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -733,14 +708,14 @@
                                 "portIndex": 18,
                                 "nets": [
                                     {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_ht_unsupport",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_pkt_header_valid",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe19",
-                                "id": 22,
+                                "id": 21,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -749,14 +724,14 @@
                                 "portIndex": 19,
                                 "nets": [
                                     {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_pkt_header_valid",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_pkt_header_valid_strobe",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe20",
-                                "id": 23,
+                                "id": 22,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -765,14 +740,14 @@
                                 "portIndex": 20,
                                 "nets": [
                                     {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_pkt_header_valid_strobe",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_tx_0/phy_tx_start",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe21",
-                                "id": 24,
+                                "id": 23,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -781,14 +756,14 @@
                                 "portIndex": 21,
                                 "nets": [
                                     {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_tx_0/phy_tx_start",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/tx_intf_0/tx_end_from_acc",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe22",
-                                "id": 25,
+                                "id": 24,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -797,14 +772,14 @@
                                 "portIndex": 22,
                                 "nets": [
                                     {
-                                        "name": "u_ila_0_side_info_fifo_rd_en",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/tx_pkt_need_ack",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe23",
-                                "id": 26,
+                                "id": 25,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -813,14 +788,14 @@
                                 "portIndex": 23,
                                 "nets": [
                                     {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/side_ch_control_i/side_info_fifo_wr_en",
+                                        "name": "i_system_wrapper/system_i/openwifi_ip/xpu_0_addr1_valid",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
                                 "name": "probe24",
-                                "id": 27,
+                                "id": 26,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
@@ -829,68 +804,20 @@
                                 "portIndex": 24,
                                 "nets": [
                                     {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/tx_intf_0/tx_end_from_acc",
-                                        "isBus": false
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe25",
-                                "id": 28,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": false,
-                                "leftIndex": 0,
-                                "rightIndex": 0,
-                                "portIndex": 25,
-                                "nets": [
-                                    {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/tx_pkt_need_ack",
-                                        "isBus": false
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe26",
-                                "id": 29,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": false,
-                                "leftIndex": 0,
-                                "rightIndex": 0,
-                                "portIndex": 26,
-                                "nets": [
-                                    {
-                                        "name": "i_system_wrapper/system_i/openwifi_ip/xpu_0_addr1_valid",
-                                        "isBus": false
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe27",
-                                "id": 30,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": false,
-                                "leftIndex": 0,
-                                "rightIndex": 0,
-                                "portIndex": 27,
-                                "nets": [
-                                    {
                                         "name": "i_system_wrapper/system_i/openwifi_ip/xpu_0_FC_DI_valid",
                                         "isBus": false
                                     }
                                 ]
                             },
                             {
-                                "name": "probe28",
-                                "id": 31,
+                                "name": "probe25",
+                                "id": 27,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": false,
                                 "leftIndex": 0,
                                 "rightIndex": 0,
-                                "portIndex": 28,
+                                "portIndex": 25,
                                 "nets": [
                                     {
                                         "name": "i_system_wrapper/system_i/openwifi_ip/xpu_0_tx_try_complete",
@@ -903,284 +830,75 @@
                 ],
                 "parent_nets": [
                     {
-                        "id": 0,
-                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[0]",
-                        "state_reg": [
-                            {
-                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state_reg[0]",
-                                "states": [
-                                    {
-                                        "name": "S_WAIT_POWER_TRIGGER",
-                                        "val": "0000"
-                                    },
-                                    {
-                                        "name": "S_SYNC_SHORT",
-                                        "val": "0001"
-                                    },
-                                    {
-                                        "name": "S_SYNC_LONG",
-                                        "val": "0010"
-                                    },
-                                    {
-                                        "name": "S_DECODE_SIGNAL",
-                                        "val": "0011"
-                                    },
-                                    {
-                                        "name": "S_CHECK_SIGNAL",
-                                        "val": "0100"
-                                    },
-                                    {
-                                        "name": "S_SIGNAL_ERROR",
-                                        "val": "1100"
-                                    },
-                                    {
-                                        "name": "S_DETECT_HT",
-                                        "val": "0101"
-                                    },
-                                    {
-                                        "name": "S_HT_SIGNAL",
-                                        "val": "0110"
-                                    },
-                                    {
-                                        "name": "S_CHECK_HT_SIG_CRC",
-                                        "val": "0111"
-                                    },
-                                    {
-                                        "name": "S_CHECK_HT_SIG",
-                                        "val": "1000"
-                                    },
-                                    {
-                                        "name": "S_HT_SIG_ERROR",
-                                        "val": "1101"
-                                    },
-                                    {
-                                        "name": "S_HT_STS",
-                                        "val": "1001"
-                                    },
-                                    {
-                                        "name": "S_HT_LTS",
-                                        "val": "1010"
-                                    },
-                                    {
-                                        "name": "S_DECODE_DATA",
-                                        "val": "1011"
-                                    },
-                                    {
-                                        "name": "S_DECODE_DONE",
-                                        "val": "1110"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "id": 1,
-                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[3]",
-                        "state_reg": [
-                            {
-                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state_reg[3]",
-                                "states": [
-                                    {
-                                        "name": "S_WAIT_POWER_TRIGGER",
-                                        "val": "0000"
-                                    },
-                                    {
-                                        "name": "S_SYNC_SHORT",
-                                        "val": "0001"
-                                    },
-                                    {
-                                        "name": "S_SYNC_LONG",
-                                        "val": "0010"
-                                    },
-                                    {
-                                        "name": "S_DECODE_SIGNAL",
-                                        "val": "0011"
-                                    },
-                                    {
-                                        "name": "S_CHECK_SIGNAL",
-                                        "val": "0100"
-                                    },
-                                    {
-                                        "name": "S_SIGNAL_ERROR",
-                                        "val": "1100"
-                                    },
-                                    {
-                                        "name": "S_DETECT_HT",
-                                        "val": "0101"
-                                    },
-                                    {
-                                        "name": "S_HT_SIGNAL",
-                                        "val": "0110"
-                                    },
-                                    {
-                                        "name": "S_CHECK_HT_SIG_CRC",
-                                        "val": "0111"
-                                    },
-                                    {
-                                        "name": "S_CHECK_HT_SIG",
-                                        "val": "1000"
-                                    },
-                                    {
-                                        "name": "S_HT_SIG_ERROR",
-                                        "val": "1101"
-                                    },
-                                    {
-                                        "name": "S_HT_STS",
-                                        "val": "1001"
-                                    },
-                                    {
-                                        "name": "S_HT_LTS",
-                                        "val": "1010"
-                                    },
-                                    {
-                                        "name": "S_DECODE_DATA",
-                                        "val": "1011"
-                                    },
-                                    {
-                                        "name": "S_DECODE_DONE",
-                                        "val": "1110"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "id": 2,
-                        "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[2]",
-                        "state_reg": [
-                            {
-                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state_reg[2]",
-                                "states": [
-                                    {
-                                        "name": "S_WAIT_POWER_TRIGGER",
-                                        "val": "0000"
-                                    },
-                                    {
-                                        "name": "S_SYNC_SHORT",
-                                        "val": "0001"
-                                    },
-                                    {
-                                        "name": "S_SYNC_LONG",
-                                        "val": "0010"
-                                    },
-                                    {
-                                        "name": "S_DECODE_SIGNAL",
-                                        "val": "0011"
-                                    },
-                                    {
-                                        "name": "S_CHECK_SIGNAL",
-                                        "val": "0100"
-                                    },
-                                    {
-                                        "name": "S_SIGNAL_ERROR",
-                                        "val": "1100"
-                                    },
-                                    {
-                                        "name": "S_DETECT_HT",
-                                        "val": "0101"
-                                    },
-                                    {
-                                        "name": "S_HT_SIGNAL",
-                                        "val": "0110"
-                                    },
-                                    {
-                                        "name": "S_CHECK_HT_SIG_CRC",
-                                        "val": "0111"
-                                    },
-                                    {
-                                        "name": "S_CHECK_HT_SIG",
-                                        "val": "1000"
-                                    },
-                                    {
-                                        "name": "S_HT_SIG_ERROR",
-                                        "val": "1101"
-                                    },
-                                    {
-                                        "name": "S_HT_STS",
-                                        "val": "1001"
-                                    },
-                                    {
-                                        "name": "S_HT_LTS",
-                                        "val": "1010"
-                                    },
-                                    {
-                                        "name": "S_DECODE_DATA",
-                                        "val": "1011"
-                                    },
-                                    {
-                                        "name": "S_DECODE_DONE",
-                                        "val": "1110"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "id": 3,
+                        "id": 53,
                         "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[1]",
                         "state_reg": [
                             {
-                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state_reg[1]",
+                                "name": "i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/FSM_sequential_state_reg[1]",
                                 "states": [
                                     {
-                                        "name": "S_WAIT_POWER_TRIGGER",
-                                        "val": "0000"
-                                    },
-                                    {
-                                        "name": "S_SYNC_SHORT",
-                                        "val": "0001"
+                                        "name": "S_DECODE_SIGNAL",
+                                        "val": "0011"
                                     },
                                     {
                                         "name": "S_SYNC_LONG",
                                         "val": "0010"
                                     },
                                     {
-                                        "name": "S_DECODE_SIGNAL",
-                                        "val": "0011"
+                                        "name": "S_SYNC_SHORT",
+                                        "val": "0001"
+                                    },
+                                    {
+                                        "name": "S_WAIT_POWER_TRIGGER",
+                                        "val": "0000"
+                                    },
+                                    {
+                                        "name": "S_DECODE_DATA",
+                                        "val": "1101"
+                                    },
+                                    {
+                                        "name": "S_HT_LTS",
+                                        "val": "1100"
+                                    },
+                                    {
+                                        "name": "S_CHECK_HT_SIG_CRC",
+                                        "val": "1000"
+                                    },
+                                    {
+                                        "name": "S_HT_SIGNAL",
+                                        "val": "0111"
+                                    },
+                                    {
+                                        "name": "S_HT_STS",
+                                        "val": "1011"
+                                    },
+                                    {
+                                        "name": "S_CHECK_HT_SIG",
+                                        "val": "1001"
+                                    },
+                                    {
+                                        "name": "S_DETECT_HT",
+                                        "val": "0110"
+                                    },
+                                    {
+                                        "name": "iSTATE",
+                                        "val": "1111"
                                     },
                                     {
                                         "name": "S_CHECK_SIGNAL",
                                         "val": "0100"
                                     },
                                     {
-                                        "name": "S_SIGNAL_ERROR",
-                                        "val": "1100"
-                                    },
-                                    {
-                                        "name": "S_DETECT_HT",
-                                        "val": "0101"
-                                    },
-                                    {
-                                        "name": "S_HT_SIGNAL",
-                                        "val": "0110"
-                                    },
-                                    {
-                                        "name": "S_CHECK_HT_SIG_CRC",
-                                        "val": "0111"
-                                    },
-                                    {
-                                        "name": "S_CHECK_HT_SIG",
-                                        "val": "1000"
+                                        "name": "S_DECODE_DONE",
+                                        "val": "1110"
                                     },
                                     {
                                         "name": "S_HT_SIG_ERROR",
-                                        "val": "1101"
-                                    },
-                                    {
-                                        "name": "S_HT_STS",
-                                        "val": "1001"
-                                    },
-                                    {
-                                        "name": "S_HT_LTS",
                                         "val": "1010"
                                     },
                                     {
-                                        "name": "S_DECODE_DATA",
-                                        "val": "1011"
-                                    },
-                                    {
-                                        "name": "S_DECODE_DONE",
-                                        "val": "1110"
+                                        "name": "S_SIGNAL_ERROR",
+                                        "val": "0101"
                                     }
                                 ]
                             }

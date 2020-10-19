@@ -1,5 +1,6 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
+`include "fpga_scale.v"
 
 `timescale 1 ns / 1 ps
 
@@ -19,15 +20,26 @@
 
 		parameter integer C_S00_AXIS_TDATA_WIDTH	= 64,
 		parameter integer C_M00_AXIS_TDATA_WIDTH	= 64,
-		
-        parameter integer WAIT_COUNT_BITS = 5,
-		parameter integer MAX_NUM_DMA_SYMBOL = 4096 // the fifo depth inside m_axis
+
+`ifdef SIDE_CH_LESS_BRAM
+		parameter integer MAX_NUM_DMA_SYMBOL = 2048, // the fifo depth inside m_axis
+`else
+		parameter integer MAX_NUM_DMA_SYMBOL = 8192,
+`endif
+        parameter integer WAIT_COUNT_BITS = 5
 	)
 	(
 		// from pl
+	    input wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
+        input wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
 		input wire [(TSF_TIMER_WIDTH-1):0]  tsf_runtime_val,
+		input wire [(2*IQ_DATA_WIDTH-1):0] sample_in,
+    	input wire sample_in_strobe,
+
 		input wire demod_is_ongoing,
 		input wire ofdm_symbol_eq_out_pulse,
+		input wire long_preamble_detected,
+		input wire short_preamble_detected,
 		input wire ht_unsupport,
 		input wire [7:0] pkt_rate,
 		input wire [15:0] pkt_len,
@@ -115,11 +127,11 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5;
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6;
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg7;
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; 
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg9;
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; 
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg11;
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg12;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg9;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg11;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg12;
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg13;
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg14;
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg15;
@@ -158,6 +170,8 @@
 
 	side_ch_control # (
 		.TSF_TIMER_WIDTH(TSF_TIMER_WIDTH),
+        .GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH),
+        .RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH),
 		.C_S_AXI_DATA_WIDTH(C_S00_AXI_DATA_WIDTH),
 		.IQ_DATA_WIDTH(IQ_DATA_WIDTH),
 	    .C_S_AXIS_TDATA_WIDTH(C_S00_AXIS_TDATA_WIDTH),
@@ -168,9 +182,15 @@
         .rstn(m00_axis_aresetn&(~slv_reg0[2])),
 
 		// from pl
+		.gpio_status(gpio_status),
+		.rssi_half_db(rssi_half_db),
 		.tsf_runtime_val(tsf_runtime_val),
+		.iq(sample_in),
+		.iq_strobe(sample_in_strobe),
 		.demod_is_ongoing(demod_is_ongoing),
 		.ofdm_symbol_eq_out_pulse(ofdm_symbol_eq_out_pulse),
+		.long_preamble_detected(long_preamble_detected),
+		.short_preamble_detected(short_preamble_detected),
         .ht_unsupport(ht_unsupport),
         .pkt_rate(pkt_rate),
 		.pkt_len(pkt_len),
@@ -199,13 +219,19 @@
 		// from arm
 		.slv_reg_wren_signal(slv_reg_wren_signal),
 		.axi_awaddr_core(axi_awaddr_core),
+		.iq_capture(slv_reg3[0]),
+		.iq_trigger_select(slv_reg8[3:0]),
+		.rssi_th(slv_reg9[(RSSI_HALF_DB_WIDTH-1):0]),
+		.gain_th(slv_reg10[(GPIO_STATUS_WIDTH-2):0]),
+		.pre_trigger_len(slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),
+		.iq_len_target(slv_reg12[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),
 		.FC_target(slv_reg5[15:0]),
 		.addr1_target(slv_reg6),
 		.addr2_target(slv_reg7),
 		.match_cfg(slv_reg1[15:12]),
 		.num_eq(slv_reg4[3:0]),
 		.m_axis_start_mode(slv_reg1[1:0]),
-		.m_axis_start_ext_trigger(slv_reg3[0]),
+		.m_axis_start_ext_trigger(),
 		// .data_transfer_control(),
 
 		// s_axis
@@ -314,11 +340,11 @@
         .SLV_REG5(slv_reg5),
         .SLV_REG6(slv_reg6),
         .SLV_REG7(slv_reg7),
-		// .SLV_REG8(slv_reg8),
-        // .SLV_REG9(slv_reg9),
-        // .SLV_REG10(slv_reg10),
-        // .SLV_REG11(slv_reg11),
-        // .SLV_REG12(slv_reg12),
+		.SLV_REG8(slv_reg8),
+        .SLV_REG9(slv_reg9),
+        .SLV_REG10(slv_reg10),
+        .SLV_REG11(slv_reg11),
+        .SLV_REG12(slv_reg12),
         // .SLV_REG13(slv_reg13),
         //.SLV_REG14(slv_reg14),
         //.SLV_REG15(slv_reg15),
