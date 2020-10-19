@@ -43,9 +43,10 @@ module dot11 (
     /////////////////////////////////////////////////////////
     
     // decode status
-    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) output reg [3:0] state,
-    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) output reg [3:0] status_code,
-    (* mark_debug = "true" *) output state_changed,
+    // (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
+    output reg [3:0] state,
+    output reg [3:0] status_code,
+    output state_changed,
     output reg [31:0] state_history,
 
     // power trigger
@@ -852,6 +853,8 @@ always @(posedge clock) begin
             end
 
             S_HT_LTS: begin
+                pkt_header_valid <= 0;
+                pkt_header_valid_strobe <= 0;
                 short_gi <= ht_sgi;
                 if (sync_long_out_strobe) begin
                     sync_long_out_count <= sync_long_out_count + 1;

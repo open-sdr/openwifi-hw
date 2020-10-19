@@ -18,6 +18,8 @@
 
 		output wire demod_is_ongoing, // this needs to be corrected further to indicate actual RF on going regardless the latency
 //		output wire pkt_ht,
+		output wire short_preamble_detected,
+		output wire long_preamble_detected,
 		output wire pkt_header_valid,
 		output wire pkt_header_valid_strobe,
 		output wire ht_unsupport,
@@ -144,13 +146,13 @@
 		.power_trigger(),
 
 		// sync short
-		.short_preamble_detected(),
+		.short_preamble_detected(short_preamble_detected),
 		.phase_offset(),
 
 		// sync long
 		.sync_long_metric(),
 		.sync_long_metric_stb(),
-		.long_preamble_detected(),
+		.long_preamble_detected(long_preamble_detected),
 		.sync_long_out(),
 		.sync_long_out_strobe(),
 		.phase_offset_taken(phase_offset_taken),

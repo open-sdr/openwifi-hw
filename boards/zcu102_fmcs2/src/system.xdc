@@ -38,7 +38,6 @@ set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf
 # set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_ant_flag/syncstages_ff_reg[3][0]/Q}]
 # set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_ant_flag/syncstages_ff_reg[3][0]/R}]
 
-
 create_debug_core u_ila_0 ila
 set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
 set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
@@ -51,24 +50,24 @@ set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
 set_property port_width 1 [get_debug_ports u_ila_0/clk]
 connect_debug_port u_ila_0/clk [get_nets [list i_system_wrapper/system_i/sys_ps8/inst/pl_clk2]]
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
-set_property port_width 4 [get_debug_ports u_ila_0/probe0]
-connect_debug_port u_ila_0/probe0 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[0]} {i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[1]} {i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[2]} {i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[3]}]]
+set_property port_width 2 [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/side_ch_control_i/ofdm_rx_state[0]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/side_ch_control_i/ofdm_rx_state[1]}]]
 create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
-set_property port_width 2 [get_debug_ports u_ila_0/probe1]
-connect_debug_port u_ila_0/probe1 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/side_ch_control_i/ofdm_rx_state[0]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/side_ch_control_i/ofdm_rx_state[1]}]]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe1]
+set_property port_width 32 [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[0]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[1]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[2]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[3]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[4]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[5]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[6]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[7]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[8]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[9]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[10]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[11]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[12]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[13]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[14]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[15]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[16]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[17]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[18]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[19]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[20]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[21]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[22]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[23]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[24]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[25]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[26]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[27]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[28]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[29]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[30]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[31]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe2]
-set_property port_width 32 [get_debug_ports u_ila_0/probe2]
-connect_debug_port u_ila_0/probe2 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[0]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[1]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[2]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[3]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[4]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[5]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[6]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[7]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[8]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[9]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[10]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[11]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[12]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[13]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[14]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[15]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[16]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[17]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[18]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[19]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[20]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[21]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[22]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[23]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[24]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[25]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[26]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[27]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[28]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[29]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[30]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/data_to_ps[31]}]]
+set_property port_width 16 [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[0]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[1]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[2]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[3]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[4]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[5]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[6]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[7]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[8]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[9]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[10]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[11]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[12]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[13]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[14]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[15]}]]
 create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe3]
-set_property port_width 16 [get_debug_ports u_ila_0/probe3]
-connect_debug_port u_ila_0/probe3 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[0]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[1]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[2]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[3]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[4]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[5]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[6]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[7]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[8]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[9]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[10]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[11]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[12]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[13]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[14]} {i_system_wrapper/system_i/openwifi_ip/side_ch_0/m00_axis_tdata[15]}]]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe3]
+set_property port_width 3 [get_debug_ports u_ila_0/probe3]
+connect_debug_port u_ila_0/probe3 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[0]} {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[1]} {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[2]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe4]
-set_property port_width 3 [get_debug_ports u_ila_0/probe4]
-connect_debug_port u_ila_0/probe4 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[0]} {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[1]} {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[2]}]]
+set_property port_width 1 [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0/inst/dot11_i/state[1]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe5]
 set_property port_width 16 [get_debug_ports u_ila_0/probe5]
@@ -100,71 +99,59 @@ connect_debug_port u_ila_0/probe11 [get_nets [list i_system_wrapper/system_i/ope
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe12]
 set_property port_width 1 [get_debug_ports u_ila_0/probe12]
-connect_debug_port u_ila_0/probe12 [get_nets [list i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/m_axis_start_1trans]]
+connect_debug_port u_ila_0/probe12 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_csi_valid]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe13]
 set_property port_width 1 [get_debug_ports u_ila_0/probe13]
-connect_debug_port u_ila_0/probe13 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_csi_valid]]
+connect_debug_port u_ila_0/probe13 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_demod_is_ongoing]]
 create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe14]
+set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe14]
 set_property port_width 1 [get_debug_ports u_ila_0/probe14]
-connect_debug_port u_ila_0/probe14 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_demod_is_ongoing]]
+connect_debug_port u_ila_0/probe14 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_equalizer_valid]]
 create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA [get_debug_ports u_ila_0/probe15]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe15]
 set_property port_width 1 [get_debug_ports u_ila_0/probe15]
-connect_debug_port u_ila_0/probe15 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_equalizer_valid]]
+connect_debug_port u_ila_0/probe15 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_fcs_ok]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe16]
 set_property port_width 1 [get_debug_ports u_ila_0/probe16]
-connect_debug_port u_ila_0/probe16 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_fcs_ok]]
+connect_debug_port u_ila_0/probe16 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_fcs_out_strobe]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe17]
 set_property port_width 1 [get_debug_ports u_ila_0/probe17]
-connect_debug_port u_ila_0/probe17 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_fcs_out_strobe]]
+connect_debug_port u_ila_0/probe17 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_ht_unsupport]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe18]
 set_property port_width 1 [get_debug_ports u_ila_0/probe18]
-connect_debug_port u_ila_0/probe18 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_ht_unsupport]]
+connect_debug_port u_ila_0/probe18 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_pkt_header_valid]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe19]
 set_property port_width 1 [get_debug_ports u_ila_0/probe19]
-connect_debug_port u_ila_0/probe19 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_pkt_header_valid]]
+connect_debug_port u_ila_0/probe19 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_pkt_header_valid_strobe]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe20]
 set_property port_width 1 [get_debug_ports u_ila_0/probe20]
-connect_debug_port u_ila_0/probe20 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_rx_0_pkt_header_valid_strobe]]
+connect_debug_port u_ila_0/probe20 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_tx_0/phy_tx_start]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe21]
 set_property port_width 1 [get_debug_ports u_ila_0/probe21]
-connect_debug_port u_ila_0/probe21 [get_nets [list i_system_wrapper/system_i/openwifi_ip/openofdm_tx_0/phy_tx_start]]
+connect_debug_port u_ila_0/probe21 [get_nets [list i_system_wrapper/system_i/openwifi_ip/tx_intf_0/tx_end_from_acc]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe22]
 set_property port_width 1 [get_debug_ports u_ila_0/probe22]
-connect_debug_port u_ila_0/probe22 [get_nets [list i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/side_ch_control_i/side_info_fifo_rd_en]]
+connect_debug_port u_ila_0/probe22 [get_nets [list i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/tx_pkt_need_ack]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe23]
 set_property port_width 1 [get_debug_ports u_ila_0/probe23]
-connect_debug_port u_ila_0/probe23 [get_nets [list i_system_wrapper/system_i/openwifi_ip/side_ch_0/inst/side_ch_control_i/side_info_fifo_wr_en]]
+connect_debug_port u_ila_0/probe23 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0_addr1_valid]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe24]
 set_property port_width 1 [get_debug_ports u_ila_0/probe24]
-connect_debug_port u_ila_0/probe24 [get_nets [list i_system_wrapper/system_i/openwifi_ip/tx_intf_0/tx_end_from_acc]]
+connect_debug_port u_ila_0/probe24 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0_FC_DI_valid]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe25]
 set_property port_width 1 [get_debug_ports u_ila_0/probe25]
-connect_debug_port u_ila_0/probe25 [get_nets [list i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/tx_pkt_need_ack]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe26]
-set_property port_width 1 [get_debug_ports u_ila_0/probe26]
-connect_debug_port u_ila_0/probe26 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0_addr1_valid]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe27]
-set_property port_width 1 [get_debug_ports u_ila_0/probe27]
-connect_debug_port u_ila_0/probe27 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0_FC_DI_valid]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe28]
-set_property port_width 1 [get_debug_ports u_ila_0/probe28]
-connect_debug_port u_ila_0/probe28 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0_tx_try_complete]]
+connect_debug_port u_ila_0/probe25 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0_tx_try_complete]]
 set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
 set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
 set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]

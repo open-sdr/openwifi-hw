@@ -385,7 +385,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>b19f53aa</spirit:value>
+            <spirit:value>0a8dd6cc</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -410,7 +410,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>b19f53aa</spirit:value>
+            <spirit:value>0a8dd6cc</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1524,7 +1524,7 @@
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>MAX_NUM_DMA_SYMBOL</spirit:name>
         <spirit:displayName>Max Num Dma Symbol</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.MAX_NUM_DMA_SYMBOL">8192</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.MAX_NUM_DMA_SYMBOL">4096</spirit:value>
       </spirit:modelParameter>
     </spirit:modelParameters>
   </spirit:model>
@@ -1539,13 +1539,13 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/clock_speed.v</spirit:name>
+        <spirit:name>src/board_def.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/board_def.v</spirit:name>
+        <spirit:name>src/clock_speed.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
@@ -1557,16 +1557,6 @@
       </spirit:file>
       <spirit:file>
         <spirit:name>src/fifo64_1clk_dep64_fifo_generator_0_0/fifo64_1clk_dep64_fifo_generator_0_0.xci</spirit:name>
-        <spirit:userFileType>xci</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_1clk_fifo_generator_0_0/fifo64_1clk_fifo_generator_0_0.xci</spirit:name>
-        <spirit:userFileType>xci</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_1clk_dep4k_fifo_generator_0_0/fifo64_1clk_dep4k_fifo_generator_0_0.xci</spirit:name>
         <spirit:userFileType>xci</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -1612,16 +1602,6 @@
       </spirit:file>
       <spirit:file>
         <spirit:name>src/fifo32_2clk_dep32.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_1clk.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_1clk_dep4k.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -1663,7 +1643,7 @@
       <spirit:file>
         <spirit:name>src/tx_intf.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_4877724f</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_bf4e56da</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1700,13 +1680,13 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/clock_speed.v</spirit:name>
+        <spirit:name>src/board_def.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/board_def.v</spirit:name>
+        <spirit:name>src/clock_speed.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
@@ -1718,16 +1698,6 @@
       </spirit:file>
       <spirit:file>
         <spirit:name>src/fifo64_1clk_dep64_fifo_generator_0_0/fifo64_1clk_dep64_fifo_generator_0_0.xci</spirit:name>
-        <spirit:userFileType>xci</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_1clk_fifo_generator_0_0/fifo64_1clk_fifo_generator_0_0.xci</spirit:name>
-        <spirit:userFileType>xci</spirit:userFileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_1clk_dep4k_fifo_generator_0_0/fifo64_1clk_dep4k_fifo_generator_0_0.xci</spirit:name>
         <spirit:userFileType>xci</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -1773,16 +1743,6 @@
       </spirit:file>
       <spirit:file>
         <spirit:name>src/fifo32_2clk_dep32.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_1clk.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>src/fifo64_1clk_dep4k.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -1922,7 +1882,7 @@
     <spirit:parameter>
       <spirit:name>MAX_NUM_DMA_SYMBOL</spirit:name>
       <spirit:displayName>Max Num Dma Symbol</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.MAX_NUM_DMA_SYMBOL">8192</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.MAX_NUM_DMA_SYMBOL">4096</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
@@ -1941,26 +1901,27 @@
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:xpmLibraries>
         <xilinx:xpmLibrary>XPM_CDC</xilinx:xpmLibrary>
+        <xilinx:xpmLibrary>XPM_FIFO</xilinx:xpmLibrary>
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-10-05T18:10:51Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-10-16T18:07:02Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3eee9661_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5cbce504_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@563a281d_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@52bd116_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@6192d122_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6527cc8e_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@23c079a2_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@aa55f2_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@179e70fe_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@18d77768_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/low/tx_intf</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="49bbe3ef"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="871c369d"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="0bc8e01a"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="50ce616d"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="31119b8c"/>
-      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="f899969d"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="71c6d547"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="f0c8db6b"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="ecf37a9e"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>

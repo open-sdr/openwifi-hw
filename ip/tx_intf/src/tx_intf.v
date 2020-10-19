@@ -1,4 +1,5 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
+`include "clock_speed.v"
 
 `timescale 1 ns / 1 ps
 
@@ -17,7 +18,11 @@
 		parameter integer C_M00_AXIS_TDATA_WIDTH	= 64,
 		
         parameter integer WAIT_COUNT_BITS = 5,
-		parameter integer MAX_NUM_DMA_SYMBOL = 8192
+`ifdef SMALL_FPGA
+		parameter integer MAX_NUM_DMA_SYMBOL = 4096
+`else
+        parameter integer MAX_NUM_DMA_SYMBOL = 8192
+`endif
 	)
 	(
 	    input wire dac_rst,

@@ -853,6 +853,8 @@ always @(posedge clock) begin
             end
 
             S_HT_LTS: begin
+                pkt_header_valid <= 0;
+                pkt_header_valid_strobe <= 0;
                 short_gi <= ht_sgi;
                 if (sync_long_out_strobe) begin
                     sync_long_out_count <= sync_long_out_count + 1;
