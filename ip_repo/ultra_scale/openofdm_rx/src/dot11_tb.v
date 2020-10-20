@@ -22,7 +22,6 @@ wire [31:0] sync_long_metric;
 wire sync_long_metric_stb;
 wire long_preamble_detected;
 
-
 wire [31:0] equalizer_out;
 wire equalizer_out_strobe;
 
@@ -85,16 +84,26 @@ integer signal_fd;
 
 integer byte_out_fd;
 
-
-
 integer file_i, file_q, file_rssi_half_db, iq_sample_file;
 
-//`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11n_65mbps_98_5f_d3_c7_06_27_e8_de_27_90_6e_42_openwifi.txt" 
-//`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11a_48mbps_qos_data_e4_90_7e_15_2a_16_e8_de_27_90_6e_42_openwifi.txt" 
-//`define NUM_SAMPLE 4560
+//`define SPEED_100M // comment out this to use 200M
 
-`define SAMPLE_FILE "../../../../../testing_inputs/simulated/openofdm_tx/PL_100Bytes/54Mbps.txt"
-`define NUM_SAMPLE 2048
+//`define SAMPLE_FILE "../../../../../testing_inputs/simulated/iq_11n_mcs7_gi0_100B_ht_unsupport_openwifi.txt"
+//`define SAMPLE_FILE "../../../../../testing_inputs/simulated/iq_11n_mcs7_gi0_100B_wrong_ht_sig_openwifi.txt"
+//`define SAMPLE_FILE "../../../../../testing_inputs/simulated/iq_11n_mcs7_gi0_100B_wrong_sig_openwifi.txt"
+`define SAMPLE_FILE "../../../../../testing_inputs/simulated/iq_11n_mcs7_gi0_100B_openwifi.txt"
+//`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11n_6.5mbps_98_5f_d3_c7_06_27_e8_de_27_90_6e_42_openwifi.txt"
+//`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11n_52mbps_98_5f_d3_c7_06_27_e8_de_27_90_6e_42_openwifi.txt"
+//`define SAMPLE_FILE "../../../../../testing_inputs/radiated/dot11n_19.5mbps_openwifi.txt"
+//`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11n_58.5mbps_98_5f_d3_c7_06_27_e8_de_27_90_6e_42_openwifi.txt"
+//`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11n_65mbps_98_5f_d3_c7_06_27_e8_de_27_90_6e_42_openwifi.txt" 
+//`define SAMPLE_FILE "../../../../../testing_inputs/conducted/dot11a_48mbps_qos_data_e4_90_7e_15_2a_16_e8_de_27_90_6e_42_openwifi.txt"
+//`define SAMPLE_FILE "../../../../../testing_inputs/radiated/ack-ok-openwifi.txt"
+
+`define NUM_SAMPLE 8560
+
+//`define SAMPLE_FILE "../../../../../testing_inputs/simulated/openofdm_tx/PL_100Bytes/54Mbps.txt"
+//`define NUM_SAMPLE 2048
 
 initial begin
     $dumpfile("dot11.vcd");
@@ -145,15 +154,15 @@ always @(posedge clock) begin
     end
 end
 
-always begin //100MHz
-    #5 clock = !clock;
-end
-
-/*
-always begin //200MHz
-    #2.5 clock = !clock;
-end
-*/
+`ifdef SPEED_100M
+    always begin //100MHz
+        #5 clock = !clock;
+    end
+`else
+    always begin //200MHz
+        #2.5 clock = !clock;
+    end
+`endif
 
 always @(posedge clock) begin
     if (reset) begin
@@ -162,8 +171,11 @@ always @(posedge clock) begin
         sample_in_strobe <= 0;
         addr <= 0;
     end else if (enable) begin
-	if (clk_count == 4) begin  // for 100M; 100/20 = 5
-        // if (clk_count == 9) begin // for 200M; 200/20 = 10
+        `ifdef SPEED_100M
+    	if (clk_count == 4) begin  // for 100M; 100/20 = 5
+    	`else
+        if (clk_count == 9) begin // for 200M; 200/20 = 10
+        `endif
             sample_in_strobe <= 1;
             //$fscanf(iq_sample_file, "%d %d %d", file_i, file_q, file_rssi_half_db);
             $fscanf(iq_sample_file, "%d %d", file_i, file_q);
@@ -275,8 +287,8 @@ end
 
 dot11 dot11_inst (
     .clock(clock),
-    .reset(reset),
     .enable(enable),
+    .reset(reset),
 
     //.set_stb(set_stb),
     //.set_addr(set_addr),
@@ -290,20 +302,37 @@ dot11 dot11_inst (
     .sample_in_strobe(sample_in_strobe),
     .soft_decoding(1'b1),
 
+    .pkt_header_valid_strobe(pkt_header_valid_strobe),
+    .pkt_len(pkt_len),
+    .pkt_len_total(pkt_len_total),
+    .byte_out_strobe(byte_out_strobe),
+    .byte_out(byte_out),
+    .byte_count_total(byte_count_total),
+    .byte_count(byte_count),
+    .fcs_out_strobe(fcs_out_strobe),
+    .fcs_ok(fcs_ok),
+
     .state(dot11_state),
 
     .power_trigger(power_trigger),
+
     .short_preamble_detected(short_preamble_detected),
 
     .sync_long_metric(sync_long_metric),
     .sync_long_metric_stb(sync_long_metric_stb),
     .long_preamble_detected(long_preamble_detected),
-
     .sync_long_out(sync_long_out),
     .sync_long_out_strobe(sync_long_out_strobe),
 
     .equalizer_out(equalizer_out),
     .equalizer_out_strobe(equalizer_out_strobe),
+
+    .legacy_sig_stb(legacy_sig_stb),
+    .legacy_rate(legacy_rate),
+    .legacy_sig_rsvd(legacy_sig_rsvd),
+    .legacy_len(legacy_len),
+    .legacy_sig_parity(legacy_sig_parity),
+    .legacy_sig_tail(legacy_sig_tail),
 
     .demod_out(demod_out),
     .demod_out_strobe(demod_out_strobe),
@@ -315,24 +344,7 @@ dot11 dot11_inst (
     .conv_decoder_out_stb(conv_decoder_out_stb),
 
     .descramble_out(descramble_out),
-    .descramble_out_strobe(descramble_out_strobe),
-
-    .pkt_header_valid_strobe(pkt_header_valid_strobe),
-    .byte_out(byte_out),
-    .byte_out_strobe(byte_out_strobe),
-    .fcs_out_strobe(fcs_out_strobe),
-    .fcs_ok(fcs_ok),
-    .byte_count_total(byte_count_total),
-    .byte_count(byte_count),
-    .pkt_len_total(pkt_len_total),
-    .pkt_len(pkt_len),
-
-    .legacy_rate(legacy_rate),
-    .legacy_sig_rsvd(legacy_sig_rsvd),
-    .legacy_len(legacy_len),
-    .legacy_sig_parity(legacy_sig_parity),
-    .legacy_sig_tail(legacy_sig_tail),
-    .legacy_sig_stb(legacy_sig_stb)
+    .descramble_out_strobe(descramble_out_strobe)
 );
 
 /*

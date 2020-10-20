@@ -19,6 +19,7 @@ module sync_long (
     output reg sample_out_strobe,
     output reg [15:0] num_ofdm_symbol,
 
+    output reg signed [31:0] phase_offset_taken,
     output reg [2:0] state
 );
 `include "common_params.v"
@@ -359,6 +360,7 @@ always @(posedge clock) begin
                         num_ofdm_symbol <= 0;
                         phase_correction <= 0;
                         next_phase_correction <= phase_offset;
+                        phase_offset_taken <= phase_offset;
                         state <= S_FFT;
                     end else begin
                         state <= S_IDLE;

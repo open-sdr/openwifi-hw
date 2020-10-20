@@ -21,7 +21,7 @@
         output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count2,
         output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] data_count3,
 
-        input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] S_AXIS_NUM_DMA_SYMBOL,
+        input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] S_AXIS_NUM_DMA_SYMBOL_raw,
         output wire s_axis_recv_data_from_high,
 
 		input wire  S_AXIS_ACLK,
@@ -45,6 +45,7 @@
 	                WRITE_FIFO  = 1'b1; // In this state FIFO is written with the
 
 	reg  mst_exec_state;  
+	reg [bit_num-1 : 0] S_AXIS_NUM_DMA_SYMBOL;
 	
 	wire axis_tready0;
 	wire axis_tready1;
@@ -99,31 +100,26 @@
 
 	always @(posedge S_AXIS_ACLK) 
 	begin  
-	  if (!S_AXIS_ARESETN) 
-	    begin
-	      mst_exec_state <= IDLE;
-	    end  
-	  else
-	    case (mst_exec_state)
-	      IDLE: 
-	          if (S_AXIS_TVALID)
-	            begin
-	              mst_exec_state <= WRITE_FIFO;
-	            end
-	          else
-	            begin
-	              mst_exec_state <= IDLE;
-	            end
-	      WRITE_FIFO: 
-	        if (writes_done)
-	          begin
-	            mst_exec_state <= IDLE;
-	          end
-	        else
-	          begin
-	            mst_exec_state <= WRITE_FIFO;
-	          end
-	    endcase
+		if (!S_AXIS_ARESETN) begin
+			mst_exec_state <= IDLE;
+			S_AXIS_NUM_DMA_SYMBOL <= 0;
+		end else begin
+			S_AXIS_NUM_DMA_SYMBOL <= S_AXIS_NUM_DMA_SYMBOL_raw - 1;
+			case (mst_exec_state)
+			IDLE: 
+				if (S_AXIS_TVALID) begin
+					mst_exec_state <= WRITE_FIFO;
+				end else begin
+					mst_exec_state <= IDLE;
+				end
+			WRITE_FIFO: 
+				if (writes_done) begin
+					mst_exec_state <= IDLE;
+				end else begin
+					mst_exec_state <= WRITE_FIFO;
+				end
+			endcase
+		end
 	end
 
 	always@(posedge S_AXIS_ACLK)
@@ -136,7 +132,7 @@
 	  else
 	    if ( write_pointer <= S_AXIS_NUM_DMA_SYMBOL || (endless_mode==1) )
 	      begin
-	        if (fifo_wren0||fifo_wren1||fifo_wren2||fifo_wren3)
+	        if (fifo_wren0||fifo_wren1)
 	          begin
 	            write_pointer <= write_pointer + 1;
 	            writes_done <= 1'b0;
@@ -148,52 +144,224 @@
 	      end  
 	end
 
-    fifo64_1clk_dep4k fifo64_1clk_dep4k_i0 ( //queue0
-        .CLK(S_AXIS_ACLK),
-        .DATAO(DATA_TO_ACC0),
-        .DI(S_AXIS_TDATA),
-        .EMPTY(EMPTY0),
-        .FULL(FULL0),
-        .RDEN(ACC_ASK_DATA0),
-        .RST(!S_AXIS_ARESETN),
-        .WREN(fifo_wren0),
-        .data_count(data_count0)
-    );
+    // fifo64_1clk_dep4k fifo64_1clk_dep4k_i0 ( //queue0
+    //     .CLK(S_AXIS_ACLK),
+    //     .DATAO(DATA_TO_ACC0),
+    //     .DI(S_AXIS_TDATA),
+    //     .EMPTY(EMPTY0),
+    //     .FULL(FULL0),
+    //     .RDEN(ACC_ASK_DATA0),
+    //     .RST(!S_AXIS_ARESETN),
+    //     .WREN(fifo_wren0),
+    //     .data_count(data_count0)
+    // );
+	xpm_fifo_sync #(
+		.DOUT_RESET_VALUE("0"),    // String
+		.ECC_MODE("no_ecc"),       // String
+		.FIFO_MEMORY_TYPE("auto"), // String
+		.FIFO_READ_LATENCY(0),     // DECIMAL
+		.FIFO_WRITE_DEPTH(MAX_NUM_DMA_SYMBOL),   // DECIMAL
+		.FULL_RESET_VALUE(0),      // DECIMAL
+		.PROG_EMPTY_THRESH(10),    // DECIMAL
+		.PROG_FULL_THRESH(10),     // DECIMAL
+		.RD_DATA_COUNT_WIDTH(bit_num),   // DECIMAL
+		.READ_DATA_WIDTH(C_S_AXIS_TDATA_WIDTH),      // DECIMAL
+		.READ_MODE("fwft"),         // String
+		.USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+		.WAKEUP_TIME(0),           // DECIMAL
+		.WRITE_DATA_WIDTH(C_S_AXIS_TDATA_WIDTH),     // DECIMAL
+		.WR_DATA_COUNT_WIDTH(bit_num)    // DECIMAL
+	) fifo64_i0 (
+		.almost_empty(),
+		.almost_full(),
+		.data_valid(),
+		.dbiterr(),
+		.dout(DATA_TO_ACC0),
+		.empty(EMPTY0),
+		.full(FULL0),
+		.overflow(),
+		.prog_empty(),
+		.prog_full(),
+		.rd_data_count(data_count0),
+		.rd_rst_busy(),
+		.sbiterr(),
+		.underflow(),
+		.wr_ack(),
+		.wr_data_count(),
+		.wr_rst_busy(),
+		.din(S_AXIS_TDATA),
+		.injectdbiterr(),
+		.injectsbiterr(),
+		.rd_en(ACC_ASK_DATA0),
+		.rst(!S_AXIS_ARESETN),
+		.sleep(),
+		.wr_clk(S_AXIS_ACLK),
+		.wr_en(fifo_wren0)
+	);
 
-    fifo64_1clk_dep4k fifo64_1clk_dep4k_i1 ( //queue1
-        .CLK(S_AXIS_ACLK),
-        .DATAO(DATA_TO_ACC1),
-        .DI(S_AXIS_TDATA),
-        .EMPTY(EMPTY1),
-        .FULL(FULL1),
-        .RDEN(ACC_ASK_DATA1),
-        .RST(!S_AXIS_ARESETN),
-        .WREN(fifo_wren1),
-        .data_count(data_count1)
-    );
+    // fifo64_1clk_dep4k fifo64_1clk_dep4k_i1 ( //queue1
+    //     .CLK(S_AXIS_ACLK),
+    //     .DATAO(DATA_TO_ACC1),
+    //     .DI(S_AXIS_TDATA),
+    //     .EMPTY(EMPTY1),
+    //     .FULL(FULL1),
+    //     .RDEN(ACC_ASK_DATA1),
+    //     .RST(!S_AXIS_ARESETN),
+    //     .WREN(fifo_wren1),
+    //     .data_count(data_count1)
+    // );
+	xpm_fifo_sync #(
+		.DOUT_RESET_VALUE("0"),    // String
+		.ECC_MODE("no_ecc"),       // String
+		.FIFO_MEMORY_TYPE("auto"), // String
+		.FIFO_READ_LATENCY(0),     // DECIMAL
+		.FIFO_WRITE_DEPTH(MAX_NUM_DMA_SYMBOL),   // DECIMAL
+		.FULL_RESET_VALUE(0),      // DECIMAL
+		.PROG_EMPTY_THRESH(10),    // DECIMAL
+		.PROG_FULL_THRESH(10),     // DECIMAL
+		.RD_DATA_COUNT_WIDTH(bit_num),   // DECIMAL
+		.READ_DATA_WIDTH(C_S_AXIS_TDATA_WIDTH),      // DECIMAL
+		.READ_MODE("fwft"),         // String
+		.USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+		.WAKEUP_TIME(0),           // DECIMAL
+		.WRITE_DATA_WIDTH(C_S_AXIS_TDATA_WIDTH),     // DECIMAL
+		.WR_DATA_COUNT_WIDTH(bit_num)    // DECIMAL
+	) fifo64_i1 (
+		.almost_empty(),
+		.almost_full(),
+		.data_valid(),
+		.dbiterr(),
+		.dout(DATA_TO_ACC1),
+		.empty(EMPTY1),
+		.full(FULL1),
+		.overflow(),
+		.prog_empty(),
+		.prog_full(),
+		.rd_data_count(data_count1),
+		.rd_rst_busy(),
+		.sbiterr(),
+		.underflow(),
+		.wr_ack(),
+		.wr_data_count(),
+		.wr_rst_busy(),
+		.din(S_AXIS_TDATA),
+		.injectdbiterr(),
+		.injectsbiterr(),
+		.rd_en(ACC_ASK_DATA1),
+		.rst(!S_AXIS_ARESETN),
+		.sleep(),
+		.wr_clk(S_AXIS_ACLK),
+		.wr_en(fifo_wren1)
+	);
 
-    fifo64_1clk fifo64_1clk_dep4k_i2 ( //queue2
-        .CLK(S_AXIS_ACLK),
-        .DATAO(DATA_TO_ACC2),
-        .DI(S_AXIS_TDATA),
-        .EMPTY(EMPTY2),
-        .FULL(FULL2),
-        .RDEN(ACC_ASK_DATA2),
-        .RST(!S_AXIS_ARESETN),
-        .WREN(fifo_wren2),
-        .data_count(data_count2)
-    );
+    // fifo64_1clk fifo64_1clk_dep4k_i2 ( //queue2
+    //     .CLK(S_AXIS_ACLK),
+    //     .DATAO(DATA_TO_ACC2),
+    //     .DI(S_AXIS_TDATA),
+    //     .EMPTY(EMPTY2),
+    //     .FULL(FULL2),
+    //     .RDEN(ACC_ASK_DATA2),
+    //     .RST(!S_AXIS_ARESETN),
+    //     .WREN(fifo_wren2),
+    //     .data_count(data_count2)
+    // );
+	xpm_fifo_sync #(
+		.DOUT_RESET_VALUE("0"),    // String
+		.ECC_MODE("no_ecc"),       // String
+		.FIFO_MEMORY_TYPE("auto"), // String
+		.FIFO_READ_LATENCY(0),     // DECIMAL
+		.FIFO_WRITE_DEPTH(MAX_NUM_DMA_SYMBOL),   // DECIMAL
+		.FULL_RESET_VALUE(0),      // DECIMAL
+		.PROG_EMPTY_THRESH(10),    // DECIMAL
+		.PROG_FULL_THRESH(10),     // DECIMAL
+		.RD_DATA_COUNT_WIDTH(bit_num),   // DECIMAL
+		.READ_DATA_WIDTH(C_S_AXIS_TDATA_WIDTH),      // DECIMAL
+		.READ_MODE("fwft"),         // String
+		.USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+		.WAKEUP_TIME(0),           // DECIMAL
+		.WRITE_DATA_WIDTH(C_S_AXIS_TDATA_WIDTH),     // DECIMAL
+		.WR_DATA_COUNT_WIDTH(bit_num)    // DECIMAL
+	) fifo64_i2 (
+		.almost_empty(),
+		.almost_full(),
+		.data_valid(),
+		.dbiterr(),
+		.dout(DATA_TO_ACC2),
+		.empty(EMPTY2),
+		.full(FULL2),
+		.overflow(),
+		.prog_empty(),
+		.prog_full(),
+		.rd_data_count(data_count2),
+		.rd_rst_busy(),
+		.sbiterr(),
+		.underflow(),
+		.wr_ack(),
+		.wr_data_count(),
+		.wr_rst_busy(),
+		.din(S_AXIS_TDATA),
+		.injectdbiterr(),
+		.injectsbiterr(),
+		.rd_en(ACC_ASK_DATA2),
+		.rst(!S_AXIS_ARESETN),
+		.sleep(),
+		.wr_clk(S_AXIS_ACLK),
+		.wr_en(fifo_wren2)
+	);
 
-    fifo64_1clk fifo64_1clk_dep4k_i3 ( //queue3
-        .CLK(S_AXIS_ACLK),
-        .DATAO(DATA_TO_ACC3),
-        .DI(S_AXIS_TDATA),
-        .EMPTY(EMPTY3),
-        .FULL(FULL3),
-        .RDEN(ACC_ASK_DATA3),
-        .RST(!S_AXIS_ARESETN),
-        .WREN(fifo_wren3),
-        .data_count(data_count3)
-    );
+    // fifo64_1clk fifo64_1clk_dep4k_i3 ( //queue3
+    //     .CLK(S_AXIS_ACLK),
+    //     .DATAO(DATA_TO_ACC3),
+    //     .DI(S_AXIS_TDATA),
+    //     .EMPTY(EMPTY3),
+    //     .FULL(FULL3),
+    //     .RDEN(ACC_ASK_DATA3),
+    //     .RST(!S_AXIS_ARESETN),
+    //     .WREN(fifo_wren3),
+    //     .data_count(data_count3)
+    // );
+	xpm_fifo_sync #(
+		.DOUT_RESET_VALUE("0"),    // String
+		.ECC_MODE("no_ecc"),       // String
+		.FIFO_MEMORY_TYPE("auto"), // String
+		.FIFO_READ_LATENCY(0),     // DECIMAL
+		.FIFO_WRITE_DEPTH(MAX_NUM_DMA_SYMBOL),   // DECIMAL
+		.FULL_RESET_VALUE(0),      // DECIMAL
+		.PROG_EMPTY_THRESH(10),    // DECIMAL
+		.PROG_FULL_THRESH(10),     // DECIMAL
+		.RD_DATA_COUNT_WIDTH(bit_num),   // DECIMAL
+		.READ_DATA_WIDTH(C_S_AXIS_TDATA_WIDTH),      // DECIMAL
+		.READ_MODE("fwft"),         // String
+		.USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+		.WAKEUP_TIME(0),           // DECIMAL
+		.WRITE_DATA_WIDTH(C_S_AXIS_TDATA_WIDTH),     // DECIMAL
+		.WR_DATA_COUNT_WIDTH(bit_num)    // DECIMAL
+	) fifo64_i3 (
+		.almost_empty(),
+		.almost_full(),
+		.data_valid(),
+		.dbiterr(),
+		.dout(DATA_TO_ACC3),
+		.empty(EMPTY3),
+		.full(FULL3),
+		.overflow(),
+		.prog_empty(),
+		.prog_full(),
+		.rd_data_count(data_count3),
+		.rd_rst_busy(),
+		.sbiterr(),
+		.underflow(),
+		.wr_ack(),
+		.wr_data_count(),
+		.wr_rst_busy(),
+		.din(S_AXIS_TDATA),
+		.injectdbiterr(),
+		.injectsbiterr(),
+		.rd_en(ACC_ASK_DATA3),
+		.rst(!S_AXIS_ARESETN),
+		.sleep(),
+		.wr_clk(S_AXIS_ACLK),
+		.wr_en(fifo_wren3)
+	);
 
 	endmodule

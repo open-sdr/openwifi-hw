@@ -1,4 +1,5 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
+`include "clock_speed.v"
 
 `timescale 1 ns / 1 ps
 
@@ -17,7 +18,11 @@
 		parameter integer C_M00_AXIS_TDATA_WIDTH	= 64,
 		
         parameter integer WAIT_COUNT_BITS = 5,
-		parameter integer MAX_NUM_DMA_SYMBOL = 8192
+`ifdef SMALL_FPGA
+		parameter integer MAX_NUM_DMA_SYMBOL = 4096
+`else
+        parameter integer MAX_NUM_DMA_SYMBOL = 8192
+`endif
 	)
 	(
 	    input wire dac_rst,
@@ -45,8 +50,7 @@
         input wire tx_end_from_acc,
     
 	    // interrupt to PS
-        output wire tx_itrpt0,
-        output wire tx_itrpt1,
+        output wire tx_itrpt,
 
         // for xpu
         input wire [4:0] tx_status,
@@ -110,16 +114,7 @@
 		input wire [C_S00_AXIS_TDATA_WIDTH-1 : 0] s00_axis_tdata,
 		input wire [(C_S00_AXIS_TDATA_WIDTH/8)-1 : 0] s00_axis_tstrb,
 		input wire  s00_axis_tlast,
-		input wire  s00_axis_tvalid,
-
-		// Ports of Axi Master Bus Interface M00_AXIS to PS
-		input wire  m00_axis_aclk,
-		input wire  m00_axis_aresetn,
-		output wire  m00_axis_tvalid,
-		output wire [C_M00_AXIS_TDATA_WIDTH-1 : 0] m00_axis_tdata,
-		output wire [(C_M00_AXIS_TDATA_WIDTH/8)-1 : 0] m00_axis_tstrb,
-		output wire  m00_axis_tlast,
-		input wire  m00_axis_tready
+		input wire  s00_axis_tvalid
 	);
 
 	function integer clogb2 (input integer bit_depth);                                   
@@ -177,7 +172,6 @@
     
     wire [(C_S00_AXIS_TDATA_WIDTH-1):0] s_axis_data_to_acc;
     wire tx_bit_intf_acc_ask_data_from_s_axis;
-    wire tx_iq_intf_acc_ask_data_from_s_axis;
     wire acc_ask_data_from_s_axis;
     wire s_axis_emptyn_to_acc;
     wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] s_axis_fifo_data_count0;
@@ -195,15 +189,6 @@
     wire [6:0] num_dma_symbol_fifo_data_count2;
     wire [6:0] num_dma_symbol_fifo_data_count3;
 
-    wire [(C_M00_AXIS_TDATA_WIDTH-1):0] data_loopback;
-    wire data_loopback_valid;
-    
-	wire start_1trans_from_pl_to_m_axis;
-    wire [(C_M00_AXIS_TDATA_WIDTH-1):0] data_from_pl_to_m_axis;
-    wire data_ready_from_pl_to_m_axis;
-    wire fulln_from_m_axis_to_pl;
-    wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_fifo_data_count;
-
     wire [5:0] dac_intf_rd_data_count;
     wire [5:0] dac_intf_wr_data_count;
     wire [27:0] dac_intf_counter_1s;
@@ -216,16 +201,11 @@
     
     wire s_axis_recv_data_from_high;
     
-    wire src_indication;
-
-    wire tx_itrpt0_internal;
-    wire tx_itrpt1_internal;
+    wire tx_itrpt_internal;
 
     wire [13:0] send_cts_toself_wait_sifs_top;
 
     assign send_cts_toself_wait_sifs_top = (band==1?slv_reg6[13:0]:slv_reg6[29:16]);
-
-    assign src_indication = slv_reg3[0];
 
 	assign phy_tx_auto_start_mode = slv_reg2[3];
 	assign phy_tx_auto_start_num_dma_symbol_th = slv_reg2[13:4];
@@ -235,10 +215,9 @@
     assign slv_reg21[2] = (s_axis_fifo_data_count2>slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]?1:0);
     assign slv_reg21[3] = (s_axis_fifo_data_count3>slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]?1:0);
 
-    assign acc_ask_data_from_s_axis=(src_indication==1?tx_iq_intf_acc_ask_data_from_s_axis:tx_bit_intf_acc_ask_data_from_s_axis);
+    assign acc_ask_data_from_s_axis = tx_bit_intf_acc_ask_data_from_s_axis;
 
-    assign tx_itrpt0 = (slv_reg14[16]==0?tx_itrpt0_internal:0);
-    assign tx_itrpt1 = (slv_reg14[17]==0?(slv_reg14[8]?tx_itrpt1_internal: (tx_itrpt1_internal&(~ack_tx_flag)) ):0);
+    assign tx_itrpt = (slv_reg14[17]==0?(slv_reg14[8]?tx_itrpt_internal: (tx_itrpt_internal&(~ack_tx_flag)) ):0);
 
     // assign slv_reg22[29:0] = {linux_prio,tx_queue_idx,tx_pkt_sn,tx_pkt_num_dma_byte};
 
@@ -390,7 +369,7 @@
 		.S_AXIS_TSTRB(s00_axis_tstrb),
 		.S_AXIS_TLAST(s00_axis_tlast),
 		.S_AXIS_TVALID(s00_axis_tvalid),
-		.S_AXIS_NUM_DMA_SYMBOL(slv_reg8[12:0]-1'b1),
+		.S_AXIS_NUM_DMA_SYMBOL_raw(slv_reg8[12:0]),
 		
 		.s_axis_recv_data_from_high(s_axis_recv_data_from_high),
 		
@@ -408,8 +387,7 @@
 
     tx_interrupt_selection tx_interrupt_selection_i (
         // selection
-        .src_sel0(slv_reg14[2:0]),
-        .src_sel1(slv_reg14[6:4]),
+        .src_sel(slv_reg14[2:0]),
         // src
         .s00_axis_tlast(s00_axis_tlast),
         .phy_tx_start(phy_tx_start),
@@ -418,8 +396,7 @@
         .tx_try_complete(tx_try_complete),
 
 	    // to ps interrupt
-	    .tx_itrpt0(tx_itrpt0_internal),
-        .tx_itrpt1(tx_itrpt1_internal)
+	    .tx_itrpt(tx_itrpt_internal)
 	);
 
     tx_bit_intf # (
@@ -493,10 +470,6 @@
         .wifi_iq_pack(wifi_iq_pack),
         .wifi_iq_ready(wifi_iq_ready),
         .wifi_iq_valid(wifi_iq_valid),
-        // receive iq samples from s_axis for debug purpose
-        .data_from_s_axis(s_axis_data_to_acc),
-        .emptyn_from_s_axis(s_axis_emptyn_to_acc),
-        .ask_data_from_s_axis(tx_iq_intf_acc_ask_data_from_s_axis),// acc_ask_data_from_s_axis=(tx_iq_intf_acc_ask_data_from_s_axis|tx_bit_intf_acc_ask_data_from_s_axis)
 
         .tx_hold_threshold(slv_reg12[10:0]),
         .bb_gain(slv_reg13[9:0]),
@@ -504,61 +477,9 @@
         .rf_i(rf_i_from_acc),
         .rf_q(rf_q_from_acc),
         .rf_iq_valid(rf_iq_valid_from_acc),
-        // some selection and enable signal
-//        .ch_sel(slv_reg3[2]),
-        .src_sel(src_indication), //0-acc; 1-s_axis
-        .loopback_sel(slv_reg3[1]), //0-always loopback s_axis; 1-loopback from src_sel result
-        // selected data also looped back to m_axis
-        .data_loopback(data_loopback),
-        .data_loopback_valid(data_loopback_valid),
 
         .tx_iq_fifo_empty(tx_iq_fifo_empty),
         .tx_hold(tx_hold)
     );
     
-    tx_intf_pl_to_m_axis # ( 
-        .C_M00_AXIS_TDATA_WIDTH(C_M00_AXIS_TDATA_WIDTH)
-    ) tx_intf_pl_to_m_axis_i (
-    // to m_axis and PS
-        .start_1trans_to_m_axis(start_1trans_from_pl_to_m_axis),
-
-        .data_to_m_axis(data_from_pl_to_m_axis),
-        .data_ready_to_m_axis(data_ready_from_pl_to_m_axis),
-//        .fulln_from_m_axis(fulln_from_m_axis_to_pl),
-        
-        .start_1trans_mode(slv_reg5[1:0]),
-        .start_1trans_ext_trigger(slv_reg6[31]),
-        .src_sel(slv_reg7[0]),
-        
-        .tx_start_from_acc(tx_start_from_acc),
-        .tx_end_from_acc(tx_end_from_acc),
-        
-        .data_loopback(data_loopback),
-        .data_loopback_valid(data_loopback_valid)
-    );
-    
-	tx_intf_m_axis # ( 
-		.C_M_AXIS_TDATA_WIDTH(C_M00_AXIS_TDATA_WIDTH),
-		.WAIT_COUNT_BITS(WAIT_COUNT_BITS),
-		.MAX_NUM_DMA_SYMBOL(MAX_NUM_DMA_SYMBOL),
-		.MAX_BIT_NUM_DMA_SYMBOL(MAX_BIT_NUM_DMA_SYMBOL)
-	) tx_intf_m_axis_i (
-		.M_AXIS_ACLK(m00_axis_aclk),
-		.M_AXIS_ARESETN(m00_axis_aresetn&(~slv_reg0[4])),
-		.M_AXIS_TVALID(m00_axis_tvalid),
-		.M_AXIS_TDATA(m00_axis_tdata),
-		.M_AXIS_TSTRB(m00_axis_tstrb),
-		.M_AXIS_TLAST(m00_axis_tlast),
-		.M_AXIS_TREADY(m00_axis_tready),
-		.START_COUNT_CFG(0),
-		.M_AXIS_NUM_DMA_SYMBOL(slv_reg9[12:0]-1'b1),
-		.start_1trans(start_1trans_from_pl_to_m_axis),
-		
-		.endless_mode(slv_reg5[9]),
-        .DATA_FROM_ACC(data_from_pl_to_m_axis),
-        .ACC_DATA_READY(data_ready_from_pl_to_m_axis),
-        .data_count(m_axis_fifo_data_count),
-        .FULLN_TO_ACC(fulln_from_m_axis_to_pl)
-	);
-
 	endmodule

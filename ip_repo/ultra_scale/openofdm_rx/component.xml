@@ -260,7 +260,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>2e6332a1</spirit:value>
+            <spirit:value>4f9e007a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -294,7 +294,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>2e6332a1</spirit:value>
+            <spirit:value>4f9e007a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -309,7 +309,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>28678e90</spirit:value>
+            <spirit:value>e4654f4a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -378,6 +378,32 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>demod_is_ongoing</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>short_preamble_detected</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>long_preamble_detected</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -524,6 +550,96 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>fcs_ok</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>csi</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>csi_valid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>phase_offset_taken</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire signed</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>equalizer</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>equalizer_valid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>ofdm_symbol_eq_out_pulse</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -1106,7 +1222,7 @@
       <spirit:file>
         <spirit:name>src/openofdm_rx.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_da6d1715</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_c468adf3</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1492,21 +1608,21 @@
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-09-03T06:39:55Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-10-13T14:58:51Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@46e3ded3_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_rx_ultra_scale</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@26ad9705_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_rx_ultra_scale</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@397af8d_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_rx_ultra_scale</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@14243671_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_rx_ultra_scale</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@550862ab_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_rx_ultra_scale</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1bd4e239_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_rx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@52ffb788_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_rx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@754cfb21_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_rx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@442dfdc6_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_rx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@48b454b5_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_rx</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="9add38af"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="871c369d"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="8ff33644"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="d9435267"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="4316bdf8"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="c9b93249"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="c26686bb"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="df252701"/>
     </xilinx:packagingInfo>

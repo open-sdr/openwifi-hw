@@ -166,7 +166,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set IP repository paths
 set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo/high"] [file normalize "$origin_dir/../../ip_repo/common"]" $obj
+set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo/high"] [file normalize "$origin_dir/../../ip_repo/big"] [file normalize "$origin_dir/../../ip_repo/common"]" $obj
 
 # Rebuild user ip_repo's index before adding any source files
 update_ip_catalog -rebuild

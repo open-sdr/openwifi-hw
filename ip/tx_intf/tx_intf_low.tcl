@@ -21,6 +21,7 @@
 # -----------generate clock_speed.v---------------
 set  fd  [open  "./src/clock_speed.v"  w]
 puts $fd "`define NUM_CLK_PER_US 100"
+puts $fd "`define SMALL_FPGA 1"
 close $fd
 file copy -force ../board_def.v ./src/board_def.v
 # ----end of generate clock_speed.v---------------
@@ -34,7 +35,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "tx_intf"
+set project_name "tx_intf_low"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -42,7 +43,7 @@ if { [info exists ::user_project_name] } {
 }
 
 variable script_file
-set script_file "tx_intf.tcl"
+set script_file "tx_intf_low.tcl"
 
 # Help information for this script
 proc help {} {
@@ -90,7 +91,7 @@ if { $::argc > 0 } {
 }
 
 # Set the directory path for the original project from where this script was exported
-set orig_proj_dir "[file normalize "$origin_dir/tx_intf"]"
+set orig_proj_dir "[file normalize "$origin_dir/tx_intf_low"]"
 
 # Create project
 create_project ${project_name} ./${project_name} -part xc7z045ffg900-2
@@ -155,7 +156,6 @@ update_ip_catalog -rebuild
 set obj [get_filesets sources_1]
 set files [list \
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk/src/fifo64_1clk_fifo_generator_0_0/fifo64_1clk_fifo_generator_0_0.xci"]"\
- "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep512/src/fifo64_1clk_dep512_fifo_generator_0_0/fifo64_1clk_dep512_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep4k/src/fifo64_1clk_dep4k_fifo_generator_0_0/fifo64_1clk_dep4k_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo32_1clk_dep512/src/fifo32_1clk_dep512_fifo_generator_0_0/fifo32_1clk_dep512_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo32_1clk_dep64/src/fifo32_1clk_dep64_fifo_generator_0_0/fifo32_1clk_dep64_fifo_generator_0_0.xci"]"\
@@ -169,13 +169,10 @@ set files [list \
  "[file normalize "$origin_dir/../../ip_repo/common/fifo32_1clk_dep64/src/fifo32_1clk_dep64.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk/src/fifo64_1clk.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep64/src/fifo64_1clk_dep64.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep512/src/fifo64_1clk_dep512.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo64_1clk_dep4k/src/fifo64_1clk_dep4k.v"]"\
  "[file normalize "$origin_dir/../../ip_repo/common/fifo32_2clk_dep32/src/fifo32_2clk_dep32.v"]"\
  "[file normalize "$origin_dir/src/tx_bit_intf.v"]"\
  "[file normalize "$origin_dir/src/tx_interrupt_selection.v"]"\
- "[file normalize "$origin_dir/src/tx_intf_m_axis.v"]"\
- "[file normalize "$origin_dir/src/tx_intf_pl_to_m_axis.v"]"\
  "[file normalize "$origin_dir/src/tx_intf_s_axi.v"]"\
  "[file normalize "$origin_dir/src/tx_intf_s_axis.v"]"\
  "[file normalize "$origin_dir/src/tx_iq_intf.v"]"\
@@ -186,21 +183,6 @@ add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
 set file "$origin_dir/../../ip_repo/common/fifo64_1clk/src/fifo64_1clk_fifo_generator_0_0/fifo64_1clk_fifo_generator_0_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-}
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
-set file "$origin_dir/../../ip_repo/common/fifo64_1clk_dep512/src/fifo64_1clk_dep512_fifo_generator_0_0/fifo64_1clk_dep512_fifo_generator_0_0.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 if { ![get_property "is_locked" $file_obj] } {
@@ -398,19 +380,6 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/common/fifo64_1clk_dep512/src/fifo64_1clk_dep512.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog" -objects $file_obj
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
 set file "$origin_dir/../../ip_repo/common/fifo64_1clk_dep4k/src/fifo64_1clk_dep4k.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -451,32 +420,6 @@ set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/tx_interrupt_selection.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog" -objects $file_obj
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
-set file "$origin_dir/src/tx_intf_m_axis.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog" -objects $file_obj
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
-set file "$origin_dir/src/tx_intf_pl_to_m_axis.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj

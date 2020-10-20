@@ -79,6 +79,16 @@
         output wire [3:0] band,
         output wire [7:0] channel,
 
+        // to side channel
+        output wire [31:0] FC_DI,
+    	output wire FC_DI_valid,
+		output wire [47:0] addr1,
+		output wire addr1_valid,
+		output wire [47:0] addr2,
+		output wire addr2_valid,
+		output wire [47:0] addr3,
+		output wire addr3_valid,
+
 		// Ports of Axi Slave Bus Interface S00_AXI
 		input  wire s00_axi_aclk,
 		input  wire s00_axi_aresetn,
@@ -179,8 +189,8 @@
     wire tx_control_state_idle;
     wire ch_idle;
 
-    wire [31:0] FC_DI;
-    wire FC_DI_valid;
+    // wire [31:0] FC_DI;
+    // wire FC_DI_valid;
     
     wire [1:0] FC_version;
     wire [1:0] FC_type;
@@ -195,12 +205,12 @@
     wire       FC_order;
     wire [15:0] duration;
         
-    wire [47:0] addr1;
-    wire addr1_valid;
-    wire [47:0] addr2;
-    wire addr2_valid;
-    wire [47:0] addr3;
-    wire addr3_valid;
+    // wire [47:0] addr1;
+    // wire addr1_valid;
+    // wire [47:0] addr2;
+    // wire addr2_valid;
+    // wire [47:0] addr3;
+    // wire addr3_valid;
     
     wire [15:0] SC;
     wire SC_valid;

@@ -166,7 +166,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set IP repository paths
 set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo/low"] [file normalize "$origin_dir/../../ip_repo/common"]" $obj
+set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo/low"] [file normalize "$origin_dir/../../ip_repo/small"] [file normalize "$origin_dir/../../ip_repo/common"]" $obj
 
 # Rebuild user ip_repo's index before adding any source files
 update_ip_catalog -rebuild
@@ -354,6 +354,7 @@ set_property -name "nl.write_all_overrides" -value "0" -objects $obj
 set_property -name "source_set" -value "sources_1" -objects $obj
 set_property -name "systemc_include_dirs" -value "" -objects $obj
 set_property -name "top" -value "system_top" -objects $obj
+set_property -name "top_auto_set" -value "0" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 set_property -name "transport_int_delay" -value "0" -objects $obj
 set_property -name "transport_path_delay" -value "0" -objects $obj
@@ -463,9 +464,9 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xc7z020clg484-1 -flow {Vivado Implementation 2018} -strategy "Area_ExploreWithRemap" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part xc7z020clg484-1 -flow {Vivado Implementation 2018} -strategy "Performance_Explore" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
-  set_property strategy "Area_ExploreWithRemap" [get_runs impl_1]
+  set_property strategy "Performance_Explore" [get_runs impl_1]
   set_property flow "Vivado Implementation 2018" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
@@ -876,7 +877,7 @@ set_property -name "options.more_options" -value "" -objects $obj
 }
 set obj [get_runs impl_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
-set_property -name "description" -value "Adds the remap optimization to reduce logic" -objects $obj
+set_property -name "description" -value "Uses multiple algorithms for optimization, placement, and routing to get potentially better results." -objects $obj
 set_property -name "flow" -value "Vivado Implementation 2018" -objects $obj
 set_property -name "name" -value "impl_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
@@ -887,14 +888,14 @@ set_property -name "incremental_checkpoint" -value "" -objects $obj
 set_property -name "incremental_checkpoint.more_options" -value "" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "gen_full_bitstream" -value "1" -objects $obj
-set_property -name "strategy" -value "Area_ExploreWithRemap" -objects $obj
+set_property -name "strategy" -value "Performance_Explore" -objects $obj
 set_property -name "steps.init_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.init_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.opt_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.opt_design.args.verbose" -value "0" -objects $obj
-set_property -name "steps.opt_design.args.directive" -value "ExploreWithRemap" -objects $obj
+set_property -name "steps.opt_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.power_opt_design.is_enabled" -value "0" -objects $obj
 set_property -name "steps.power_opt_design.tcl.pre" -value "" -objects $obj
@@ -917,10 +918,10 @@ set_property -name "steps.route_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.route_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.route_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.route_design.args.more options" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "1" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "0" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.args.directive" -value "Explore" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.args.directive" -value "Default" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.pre" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.post" -value "" -objects $obj

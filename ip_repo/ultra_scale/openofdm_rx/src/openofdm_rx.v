@@ -18,6 +18,8 @@
 
 		output wire demod_is_ongoing, // this needs to be corrected further to indicate actual RF on going regardless the latency
 //		output wire pkt_ht,
+		output wire short_preamble_detected,
+		output wire long_preamble_detected,
 		output wire pkt_header_valid,
 		output wire pkt_header_valid_strobe,
 		output wire ht_unsupport,
@@ -30,6 +32,13 @@
 		output wire [15:0] byte_count,
 		output wire fcs_out_strobe,
 		output wire fcs_ok,
+		// for side channel
+    	output wire [31:0] csi,
+    	output wire csi_valid,
+		output wire signed [31:0] phase_offset_taken,
+		output wire [31:0] equalizer,
+		output wire equalizer_valid,
+		output wire ofdm_symbol_eq_out_pulse,
 
 		// axi lite based register configuration interface
 		input  wire s00_axi_aclk,
@@ -92,21 +101,6 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg31; 
 	*/
 
-	wire [3:0] state;
-	wire state_changed;
-	reg [31:0] state_history;
-
-	assign slv_reg20 = state_history;
-
-	always @(posedge s00_axi_aclk) begin
-		if (s00_axi_aresetn==0) begin
-			state_history <= 0;
-		end else if (state_changed) begin
-			state_history[3:0] <= state;
-			state_history[31:4] <= state_history[27:0];
-		end 
-	end
-
 	dot11 # ( 
 	) dot11_i (
 		.clock(s00_axi_aclk),
@@ -147,26 +141,28 @@
 		.state(state),
 		.status_code(),
 		.state_changed(state_changed),
-
+		.state_history(slv_reg20),
 		// power trigger
 		.power_trigger(),
 
 		// sync short
-		.short_preamble_detected(),
+		.short_preamble_detected(short_preamble_detected),
 		.phase_offset(),
 
 		// sync long
 		.sync_long_metric(),
 		.sync_long_metric_stb(),
-		.long_preamble_detected(),
+		.long_preamble_detected(long_preamble_detected),
 		.sync_long_out(),
 		.sync_long_out_strobe(),
+		.phase_offset_taken(phase_offset_taken),
 		.sync_long_state(),
 
 		// equalizer
-		.equalizer_out(),
-		.equalizer_out_strobe(),
-		.equalizer_state(),
+		.equalizer_out(equalizer),
+		.equalizer_out_strobe(equalizer_valid),
+		.equalizer_state(equalizer_state),
+		.ofdm_symbol_eq_out_pulse(ofdm_symbol_eq_out_pulse),
 
 		// legacy signal info
 		.legacy_sig_stb(),
@@ -202,7 +198,11 @@
 		.conv_decoder_out_stb(),
 
 		.descramble_out(),
-		.descramble_out_strobe()
+		.descramble_out_strobe(),
+
+		// for side channel
+		.csi(csi),
+		.csi_valid(csi_valid)
 	);
 
 	openofdm_rx_s_axi # ( 

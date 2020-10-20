@@ -968,10 +968,8 @@
           //slv_reg61 <= SLV_REG61;
           //slv_reg62 <= SLV_REG62;
           slv_reg63 <= SLV_REG63;
-
         end 
     end       
-    
 	// User logic ends
 
 	endmodule

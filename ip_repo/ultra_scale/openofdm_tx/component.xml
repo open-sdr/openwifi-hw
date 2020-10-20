@@ -260,7 +260,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>08ce1179</spirit:value>
+            <spirit:value>5b1edab7</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -276,7 +276,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>08ce1179</spirit:value>
+            <spirit:value>5b1edab7</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1124,20 +1124,20 @@
       <xilinx:displayName>openofdm_tx_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-06-08T09:49:00Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-09-29T14:19:26Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@51f68199_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@276f1da7_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@704c5344_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@771a2d0b_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@54c3d284_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@12721d5e_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6b64cb82_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@192432ed_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@346244c9_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@38277e41_ARCHIVE_LOCATION">/home/jxj/git/tmp/openofdm_tx</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="3be2a4d2"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="871c369d"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="d48c8def"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="b3c9dac7"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="087d960e"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="aed2e092"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="8fec64ed"/>

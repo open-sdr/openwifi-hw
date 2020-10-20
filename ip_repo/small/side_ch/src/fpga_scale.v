@@ -1,0 +1,1 @@
+`define SIDE_CH_LESS_BRAM 1

@@ -742,7 +742,7 @@ proc ps7_debug_1_0 {} {
 set PCW_SILICON_VER_1_0 "0x0"
 set PCW_SILICON_VER_2_0 "0x1"
 set PCW_SILICON_VER_3_0 "0x2"
-set APU_FREQ  666666666
+set APU_FREQ  666666667
 
 
 
