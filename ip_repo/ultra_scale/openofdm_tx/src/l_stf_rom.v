@@ -1,10 +1,10 @@
 /*
- * short_preamble_rom - TODO
+ * Legacy short_preamble_rom - TODO
  *
  * Michael Tetemke Mehari michael.mehari@ugent.be
  */
 
-module short_preamble_rom
+module l_stf_rom
 (
   input      [3:0]  addr,
   output reg [31:0] dout  
