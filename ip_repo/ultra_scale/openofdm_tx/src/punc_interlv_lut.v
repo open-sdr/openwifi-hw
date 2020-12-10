@@ -6,8 +6,8 @@
 
 module punc_interlv_lut
 (
-  input  wire [3:0]  rate,
-  input  wire [7:0]  idx_i,
+  input  wire [4:0]  rate,
+  input  wire [8:0]  idx_i,
   output reg  [17:0] idx_o,
   output reg  [1:0]  punc_o
 );
@@ -16,7 +16,7 @@ module punc_interlv_lut
     idx_o = {9'd511,9'd511};
     punc_o = {1'b1,1'b1};
 	// 6 Mbps
-	if(rate == 4'b1011) begin
+	if(rate == 5'b01011) begin
 	  case (idx_i)
 		 0: begin idx_o = {9'd24,9'd0};    punc_o = {1'b0,1'b0}; end
 		 1: begin idx_o = {9'd72,9'd48};   punc_o = {1'b0,1'b0}; end
@@ -46,7 +46,7 @@ module punc_interlv_lut
 	end
 
 	// 9 Mbps
-	else if(rate == 4'b1111) begin
+	else if(rate == 5'b01111) begin
 	  case (idx_i)
 		 0: begin idx_o = {9'd24,9'd0};    punc_o = {1'b0,1'b0}; end
 		 1: begin idx_o = {9'd511,9'd48};  punc_o = {1'b1,1'b0}; end
@@ -88,7 +88,7 @@ module punc_interlv_lut
 	end
 
 	// 12 Mbps
-	else if(rate == 4'b1010) begin
+	else if(rate == 5'b01010) begin
 	  case (idx_i)
 		 0: begin idx_o = {9'd24,9'd0};    punc_o = {1'b0,1'b0}; end
 		 1: begin idx_o = {9'd72,9'd48};   punc_o = {1'b0,1'b0}; end
@@ -142,7 +142,7 @@ module punc_interlv_lut
 	end
 
 	// 18 Mbps
-	else if(rate == 4'b1110) begin
+	else if(rate == 5'b01110) begin
 	  case (idx_i)
 		 0: begin idx_o = {9'd24,9'd0};    punc_o = {1'b0,1'b0}; end
 		 1: begin idx_o = {9'd511,9'd48};  punc_o = {1'b1,1'b0}; end
@@ -220,7 +220,7 @@ module punc_interlv_lut
 	end
 
 	// 24 Mbps
-	else if(rate == 4'b1001) begin
+	else if(rate == 5'b01001) begin
 	  case (idx_i)
 		 0: begin idx_o = {9'd25,9'd0};    punc_o = {1'b0,1'b0}; end
 		 1: begin idx_o = {9'd73,9'd48};   punc_o = {1'b0,1'b0}; end
@@ -322,7 +322,7 @@ module punc_interlv_lut
 	end
 
 	// 36 Mbps
-	else if(rate == 4'b1101) begin
+	else if(rate == 5'b01101) begin
 	  case (idx_i)
 		  0: begin idx_o = {9'd25,9'd0};    punc_o = {1'b0,1'b0}; end
 		  1: begin idx_o = {9'd511,9'd48};  punc_o = {1'b1,1'b0}; end
@@ -472,7 +472,7 @@ module punc_interlv_lut
 	end
 
 	// 48 Mbps
-	else if(rate == 4'b1000) begin
+	else if(rate == 5'b01000) begin
 	  case (idx_i)
 		  0: begin idx_o = {9'd26,9'd0};    punc_o = {1'b0,1'b0}; end
 		  1: begin idx_o = {9'd511,9'd49};  punc_o = {1'b1,1'b0}; end
@@ -670,7 +670,7 @@ module punc_interlv_lut
 	end
 
 	// 54 Mbps
-	else if(rate == 4'b1100) begin
+	else if(rate == 5'b01100) begin
 	  case (idx_i)
 		  0: begin idx_o = {9'd26,9'd0};    punc_o = {1'b0,1'b0}; end
 		  1: begin idx_o = {9'd511,9'd49};  punc_o = {1'b1,1'b0}; end
@@ -891,5 +891,1170 @@ module punc_interlv_lut
 	  endcase
 	end
 
+	// 6.5/7.2 Mbps
+	else if(rate == 5'b10000) begin
+	  case (idx_i)
+		 0: begin idx_o = {9'd32,9'd0};    punc_o = {1'b0,1'b0}; end
+		 1: begin idx_o = {9'd96,9'd64};   punc_o = {1'b0,1'b0}; end
+		 2: begin idx_o = {9'd160,9'd128}; punc_o = {1'b0,1'b0}; end
+		 3: begin idx_o = {9'd224,9'd192}; punc_o = {1'b0,1'b0}; end
+		 4: begin idx_o = {9'd288,9'd256}; punc_o = {1'b0,1'b0}; end
+		 5: begin idx_o = {9'd352,9'd320}; punc_o = {1'b0,1'b0}; end
+		 6: begin idx_o = {9'd8,9'd384};   punc_o = {1'b0,1'b0}; end
+		 7: begin idx_o = {9'd72,9'd40};   punc_o = {1'b0,1'b0}; end
+		 8: begin idx_o = {9'd136,9'd104}; punc_o = {1'b0,1'b0}; end
+		 9: begin idx_o = {9'd200,9'd168}; punc_o = {1'b0,1'b0}; end
+		10: begin idx_o = {9'd264,9'd232}; punc_o = {1'b0,1'b0}; end
+		11: begin idx_o = {9'd328,9'd296}; punc_o = {1'b0,1'b0}; end
+		12: begin idx_o = {9'd392,9'd360}; punc_o = {1'b0,1'b0}; end
+		13: begin idx_o = {9'd48,9'd16};   punc_o = {1'b0,1'b0}; end
+		14: begin idx_o = {9'd112,9'd80};  punc_o = {1'b0,1'b0}; end
+		15: begin idx_o = {9'd176,9'd144}; punc_o = {1'b0,1'b0}; end
+		16: begin idx_o = {9'd240,9'd208}; punc_o = {1'b0,1'b0}; end
+		17: begin idx_o = {9'd304,9'd272}; punc_o = {1'b0,1'b0}; end
+		18: begin idx_o = {9'd368,9'd336}; punc_o = {1'b0,1'b0}; end
+		19: begin idx_o = {9'd24,9'd400};  punc_o = {1'b0,1'b0}; end
+		20: begin idx_o = {9'd88,9'd56};   punc_o = {1'b0,1'b0}; end
+		21: begin idx_o = {9'd152,9'd120}; punc_o = {1'b0,1'b0}; end
+		22: begin idx_o = {9'd216,9'd184}; punc_o = {1'b0,1'b0}; end
+		23: begin idx_o = {9'd280,9'd248}; punc_o = {1'b0,1'b0}; end
+		24: begin idx_o = {9'd344,9'd312}; punc_o = {1'b0,1'b0}; end
+		25: begin idx_o = {9'd408,9'd376}; punc_o = {1'b0,1'b0}; end
+	  endcase
+	end
+
+	// 13.0/14.4 Mbps
+	else if(rate == 5'b10001) begin
+	  case (idx_i)
+		 0: begin idx_o = {9'd32,9'd0};    punc_o = {1'b0,1'b0}; end
+		 1: begin idx_o = {9'd96,9'd64};   punc_o = {1'b0,1'b0}; end
+		 2: begin idx_o = {9'd160,9'd128}; punc_o = {1'b0,1'b0}; end
+		 3: begin idx_o = {9'd224,9'd192}; punc_o = {1'b0,1'b0}; end
+		 4: begin idx_o = {9'd288,9'd256}; punc_o = {1'b0,1'b0}; end
+		 5: begin idx_o = {9'd352,9'd320}; punc_o = {1'b0,1'b0}; end
+		 6: begin idx_o = {9'd1,9'd384};   punc_o = {1'b0,1'b0}; end
+		 7: begin idx_o = {9'd65,9'd33};   punc_o = {1'b0,1'b0}; end
+		 8: begin idx_o = {9'd129,9'd97};  punc_o = {1'b0,1'b0}; end
+		 9: begin idx_o = {9'd193,9'd161}; punc_o = {1'b0,1'b0}; end
+		10: begin idx_o = {9'd257,9'd225}; punc_o = {1'b0,1'b0}; end
+		11: begin idx_o = {9'd321,9'd289}; punc_o = {1'b0,1'b0}; end
+		12: begin idx_o = {9'd385,9'd353}; punc_o = {1'b0,1'b0}; end
+		13: begin idx_o = {9'd40,9'd8};    punc_o = {1'b0,1'b0}; end
+		14: begin idx_o = {9'd104,9'd72};  punc_o = {1'b0,1'b0}; end
+		15: begin idx_o = {9'd168,9'd136}; punc_o = {1'b0,1'b0}; end
+		16: begin idx_o = {9'd232,9'd200}; punc_o = {1'b0,1'b0}; end
+		17: begin idx_o = {9'd296,9'd264}; punc_o = {1'b0,1'b0}; end
+		18: begin idx_o = {9'd360,9'd328}; punc_o = {1'b0,1'b0}; end
+		19: begin idx_o = {9'd9,9'd392};   punc_o = {1'b0,1'b0}; end
+		20: begin idx_o = {9'd73,9'd41};   punc_o = {1'b0,1'b0}; end
+		21: begin idx_o = {9'd137,9'd105}; punc_o = {1'b0,1'b0}; end
+		22: begin idx_o = {9'd201,9'd169}; punc_o = {1'b0,1'b0}; end
+		23: begin idx_o = {9'd265,9'd233}; punc_o = {1'b0,1'b0}; end
+		24: begin idx_o = {9'd329,9'd297}; punc_o = {1'b0,1'b0}; end
+		25: begin idx_o = {9'd393,9'd361}; punc_o = {1'b0,1'b0}; end
+		26: begin idx_o = {9'd48,9'd16};   punc_o = {1'b0,1'b0}; end
+		27: begin idx_o = {9'd112,9'd80};  punc_o = {1'b0,1'b0}; end
+		28: begin idx_o = {9'd176,9'd144}; punc_o = {1'b0,1'b0}; end
+		29: begin idx_o = {9'd240,9'd208}; punc_o = {1'b0,1'b0}; end
+		30: begin idx_o = {9'd304,9'd272}; punc_o = {1'b0,1'b0}; end
+		31: begin idx_o = {9'd368,9'd336}; punc_o = {1'b0,1'b0}; end
+		32: begin idx_o = {9'd17,9'd400};  punc_o = {1'b0,1'b0}; end
+		33: begin idx_o = {9'd81,9'd49};   punc_o = {1'b0,1'b0}; end
+		34: begin idx_o = {9'd145,9'd113}; punc_o = {1'b0,1'b0}; end
+		35: begin idx_o = {9'd209,9'd177}; punc_o = {1'b0,1'b0}; end
+		36: begin idx_o = {9'd273,9'd241}; punc_o = {1'b0,1'b0}; end
+		37: begin idx_o = {9'd337,9'd305}; punc_o = {1'b0,1'b0}; end
+		38: begin idx_o = {9'd401,9'd369}; punc_o = {1'b0,1'b0}; end
+		39: begin idx_o = {9'd56,9'd24};   punc_o = {1'b0,1'b0}; end
+		40: begin idx_o = {9'd120,9'd88};  punc_o = {1'b0,1'b0}; end
+		41: begin idx_o = {9'd184,9'd152}; punc_o = {1'b0,1'b0}; end
+		42: begin idx_o = {9'd248,9'd216}; punc_o = {1'b0,1'b0}; end
+		43: begin idx_o = {9'd312,9'd280}; punc_o = {1'b0,1'b0}; end
+		44: begin idx_o = {9'd376,9'd344}; punc_o = {1'b0,1'b0}; end
+		45: begin idx_o = {9'd25,9'd408};  punc_o = {1'b0,1'b0}; end
+		46: begin idx_o = {9'd89,9'd57};   punc_o = {1'b0,1'b0}; end
+		47: begin idx_o = {9'd153,9'd121}; punc_o = {1'b0,1'b0}; end
+		48: begin idx_o = {9'd217,9'd185}; punc_o = {1'b0,1'b0}; end
+		49: begin idx_o = {9'd281,9'd249}; punc_o = {1'b0,1'b0}; end
+		50: begin idx_o = {9'd345,9'd313}; punc_o = {1'b0,1'b0}; end
+		51: begin idx_o = {9'd409,9'd377}; punc_o = {1'b0,1'b0}; end
+	  endcase
+	end
+
+	// 19.5/21.7 Mbps
+	else if(rate == 5'b10010) begin
+	  case (idx_i)
+		 0: begin idx_o = {9'd32,9'd0};    punc_o = {1'b0,1'b0}; end
+		 1: begin idx_o = {9'd511,9'd64};  punc_o = {1'b1,1'b0}; end
+		 2: begin idx_o = {9'd96,9'd511};  punc_o = {1'b0,1'b1}; end
+		 3: begin idx_o = {9'd160,9'd128}; punc_o = {1'b0,1'b0}; end
+		 4: begin idx_o = {9'd511,9'd192}; punc_o = {1'b1,1'b0}; end
+		 5: begin idx_o = {9'd224,9'd511}; punc_o = {1'b0,1'b1}; end
+		 6: begin idx_o = {9'd288,9'd256}; punc_o = {1'b0,1'b0}; end
+		 7: begin idx_o = {9'd511,9'd320}; punc_o = {1'b1,1'b0}; end
+		 8: begin idx_o = {9'd352,9'd511}; punc_o = {1'b0,1'b1}; end
+		 9: begin idx_o = {9'd1,9'd384};   punc_o = {1'b0,1'b0}; end
+		10: begin idx_o = {9'd511,9'd33};  punc_o = {1'b1,1'b0}; end
+		11: begin idx_o = {9'd65,9'd511};  punc_o = {1'b0,1'b1}; end
+		12: begin idx_o = {9'd129,9'd97};  punc_o = {1'b0,1'b0}; end
+		13: begin idx_o = {9'd511,9'd161}; punc_o = {1'b1,1'b0}; end
+		14: begin idx_o = {9'd193,9'd511}; punc_o = {1'b0,1'b1}; end
+		15: begin idx_o = {9'd257,9'd225}; punc_o = {1'b0,1'b0}; end
+		16: begin idx_o = {9'd511,9'd289}; punc_o = {1'b1,1'b0}; end
+		17: begin idx_o = {9'd321,9'd511}; punc_o = {1'b0,1'b1}; end
+		18: begin idx_o = {9'd385,9'd353}; punc_o = {1'b0,1'b0}; end
+		19: begin idx_o = {9'd511,9'd8};   punc_o = {1'b1,1'b0}; end
+		20: begin idx_o = {9'd40,9'd511};  punc_o = {1'b0,1'b1}; end
+		21: begin idx_o = {9'd104,9'd72};  punc_o = {1'b0,1'b0}; end
+		22: begin idx_o = {9'd511,9'd136}; punc_o = {1'b1,1'b0}; end
+		23: begin idx_o = {9'd168,9'd511}; punc_o = {1'b0,1'b1}; end
+		24: begin idx_o = {9'd232,9'd200}; punc_o = {1'b0,1'b0}; end
+		25: begin idx_o = {9'd511,9'd264}; punc_o = {1'b1,1'b0}; end
+		26: begin idx_o = {9'd296,9'd511}; punc_o = {1'b0,1'b1}; end
+		27: begin idx_o = {9'd360,9'd328}; punc_o = {1'b0,1'b0}; end
+		28: begin idx_o = {9'd511,9'd392}; punc_o = {1'b1,1'b0}; end
+		29: begin idx_o = {9'd9,9'd511};   punc_o = {1'b0,1'b1}; end
+		30: begin idx_o = {9'd73,9'd41};   punc_o = {1'b0,1'b0}; end
+		31: begin idx_o = {9'd511,9'd105}; punc_o = {1'b1,1'b0}; end
+		32: begin idx_o = {9'd137,9'd511}; punc_o = {1'b0,1'b1}; end
+		33: begin idx_o = {9'd201,9'd169}; punc_o = {1'b0,1'b0}; end
+		34: begin idx_o = {9'd511,9'd233}; punc_o = {1'b1,1'b0}; end
+		35: begin idx_o = {9'd265,9'd511}; punc_o = {1'b0,1'b1}; end
+		36: begin idx_o = {9'd329,9'd297}; punc_o = {1'b0,1'b0}; end
+		37: begin idx_o = {9'd511,9'd361}; punc_o = {1'b1,1'b0}; end
+		38: begin idx_o = {9'd393,9'd511}; punc_o = {1'b0,1'b1}; end
+		39: begin idx_o = {9'd48,9'd16};   punc_o = {1'b0,1'b0}; end
+		40: begin idx_o = {9'd511,9'd80};  punc_o = {1'b1,1'b0}; end
+		41: begin idx_o = {9'd112,9'd511}; punc_o = {1'b0,1'b1}; end
+		42: begin idx_o = {9'd176,9'd144}; punc_o = {1'b0,1'b0}; end
+		43: begin idx_o = {9'd511,9'd208}; punc_o = {1'b1,1'b0}; end
+		44: begin idx_o = {9'd240,9'd511}; punc_o = {1'b0,1'b1}; end
+		45: begin idx_o = {9'd304,9'd272}; punc_o = {1'b0,1'b0}; end
+		46: begin idx_o = {9'd511,9'd336}; punc_o = {1'b1,1'b0}; end
+		47: begin idx_o = {9'd368,9'd511}; punc_o = {1'b0,1'b1}; end
+		48: begin idx_o = {9'd17,9'd400};  punc_o = {1'b0,1'b0}; end
+		49: begin idx_o = {9'd511,9'd49};  punc_o = {1'b1,1'b0}; end
+		50: begin idx_o = {9'd81,9'd511};  punc_o = {1'b0,1'b1}; end
+		51: begin idx_o = {9'd145,9'd113}; punc_o = {1'b0,1'b0}; end
+		52: begin idx_o = {9'd511,9'd177}; punc_o = {1'b1,1'b0}; end
+		53: begin idx_o = {9'd209,9'd511}; punc_o = {1'b0,1'b1}; end
+		54: begin idx_o = {9'd273,9'd241}; punc_o = {1'b0,1'b0}; end
+		55: begin idx_o = {9'd511,9'd305}; punc_o = {1'b1,1'b0}; end
+		56: begin idx_o = {9'd337,9'd511}; punc_o = {1'b0,1'b1}; end
+		57: begin idx_o = {9'd401,9'd369}; punc_o = {1'b0,1'b0}; end
+		58: begin idx_o = {9'd511,9'd24};  punc_o = {1'b1,1'b0}; end
+		59: begin idx_o = {9'd56,9'd511};  punc_o = {1'b0,1'b1}; end
+		60: begin idx_o = {9'd120,9'd88};  punc_o = {1'b0,1'b0}; end
+		61: begin idx_o = {9'd511,9'd152}; punc_o = {1'b1,1'b0}; end
+		62: begin idx_o = {9'd184,9'd511}; punc_o = {1'b0,1'b1}; end
+		63: begin idx_o = {9'd248,9'd216}; punc_o = {1'b0,1'b0}; end
+		64: begin idx_o = {9'd511,9'd280}; punc_o = {1'b1,1'b0}; end
+		65: begin idx_o = {9'd312,9'd511}; punc_o = {1'b0,1'b1}; end
+		66: begin idx_o = {9'd376,9'd344}; punc_o = {1'b0,1'b0}; end
+		67: begin idx_o = {9'd511,9'd408}; punc_o = {1'b1,1'b0}; end
+		68: begin idx_o = {9'd25,9'd511};  punc_o = {1'b0,1'b1}; end
+		69: begin idx_o = {9'd89,9'd57};   punc_o = {1'b0,1'b0}; end
+		70: begin idx_o = {9'd511,9'd121}; punc_o = {1'b1,1'b0}; end
+		71: begin idx_o = {9'd153,9'd511}; punc_o = {1'b0,1'b1}; end
+		72: begin idx_o = {9'd217,9'd185}; punc_o = {1'b0,1'b0}; end
+		73: begin idx_o = {9'd511,9'd249}; punc_o = {1'b1,1'b0}; end
+		74: begin idx_o = {9'd281,9'd511}; punc_o = {1'b0,1'b1}; end
+		75: begin idx_o = {9'd345,9'd313}; punc_o = {1'b0,1'b0}; end
+		76: begin idx_o = {9'd511,9'd377}; punc_o = {1'b1,1'b0}; end
+		77: begin idx_o = {9'd409,9'd511}; punc_o = {1'b0,1'b1}; end
+	  endcase
+	end
+
+	// 26.0/28.9 Mbps
+	else if(rate == 5'b10011) begin
+	  case (idx_i)
+		  0: begin idx_o = {9'd33,9'd0};    punc_o = {1'b0,1'b0}; end
+		  1: begin idx_o = {9'd97,9'd64};   punc_o = {1'b0,1'b0}; end
+		  2: begin idx_o = {9'd161,9'd128}; punc_o = {1'b0,1'b0}; end
+		  3: begin idx_o = {9'd225,9'd192}; punc_o = {1'b0,1'b0}; end
+		  4: begin idx_o = {9'd289,9'd256}; punc_o = {1'b0,1'b0}; end
+		  5: begin idx_o = {9'd353,9'd320}; punc_o = {1'b0,1'b0}; end
+		  6: begin idx_o = {9'd1,9'd384};   punc_o = {1'b0,1'b0}; end
+		  7: begin idx_o = {9'd65,9'd32};   punc_o = {1'b0,1'b0}; end
+		  8: begin idx_o = {9'd129,9'd96};  punc_o = {1'b0,1'b0}; end
+		  9: begin idx_o = {9'd193,9'd160}; punc_o = {1'b0,1'b0}; end
+		 10: begin idx_o = {9'd257,9'd224}; punc_o = {1'b0,1'b0}; end
+		 11: begin idx_o = {9'd321,9'd288}; punc_o = {1'b0,1'b0}; end
+		 12: begin idx_o = {9'd385,9'd352}; punc_o = {1'b0,1'b0}; end
+		 13: begin idx_o = {9'd35,9'd2};    punc_o = {1'b0,1'b0}; end
+		 14: begin idx_o = {9'd99,9'd66};   punc_o = {1'b0,1'b0}; end
+		 15: begin idx_o = {9'd163,9'd130}; punc_o = {1'b0,1'b0}; end
+		 16: begin idx_o = {9'd227,9'd194}; punc_o = {1'b0,1'b0}; end
+		 17: begin idx_o = {9'd291,9'd258}; punc_o = {1'b0,1'b0}; end
+		 18: begin idx_o = {9'd355,9'd322}; punc_o = {1'b0,1'b0}; end
+		 19: begin idx_o = {9'd3,9'd386};   punc_o = {1'b0,1'b0}; end
+		 20: begin idx_o = {9'd67,9'd34};   punc_o = {1'b0,1'b0}; end
+		 21: begin idx_o = {9'd131,9'd98};  punc_o = {1'b0,1'b0}; end
+		 22: begin idx_o = {9'd195,9'd162}; punc_o = {1'b0,1'b0}; end
+		 23: begin idx_o = {9'd259,9'd226}; punc_o = {1'b0,1'b0}; end
+		 24: begin idx_o = {9'd323,9'd290}; punc_o = {1'b0,1'b0}; end
+		 25: begin idx_o = {9'd387,9'd354}; punc_o = {1'b0,1'b0}; end
+		 26: begin idx_o = {9'd41,9'd8};    punc_o = {1'b0,1'b0}; end
+		 27: begin idx_o = {9'd105,9'd72};  punc_o = {1'b0,1'b0}; end
+		 28: begin idx_o = {9'd169,9'd136}; punc_o = {1'b0,1'b0}; end
+		 29: begin idx_o = {9'd233,9'd200}; punc_o = {1'b0,1'b0}; end
+		 30: begin idx_o = {9'd297,9'd264}; punc_o = {1'b0,1'b0}; end
+		 31: begin idx_o = {9'd361,9'd328}; punc_o = {1'b0,1'b0}; end
+		 32: begin idx_o = {9'd9,9'd392};   punc_o = {1'b0,1'b0}; end
+		 33: begin idx_o = {9'd73,9'd40};   punc_o = {1'b0,1'b0}; end
+		 34: begin idx_o = {9'd137,9'd104}; punc_o = {1'b0,1'b0}; end
+		 35: begin idx_o = {9'd201,9'd168}; punc_o = {1'b0,1'b0}; end
+		 36: begin idx_o = {9'd265,9'd232}; punc_o = {1'b0,1'b0}; end
+		 37: begin idx_o = {9'd329,9'd296}; punc_o = {1'b0,1'b0}; end
+		 38: begin idx_o = {9'd393,9'd360}; punc_o = {1'b0,1'b0}; end
+		 39: begin idx_o = {9'd43,9'd10};   punc_o = {1'b0,1'b0}; end
+		 40: begin idx_o = {9'd107,9'd74};  punc_o = {1'b0,1'b0}; end
+		 41: begin idx_o = {9'd171,9'd138}; punc_o = {1'b0,1'b0}; end
+		 42: begin idx_o = {9'd235,9'd202}; punc_o = {1'b0,1'b0}; end
+		 43: begin idx_o = {9'd299,9'd266}; punc_o = {1'b0,1'b0}; end
+		 44: begin idx_o = {9'd363,9'd330}; punc_o = {1'b0,1'b0}; end
+		 45: begin idx_o = {9'd11,9'd394};  punc_o = {1'b0,1'b0}; end
+		 46: begin idx_o = {9'd75,9'd42};   punc_o = {1'b0,1'b0}; end
+		 47: begin idx_o = {9'd139,9'd106}; punc_o = {1'b0,1'b0}; end
+		 48: begin idx_o = {9'd203,9'd170}; punc_o = {1'b0,1'b0}; end
+		 49: begin idx_o = {9'd267,9'd234}; punc_o = {1'b0,1'b0}; end
+		 50: begin idx_o = {9'd331,9'd298}; punc_o = {1'b0,1'b0}; end
+		 51: begin idx_o = {9'd395,9'd362}; punc_o = {1'b0,1'b0}; end
+		 52: begin idx_o = {9'd49,9'd16};   punc_o = {1'b0,1'b0}; end
+		 53: begin idx_o = {9'd113,9'd80};  punc_o = {1'b0,1'b0}; end
+		 54: begin idx_o = {9'd177,9'd144}; punc_o = {1'b0,1'b0}; end
+		 55: begin idx_o = {9'd241,9'd208}; punc_o = {1'b0,1'b0}; end
+		 56: begin idx_o = {9'd305,9'd272}; punc_o = {1'b0,1'b0}; end
+		 57: begin idx_o = {9'd369,9'd336}; punc_o = {1'b0,1'b0}; end
+		 58: begin idx_o = {9'd17,9'd400};  punc_o = {1'b0,1'b0}; end
+		 59: begin idx_o = {9'd81,9'd48};   punc_o = {1'b0,1'b0}; end
+		 60: begin idx_o = {9'd145,9'd112}; punc_o = {1'b0,1'b0}; end
+		 61: begin idx_o = {9'd209,9'd176}; punc_o = {1'b0,1'b0}; end
+		 62: begin idx_o = {9'd273,9'd240}; punc_o = {1'b0,1'b0}; end
+		 63: begin idx_o = {9'd337,9'd304}; punc_o = {1'b0,1'b0}; end
+		 64: begin idx_o = {9'd401,9'd368}; punc_o = {1'b0,1'b0}; end
+		 65: begin idx_o = {9'd51,9'd18};   punc_o = {1'b0,1'b0}; end
+		 66: begin idx_o = {9'd115,9'd82};  punc_o = {1'b0,1'b0}; end
+		 67: begin idx_o = {9'd179,9'd146}; punc_o = {1'b0,1'b0}; end
+		 68: begin idx_o = {9'd243,9'd210}; punc_o = {1'b0,1'b0}; end
+		 69: begin idx_o = {9'd307,9'd274}; punc_o = {1'b0,1'b0}; end
+		 70: begin idx_o = {9'd371,9'd338}; punc_o = {1'b0,1'b0}; end
+		 71: begin idx_o = {9'd19,9'd402};  punc_o = {1'b0,1'b0}; end
+		 72: begin idx_o = {9'd83,9'd50};   punc_o = {1'b0,1'b0}; end
+		 73: begin idx_o = {9'd147,9'd114}; punc_o = {1'b0,1'b0}; end
+		 74: begin idx_o = {9'd211,9'd178}; punc_o = {1'b0,1'b0}; end
+		 75: begin idx_o = {9'd275,9'd242}; punc_o = {1'b0,1'b0}; end
+		 76: begin idx_o = {9'd339,9'd306}; punc_o = {1'b0,1'b0}; end
+		 77: begin idx_o = {9'd403,9'd370}; punc_o = {1'b0,1'b0}; end
+		 78: begin idx_o = {9'd57,9'd24};   punc_o = {1'b0,1'b0}; end
+		 79: begin idx_o = {9'd121,9'd88};  punc_o = {1'b0,1'b0}; end
+		 80: begin idx_o = {9'd185,9'd152}; punc_o = {1'b0,1'b0}; end
+		 81: begin idx_o = {9'd249,9'd216}; punc_o = {1'b0,1'b0}; end
+		 82: begin idx_o = {9'd313,9'd280}; punc_o = {1'b0,1'b0}; end
+		 83: begin idx_o = {9'd377,9'd344}; punc_o = {1'b0,1'b0}; end
+		 84: begin idx_o = {9'd25,9'd408};  punc_o = {1'b0,1'b0}; end
+		 85: begin idx_o = {9'd89,9'd56};   punc_o = {1'b0,1'b0}; end
+		 86: begin idx_o = {9'd153,9'd120}; punc_o = {1'b0,1'b0}; end
+		 87: begin idx_o = {9'd217,9'd184}; punc_o = {1'b0,1'b0}; end
+		 88: begin idx_o = {9'd281,9'd248}; punc_o = {1'b0,1'b0}; end
+		 89: begin idx_o = {9'd345,9'd312}; punc_o = {1'b0,1'b0}; end
+		 90: begin idx_o = {9'd409,9'd376}; punc_o = {1'b0,1'b0}; end
+		 91: begin idx_o = {9'd59,9'd26};   punc_o = {1'b0,1'b0}; end
+		 92: begin idx_o = {9'd123,9'd90};  punc_o = {1'b0,1'b0}; end
+		 93: begin idx_o = {9'd187,9'd154}; punc_o = {1'b0,1'b0}; end
+		 94: begin idx_o = {9'd251,9'd218}; punc_o = {1'b0,1'b0}; end
+		 95: begin idx_o = {9'd315,9'd282}; punc_o = {1'b0,1'b0}; end
+		 96: begin idx_o = {9'd379,9'd346}; punc_o = {1'b0,1'b0}; end
+		 97: begin idx_o = {9'd27,9'd410};  punc_o = {1'b0,1'b0}; end
+		 98: begin idx_o = {9'd91,9'd58};   punc_o = {1'b0,1'b0}; end
+		 99: begin idx_o = {9'd155,9'd122}; punc_o = {1'b0,1'b0}; end
+		100: begin idx_o = {9'd219,9'd186}; punc_o = {1'b0,1'b0}; end
+		101: begin idx_o = {9'd283,9'd250}; punc_o = {1'b0,1'b0}; end
+		102: begin idx_o = {9'd347,9'd314}; punc_o = {1'b0,1'b0}; end
+		103: begin idx_o = {9'd411,9'd378}; punc_o = {1'b0,1'b0}; end
+	  endcase
+	end
+
+	// 39.0/43.3 Mbps
+	else if(rate == 5'b10100) begin
+	  case (idx_i)
+		  0: begin idx_o = {9'd33,9'd0};    punc_o = {1'b0,1'b0}; end
+		  1: begin idx_o = {9'd511,9'd64};  punc_o = {1'b1,1'b0}; end
+		  2: begin idx_o = {9'd97,9'd511};  punc_o = {1'b0,1'b1}; end
+		  3: begin idx_o = {9'd161,9'd128}; punc_o = {1'b0,1'b0}; end
+		  4: begin idx_o = {9'd511,9'd192}; punc_o = {1'b1,1'b0}; end
+		  5: begin idx_o = {9'd225,9'd511}; punc_o = {1'b0,1'b1}; end
+		  6: begin idx_o = {9'd289,9'd256}; punc_o = {1'b0,1'b0}; end
+		  7: begin idx_o = {9'd511,9'd320}; punc_o = {1'b1,1'b0}; end
+		  8: begin idx_o = {9'd353,9'd511}; punc_o = {1'b0,1'b1}; end
+		  9: begin idx_o = {9'd1,9'd384};   punc_o = {1'b0,1'b0}; end
+		 10: begin idx_o = {9'd511,9'd32};  punc_o = {1'b1,1'b0}; end
+		 11: begin idx_o = {9'd65,9'd511};  punc_o = {1'b0,1'b1}; end
+		 12: begin idx_o = {9'd129,9'd96};  punc_o = {1'b0,1'b0}; end
+		 13: begin idx_o = {9'd511,9'd160}; punc_o = {1'b1,1'b0}; end
+		 14: begin idx_o = {9'd193,9'd511}; punc_o = {1'b0,1'b1}; end
+		 15: begin idx_o = {9'd257,9'd224}; punc_o = {1'b0,1'b0}; end
+		 16: begin idx_o = {9'd511,9'd288}; punc_o = {1'b1,1'b0}; end
+		 17: begin idx_o = {9'd321,9'd511}; punc_o = {1'b0,1'b1}; end
+		 18: begin idx_o = {9'd385,9'd352}; punc_o = {1'b0,1'b0}; end
+		 19: begin idx_o = {9'd511,9'd2};   punc_o = {1'b1,1'b0}; end
+		 20: begin idx_o = {9'd35,9'd511};  punc_o = {1'b0,1'b1}; end
+		 21: begin idx_o = {9'd99,9'd66};   punc_o = {1'b0,1'b0}; end
+		 22: begin idx_o = {9'd511,9'd130}; punc_o = {1'b1,1'b0}; end
+		 23: begin idx_o = {9'd163,9'd511}; punc_o = {1'b0,1'b1}; end
+		 24: begin idx_o = {9'd227,9'd194}; punc_o = {1'b0,1'b0}; end
+		 25: begin idx_o = {9'd511,9'd258}; punc_o = {1'b1,1'b0}; end
+		 26: begin idx_o = {9'd291,9'd511}; punc_o = {1'b0,1'b1}; end
+		 27: begin idx_o = {9'd355,9'd322}; punc_o = {1'b0,1'b0}; end
+		 28: begin idx_o = {9'd511,9'd386}; punc_o = {1'b1,1'b0}; end
+		 29: begin idx_o = {9'd3,9'd511};   punc_o = {1'b0,1'b1}; end
+		 30: begin idx_o = {9'd67,9'd34};   punc_o = {1'b0,1'b0}; end
+		 31: begin idx_o = {9'd511,9'd98};  punc_o = {1'b1,1'b0}; end
+		 32: begin idx_o = {9'd131,9'd511}; punc_o = {1'b0,1'b1}; end
+		 33: begin idx_o = {9'd195,9'd162}; punc_o = {1'b0,1'b0}; end
+		 34: begin idx_o = {9'd511,9'd226}; punc_o = {1'b1,1'b0}; end
+		 35: begin idx_o = {9'd259,9'd511}; punc_o = {1'b0,1'b1}; end
+		 36: begin idx_o = {9'd323,9'd290}; punc_o = {1'b0,1'b0}; end
+		 37: begin idx_o = {9'd511,9'd354}; punc_o = {1'b1,1'b0}; end
+		 38: begin idx_o = {9'd387,9'd511}; punc_o = {1'b0,1'b1}; end
+		 39: begin idx_o = {9'd41,9'd8};    punc_o = {1'b0,1'b0}; end
+		 40: begin idx_o = {9'd511,9'd72};  punc_o = {1'b1,1'b0}; end
+		 41: begin idx_o = {9'd105,9'd511}; punc_o = {1'b0,1'b1}; end
+		 42: begin idx_o = {9'd169,9'd136}; punc_o = {1'b0,1'b0}; end
+		 43: begin idx_o = {9'd511,9'd200}; punc_o = {1'b1,1'b0}; end
+		 44: begin idx_o = {9'd233,9'd511}; punc_o = {1'b0,1'b1}; end
+		 45: begin idx_o = {9'd297,9'd264}; punc_o = {1'b0,1'b0}; end
+		 46: begin idx_o = {9'd511,9'd328}; punc_o = {1'b1,1'b0}; end
+		 47: begin idx_o = {9'd361,9'd511}; punc_o = {1'b0,1'b1}; end
+		 48: begin idx_o = {9'd9,9'd392};   punc_o = {1'b0,1'b0}; end
+		 49: begin idx_o = {9'd511,9'd40};  punc_o = {1'b1,1'b0}; end
+		 50: begin idx_o = {9'd73,9'd511};  punc_o = {1'b0,1'b1}; end
+		 51: begin idx_o = {9'd137,9'd104}; punc_o = {1'b0,1'b0}; end
+		 52: begin idx_o = {9'd511,9'd168}; punc_o = {1'b1,1'b0}; end
+		 53: begin idx_o = {9'd201,9'd511}; punc_o = {1'b0,1'b1}; end
+		 54: begin idx_o = {9'd265,9'd232}; punc_o = {1'b0,1'b0}; end
+		 55: begin idx_o = {9'd511,9'd296}; punc_o = {1'b1,1'b0}; end
+		 56: begin idx_o = {9'd329,9'd511}; punc_o = {1'b0,1'b1}; end
+		 57: begin idx_o = {9'd393,9'd360}; punc_o = {1'b0,1'b0}; end
+		 58: begin idx_o = {9'd511,9'd10};  punc_o = {1'b1,1'b0}; end
+		 59: begin idx_o = {9'd43,9'd511};  punc_o = {1'b0,1'b1}; end
+		 60: begin idx_o = {9'd107,9'd74};  punc_o = {1'b0,1'b0}; end
+		 61: begin idx_o = {9'd511,9'd138}; punc_o = {1'b1,1'b0}; end
+		 62: begin idx_o = {9'd171,9'd511}; punc_o = {1'b0,1'b1}; end
+		 63: begin idx_o = {9'd235,9'd202}; punc_o = {1'b0,1'b0}; end
+		 64: begin idx_o = {9'd511,9'd266}; punc_o = {1'b1,1'b0}; end
+		 65: begin idx_o = {9'd299,9'd511}; punc_o = {1'b0,1'b1}; end
+		 66: begin idx_o = {9'd363,9'd330}; punc_o = {1'b0,1'b0}; end
+		 67: begin idx_o = {9'd511,9'd394}; punc_o = {1'b1,1'b0}; end
+		 68: begin idx_o = {9'd11,9'd511};  punc_o = {1'b0,1'b1}; end
+		 69: begin idx_o = {9'd75,9'd42};   punc_o = {1'b0,1'b0}; end
+		 70: begin idx_o = {9'd511,9'd106}; punc_o = {1'b1,1'b0}; end
+		 71: begin idx_o = {9'd139,9'd511}; punc_o = {1'b0,1'b1}; end
+		 72: begin idx_o = {9'd203,9'd170}; punc_o = {1'b0,1'b0}; end
+		 73: begin idx_o = {9'd511,9'd234}; punc_o = {1'b1,1'b0}; end
+		 74: begin idx_o = {9'd267,9'd511}; punc_o = {1'b0,1'b1}; end
+		 75: begin idx_o = {9'd331,9'd298}; punc_o = {1'b0,1'b0}; end
+		 76: begin idx_o = {9'd511,9'd362}; punc_o = {1'b1,1'b0}; end
+		 77: begin idx_o = {9'd395,9'd511}; punc_o = {1'b0,1'b1}; end
+		 78: begin idx_o = {9'd49,9'd16};   punc_o = {1'b0,1'b0}; end
+		 79: begin idx_o = {9'd511,9'd80};  punc_o = {1'b1,1'b0}; end
+		 80: begin idx_o = {9'd113,9'd511}; punc_o = {1'b0,1'b1}; end
+		 81: begin idx_o = {9'd177,9'd144}; punc_o = {1'b0,1'b0}; end
+		 82: begin idx_o = {9'd511,9'd208}; punc_o = {1'b1,1'b0}; end
+		 83: begin idx_o = {9'd241,9'd511}; punc_o = {1'b0,1'b1}; end
+		 84: begin idx_o = {9'd305,9'd272}; punc_o = {1'b0,1'b0}; end
+		 85: begin idx_o = {9'd511,9'd336}; punc_o = {1'b1,1'b0}; end
+		 86: begin idx_o = {9'd369,9'd511}; punc_o = {1'b0,1'b1}; end
+		 87: begin idx_o = {9'd17,9'd400};  punc_o = {1'b0,1'b0}; end
+		 88: begin idx_o = {9'd511,9'd48};  punc_o = {1'b1,1'b0}; end
+		 89: begin idx_o = {9'd81,9'd511};  punc_o = {1'b0,1'b1}; end
+		 90: begin idx_o = {9'd145,9'd112}; punc_o = {1'b0,1'b0}; end
+		 91: begin idx_o = {9'd511,9'd176}; punc_o = {1'b1,1'b0}; end
+		 92: begin idx_o = {9'd209,9'd511}; punc_o = {1'b0,1'b1}; end
+		 93: begin idx_o = {9'd273,9'd240}; punc_o = {1'b0,1'b0}; end
+		 94: begin idx_o = {9'd511,9'd304}; punc_o = {1'b1,1'b0}; end
+		 95: begin idx_o = {9'd337,9'd511}; punc_o = {1'b0,1'b1}; end
+		 96: begin idx_o = {9'd401,9'd368}; punc_o = {1'b0,1'b0}; end
+		 97: begin idx_o = {9'd511,9'd18};  punc_o = {1'b1,1'b0}; end
+		 98: begin idx_o = {9'd51,9'd511};  punc_o = {1'b0,1'b1}; end
+		 99: begin idx_o = {9'd115,9'd82};  punc_o = {1'b0,1'b0}; end
+		100: begin idx_o = {9'd511,9'd146}; punc_o = {1'b1,1'b0}; end
+		101: begin idx_o = {9'd179,9'd511}; punc_o = {1'b0,1'b1}; end
+		102: begin idx_o = {9'd243,9'd210}; punc_o = {1'b0,1'b0}; end
+		103: begin idx_o = {9'd511,9'd274}; punc_o = {1'b1,1'b0}; end
+		104: begin idx_o = {9'd307,9'd511}; punc_o = {1'b0,1'b1}; end
+		105: begin idx_o = {9'd371,9'd338}; punc_o = {1'b0,1'b0}; end
+		106: begin idx_o = {9'd511,9'd402}; punc_o = {1'b1,1'b0}; end
+		107: begin idx_o = {9'd19,9'd511};  punc_o = {1'b0,1'b1}; end
+		108: begin idx_o = {9'd83,9'd50};   punc_o = {1'b0,1'b0}; end
+		109: begin idx_o = {9'd511,9'd114}; punc_o = {1'b1,1'b0}; end
+		110: begin idx_o = {9'd147,9'd511}; punc_o = {1'b0,1'b1}; end
+		111: begin idx_o = {9'd211,9'd178}; punc_o = {1'b0,1'b0}; end
+		112: begin idx_o = {9'd511,9'd242}; punc_o = {1'b1,1'b0}; end
+		113: begin idx_o = {9'd275,9'd511}; punc_o = {1'b0,1'b1}; end
+		114: begin idx_o = {9'd339,9'd306}; punc_o = {1'b0,1'b0}; end
+		115: begin idx_o = {9'd511,9'd370}; punc_o = {1'b1,1'b0}; end
+		116: begin idx_o = {9'd403,9'd511}; punc_o = {1'b0,1'b1}; end
+		117: begin idx_o = {9'd57,9'd24};   punc_o = {1'b0,1'b0}; end
+		118: begin idx_o = {9'd511,9'd88};  punc_o = {1'b1,1'b0}; end
+		119: begin idx_o = {9'd121,9'd511}; punc_o = {1'b0,1'b1}; end
+		120: begin idx_o = {9'd185,9'd152}; punc_o = {1'b0,1'b0}; end
+		121: begin idx_o = {9'd511,9'd216}; punc_o = {1'b1,1'b0}; end
+		122: begin idx_o = {9'd249,9'd511}; punc_o = {1'b0,1'b1}; end
+		123: begin idx_o = {9'd313,9'd280}; punc_o = {1'b0,1'b0}; end
+		124: begin idx_o = {9'd511,9'd344}; punc_o = {1'b1,1'b0}; end
+		125: begin idx_o = {9'd377,9'd511}; punc_o = {1'b0,1'b1}; end
+		126: begin idx_o = {9'd25,9'd408};  punc_o = {1'b0,1'b0}; end
+		127: begin idx_o = {9'd511,9'd56};  punc_o = {1'b1,1'b0}; end
+		128: begin idx_o = {9'd89,9'd511};  punc_o = {1'b0,1'b1}; end
+		129: begin idx_o = {9'd153,9'd120}; punc_o = {1'b0,1'b0}; end
+		130: begin idx_o = {9'd511,9'd184}; punc_o = {1'b1,1'b0}; end
+		131: begin idx_o = {9'd217,9'd511}; punc_o = {1'b0,1'b1}; end
+		132: begin idx_o = {9'd281,9'd248}; punc_o = {1'b0,1'b0}; end
+		133: begin idx_o = {9'd511,9'd312}; punc_o = {1'b1,1'b0}; end
+		134: begin idx_o = {9'd345,9'd511}; punc_o = {1'b0,1'b1}; end
+		135: begin idx_o = {9'd409,9'd376}; punc_o = {1'b0,1'b0}; end
+		136: begin idx_o = {9'd511,9'd26};  punc_o = {1'b1,1'b0}; end
+		137: begin idx_o = {9'd59,9'd511};  punc_o = {1'b0,1'b1}; end
+		138: begin idx_o = {9'd123,9'd90};  punc_o = {1'b0,1'b0}; end
+		139: begin idx_o = {9'd511,9'd154}; punc_o = {1'b1,1'b0}; end
+		140: begin idx_o = {9'd187,9'd511}; punc_o = {1'b0,1'b1}; end
+		141: begin idx_o = {9'd251,9'd218}; punc_o = {1'b0,1'b0}; end
+		142: begin idx_o = {9'd511,9'd282}; punc_o = {1'b1,1'b0}; end
+		143: begin idx_o = {9'd315,9'd511}; punc_o = {1'b0,1'b1}; end
+		144: begin idx_o = {9'd379,9'd346}; punc_o = {1'b0,1'b0}; end
+		145: begin idx_o = {9'd511,9'd410}; punc_o = {1'b1,1'b0}; end
+		146: begin idx_o = {9'd27,9'd511};  punc_o = {1'b0,1'b1}; end
+		147: begin idx_o = {9'd91,9'd58};   punc_o = {1'b0,1'b0}; end
+		148: begin idx_o = {9'd511,9'd122}; punc_o = {1'b1,1'b0}; end
+		149: begin idx_o = {9'd155,9'd511}; punc_o = {1'b0,1'b1}; end
+		150: begin idx_o = {9'd219,9'd186}; punc_o = {1'b0,1'b0}; end
+		151: begin idx_o = {9'd511,9'd250}; punc_o = {1'b1,1'b0}; end
+		152: begin idx_o = {9'd283,9'd511}; punc_o = {1'b0,1'b1}; end
+		153: begin idx_o = {9'd347,9'd314}; punc_o = {1'b0,1'b0}; end
+		154: begin idx_o = {9'd511,9'd378}; punc_o = {1'b1,1'b0}; end
+		155: begin idx_o = {9'd411,9'd511}; punc_o = {1'b0,1'b1}; end
+	  endcase
+	end
+
+	// 52.0/57.8 Mbps
+	else if(rate == 5'b10101) begin
+	  case (idx_i)
+		  0: begin idx_o = {9'd34,9'd0};    punc_o = {1'b0,1'b0}; end
+		  1: begin idx_o = {9'd511,9'd65};  punc_o = {1'b1,1'b0}; end
+		  2: begin idx_o = {9'd130,9'd96};  punc_o = {1'b0,1'b0}; end
+		  3: begin idx_o = {9'd511,9'd161}; punc_o = {1'b1,1'b0}; end
+		  4: begin idx_o = {9'd226,9'd192}; punc_o = {1'b0,1'b0}; end
+		  5: begin idx_o = {9'd511,9'd257}; punc_o = {1'b1,1'b0}; end
+		  6: begin idx_o = {9'd322,9'd288}; punc_o = {1'b0,1'b0}; end
+		  7: begin idx_o = {9'd511,9'd353}; punc_o = {1'b1,1'b0}; end
+		  8: begin idx_o = {9'd1,9'd384};   punc_o = {1'b0,1'b0}; end
+		  9: begin idx_o = {9'd511,9'd32};  punc_o = {1'b1,1'b0}; end
+		 10: begin idx_o = {9'd97,9'd66};   punc_o = {1'b0,1'b0}; end
+		 11: begin idx_o = {9'd511,9'd128}; punc_o = {1'b1,1'b0}; end
+		 12: begin idx_o = {9'd193,9'd162}; punc_o = {1'b0,1'b0}; end
+		 13: begin idx_o = {9'd511,9'd224}; punc_o = {1'b1,1'b0}; end
+		 14: begin idx_o = {9'd289,9'd258}; punc_o = {1'b0,1'b0}; end
+		 15: begin idx_o = {9'd511,9'd320}; punc_o = {1'b1,1'b0}; end
+		 16: begin idx_o = {9'd385,9'd354}; punc_o = {1'b0,1'b0}; end
+		 17: begin idx_o = {9'd511,9'd2};   punc_o = {1'b1,1'b0}; end
+		 18: begin idx_o = {9'd64,9'd33};   punc_o = {1'b0,1'b0}; end
+		 19: begin idx_o = {9'd511,9'd98};  punc_o = {1'b1,1'b0}; end
+		 20: begin idx_o = {9'd160,9'd129}; punc_o = {1'b0,1'b0}; end
+		 21: begin idx_o = {9'd511,9'd194}; punc_o = {1'b1,1'b0}; end
+		 22: begin idx_o = {9'd256,9'd225}; punc_o = {1'b0,1'b0}; end
+		 23: begin idx_o = {9'd511,9'd290}; punc_o = {1'b1,1'b0}; end
+		 24: begin idx_o = {9'd352,9'd321}; punc_o = {1'b0,1'b0}; end
+		 25: begin idx_o = {9'd511,9'd386}; punc_o = {1'b1,1'b0}; end
+		 26: begin idx_o = {9'd37,9'd3};    punc_o = {1'b0,1'b0}; end
+		 27: begin idx_o = {9'd511,9'd68};  punc_o = {1'b1,1'b0}; end
+		 28: begin idx_o = {9'd133,9'd99};  punc_o = {1'b0,1'b0}; end
+		 29: begin idx_o = {9'd511,9'd164}; punc_o = {1'b1,1'b0}; end
+		 30: begin idx_o = {9'd229,9'd195}; punc_o = {1'b0,1'b0}; end
+		 31: begin idx_o = {9'd511,9'd260}; punc_o = {1'b1,1'b0}; end
+		 32: begin idx_o = {9'd325,9'd291}; punc_o = {1'b0,1'b0}; end
+		 33: begin idx_o = {9'd511,9'd356}; punc_o = {1'b1,1'b0}; end
+		 34: begin idx_o = {9'd4,9'd387};   punc_o = {1'b0,1'b0}; end
+		 35: begin idx_o = {9'd511,9'd35};  punc_o = {1'b1,1'b0}; end
+		 36: begin idx_o = {9'd100,9'd69};  punc_o = {1'b0,1'b0}; end
+		 37: begin idx_o = {9'd511,9'd131}; punc_o = {1'b1,1'b0}; end
+		 38: begin idx_o = {9'd196,9'd165}; punc_o = {1'b0,1'b0}; end
+		 39: begin idx_o = {9'd511,9'd227}; punc_o = {1'b1,1'b0}; end
+		 40: begin idx_o = {9'd292,9'd261}; punc_o = {1'b0,1'b0}; end
+		 41: begin idx_o = {9'd511,9'd323}; punc_o = {1'b1,1'b0}; end
+		 42: begin idx_o = {9'd388,9'd357}; punc_o = {1'b0,1'b0}; end
+		 43: begin idx_o = {9'd511,9'd5};   punc_o = {1'b1,1'b0}; end
+		 44: begin idx_o = {9'd67,9'd36};   punc_o = {1'b0,1'b0}; end
+		 45: begin idx_o = {9'd511,9'd101}; punc_o = {1'b1,1'b0}; end
+		 46: begin idx_o = {9'd163,9'd132}; punc_o = {1'b0,1'b0}; end
+		 47: begin idx_o = {9'd511,9'd197}; punc_o = {1'b1,1'b0}; end
+		 48: begin idx_o = {9'd259,9'd228}; punc_o = {1'b0,1'b0}; end
+		 49: begin idx_o = {9'd511,9'd293}; punc_o = {1'b1,1'b0}; end
+		 50: begin idx_o = {9'd355,9'd324}; punc_o = {1'b0,1'b0}; end
+		 51: begin idx_o = {9'd511,9'd389}; punc_o = {1'b1,1'b0}; end
+		 52: begin idx_o = {9'd42,9'd8};    punc_o = {1'b0,1'b0}; end
+		 53: begin idx_o = {9'd511,9'd73};  punc_o = {1'b1,1'b0}; end
+		 54: begin idx_o = {9'd138,9'd104}; punc_o = {1'b0,1'b0}; end
+		 55: begin idx_o = {9'd511,9'd169}; punc_o = {1'b1,1'b0}; end
+		 56: begin idx_o = {9'd234,9'd200}; punc_o = {1'b0,1'b0}; end
+		 57: begin idx_o = {9'd511,9'd265}; punc_o = {1'b1,1'b0}; end
+		 58: begin idx_o = {9'd330,9'd296}; punc_o = {1'b0,1'b0}; end
+		 59: begin idx_o = {9'd511,9'd361}; punc_o = {1'b1,1'b0}; end
+		 60: begin idx_o = {9'd9,9'd392};   punc_o = {1'b0,1'b0}; end
+		 61: begin idx_o = {9'd511,9'd40};  punc_o = {1'b1,1'b0}; end
+		 62: begin idx_o = {9'd105,9'd74};  punc_o = {1'b0,1'b0}; end
+		 63: begin idx_o = {9'd511,9'd136}; punc_o = {1'b1,1'b0}; end
+		 64: begin idx_o = {9'd201,9'd170}; punc_o = {1'b0,1'b0}; end
+		 65: begin idx_o = {9'd511,9'd232}; punc_o = {1'b1,1'b0}; end
+		 66: begin idx_o = {9'd297,9'd266}; punc_o = {1'b0,1'b0}; end
+		 67: begin idx_o = {9'd511,9'd328}; punc_o = {1'b1,1'b0}; end
+		 68: begin idx_o = {9'd393,9'd362}; punc_o = {1'b0,1'b0}; end
+		 69: begin idx_o = {9'd511,9'd10};  punc_o = {1'b1,1'b0}; end
+		 70: begin idx_o = {9'd72,9'd41};   punc_o = {1'b0,1'b0}; end
+		 71: begin idx_o = {9'd511,9'd106}; punc_o = {1'b1,1'b0}; end
+		 72: begin idx_o = {9'd168,9'd137}; punc_o = {1'b0,1'b0}; end
+		 73: begin idx_o = {9'd511,9'd202}; punc_o = {1'b1,1'b0}; end
+		 74: begin idx_o = {9'd264,9'd233}; punc_o = {1'b0,1'b0}; end
+		 75: begin idx_o = {9'd511,9'd298}; punc_o = {1'b1,1'b0}; end
+		 76: begin idx_o = {9'd360,9'd329}; punc_o = {1'b0,1'b0}; end
+		 77: begin idx_o = {9'd511,9'd394}; punc_o = {1'b1,1'b0}; end
+		 78: begin idx_o = {9'd45,9'd11};   punc_o = {1'b0,1'b0}; end
+		 79: begin idx_o = {9'd511,9'd76};  punc_o = {1'b1,1'b0}; end
+		 80: begin idx_o = {9'd141,9'd107}; punc_o = {1'b0,1'b0}; end
+		 81: begin idx_o = {9'd511,9'd172}; punc_o = {1'b1,1'b0}; end
+		 82: begin idx_o = {9'd237,9'd203}; punc_o = {1'b0,1'b0}; end
+		 83: begin idx_o = {9'd511,9'd268}; punc_o = {1'b1,1'b0}; end
+		 84: begin idx_o = {9'd333,9'd299}; punc_o = {1'b0,1'b0}; end
+		 85: begin idx_o = {9'd511,9'd364}; punc_o = {1'b1,1'b0}; end
+		 86: begin idx_o = {9'd12,9'd395};  punc_o = {1'b0,1'b0}; end
+		 87: begin idx_o = {9'd511,9'd43};  punc_o = {1'b1,1'b0}; end
+		 88: begin idx_o = {9'd108,9'd77};  punc_o = {1'b0,1'b0}; end
+		 89: begin idx_o = {9'd511,9'd139}; punc_o = {1'b1,1'b0}; end
+		 90: begin idx_o = {9'd204,9'd173}; punc_o = {1'b0,1'b0}; end
+		 91: begin idx_o = {9'd511,9'd235}; punc_o = {1'b1,1'b0}; end
+		 92: begin idx_o = {9'd300,9'd269}; punc_o = {1'b0,1'b0}; end
+		 93: begin idx_o = {9'd511,9'd331}; punc_o = {1'b1,1'b0}; end
+		 94: begin idx_o = {9'd396,9'd365}; punc_o = {1'b0,1'b0}; end
+		 95: begin idx_o = {9'd511,9'd13};  punc_o = {1'b1,1'b0}; end
+		 96: begin idx_o = {9'd75,9'd44};   punc_o = {1'b0,1'b0}; end
+		 97: begin idx_o = {9'd511,9'd109}; punc_o = {1'b1,1'b0}; end
+		 98: begin idx_o = {9'd171,9'd140}; punc_o = {1'b0,1'b0}; end
+		 99: begin idx_o = {9'd511,9'd205}; punc_o = {1'b1,1'b0}; end
+		100: begin idx_o = {9'd267,9'd236}; punc_o = {1'b0,1'b0}; end
+		101: begin idx_o = {9'd511,9'd301}; punc_o = {1'b1,1'b0}; end
+		102: begin idx_o = {9'd363,9'd332}; punc_o = {1'b0,1'b0}; end
+		103: begin idx_o = {9'd511,9'd397}; punc_o = {1'b1,1'b0}; end
+		104: begin idx_o = {9'd50,9'd16};   punc_o = {1'b0,1'b0}; end
+		105: begin idx_o = {9'd511,9'd81};  punc_o = {1'b1,1'b0}; end
+		106: begin idx_o = {9'd146,9'd112}; punc_o = {1'b0,1'b0}; end
+		107: begin idx_o = {9'd511,9'd177}; punc_o = {1'b1,1'b0}; end
+		108: begin idx_o = {9'd242,9'd208}; punc_o = {1'b0,1'b0}; end
+		109: begin idx_o = {9'd511,9'd273}; punc_o = {1'b1,1'b0}; end
+		110: begin idx_o = {9'd338,9'd304}; punc_o = {1'b0,1'b0}; end
+		111: begin idx_o = {9'd511,9'd369}; punc_o = {1'b1,1'b0}; end
+		112: begin idx_o = {9'd17,9'd400};  punc_o = {1'b0,1'b0}; end
+		113: begin idx_o = {9'd511,9'd48};  punc_o = {1'b1,1'b0}; end
+		114: begin idx_o = {9'd113,9'd82};  punc_o = {1'b0,1'b0}; end
+		115: begin idx_o = {9'd511,9'd144}; punc_o = {1'b1,1'b0}; end
+		116: begin idx_o = {9'd209,9'd178}; punc_o = {1'b0,1'b0}; end
+		117: begin idx_o = {9'd511,9'd240}; punc_o = {1'b1,1'b0}; end
+		118: begin idx_o = {9'd305,9'd274}; punc_o = {1'b0,1'b0}; end
+		119: begin idx_o = {9'd511,9'd336}; punc_o = {1'b1,1'b0}; end
+		120: begin idx_o = {9'd401,9'd370}; punc_o = {1'b0,1'b0}; end
+		121: begin idx_o = {9'd511,9'd18};  punc_o = {1'b1,1'b0}; end
+		122: begin idx_o = {9'd80,9'd49};   punc_o = {1'b0,1'b0}; end
+		123: begin idx_o = {9'd511,9'd114}; punc_o = {1'b1,1'b0}; end
+		124: begin idx_o = {9'd176,9'd145}; punc_o = {1'b0,1'b0}; end
+		125: begin idx_o = {9'd511,9'd210}; punc_o = {1'b1,1'b0}; end
+		126: begin idx_o = {9'd272,9'd241}; punc_o = {1'b0,1'b0}; end
+		127: begin idx_o = {9'd511,9'd306}; punc_o = {1'b1,1'b0}; end
+		128: begin idx_o = {9'd368,9'd337}; punc_o = {1'b0,1'b0}; end
+		129: begin idx_o = {9'd511,9'd402}; punc_o = {1'b1,1'b0}; end
+		130: begin idx_o = {9'd53,9'd19};   punc_o = {1'b0,1'b0}; end
+		131: begin idx_o = {9'd511,9'd84};  punc_o = {1'b1,1'b0}; end
+		132: begin idx_o = {9'd149,9'd115}; punc_o = {1'b0,1'b0}; end
+		133: begin idx_o = {9'd511,9'd180}; punc_o = {1'b1,1'b0}; end
+		134: begin idx_o = {9'd245,9'd211}; punc_o = {1'b0,1'b0}; end
+		135: begin idx_o = {9'd511,9'd276}; punc_o = {1'b1,1'b0}; end
+		136: begin idx_o = {9'd341,9'd307}; punc_o = {1'b0,1'b0}; end
+		137: begin idx_o = {9'd511,9'd372}; punc_o = {1'b1,1'b0}; end
+		138: begin idx_o = {9'd20,9'd403};  punc_o = {1'b0,1'b0}; end
+		139: begin idx_o = {9'd511,9'd51};  punc_o = {1'b1,1'b0}; end
+		140: begin idx_o = {9'd116,9'd85};  punc_o = {1'b0,1'b0}; end
+		141: begin idx_o = {9'd511,9'd147}; punc_o = {1'b1,1'b0}; end
+		142: begin idx_o = {9'd212,9'd181}; punc_o = {1'b0,1'b0}; end
+		143: begin idx_o = {9'd511,9'd243}; punc_o = {1'b1,1'b0}; end
+		144: begin idx_o = {9'd308,9'd277}; punc_o = {1'b0,1'b0}; end
+		145: begin idx_o = {9'd511,9'd339}; punc_o = {1'b1,1'b0}; end
+		146: begin idx_o = {9'd404,9'd373}; punc_o = {1'b0,1'b0}; end
+		147: begin idx_o = {9'd511,9'd21};  punc_o = {1'b1,1'b0}; end
+		148: begin idx_o = {9'd83,9'd52};   punc_o = {1'b0,1'b0}; end
+		149: begin idx_o = {9'd511,9'd117}; punc_o = {1'b1,1'b0}; end
+		150: begin idx_o = {9'd179,9'd148}; punc_o = {1'b0,1'b0}; end
+		151: begin idx_o = {9'd511,9'd213}; punc_o = {1'b1,1'b0}; end
+		152: begin idx_o = {9'd275,9'd244}; punc_o = {1'b0,1'b0}; end
+		153: begin idx_o = {9'd511,9'd309}; punc_o = {1'b1,1'b0}; end
+		154: begin idx_o = {9'd371,9'd340}; punc_o = {1'b0,1'b0}; end
+		155: begin idx_o = {9'd511,9'd405}; punc_o = {1'b1,1'b0}; end
+		156: begin idx_o = {9'd58,9'd24};   punc_o = {1'b0,1'b0}; end
+		157: begin idx_o = {9'd511,9'd89};  punc_o = {1'b1,1'b0}; end
+		158: begin idx_o = {9'd154,9'd120}; punc_o = {1'b0,1'b0}; end
+		159: begin idx_o = {9'd511,9'd185}; punc_o = {1'b1,1'b0}; end
+		160: begin idx_o = {9'd250,9'd216}; punc_o = {1'b0,1'b0}; end
+		161: begin idx_o = {9'd511,9'd281}; punc_o = {1'b1,1'b0}; end
+		162: begin idx_o = {9'd346,9'd312}; punc_o = {1'b0,1'b0}; end
+		163: begin idx_o = {9'd511,9'd377}; punc_o = {1'b1,1'b0}; end
+		164: begin idx_o = {9'd25,9'd408};  punc_o = {1'b0,1'b0}; end
+		165: begin idx_o = {9'd511,9'd56};  punc_o = {1'b1,1'b0}; end
+		166: begin idx_o = {9'd121,9'd90};  punc_o = {1'b0,1'b0}; end
+		167: begin idx_o = {9'd511,9'd152}; punc_o = {1'b1,1'b0}; end
+		168: begin idx_o = {9'd217,9'd186}; punc_o = {1'b0,1'b0}; end
+		169: begin idx_o = {9'd511,9'd248}; punc_o = {1'b1,1'b0}; end
+		170: begin idx_o = {9'd313,9'd282}; punc_o = {1'b0,1'b0}; end
+		171: begin idx_o = {9'd511,9'd344}; punc_o = {1'b1,1'b0}; end
+		172: begin idx_o = {9'd409,9'd378}; punc_o = {1'b0,1'b0}; end
+		173: begin idx_o = {9'd511,9'd26};  punc_o = {1'b1,1'b0}; end
+		174: begin idx_o = {9'd88,9'd57};   punc_o = {1'b0,1'b0}; end
+		175: begin idx_o = {9'd511,9'd122}; punc_o = {1'b1,1'b0}; end
+		176: begin idx_o = {9'd184,9'd153}; punc_o = {1'b0,1'b0}; end
+		177: begin idx_o = {9'd511,9'd218}; punc_o = {1'b1,1'b0}; end
+		178: begin idx_o = {9'd280,9'd249}; punc_o = {1'b0,1'b0}; end
+		179: begin idx_o = {9'd511,9'd314}; punc_o = {1'b1,1'b0}; end
+		180: begin idx_o = {9'd376,9'd345}; punc_o = {1'b0,1'b0}; end
+		181: begin idx_o = {9'd511,9'd410}; punc_o = {1'b1,1'b0}; end
+		182: begin idx_o = {9'd61,9'd27};   punc_o = {1'b0,1'b0}; end
+		183: begin idx_o = {9'd511,9'd92};  punc_o = {1'b1,1'b0}; end
+		184: begin idx_o = {9'd157,9'd123}; punc_o = {1'b0,1'b0}; end
+		185: begin idx_o = {9'd511,9'd188}; punc_o = {1'b1,1'b0}; end
+		186: begin idx_o = {9'd253,9'd219}; punc_o = {1'b0,1'b0}; end
+		187: begin idx_o = {9'd511,9'd284}; punc_o = {1'b1,1'b0}; end
+		188: begin idx_o = {9'd349,9'd315}; punc_o = {1'b0,1'b0}; end
+		189: begin idx_o = {9'd511,9'd380}; punc_o = {1'b1,1'b0}; end
+		190: begin idx_o = {9'd28,9'd411};  punc_o = {1'b0,1'b0}; end
+		191: begin idx_o = {9'd511,9'd59};  punc_o = {1'b1,1'b0}; end
+		192: begin idx_o = {9'd124,9'd93};  punc_o = {1'b0,1'b0}; end
+		193: begin idx_o = {9'd511,9'd155}; punc_o = {1'b1,1'b0}; end
+		194: begin idx_o = {9'd220,9'd189}; punc_o = {1'b0,1'b0}; end
+		195: begin idx_o = {9'd511,9'd251}; punc_o = {1'b1,1'b0}; end
+		196: begin idx_o = {9'd316,9'd285}; punc_o = {1'b0,1'b0}; end
+		197: begin idx_o = {9'd511,9'd347}; punc_o = {1'b1,1'b0}; end
+		198: begin idx_o = {9'd412,9'd381}; punc_o = {1'b0,1'b0}; end
+		199: begin idx_o = {9'd511,9'd29};  punc_o = {1'b1,1'b0}; end
+		200: begin idx_o = {9'd91,9'd60};   punc_o = {1'b0,1'b0}; end
+		201: begin idx_o = {9'd511,9'd125}; punc_o = {1'b1,1'b0}; end
+		202: begin idx_o = {9'd187,9'd156}; punc_o = {1'b0,1'b0}; end
+		203: begin idx_o = {9'd511,9'd221}; punc_o = {1'b1,1'b0}; end
+		204: begin idx_o = {9'd283,9'd252}; punc_o = {1'b0,1'b0}; end
+		205: begin idx_o = {9'd511,9'd317}; punc_o = {1'b1,1'b0}; end
+		206: begin idx_o = {9'd379,9'd348}; punc_o = {1'b0,1'b0}; end
+		207: begin idx_o = {9'd511,9'd413}; punc_o = {1'b1,1'b0}; end
+	  endcase
+	end
+
+	// 58.5/65.0 Mbps
+	else if(rate == 5'b10110) begin
+	  case (idx_i)
+		  0: begin idx_o = {9'd34,9'd0};    punc_o = {1'b0,1'b0}; end
+		  1: begin idx_o = {9'd511,9'd65};  punc_o = {1'b1,1'b0}; end
+		  2: begin idx_o = {9'd96,9'd511};  punc_o = {1'b0,1'b1}; end
+		  3: begin idx_o = {9'd161,9'd130}; punc_o = {1'b0,1'b0}; end
+		  4: begin idx_o = {9'd511,9'd192}; punc_o = {1'b1,1'b0}; end
+		  5: begin idx_o = {9'd226,9'd511}; punc_o = {1'b0,1'b1}; end
+		  6: begin idx_o = {9'd288,9'd257}; punc_o = {1'b0,1'b0}; end
+		  7: begin idx_o = {9'd511,9'd322}; punc_o = {1'b1,1'b0}; end
+		  8: begin idx_o = {9'd353,9'd511}; punc_o = {1'b0,1'b1}; end
+		  9: begin idx_o = {9'd1,9'd384};   punc_o = {1'b0,1'b0}; end
+		 10: begin idx_o = {9'd511,9'd32};  punc_o = {1'b1,1'b0}; end
+		 11: begin idx_o = {9'd66,9'd511};  punc_o = {1'b0,1'b1}; end
+		 12: begin idx_o = {9'd128,9'd97};  punc_o = {1'b0,1'b0}; end
+		 13: begin idx_o = {9'd511,9'd162}; punc_o = {1'b1,1'b0}; end
+		 14: begin idx_o = {9'd193,9'd511}; punc_o = {1'b0,1'b1}; end
+		 15: begin idx_o = {9'd258,9'd224}; punc_o = {1'b0,1'b0}; end
+		 16: begin idx_o = {9'd511,9'd289}; punc_o = {1'b1,1'b0}; end
+		 17: begin idx_o = {9'd320,9'd511}; punc_o = {1'b0,1'b1}; end
+		 18: begin idx_o = {9'd385,9'd354}; punc_o = {1'b0,1'b0}; end
+		 19: begin idx_o = {9'd511,9'd2};   punc_o = {1'b1,1'b0}; end
+		 20: begin idx_o = {9'd33,9'd511};  punc_o = {1'b0,1'b1}; end
+		 21: begin idx_o = {9'd98,9'd64};   punc_o = {1'b0,1'b0}; end
+		 22: begin idx_o = {9'd511,9'd129}; punc_o = {1'b1,1'b0}; end
+		 23: begin idx_o = {9'd160,9'd511}; punc_o = {1'b0,1'b1}; end
+		 24: begin idx_o = {9'd225,9'd194}; punc_o = {1'b0,1'b0}; end
+		 25: begin idx_o = {9'd511,9'd256}; punc_o = {1'b1,1'b0}; end
+		 26: begin idx_o = {9'd290,9'd511}; punc_o = {1'b0,1'b1}; end
+		 27: begin idx_o = {9'd352,9'd321}; punc_o = {1'b0,1'b0}; end
+		 28: begin idx_o = {9'd511,9'd386}; punc_o = {1'b1,1'b0}; end
+		 29: begin idx_o = {9'd3,9'd511};   punc_o = {1'b0,1'b1}; end
+		 30: begin idx_o = {9'd68,9'd37};   punc_o = {1'b0,1'b0}; end
+		 31: begin idx_o = {9'd511,9'd99};  punc_o = {1'b1,1'b0}; end
+		 32: begin idx_o = {9'd133,9'd511}; punc_o = {1'b0,1'b1}; end
+		 33: begin idx_o = {9'd195,9'd164}; punc_o = {1'b0,1'b0}; end
+		 34: begin idx_o = {9'd511,9'd229}; punc_o = {1'b1,1'b0}; end
+		 35: begin idx_o = {9'd260,9'd511}; punc_o = {1'b0,1'b1}; end
+		 36: begin idx_o = {9'd325,9'd291}; punc_o = {1'b0,1'b0}; end
+		 37: begin idx_o = {9'd511,9'd356}; punc_o = {1'b1,1'b0}; end
+		 38: begin idx_o = {9'd387,9'd511}; punc_o = {1'b0,1'b1}; end
+		 39: begin idx_o = {9'd35,9'd4};    punc_o = {1'b0,1'b0}; end
+		 40: begin idx_o = {9'd511,9'd69};  punc_o = {1'b1,1'b0}; end
+		 41: begin idx_o = {9'd100,9'd511}; punc_o = {1'b0,1'b1}; end
+		 42: begin idx_o = {9'd165,9'd131}; punc_o = {1'b0,1'b0}; end
+		 43: begin idx_o = {9'd511,9'd196}; punc_o = {1'b1,1'b0}; end
+		 44: begin idx_o = {9'd227,9'd511}; punc_o = {1'b0,1'b1}; end
+		 45: begin idx_o = {9'd292,9'd261}; punc_o = {1'b0,1'b0}; end
+		 46: begin idx_o = {9'd511,9'd323}; punc_o = {1'b1,1'b0}; end
+		 47: begin idx_o = {9'd357,9'd511}; punc_o = {1'b0,1'b1}; end
+		 48: begin idx_o = {9'd5,9'd388};   punc_o = {1'b0,1'b0}; end
+		 49: begin idx_o = {9'd511,9'd36};  punc_o = {1'b1,1'b0}; end
+		 50: begin idx_o = {9'd67,9'd511};  punc_o = {1'b0,1'b1}; end
+		 51: begin idx_o = {9'd132,9'd101}; punc_o = {1'b0,1'b0}; end
+		 52: begin idx_o = {9'd511,9'd163}; punc_o = {1'b1,1'b0}; end
+		 53: begin idx_o = {9'd197,9'd511}; punc_o = {1'b0,1'b1}; end
+		 54: begin idx_o = {9'd259,9'd228}; punc_o = {1'b0,1'b0}; end
+		 55: begin idx_o = {9'd511,9'd293}; punc_o = {1'b1,1'b0}; end
+		 56: begin idx_o = {9'd324,9'd511}; punc_o = {1'b0,1'b1}; end
+		 57: begin idx_o = {9'd389,9'd355}; punc_o = {1'b0,1'b0}; end
+		 58: begin idx_o = {9'd511,9'd8};   punc_o = {1'b1,1'b0}; end
+		 59: begin idx_o = {9'd42,9'd511};  punc_o = {1'b0,1'b1}; end
+		 60: begin idx_o = {9'd104,9'd73};  punc_o = {1'b0,1'b0}; end
+		 61: begin idx_o = {9'd511,9'd138}; punc_o = {1'b1,1'b0}; end
+		 62: begin idx_o = {9'd169,9'd511}; punc_o = {1'b0,1'b1}; end
+		 63: begin idx_o = {9'd234,9'd200}; punc_o = {1'b0,1'b0}; end
+		 64: begin idx_o = {9'd511,9'd265}; punc_o = {1'b1,1'b0}; end
+		 65: begin idx_o = {9'd296,9'd511}; punc_o = {1'b0,1'b1}; end
+		 66: begin idx_o = {9'd361,9'd330}; punc_o = {1'b0,1'b0}; end
+		 67: begin idx_o = {9'd511,9'd392}; punc_o = {1'b1,1'b0}; end
+		 68: begin idx_o = {9'd9,9'd511};   punc_o = {1'b0,1'b1}; end
+		 69: begin idx_o = {9'd74,9'd40};   punc_o = {1'b0,1'b0}; end
+		 70: begin idx_o = {9'd511,9'd105}; punc_o = {1'b1,1'b0}; end
+		 71: begin idx_o = {9'd136,9'd511}; punc_o = {1'b0,1'b1}; end
+		 72: begin idx_o = {9'd201,9'd170}; punc_o = {1'b0,1'b0}; end
+		 73: begin idx_o = {9'd511,9'd232}; punc_o = {1'b1,1'b0}; end
+		 74: begin idx_o = {9'd266,9'd511}; punc_o = {1'b0,1'b1}; end
+		 75: begin idx_o = {9'd328,9'd297}; punc_o = {1'b0,1'b0}; end
+		 76: begin idx_o = {9'd511,9'd362}; punc_o = {1'b1,1'b0}; end
+		 77: begin idx_o = {9'd393,9'd511}; punc_o = {1'b0,1'b1}; end
+		 78: begin idx_o = {9'd41,9'd10};   punc_o = {1'b0,1'b0}; end
+		 79: begin idx_o = {9'd511,9'd72};  punc_o = {1'b1,1'b0}; end
+		 80: begin idx_o = {9'd106,9'd511}; punc_o = {1'b0,1'b1}; end
+		 81: begin idx_o = {9'd168,9'd137}; punc_o = {1'b0,1'b0}; end
+		 82: begin idx_o = {9'd511,9'd202}; punc_o = {1'b1,1'b0}; end
+		 83: begin idx_o = {9'd233,9'd511}; punc_o = {1'b0,1'b1}; end
+		 84: begin idx_o = {9'd298,9'd264}; punc_o = {1'b0,1'b0}; end
+		 85: begin idx_o = {9'd511,9'd329}; punc_o = {1'b1,1'b0}; end
+		 86: begin idx_o = {9'd360,9'd511}; punc_o = {1'b0,1'b1}; end
+		 87: begin idx_o = {9'd11,9'd394};  punc_o = {1'b0,1'b0}; end
+		 88: begin idx_o = {9'd511,9'd45};  punc_o = {1'b1,1'b0}; end
+		 89: begin idx_o = {9'd76,9'd511};  punc_o = {1'b0,1'b1}; end
+		 90: begin idx_o = {9'd141,9'd107}; punc_o = {1'b0,1'b0}; end
+		 91: begin idx_o = {9'd511,9'd172}; punc_o = {1'b1,1'b0}; end
+		 92: begin idx_o = {9'd203,9'd511}; punc_o = {1'b0,1'b1}; end
+		 93: begin idx_o = {9'd268,9'd237}; punc_o = {1'b0,1'b0}; end
+		 94: begin idx_o = {9'd511,9'd299}; punc_o = {1'b1,1'b0}; end
+		 95: begin idx_o = {9'd333,9'd511}; punc_o = {1'b0,1'b1}; end
+		 96: begin idx_o = {9'd395,9'd364}; punc_o = {1'b0,1'b0}; end
+		 97: begin idx_o = {9'd511,9'd12};  punc_o = {1'b1,1'b0}; end
+		 98: begin idx_o = {9'd43,9'd511};  punc_o = {1'b0,1'b1}; end
+		 99: begin idx_o = {9'd108,9'd77};  punc_o = {1'b0,1'b0}; end
+		100: begin idx_o = {9'd511,9'd139}; punc_o = {1'b1,1'b0}; end
+		101: begin idx_o = {9'd173,9'd511}; punc_o = {1'b0,1'b1}; end
+		102: begin idx_o = {9'd235,9'd204}; punc_o = {1'b0,1'b0}; end
+		103: begin idx_o = {9'd511,9'd269}; punc_o = {1'b1,1'b0}; end
+		104: begin idx_o = {9'd300,9'd511}; punc_o = {1'b0,1'b1}; end
+		105: begin idx_o = {9'd365,9'd331}; punc_o = {1'b0,1'b0}; end
+		106: begin idx_o = {9'd511,9'd396}; punc_o = {1'b1,1'b0}; end
+		107: begin idx_o = {9'd13,9'd511};  punc_o = {1'b0,1'b1}; end
+		108: begin idx_o = {9'd75,9'd44};   punc_o = {1'b0,1'b0}; end
+		109: begin idx_o = {9'd511,9'd109}; punc_o = {1'b1,1'b0}; end
+		110: begin idx_o = {9'd140,9'd511}; punc_o = {1'b0,1'b1}; end
+		111: begin idx_o = {9'd205,9'd171}; punc_o = {1'b0,1'b0}; end
+		112: begin idx_o = {9'd511,9'd236}; punc_o = {1'b1,1'b0}; end
+		113: begin idx_o = {9'd267,9'd511}; punc_o = {1'b0,1'b1}; end
+		114: begin idx_o = {9'd332,9'd301}; punc_o = {1'b0,1'b0}; end
+		115: begin idx_o = {9'd511,9'd363}; punc_o = {1'b1,1'b0}; end
+		116: begin idx_o = {9'd397,9'd511}; punc_o = {1'b0,1'b1}; end
+		117: begin idx_o = {9'd50,9'd16};   punc_o = {1'b0,1'b0}; end
+		118: begin idx_o = {9'd511,9'd81};  punc_o = {1'b1,1'b0}; end
+		119: begin idx_o = {9'd112,9'd511}; punc_o = {1'b0,1'b1}; end
+		120: begin idx_o = {9'd177,9'd146}; punc_o = {1'b0,1'b0}; end
+		121: begin idx_o = {9'd511,9'd208}; punc_o = {1'b1,1'b0}; end
+		122: begin idx_o = {9'd242,9'd511}; punc_o = {1'b0,1'b1}; end
+		123: begin idx_o = {9'd304,9'd273}; punc_o = {1'b0,1'b0}; end
+		124: begin idx_o = {9'd511,9'd338}; punc_o = {1'b1,1'b0}; end
+		125: begin idx_o = {9'd369,9'd511}; punc_o = {1'b0,1'b1}; end
+		126: begin idx_o = {9'd17,9'd400};  punc_o = {1'b0,1'b0}; end
+		127: begin idx_o = {9'd511,9'd48};  punc_o = {1'b1,1'b0}; end
+		128: begin idx_o = {9'd82,9'd511};  punc_o = {1'b0,1'b1}; end
+		129: begin idx_o = {9'd144,9'd113}; punc_o = {1'b0,1'b0}; end
+		130: begin idx_o = {9'd511,9'd178}; punc_o = {1'b1,1'b0}; end
+		131: begin idx_o = {9'd209,9'd511}; punc_o = {1'b0,1'b1}; end
+		132: begin idx_o = {9'd274,9'd240}; punc_o = {1'b0,1'b0}; end
+		133: begin idx_o = {9'd511,9'd305}; punc_o = {1'b1,1'b0}; end
+		134: begin idx_o = {9'd336,9'd511}; punc_o = {1'b0,1'b1}; end
+		135: begin idx_o = {9'd401,9'd370}; punc_o = {1'b0,1'b0}; end
+		136: begin idx_o = {9'd511,9'd18};  punc_o = {1'b1,1'b0}; end
+		137: begin idx_o = {9'd49,9'd511};  punc_o = {1'b0,1'b1}; end
+		138: begin idx_o = {9'd114,9'd80};  punc_o = {1'b0,1'b0}; end
+		139: begin idx_o = {9'd511,9'd145}; punc_o = {1'b1,1'b0}; end
+		140: begin idx_o = {9'd176,9'd511}; punc_o = {1'b0,1'b1}; end
+		141: begin idx_o = {9'd241,9'd210}; punc_o = {1'b0,1'b0}; end
+		142: begin idx_o = {9'd511,9'd272}; punc_o = {1'b1,1'b0}; end
+		143: begin idx_o = {9'd306,9'd511}; punc_o = {1'b0,1'b1}; end
+		144: begin idx_o = {9'd368,9'd337}; punc_o = {1'b0,1'b0}; end
+		145: begin idx_o = {9'd511,9'd402}; punc_o = {1'b1,1'b0}; end
+		146: begin idx_o = {9'd19,9'd511};  punc_o = {1'b0,1'b1}; end
+		147: begin idx_o = {9'd84,9'd53};   punc_o = {1'b0,1'b0}; end
+		148: begin idx_o = {9'd511,9'd115}; punc_o = {1'b1,1'b0}; end
+		149: begin idx_o = {9'd149,9'd511}; punc_o = {1'b0,1'b1}; end
+		150: begin idx_o = {9'd211,9'd180}; punc_o = {1'b0,1'b0}; end
+		151: begin idx_o = {9'd511,9'd245}; punc_o = {1'b1,1'b0}; end
+		152: begin idx_o = {9'd276,9'd511}; punc_o = {1'b0,1'b1}; end
+		153: begin idx_o = {9'd341,9'd307}; punc_o = {1'b0,1'b0}; end
+		154: begin idx_o = {9'd511,9'd372}; punc_o = {1'b1,1'b0}; end
+		155: begin idx_o = {9'd403,9'd511}; punc_o = {1'b0,1'b1}; end
+		156: begin idx_o = {9'd51,9'd20};   punc_o = {1'b0,1'b0}; end
+		157: begin idx_o = {9'd511,9'd85};  punc_o = {1'b1,1'b0}; end
+		158: begin idx_o = {9'd116,9'd511}; punc_o = {1'b0,1'b1}; end
+		159: begin idx_o = {9'd181,9'd147}; punc_o = {1'b0,1'b0}; end
+		160: begin idx_o = {9'd511,9'd212}; punc_o = {1'b1,1'b0}; end
+		161: begin idx_o = {9'd243,9'd511}; punc_o = {1'b0,1'b1}; end
+		162: begin idx_o = {9'd308,9'd277}; punc_o = {1'b0,1'b0}; end
+		163: begin idx_o = {9'd511,9'd339}; punc_o = {1'b1,1'b0}; end
+		164: begin idx_o = {9'd373,9'd511}; punc_o = {1'b0,1'b1}; end
+		165: begin idx_o = {9'd21,9'd404};  punc_o = {1'b0,1'b0}; end
+		166: begin idx_o = {9'd511,9'd52};  punc_o = {1'b1,1'b0}; end
+		167: begin idx_o = {9'd83,9'd511};  punc_o = {1'b0,1'b1}; end
+		168: begin idx_o = {9'd148,9'd117}; punc_o = {1'b0,1'b0}; end
+		169: begin idx_o = {9'd511,9'd179}; punc_o = {1'b1,1'b0}; end
+		170: begin idx_o = {9'd213,9'd511}; punc_o = {1'b0,1'b1}; end
+		171: begin idx_o = {9'd275,9'd244}; punc_o = {1'b0,1'b0}; end
+		172: begin idx_o = {9'd511,9'd309}; punc_o = {1'b1,1'b0}; end
+		173: begin idx_o = {9'd340,9'd511}; punc_o = {1'b0,1'b1}; end
+		174: begin idx_o = {9'd405,9'd371}; punc_o = {1'b0,1'b0}; end
+		175: begin idx_o = {9'd511,9'd24};  punc_o = {1'b1,1'b0}; end
+		176: begin idx_o = {9'd58,9'd511};  punc_o = {1'b0,1'b1}; end
+		177: begin idx_o = {9'd120,9'd89};  punc_o = {1'b0,1'b0}; end
+		178: begin idx_o = {9'd511,9'd154}; punc_o = {1'b1,1'b0}; end
+		179: begin idx_o = {9'd185,9'd511}; punc_o = {1'b0,1'b1}; end
+		180: begin idx_o = {9'd250,9'd216}; punc_o = {1'b0,1'b0}; end
+		181: begin idx_o = {9'd511,9'd281}; punc_o = {1'b1,1'b0}; end
+		182: begin idx_o = {9'd312,9'd511}; punc_o = {1'b0,1'b1}; end
+		183: begin idx_o = {9'd377,9'd346}; punc_o = {1'b0,1'b0}; end
+		184: begin idx_o = {9'd511,9'd408}; punc_o = {1'b1,1'b0}; end
+		185: begin idx_o = {9'd25,9'd511};  punc_o = {1'b0,1'b1}; end
+		186: begin idx_o = {9'd90,9'd56};   punc_o = {1'b0,1'b0}; end
+		187: begin idx_o = {9'd511,9'd121}; punc_o = {1'b1,1'b0}; end
+		188: begin idx_o = {9'd152,9'd511}; punc_o = {1'b0,1'b1}; end
+		189: begin idx_o = {9'd217,9'd186}; punc_o = {1'b0,1'b0}; end
+		190: begin idx_o = {9'd511,9'd248}; punc_o = {1'b1,1'b0}; end
+		191: begin idx_o = {9'd282,9'd511}; punc_o = {1'b0,1'b1}; end
+		192: begin idx_o = {9'd344,9'd313}; punc_o = {1'b0,1'b0}; end
+		193: begin idx_o = {9'd511,9'd378}; punc_o = {1'b1,1'b0}; end
+		194: begin idx_o = {9'd409,9'd511}; punc_o = {1'b0,1'b1}; end
+		195: begin idx_o = {9'd57,9'd26};   punc_o = {1'b0,1'b0}; end
+		196: begin idx_o = {9'd511,9'd88};  punc_o = {1'b1,1'b0}; end
+		197: begin idx_o = {9'd122,9'd511}; punc_o = {1'b0,1'b1}; end
+		198: begin idx_o = {9'd184,9'd153}; punc_o = {1'b0,1'b0}; end
+		199: begin idx_o = {9'd511,9'd218}; punc_o = {1'b1,1'b0}; end
+		200: begin idx_o = {9'd249,9'd511}; punc_o = {1'b0,1'b1}; end
+		201: begin idx_o = {9'd314,9'd280}; punc_o = {1'b0,1'b0}; end
+		202: begin idx_o = {9'd511,9'd345}; punc_o = {1'b1,1'b0}; end
+		203: begin idx_o = {9'd376,9'd511}; punc_o = {1'b0,1'b1}; end
+		204: begin idx_o = {9'd27,9'd410};  punc_o = {1'b0,1'b0}; end
+		205: begin idx_o = {9'd511,9'd61};  punc_o = {1'b1,1'b0}; end
+		206: begin idx_o = {9'd92,9'd511};  punc_o = {1'b0,1'b1}; end
+		207: begin idx_o = {9'd157,9'd123}; punc_o = {1'b0,1'b0}; end
+		208: begin idx_o = {9'd511,9'd188}; punc_o = {1'b1,1'b0}; end
+		209: begin idx_o = {9'd219,9'd511}; punc_o = {1'b0,1'b1}; end
+		210: begin idx_o = {9'd284,9'd253}; punc_o = {1'b0,1'b0}; end
+		211: begin idx_o = {9'd511,9'd315}; punc_o = {1'b1,1'b0}; end
+		212: begin idx_o = {9'd349,9'd511}; punc_o = {1'b0,1'b1}; end
+		213: begin idx_o = {9'd411,9'd380}; punc_o = {1'b0,1'b0}; end
+		214: begin idx_o = {9'd511,9'd28};  punc_o = {1'b1,1'b0}; end
+		215: begin idx_o = {9'd59,9'd511};  punc_o = {1'b0,1'b1}; end
+		216: begin idx_o = {9'd124,9'd93};  punc_o = {1'b0,1'b0}; end
+		217: begin idx_o = {9'd511,9'd155}; punc_o = {1'b1,1'b0}; end
+		218: begin idx_o = {9'd189,9'd511}; punc_o = {1'b0,1'b1}; end
+		219: begin idx_o = {9'd251,9'd220}; punc_o = {1'b0,1'b0}; end
+		220: begin idx_o = {9'd511,9'd285}; punc_o = {1'b1,1'b0}; end
+		221: begin idx_o = {9'd316,9'd511}; punc_o = {1'b0,1'b1}; end
+		222: begin idx_o = {9'd381,9'd347}; punc_o = {1'b0,1'b0}; end
+		223: begin idx_o = {9'd511,9'd412}; punc_o = {1'b1,1'b0}; end
+		224: begin idx_o = {9'd29,9'd511};  punc_o = {1'b0,1'b1}; end
+		225: begin idx_o = {9'd91,9'd60};   punc_o = {1'b0,1'b0}; end
+		226: begin idx_o = {9'd511,9'd125}; punc_o = {1'b1,1'b0}; end
+		227: begin idx_o = {9'd156,9'd511}; punc_o = {1'b0,1'b1}; end
+		228: begin idx_o = {9'd221,9'd187}; punc_o = {1'b0,1'b0}; end
+		229: begin idx_o = {9'd511,9'd252}; punc_o = {1'b1,1'b0}; end
+		230: begin idx_o = {9'd283,9'd511}; punc_o = {1'b0,1'b1}; end
+		231: begin idx_o = {9'd348,9'd317}; punc_o = {1'b0,1'b0}; end
+		232: begin idx_o = {9'd511,9'd379}; punc_o = {1'b1,1'b0}; end
+		233: begin idx_o = {9'd413,9'd511}; punc_o = {1'b0,1'b1}; end
+	  endcase
+	end
+
+	// 65.0/72.2 Mbps
+	else if(rate == 5'b10111) begin
+	  case (idx_i)
+		  0: begin idx_o = {9'd34,9'd0};    punc_o = {1'b0,1'b0}; end
+		  1: begin idx_o = {9'd511,9'd65};  punc_o = {1'b1,1'b0}; end
+		  2: begin idx_o = {9'd96,9'd511};  punc_o = {1'b0,1'b1}; end
+		  3: begin idx_o = {9'd511,9'd130}; punc_o = {1'b1,1'b0}; end
+		  4: begin idx_o = {9'd161,9'd511}; punc_o = {1'b0,1'b1}; end
+		  5: begin idx_o = {9'd226,9'd192}; punc_o = {1'b0,1'b0}; end
+		  6: begin idx_o = {9'd511,9'd257}; punc_o = {1'b1,1'b0}; end
+		  7: begin idx_o = {9'd288,9'd511}; punc_o = {1'b0,1'b1}; end
+		  8: begin idx_o = {9'd511,9'd322}; punc_o = {1'b1,1'b0}; end
+		  9: begin idx_o = {9'd353,9'd511}; punc_o = {1'b0,1'b1}; end
+		 10: begin idx_o = {9'd1,9'd384};   punc_o = {1'b0,1'b0}; end
+		 11: begin idx_o = {9'd511,9'd32};  punc_o = {1'b1,1'b0}; end
+		 12: begin idx_o = {9'd66,9'd511};  punc_o = {1'b0,1'b1}; end
+		 13: begin idx_o = {9'd511,9'd97};  punc_o = {1'b1,1'b0}; end
+		 14: begin idx_o = {9'd128,9'd511}; punc_o = {1'b0,1'b1}; end
+		 15: begin idx_o = {9'd193,9'd162}; punc_o = {1'b0,1'b0}; end
+		 16: begin idx_o = {9'd511,9'd224}; punc_o = {1'b1,1'b0}; end
+		 17: begin idx_o = {9'd258,9'd511}; punc_o = {1'b0,1'b1}; end
+		 18: begin idx_o = {9'd511,9'd289}; punc_o = {1'b1,1'b0}; end
+		 19: begin idx_o = {9'd320,9'd511}; punc_o = {1'b0,1'b1}; end
+		 20: begin idx_o = {9'd385,9'd354}; punc_o = {1'b0,1'b0}; end
+		 21: begin idx_o = {9'd511,9'd2};   punc_o = {1'b1,1'b0}; end
+		 22: begin idx_o = {9'd33,9'd511};  punc_o = {1'b0,1'b1}; end
+		 23: begin idx_o = {9'd511,9'd64};  punc_o = {1'b1,1'b0}; end
+		 24: begin idx_o = {9'd98,9'd511};  punc_o = {1'b0,1'b1}; end
+		 25: begin idx_o = {9'd160,9'd129}; punc_o = {1'b0,1'b0}; end
+		 26: begin idx_o = {9'd511,9'd194}; punc_o = {1'b1,1'b0}; end
+		 27: begin idx_o = {9'd225,9'd511}; punc_o = {1'b0,1'b1}; end
+		 28: begin idx_o = {9'd511,9'd256}; punc_o = {1'b1,1'b0}; end
+		 29: begin idx_o = {9'd290,9'd511}; punc_o = {1'b0,1'b1}; end
+		 30: begin idx_o = {9'd352,9'd321}; punc_o = {1'b0,1'b0}; end
+		 31: begin idx_o = {9'd511,9'd386}; punc_o = {1'b1,1'b0}; end
+		 32: begin idx_o = {9'd3,9'd511};   punc_o = {1'b0,1'b1}; end
+		 33: begin idx_o = {9'd511,9'd37};  punc_o = {1'b1,1'b0}; end
+		 34: begin idx_o = {9'd68,9'd511};  punc_o = {1'b0,1'b1}; end
+		 35: begin idx_o = {9'd133,9'd99};  punc_o = {1'b0,1'b0}; end
+		 36: begin idx_o = {9'd511,9'd164}; punc_o = {1'b1,1'b0}; end
+		 37: begin idx_o = {9'd195,9'd511}; punc_o = {1'b0,1'b1}; end
+		 38: begin idx_o = {9'd511,9'd229}; punc_o = {1'b1,1'b0}; end
+		 39: begin idx_o = {9'd260,9'd511}; punc_o = {1'b0,1'b1}; end
+		 40: begin idx_o = {9'd325,9'd291}; punc_o = {1'b0,1'b0}; end
+		 41: begin idx_o = {9'd511,9'd356}; punc_o = {1'b1,1'b0}; end
+		 42: begin idx_o = {9'd387,9'd511}; punc_o = {1'b0,1'b1}; end
+		 43: begin idx_o = {9'd511,9'd4};   punc_o = {1'b1,1'b0}; end
+		 44: begin idx_o = {9'd35,9'd511};  punc_o = {1'b0,1'b1}; end
+		 45: begin idx_o = {9'd100,9'd69};  punc_o = {1'b0,1'b0}; end
+		 46: begin idx_o = {9'd511,9'd131}; punc_o = {1'b1,1'b0}; end
+		 47: begin idx_o = {9'd165,9'd511}; punc_o = {1'b0,1'b1}; end
+		 48: begin idx_o = {9'd511,9'd196}; punc_o = {1'b1,1'b0}; end
+		 49: begin idx_o = {9'd227,9'd511}; punc_o = {1'b0,1'b1}; end
+		 50: begin idx_o = {9'd292,9'd261}; punc_o = {1'b0,1'b0}; end
+		 51: begin idx_o = {9'd511,9'd323}; punc_o = {1'b1,1'b0}; end
+		 52: begin idx_o = {9'd357,9'd511}; punc_o = {1'b0,1'b1}; end
+		 53: begin idx_o = {9'd511,9'd388}; punc_o = {1'b1,1'b0}; end
+		 54: begin idx_o = {9'd5,9'd511};   punc_o = {1'b0,1'b1}; end
+		 55: begin idx_o = {9'd67,9'd36};   punc_o = {1'b0,1'b0}; end
+		 56: begin idx_o = {9'd511,9'd101}; punc_o = {1'b1,1'b0}; end
+		 57: begin idx_o = {9'd132,9'd511}; punc_o = {1'b0,1'b1}; end
+		 58: begin idx_o = {9'd511,9'd163}; punc_o = {1'b1,1'b0}; end
+		 59: begin idx_o = {9'd197,9'd511}; punc_o = {1'b0,1'b1}; end
+		 60: begin idx_o = {9'd259,9'd228}; punc_o = {1'b0,1'b0}; end
+		 61: begin idx_o = {9'd511,9'd293}; punc_o = {1'b1,1'b0}; end
+		 62: begin idx_o = {9'd324,9'd511}; punc_o = {1'b0,1'b1}; end
+		 63: begin idx_o = {9'd511,9'd355}; punc_o = {1'b1,1'b0}; end
+		 64: begin idx_o = {9'd389,9'd511}; punc_o = {1'b0,1'b1}; end
+		 65: begin idx_o = {9'd42,9'd8};    punc_o = {1'b0,1'b0}; end
+		 66: begin idx_o = {9'd511,9'd73};  punc_o = {1'b1,1'b0}; end
+		 67: begin idx_o = {9'd104,9'd511}; punc_o = {1'b0,1'b1}; end
+		 68: begin idx_o = {9'd511,9'd138}; punc_o = {1'b1,1'b0}; end
+		 69: begin idx_o = {9'd169,9'd511}; punc_o = {1'b0,1'b1}; end
+		 70: begin idx_o = {9'd234,9'd200}; punc_o = {1'b0,1'b0}; end
+		 71: begin idx_o = {9'd511,9'd265}; punc_o = {1'b1,1'b0}; end
+		 72: begin idx_o = {9'd296,9'd511}; punc_o = {1'b0,1'b1}; end
+		 73: begin idx_o = {9'd511,9'd330}; punc_o = {1'b1,1'b0}; end
+		 74: begin idx_o = {9'd361,9'd511}; punc_o = {1'b0,1'b1}; end
+		 75: begin idx_o = {9'd9,9'd392};   punc_o = {1'b0,1'b0}; end
+		 76: begin idx_o = {9'd511,9'd40};  punc_o = {1'b1,1'b0}; end
+		 77: begin idx_o = {9'd74,9'd511};  punc_o = {1'b0,1'b1}; end
+		 78: begin idx_o = {9'd511,9'd105}; punc_o = {1'b1,1'b0}; end
+		 79: begin idx_o = {9'd136,9'd511}; punc_o = {1'b0,1'b1}; end
+		 80: begin idx_o = {9'd201,9'd170}; punc_o = {1'b0,1'b0}; end
+		 81: begin idx_o = {9'd511,9'd232}; punc_o = {1'b1,1'b0}; end
+		 82: begin idx_o = {9'd266,9'd511}; punc_o = {1'b0,1'b1}; end
+		 83: begin idx_o = {9'd511,9'd297}; punc_o = {1'b1,1'b0}; end
+		 84: begin idx_o = {9'd328,9'd511}; punc_o = {1'b0,1'b1}; end
+		 85: begin idx_o = {9'd393,9'd362}; punc_o = {1'b0,1'b0}; end
+		 86: begin idx_o = {9'd511,9'd10};  punc_o = {1'b1,1'b0}; end
+		 87: begin idx_o = {9'd41,9'd511};  punc_o = {1'b0,1'b1}; end
+		 88: begin idx_o = {9'd511,9'd72};  punc_o = {1'b1,1'b0}; end
+		 89: begin idx_o = {9'd106,9'd511}; punc_o = {1'b0,1'b1}; end
+		 90: begin idx_o = {9'd168,9'd137}; punc_o = {1'b0,1'b0}; end
+		 91: begin idx_o = {9'd511,9'd202}; punc_o = {1'b1,1'b0}; end
+		 92: begin idx_o = {9'd233,9'd511}; punc_o = {1'b0,1'b1}; end
+		 93: begin idx_o = {9'd511,9'd264}; punc_o = {1'b1,1'b0}; end
+		 94: begin idx_o = {9'd298,9'd511}; punc_o = {1'b0,1'b1}; end
+		 95: begin idx_o = {9'd360,9'd329}; punc_o = {1'b0,1'b0}; end
+		 96: begin idx_o = {9'd511,9'd394}; punc_o = {1'b1,1'b0}; end
+		 97: begin idx_o = {9'd11,9'd511};  punc_o = {1'b0,1'b1}; end
+		 98: begin idx_o = {9'd511,9'd45};  punc_o = {1'b1,1'b0}; end
+		 99: begin idx_o = {9'd76,9'd511};  punc_o = {1'b0,1'b1}; end
+		100: begin idx_o = {9'd141,9'd107}; punc_o = {1'b0,1'b0}; end
+		101: begin idx_o = {9'd511,9'd172}; punc_o = {1'b1,1'b0}; end
+		102: begin idx_o = {9'd203,9'd511}; punc_o = {1'b0,1'b1}; end
+		103: begin idx_o = {9'd511,9'd237}; punc_o = {1'b1,1'b0}; end
+		104: begin idx_o = {9'd268,9'd511}; punc_o = {1'b0,1'b1}; end
+		105: begin idx_o = {9'd333,9'd299}; punc_o = {1'b0,1'b0}; end
+		106: begin idx_o = {9'd511,9'd364}; punc_o = {1'b1,1'b0}; end
+		107: begin idx_o = {9'd395,9'd511}; punc_o = {1'b0,1'b1}; end
+		108: begin idx_o = {9'd511,9'd12};  punc_o = {1'b1,1'b0}; end
+		109: begin idx_o = {9'd43,9'd511};  punc_o = {1'b0,1'b1}; end
+		110: begin idx_o = {9'd108,9'd77};  punc_o = {1'b0,1'b0}; end
+		111: begin idx_o = {9'd511,9'd139}; punc_o = {1'b1,1'b0}; end
+		112: begin idx_o = {9'd173,9'd511}; punc_o = {1'b0,1'b1}; end
+		113: begin idx_o = {9'd511,9'd204}; punc_o = {1'b1,1'b0}; end
+		114: begin idx_o = {9'd235,9'd511}; punc_o = {1'b0,1'b1}; end
+		115: begin idx_o = {9'd300,9'd269}; punc_o = {1'b0,1'b0}; end
+		116: begin idx_o = {9'd511,9'd331}; punc_o = {1'b1,1'b0}; end
+		117: begin idx_o = {9'd365,9'd511}; punc_o = {1'b0,1'b1}; end
+		118: begin idx_o = {9'd511,9'd396}; punc_o = {1'b1,1'b0}; end
+		119: begin idx_o = {9'd13,9'd511};  punc_o = {1'b0,1'b1}; end
+		120: begin idx_o = {9'd75,9'd44};   punc_o = {1'b0,1'b0}; end
+		121: begin idx_o = {9'd511,9'd109}; punc_o = {1'b1,1'b0}; end
+		122: begin idx_o = {9'd140,9'd511}; punc_o = {1'b0,1'b1}; end
+		123: begin idx_o = {9'd511,9'd171}; punc_o = {1'b1,1'b0}; end
+		124: begin idx_o = {9'd205,9'd511}; punc_o = {1'b0,1'b1}; end
+		125: begin idx_o = {9'd267,9'd236}; punc_o = {1'b0,1'b0}; end
+		126: begin idx_o = {9'd511,9'd301}; punc_o = {1'b1,1'b0}; end
+		127: begin idx_o = {9'd332,9'd511}; punc_o = {1'b0,1'b1}; end
+		128: begin idx_o = {9'd511,9'd363}; punc_o = {1'b1,1'b0}; end
+		129: begin idx_o = {9'd397,9'd511}; punc_o = {1'b0,1'b1}; end
+		130: begin idx_o = {9'd50,9'd16};   punc_o = {1'b0,1'b0}; end
+		131: begin idx_o = {9'd511,9'd81};  punc_o = {1'b1,1'b0}; end
+		132: begin idx_o = {9'd112,9'd511}; punc_o = {1'b0,1'b1}; end
+		133: begin idx_o = {9'd511,9'd146}; punc_o = {1'b1,1'b0}; end
+		134: begin idx_o = {9'd177,9'd511}; punc_o = {1'b0,1'b1}; end
+		135: begin idx_o = {9'd242,9'd208}; punc_o = {1'b0,1'b0}; end
+		136: begin idx_o = {9'd511,9'd273}; punc_o = {1'b1,1'b0}; end
+		137: begin idx_o = {9'd304,9'd511}; punc_o = {1'b0,1'b1}; end
+		138: begin idx_o = {9'd511,9'd338}; punc_o = {1'b1,1'b0}; end
+		139: begin idx_o = {9'd369,9'd511}; punc_o = {1'b0,1'b1}; end
+		140: begin idx_o = {9'd17,9'd400};  punc_o = {1'b0,1'b0}; end
+		141: begin idx_o = {9'd511,9'd48};  punc_o = {1'b1,1'b0}; end
+		142: begin idx_o = {9'd82,9'd511};  punc_o = {1'b0,1'b1}; end
+		143: begin idx_o = {9'd511,9'd113}; punc_o = {1'b1,1'b0}; end
+		144: begin idx_o = {9'd144,9'd511}; punc_o = {1'b0,1'b1}; end
+		145: begin idx_o = {9'd209,9'd178}; punc_o = {1'b0,1'b0}; end
+		146: begin idx_o = {9'd511,9'd240}; punc_o = {1'b1,1'b0}; end
+		147: begin idx_o = {9'd274,9'd511}; punc_o = {1'b0,1'b1}; end
+		148: begin idx_o = {9'd511,9'd305}; punc_o = {1'b1,1'b0}; end
+		149: begin idx_o = {9'd336,9'd511}; punc_o = {1'b0,1'b1}; end
+		150: begin idx_o = {9'd401,9'd370}; punc_o = {1'b0,1'b0}; end
+		151: begin idx_o = {9'd511,9'd18};  punc_o = {1'b1,1'b0}; end
+		152: begin idx_o = {9'd49,9'd511};  punc_o = {1'b0,1'b1}; end
+		153: begin idx_o = {9'd511,9'd80};  punc_o = {1'b1,1'b0}; end
+		154: begin idx_o = {9'd114,9'd511}; punc_o = {1'b0,1'b1}; end
+		155: begin idx_o = {9'd176,9'd145}; punc_o = {1'b0,1'b0}; end
+		156: begin idx_o = {9'd511,9'd210}; punc_o = {1'b1,1'b0}; end
+		157: begin idx_o = {9'd241,9'd511}; punc_o = {1'b0,1'b1}; end
+		158: begin idx_o = {9'd511,9'd272}; punc_o = {1'b1,1'b0}; end
+		159: begin idx_o = {9'd306,9'd511}; punc_o = {1'b0,1'b1}; end
+		160: begin idx_o = {9'd368,9'd337}; punc_o = {1'b0,1'b0}; end
+		161: begin idx_o = {9'd511,9'd402}; punc_o = {1'b1,1'b0}; end
+		162: begin idx_o = {9'd19,9'd511};  punc_o = {1'b0,1'b1}; end
+		163: begin idx_o = {9'd511,9'd53};  punc_o = {1'b1,1'b0}; end
+		164: begin idx_o = {9'd84,9'd511};  punc_o = {1'b0,1'b1}; end
+		165: begin idx_o = {9'd149,9'd115}; punc_o = {1'b0,1'b0}; end
+		166: begin idx_o = {9'd511,9'd180}; punc_o = {1'b1,1'b0}; end
+		167: begin idx_o = {9'd211,9'd511}; punc_o = {1'b0,1'b1}; end
+		168: begin idx_o = {9'd511,9'd245}; punc_o = {1'b1,1'b0}; end
+		169: begin idx_o = {9'd276,9'd511}; punc_o = {1'b0,1'b1}; end
+		170: begin idx_o = {9'd341,9'd307}; punc_o = {1'b0,1'b0}; end
+		171: begin idx_o = {9'd511,9'd372}; punc_o = {1'b1,1'b0}; end
+		172: begin idx_o = {9'd403,9'd511}; punc_o = {1'b0,1'b1}; end
+		173: begin idx_o = {9'd511,9'd20};  punc_o = {1'b1,1'b0}; end
+		174: begin idx_o = {9'd51,9'd511};  punc_o = {1'b0,1'b1}; end
+		175: begin idx_o = {9'd116,9'd85};  punc_o = {1'b0,1'b0}; end
+		176: begin idx_o = {9'd511,9'd147}; punc_o = {1'b1,1'b0}; end
+		177: begin idx_o = {9'd181,9'd511}; punc_o = {1'b0,1'b1}; end
+		178: begin idx_o = {9'd511,9'd212}; punc_o = {1'b1,1'b0}; end
+		179: begin idx_o = {9'd243,9'd511}; punc_o = {1'b0,1'b1}; end
+		180: begin idx_o = {9'd308,9'd277}; punc_o = {1'b0,1'b0}; end
+		181: begin idx_o = {9'd511,9'd339}; punc_o = {1'b1,1'b0}; end
+		182: begin idx_o = {9'd373,9'd511}; punc_o = {1'b0,1'b1}; end
+		183: begin idx_o = {9'd511,9'd404}; punc_o = {1'b1,1'b0}; end
+		184: begin idx_o = {9'd21,9'd511};  punc_o = {1'b0,1'b1}; end
+		185: begin idx_o = {9'd83,9'd52};   punc_o = {1'b0,1'b0}; end
+		186: begin idx_o = {9'd511,9'd117}; punc_o = {1'b1,1'b0}; end
+		187: begin idx_o = {9'd148,9'd511}; punc_o = {1'b0,1'b1}; end
+		188: begin idx_o = {9'd511,9'd179}; punc_o = {1'b1,1'b0}; end
+		189: begin idx_o = {9'd213,9'd511}; punc_o = {1'b0,1'b1}; end
+		190: begin idx_o = {9'd275,9'd244}; punc_o = {1'b0,1'b0}; end
+		191: begin idx_o = {9'd511,9'd309}; punc_o = {1'b1,1'b0}; end
+		192: begin idx_o = {9'd340,9'd511}; punc_o = {1'b0,1'b1}; end
+		193: begin idx_o = {9'd511,9'd371}; punc_o = {1'b1,1'b0}; end
+		194: begin idx_o = {9'd405,9'd511}; punc_o = {1'b0,1'b1}; end
+		195: begin idx_o = {9'd58,9'd24};   punc_o = {1'b0,1'b0}; end
+		196: begin idx_o = {9'd511,9'd89};  punc_o = {1'b1,1'b0}; end
+		197: begin idx_o = {9'd120,9'd511}; punc_o = {1'b0,1'b1}; end
+		198: begin idx_o = {9'd511,9'd154}; punc_o = {1'b1,1'b0}; end
+		199: begin idx_o = {9'd185,9'd511}; punc_o = {1'b0,1'b1}; end
+		200: begin idx_o = {9'd250,9'd216}; punc_o = {1'b0,1'b0}; end
+		201: begin idx_o = {9'd511,9'd281}; punc_o = {1'b1,1'b0}; end
+		202: begin idx_o = {9'd312,9'd511}; punc_o = {1'b0,1'b1}; end
+		203: begin idx_o = {9'd511,9'd346}; punc_o = {1'b1,1'b0}; end
+		204: begin idx_o = {9'd377,9'd511}; punc_o = {1'b0,1'b1}; end
+		205: begin idx_o = {9'd25,9'd408};  punc_o = {1'b0,1'b0}; end
+		206: begin idx_o = {9'd511,9'd56};  punc_o = {1'b1,1'b0}; end
+		207: begin idx_o = {9'd90,9'd511};  punc_o = {1'b0,1'b1}; end
+		208: begin idx_o = {9'd511,9'd121}; punc_o = {1'b1,1'b0}; end
+		209: begin idx_o = {9'd152,9'd511}; punc_o = {1'b0,1'b1}; end
+		210: begin idx_o = {9'd217,9'd186}; punc_o = {1'b0,1'b0}; end
+		211: begin idx_o = {9'd511,9'd248}; punc_o = {1'b1,1'b0}; end
+		212: begin idx_o = {9'd282,9'd511}; punc_o = {1'b0,1'b1}; end
+		213: begin idx_o = {9'd511,9'd313}; punc_o = {1'b1,1'b0}; end
+		214: begin idx_o = {9'd344,9'd511}; punc_o = {1'b0,1'b1}; end
+		215: begin idx_o = {9'd409,9'd378}; punc_o = {1'b0,1'b0}; end
+		216: begin idx_o = {9'd511,9'd26};  punc_o = {1'b1,1'b0}; end
+		217: begin idx_o = {9'd57,9'd511};  punc_o = {1'b0,1'b1}; end
+		218: begin idx_o = {9'd511,9'd88};  punc_o = {1'b1,1'b0}; end
+		219: begin idx_o = {9'd122,9'd511}; punc_o = {1'b0,1'b1}; end
+		220: begin idx_o = {9'd184,9'd153}; punc_o = {1'b0,1'b0}; end
+		221: begin idx_o = {9'd511,9'd218}; punc_o = {1'b1,1'b0}; end
+		222: begin idx_o = {9'd249,9'd511}; punc_o = {1'b0,1'b1}; end
+		223: begin idx_o = {9'd511,9'd280}; punc_o = {1'b1,1'b0}; end
+		224: begin idx_o = {9'd314,9'd511}; punc_o = {1'b0,1'b1}; end
+		225: begin idx_o = {9'd376,9'd345}; punc_o = {1'b0,1'b0}; end
+		226: begin idx_o = {9'd511,9'd410}; punc_o = {1'b1,1'b0}; end
+		227: begin idx_o = {9'd27,9'd511};  punc_o = {1'b0,1'b1}; end
+		228: begin idx_o = {9'd511,9'd61};  punc_o = {1'b1,1'b0}; end
+		229: begin idx_o = {9'd92,9'd511};  punc_o = {1'b0,1'b1}; end
+		230: begin idx_o = {9'd157,9'd123}; punc_o = {1'b0,1'b0}; end
+		231: begin idx_o = {9'd511,9'd188}; punc_o = {1'b1,1'b0}; end
+		232: begin idx_o = {9'd219,9'd511}; punc_o = {1'b0,1'b1}; end
+		233: begin idx_o = {9'd511,9'd253}; punc_o = {1'b1,1'b0}; end
+		234: begin idx_o = {9'd284,9'd511}; punc_o = {1'b0,1'b1}; end
+		235: begin idx_o = {9'd349,9'd315}; punc_o = {1'b0,1'b0}; end
+		236: begin idx_o = {9'd511,9'd380}; punc_o = {1'b1,1'b0}; end
+		237: begin idx_o = {9'd411,9'd511}; punc_o = {1'b0,1'b1}; end
+		238: begin idx_o = {9'd511,9'd28};  punc_o = {1'b1,1'b0}; end
+		239: begin idx_o = {9'd59,9'd511};  punc_o = {1'b0,1'b1}; end
+		240: begin idx_o = {9'd124,9'd93};  punc_o = {1'b0,1'b0}; end
+		241: begin idx_o = {9'd511,9'd155}; punc_o = {1'b1,1'b0}; end
+		242: begin idx_o = {9'd189,9'd511}; punc_o = {1'b0,1'b1}; end
+		243: begin idx_o = {9'd511,9'd220}; punc_o = {1'b1,1'b0}; end
+		244: begin idx_o = {9'd251,9'd511}; punc_o = {1'b0,1'b1}; end
+		245: begin idx_o = {9'd316,9'd285}; punc_o = {1'b0,1'b0}; end
+		246: begin idx_o = {9'd511,9'd347}; punc_o = {1'b1,1'b0}; end
+		247: begin idx_o = {9'd381,9'd511}; punc_o = {1'b0,1'b1}; end
+		248: begin idx_o = {9'd511,9'd412}; punc_o = {1'b1,1'b0}; end
+		249: begin idx_o = {9'd29,9'd511};  punc_o = {1'b0,1'b1}; end
+		250: begin idx_o = {9'd91,9'd60};   punc_o = {1'b0,1'b0}; end
+		251: begin idx_o = {9'd511,9'd125}; punc_o = {1'b1,1'b0}; end
+		252: begin idx_o = {9'd156,9'd511}; punc_o = {1'b0,1'b1}; end
+		253: begin idx_o = {9'd511,9'd187}; punc_o = {1'b1,1'b0}; end
+		254: begin idx_o = {9'd221,9'd511}; punc_o = {1'b0,1'b1}; end
+		255: begin idx_o = {9'd283,9'd252}; punc_o = {1'b0,1'b0}; end
+		256: begin idx_o = {9'd511,9'd317}; punc_o = {1'b1,1'b0}; end
+		257: begin idx_o = {9'd348,9'd511}; punc_o = {1'b0,1'b1}; end
+		258: begin idx_o = {9'd511,9'd379}; punc_o = {1'b1,1'b0}; end
+		259: begin idx_o = {9'd413,9'd511}; punc_o = {1'b0,1'b1}; end
+	  endcase
+	end
 end
 endmodule

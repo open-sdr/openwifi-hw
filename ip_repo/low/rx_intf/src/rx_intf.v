@@ -43,6 +43,7 @@
         input  wire ht_unsupport,
         input  wire [7:0] pkt_rate,
 		input  wire [15:0] pkt_len,
+		input  wire ht_sgi,
 		input  wire byte_in_strobe,
 		input  wire [7:0] byte_in,
 		input  wire [15:0] byte_count,
@@ -423,6 +424,7 @@
         .pkt_rate(pkt_rate),
 	    .pkt_len(pkt_len),
         .sig_valid(sig_valid),
+	    .ht_sgi(ht_sgi),
         .ht_unsupport(ht_unsupport),
         .fcs_valid(fcs_valid),
         

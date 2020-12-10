@@ -197,7 +197,7 @@ module	fftstage(i_clk, i_reset, i_ce, i_sync, i_data, o_data, o_sync);
 
 	end else begin
 
-		always @(*) idle = 0;
+		initial idle = 0;
 
 	end endgenerate
 
