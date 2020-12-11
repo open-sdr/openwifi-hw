@@ -33,7 +33,8 @@
 	    input wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
         input wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
 		input wire [(TSF_TIMER_WIDTH-1):0]  tsf_runtime_val,
-		input wire [(2*IQ_DATA_WIDTH-1):0] sample_in,
+		input wire [(2*IQ_DATA_WIDTH-1):0] sample0_in,
+		input wire [(2*IQ_DATA_WIDTH-1):0] sample1_in,
     	input wire sample_in_strobe,
 
 		input wire demod_is_ongoing,
@@ -64,6 +65,14 @@
 		input wire fcs_ok,
 		input wire block_rx_dma_to_ps,
         input wire block_rx_dma_to_ps_valid,
+
+		// from tx
+		input wire phy_tx_start,
+		input wire tx_pkt_need_ack,
+		input wire phy_tx_started,
+		input wire phy_tx_done,
+		input wire tx_bb_is_ongoing,
+		input wire tx_rf_is_ongoing,
 
 		// Ports of Axi Master Bus Interface M00_AXIS to PS
 		input wire  m00_axis_aclk,
@@ -185,7 +194,8 @@
 		.gpio_status(gpio_status),
 		.rssi_half_db(rssi_half_db),
 		.tsf_runtime_val(tsf_runtime_val),
-		.iq(sample_in),
+		.iq0(sample0_in),
+		.iq1(sample1_in),
 		.iq_strobe(sample_in_strobe),
 		.demod_is_ongoing(demod_is_ongoing),
 		.ofdm_symbol_eq_out_pulse(ofdm_symbol_eq_out_pulse),
@@ -216,12 +226,20 @@
 		.block_rx_dma_to_ps(block_rx_dma_to_ps),
         .block_rx_dma_to_ps_valid(block_rx_dma_to_ps_valid),
 
+		.phy_tx_start(phy_tx_start),
+		.tx_pkt_need_ack(tx_pkt_need_ack),
+		.phy_tx_started(phy_tx_started),
+		.phy_tx_done(phy_tx_done),
+		.tx_bb_is_ongoing(tx_bb_is_ongoing),
+		.tx_rf_is_ongoing(tx_rf_is_ongoing),
+
 		// from arm
 		.slv_reg_wren_signal(slv_reg_wren_signal),
 		.axi_awaddr_core(axi_awaddr_core),
 		.iq_capture(slv_reg3[0]),
-		.iq_trigger_select(slv_reg8[3:0]),
-		.rssi_th(slv_reg9[(RSSI_HALF_DB_WIDTH-1):0]),
+		.iq_capture_cfg(slv_reg3[5:4]),
+		.iq_trigger_select(slv_reg8[4:0]),
+		.rssi_or_iq_th(slv_reg9[(IQ_DATA_WIDTH-1):0]),
 		.gain_th(slv_reg10[(GPIO_STATUS_WIDTH-2):0]),
 		.pre_trigger_len(slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),
 		.iq_len_target(slv_reg12[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),
@@ -251,6 +269,9 @@
         .m_axis_data_count(m_axis_data_count),
         .fulln_to_pl(fulln_to_pl),
         
+		.MAX_NUM_DMA_SYMBOL_UDP_debug(slv_reg21),
+		.MAX_NUM_DMA_SYMBOL_debug(slv_reg22),
+
 		.M_AXIS_TVALID(m00_axis_tvalid),
 		.M_AXIS_TLAST(m00_axis_tlast)
 	);

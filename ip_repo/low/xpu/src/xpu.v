@@ -67,6 +67,7 @@
         output wire high_tx_allowed2,
         output wire high_tx_allowed3,
         output wire tx_bb_is_ongoing,
+        output wire tx_rf_is_ongoing,
         output wire ack_tx_flag,
         output wire wea,
         output wire [9:0] addra,
