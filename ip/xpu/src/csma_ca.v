@@ -30,6 +30,8 @@
     input wire [4:0] slot_time,
     input wire [6:0] sifs_time,
     input wire [6:0] phy_rx_start_delay_time,
+    input wire [7:0] difs_advance,
+    input wire [7:0] backoff_advance,
 
     input wire addr1_valid,
     input wire [47:0] addr1,
@@ -47,25 +49,27 @@
     input wire slice_en1,
     input wire slice_en2,
     input wire slice_en3,
+    input wire retrans_in_progress,
 
     output wire high_tx_allowed0,
     output wire high_tx_allowed1,
     output wire high_tx_allowed2,
-    output wire high_tx_allowed3
+    output wire high_tx_allowed3,
+    output wire backoff_done
 	);
 
-    localparam [1:0]  BACKOFF_CH_BUSY =      2'b00,
-                      BACKOFF_WAIT =         2'b01,
-                      BACKOFF_RUN =          2'b10,
-                      BACKOFF_SUSPEND =      2'b11;
+    localparam [2:0]  BACKOFF_CH_BUSY =      3'b000,
+                      BACKOFF_WAIT =         3'b001,
+                      BACKOFF_RUN =          3'b010,
+                      BACKOFF_SUSPEND =      3'b011,
+                      BACKOFF_WAIT_FOR_OWN = 3'b100;
 
     localparam [1:0]  NAV_IDLE =              2'b00,
                       NAV_WAIT_FOR_DURATION = 2'b01,
                       NAV_CHECK_RA =          2'b10,
                       NAV_UPDATE =            2'b11;
-
-    reg [1:0]  backoff_state;
-    reg [1:0]  backoff_state_old;
+    `DEBUG_PREFIX reg [2:0]  backoff_state;
+    `DEBUG_PREFIX reg [2:0]  backoff_state_old;
 
     reg [1:0]  nav_state;
     reg [1:0]  nav_state_old;
@@ -95,7 +99,8 @@
     reg [31:0] random_number = 32'h0b00a001;
     reg [12:0] backoff_timer;
     reg [11:0] backoff_wait_timer;
-    wire backoff_done;
+    reg first_try_failed;
+    //wire backoff_done;
 
     assign is_pspoll = (((FC_type==2'b01) && (FC_subtype==4'b1010))?1:0);
     assign is_rts    = (((FC_type==2'b01) && (FC_subtype==4'b1011) && (signal_len==20))?1:0);//20 is the length of rts frame
@@ -108,7 +113,7 @@
     assign eifs_time = ( eifs_enable?(sifs_time + difs_time + longest_ack_time):0 );
 
     assign ch_idle_final = (ch_idle&&(nav_for_mac==0));
-    assign backoff_done =  ( (backoff_state==BACKOFF_RUN) && (backoff_timer==0));
+    assign backoff_done =  ( (backoff_state==BACKOFF_WAIT_FOR_OWN) && (backoff_timer==0));
     assign high_tx_allowed0 = (backoff_done && slice_en0);
     assign high_tx_allowed1 = (backoff_done && slice_en1);
     assign high_tx_allowed2 = (backoff_done && slice_en2);
@@ -260,6 +265,7 @@
           take_new_random_number<=0;
           backoff_state<=BACKOFF_CH_BUSY;
           backoff_state_old<=BACKOFF_CH_BUSY;
+          first_try_failed<=0;
       end else begin
         backoff_state_old <= backoff_state;
         last_fcs_valid <= (fcs_in_strobe?fcs_valid:last_fcs_valid);
@@ -285,8 +291,12 @@
             if (ch_idle_final) begin
               if (backoff_wait_timer==0) begin
                 backoff_state<=BACKOFF_RUN;
-                backoff_timer<=(num_slot_random*slot_time);
-                take_new_random_number<=1;
+                if (retrans_in_progress || first_try_failed) begin // only do back off for retransmit or not the first attempt, if channel is free transmit immediately
+                  backoff_timer <= (num_slot_random==0?0:((num_slot_random*slot_time) - backoff_advance));
+                end else begin
+                  backoff_timer<=0;
+                end
+                take_new_random_number<=1; // TODO, take a new number earlier, since now we first use and then update, for queues with different cw this is too late
               end else begin
                 backoff_state<=backoff_state;
                 backoff_timer<=backoff_timer;
@@ -296,6 +306,7 @@
               backoff_state<=BACKOFF_CH_BUSY;
               backoff_timer<=backoff_timer;
               take_new_random_number<=take_new_random_number;
+              first_try_failed<=1;
             end
           end
           
@@ -303,15 +314,30 @@
             take_new_random_number<=0;
             backoff_wait_timer<=backoff_wait_timer;
             if (ch_idle_final) begin
+              first_try_failed<=0;
               backoff_timer<=( backoff_timer==0?backoff_timer:(tsf_pulse_1M?(backoff_timer-1):backoff_timer) );
-              backoff_state<=backoff_state;
+              if (backoff_timer==0) begin
+                backoff_state<=BACKOFF_WAIT_FOR_OWN;
+              end else begin
+                backoff_state<=backoff_state;
+              end
             end else begin
               backoff_timer<=backoff_timer;
               if (backoff_timer==0) begin
+                first_try_failed<=1;
                 backoff_state<=BACKOFF_CH_BUSY;
               end else begin
                 backoff_state<=BACKOFF_SUSPEND;
               end
+            end
+          end
+
+          BACKOFF_WAIT_FOR_OWN: begin
+            if(ch_idle_final) begin
+              backoff_state<=backoff_state;
+            end else begin
+              backoff_state<=BACKOFF_CH_BUSY;
+              first_try_failed<=0; // succesffully started transmission, so put the flag off
             end
           end
 

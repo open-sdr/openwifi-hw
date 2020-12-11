@@ -43,6 +43,7 @@
       input wire tx_try_complete,
       input wire retrans_in_progress,
       input wire start_retrans,
+      input wire start_tx_ack,
 	    input wire high_tx_allowed0,
 	    input wire high_tx_allowed1,
 	    input wire high_tx_allowed2,
@@ -53,6 +54,7 @@
       input wire [9:0] addra_from_xpu,
       input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina_from_xpu,
       output wire tx_pkt_need_ack,
+      output reg quit_retrans,
       output wire [3:0] tx_pkt_retrans_limit,
       output reg [9:0] tx_pkt_sn,
       // output reg [15:0] tx_pkt_num_dma_byte,
@@ -73,7 +75,8 @@
                        PREPARE_TX_JUDGE=                3'b010,
                        DO_CTS_TOSELF=                   3'b011,
                        WAIT_SIFS =                      3'b100,
-                       DO_TX =                          3'b101;
+                       DO_TX =                          3'b101,
+		       WAIT_TX_COMP =                   3'b110;
     //(* mark_debug = "true" *) reg [2:0] high_tx_ctl_state;
     reg [2:0] high_tx_ctl_state;
     reg [2:0] high_tx_ctl_state_old;
@@ -86,6 +89,7 @@
     wire wea;
     wire [9:0] addra;
     wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina;
+    wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] bram_data_to_acc_int;
 
     reg wea_internal;
     reg [12:0] addra_internal;
@@ -127,6 +131,10 @@
     reg start_delay3;
     reg start_delay4;
     reg start_delay5;
+
+    reg tx_try_complete_dl0;
+    reg tx_try_complete_dl1;
+    reg tx_try_complete_dl2;
     
     reg s_axis_recv_data_from_high_delay;
 
@@ -142,9 +150,10 @@
     assign start = ( (auto_start_mode==1'b0)?(1'b0): (start_delay0|start_delay1|start_delay2|start_delay3|start_delay4|start_delay5) );
 
     assign wea_high = (read_from_s_axis_en&emptyn_from_s_axis);
-    assign wea = ( (ack_tx_flag|retrans_in_progress)?wea_from_xpu:wea_internal );
-    assign addra = ( (ack_tx_flag|retrans_in_progress)?addra_from_xpu:addra_internal );
-    assign dina = ( (ack_tx_flag|retrans_in_progress)?dina_from_xpu:dina_internal );
+    assign wea = ( (retrans_in_progress)?wea_from_xpu:wea_internal );
+    assign addra = ( (retrans_in_progress)?addra_from_xpu:addra_internal );
+    assign dina = ( (retrans_in_progress)?dina_from_xpu:dina_internal );
+    assign bram_data_to_acc = (ack_tx_flag? dina_from_xpu:bram_data_to_acc_int);
 
     assign tx_pkt_need_ack = num_dma_symbol_total_current[13];
     assign tx_pkt_retrans_limit = num_dma_symbol_total_current[17:14];
@@ -183,7 +192,7 @@
 
           cts_toself_bb_is_ongoing<=0;
           cts_toself_rf_is_ongoing<=0;
-
+          quit_retrans<=0;
           mac_addr_reg<=0;
         end                                                                   
       else begin
@@ -209,28 +218,36 @@
 
             read_from_s_axis_en <= 0;
             // num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            if ( high_tx_allowed0 && (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag) ) begin
-                  num_dma_symbol_total_rden0<= 1;
+            if ( high_tx_allowed0 && (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag)) begin
                   num_dma_symbol_total_rden1<= 0;
                   num_dma_symbol_total_rden2<= 0;
                   num_dma_symbol_total_rden3<= 0;
-                  high_tx_ctl_state  <= PREPARE_TX_FETCH;
-                  tx_queue_idx_reg<=0;
-            end else if ( high_tx_allowed1 && (~num_dma_symbol_fifo_empty1) && (~tx_bb_is_ongoing) && (~ack_tx_flag) ) begin
+                  if(retrans_in_progress == 1) begin
+                    num_dma_symbol_total_rden0<= 0;
+                    quit_retrans <= 1;
+                    high_tx_ctl_state<=WAIT_TX_COMP;
+                    tx_queue_idx_reg<=tx_queue_idx_reg;
+                  end else begin 
+                    num_dma_symbol_total_rden0<= 1;
+                    quit_retrans<=0;
+                    tx_queue_idx_reg<=0; 
+                    high_tx_ctl_state<=PREPARE_TX_FETCH;
+                  end
+            end else if ( high_tx_allowed1 && (~num_dma_symbol_fifo_empty1) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) ) begin
                   num_dma_symbol_total_rden0<= 0;
                   num_dma_symbol_total_rden1<= 1;
                   num_dma_symbol_total_rden2<= 0;
                   num_dma_symbol_total_rden3<= 0;
                   high_tx_ctl_state  <= PREPARE_TX_FETCH;
                   tx_queue_idx_reg<=1;
-            end else if ( high_tx_allowed2 && (~num_dma_symbol_fifo_empty2) && (~tx_bb_is_ongoing) && (~ack_tx_flag) ) begin
+            end else if ( high_tx_allowed2 && (~num_dma_symbol_fifo_empty2) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) ) begin
                   num_dma_symbol_total_rden0<= 0;
                   num_dma_symbol_total_rden1<= 0;
                   num_dma_symbol_total_rden2<= 1;
                   num_dma_symbol_total_rden3<= 0;
                   high_tx_ctl_state  <= PREPARE_TX_FETCH;
                   tx_queue_idx_reg<=2;
-            end else if ( high_tx_allowed3 && (~num_dma_symbol_fifo_empty3) && (~tx_bb_is_ongoing) && (~ack_tx_flag) ) begin
+            end else if ( high_tx_allowed3 && (~num_dma_symbol_fifo_empty3) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) ) begin
                   num_dma_symbol_total_rden0<= 0;
                   num_dma_symbol_total_rden1<= 0;
                   num_dma_symbol_total_rden2<= 0;
@@ -243,6 +260,14 @@
             send_cts_toself_wait_count<=0;
           end
 
+          WAIT_TX_COMP: begin
+            quit_retrans <= 0;
+            if(tx_try_complete_dl2 == 1) begin
+              high_tx_ctl_state  <= PREPARE_TX_FETCH;
+              tx_queue_idx_reg<=0;
+	      num_dma_symbol_total_rden0<= 1;
+            end
+          end
           PREPARE_TX_FETCH: begin
             // wea_internal<=wea_internal;
             // addra_internal<=addra_internal;
@@ -416,6 +441,10 @@
             start_delay3<=0;
             start_delay4<=0;
             start_delay5<=0;
+
+            tx_try_complete_dl0<=0;
+            tx_try_complete_dl1<=0;
+            tx_try_complete_dl2<=0;
             
             num_dma_symbol_total_wren0 <= 0;
             num_dma_symbol_total_wren1 <= 0;
@@ -430,8 +459,12 @@
               // tx_pkt_num_dma_byte <= {num_dma_symbol_total_current[12:0],3'd0};
               linux_prio <= num_dma_symbol_total_current[31:30];
             end
+
+            tx_try_complete_dl0<=tx_try_complete;
+            tx_try_complete_dl1<=tx_try_complete_dl0;
+            tx_try_complete_dl2<=tx_try_complete_dl1;
             
-            start_delay0<= ( retrans_in_progress==1?start_retrans:(addra==num_dma_symbol_th) );//controle the width of tx pulse
+            start_delay0<= ( ack_tx_flag?start_tx_ack:(retrans_in_progress==1?start_retrans:(addra==num_dma_symbol_th)) );//controle the width of tx pulse
             start_delay1<=start_delay0;
             start_delay2<=start_delay1;
             start_delay3<=start_delay2;
@@ -563,7 +596,7 @@
       .dinb           (32'd0),
       .injectsbiterrb (1'b0),  //do not change
       .injectdbiterrb (1'b0),  //do not change
-      .doutb          (bram_data_to_acc),
+      .doutb          (bram_data_to_acc_int),
       .sbiterrb       (),      //do not change
       .dbiterrb       ()       //do not change
     
