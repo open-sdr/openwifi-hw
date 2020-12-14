@@ -1,8 +1,8 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
-//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-`define DEBUG_PREFIX
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+// `define DEBUG_PREFIX
 
 `timescale 1 ns / 1 ps
 
@@ -74,7 +74,7 @@
 		`DEBUG_PREFIX input wire iq_capture,
 		`DEBUG_PREFIX input wire [1:0] iq_capture_cfg,
 		input wire [4:0] iq_trigger_select,
-		input wire signed [(IQ_DATA_WIDTH-1):0] rssi_or_iq_th,
+		input wire [(IQ_DATA_WIDTH-1):0] rssi_or_iq_th,
 		input wire [(GPIO_STATUS_WIDTH-2):0] gain_th,
 		input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] pre_trigger_len,
 		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] iq_len_target,
@@ -217,7 +217,7 @@
 	reg [(bit_num-1):0] iq_waddr;
 	reg [(bit_num-1):0] iq_raddr;
 
-	wire signed [(IQ_DATA_WIDTH-1):0] iq1_i;
+	`DEBUG_PREFIX wire [(IQ_DATA_WIDTH-1):0] iq1_i_abs;
 	wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_th;
 	reg rssi_posedge;
 	reg rssi_negedge;
@@ -268,7 +268,7 @@
 	assign data_to_ps_valid = data_to_ps_valid_reg;
 
 	assign rssi_th = rssi_or_iq_th[(RSSI_HALF_DB_WIDTH-1):0];
-	assign iq1_i = iq1[(IQ_DATA_WIDTH-1):0];
+	assign iq1_i_abs = (iq1[(IQ_DATA_WIDTH-1)]?(~iq1+1):iq1);
 
 	always @( ht_flag, rate_mcs )
 	begin
@@ -453,10 +453,10 @@
 					5'd25: begin  iq_trigger <= (tx_bb_is_ongoing_negedge&tx_pkt_need_ack);  end
 					5'd26: begin  iq_trigger <= (tx_rf_is_ongoing_posedge&tx_pkt_need_ack);  end
 					5'd27: begin  iq_trigger <= (tx_rf_is_ongoing_negedge&tx_pkt_need_ack);  end
-					5'd28: begin  iq_trigger <= (tx_bb_is_ongoing_reg&(iq1_i>rssi_or_iq_th)); end
-					5'd29: begin  iq_trigger <= (tx_rf_is_ongoing_reg&(iq1_i>rssi_or_iq_th)); end
-					5'd30: begin  iq_trigger <= (demod_is_ongoing_reg&phy_tx_start); end
-					5'd31: begin  iq_trigger <= (demod_is_ongoing_reg&tx_bb_is_ongoing_reg); end
+					5'd28: begin  iq_trigger <= (tx_bb_is_ongoing_reg&(iq1_i_abs>rssi_or_iq_th)); end
+					5'd29: begin  iq_trigger <= (tx_rf_is_ongoing_reg&(iq1_i_abs>rssi_or_iq_th)); end
+					5'd30: begin  iq_trigger <= (phy_tx_start&(iq1_i_abs>rssi_or_iq_th)); end
+					5'd31: begin  iq_trigger <= (phy_tx_start&tx_pkt_need_ack&(iq1_i_abs>rssi_or_iq_th)); end
 					default: begin  iq_trigger <=  fcs_in_strobe; end
 				endcase
 

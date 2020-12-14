@@ -1,6 +1,9 @@
 
 `timescale 1 ns / 1 ps
 
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+// `define DEBUG_PREFIX
+
 module cw_exp #
 (
     parameter integer CW_EXP_MAX = 8
@@ -9,9 +12,9 @@ module cw_exp #
     input wire  clk,
 	input wire  rstn,
     input wire tx_try_complete,
-    input wire [3:0] cw_exp_min,
+    `DEBUG_PREFIX input wire [3:0] cw_exp_min,
     input wire start_retrans,
-    output reg [3:0] cw_exp
+    `DEBUG_PREFIX output reg [3:0] cw_exp
 );
 
 always @( posedge clk )

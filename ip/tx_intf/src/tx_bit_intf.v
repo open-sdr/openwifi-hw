@@ -4,6 +4,9 @@
 
 `timescale 1 ns / 1 ps
 
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+// `define DEBUG_PREFIX
+
 `define WAIT_FOR_TX_IQ_FILL_COUNT_TOP (20*`NUM_CLK_PER_US)
 
 	module tx_bit_intf #
@@ -36,26 +39,25 @@
       output wire [6:0] num_dma_symbol_fifo_data_count2,
       output wire [6:0] num_dma_symbol_fifo_data_count3,
 
-      input wire tx_iq_fifo_empty,
+      `DEBUG_PREFIX input wire tx_iq_fifo_empty,
       input wire [31:0] cts_toself_config,
       input wire [13:0] send_cts_toself_wait_sifs_top, //between cts and following frame, there should be a sifs waiting period
       input wire [47:0] mac_addr,
-      input wire tx_try_complete,
-      input wire retrans_in_progress,
-      input wire start_retrans,
-      input wire start_tx_ack,
-	    input wire high_tx_allowed0,
-	    input wire high_tx_allowed1,
-	    input wire high_tx_allowed2,
-	    input wire high_tx_allowed3,
+      `DEBUG_PREFIX input wire tx_try_complete,
+      `DEBUG_PREFIX input wire retrans_in_progress,
+      `DEBUG_PREFIX input wire start_retrans,
+      `DEBUG_PREFIX input wire start_tx_ack,
+	    `DEBUG_PREFIX input wire high_tx_allowed0,
+	    `DEBUG_PREFIX input wire high_tx_allowed1,
+	    `DEBUG_PREFIX input wire high_tx_allowed2,
+	    `DEBUG_PREFIX input wire high_tx_allowed3,
 	    input wire tx_bb_is_ongoing,
 	    input wire ack_tx_flag,
 	    input wire wea_from_xpu,
       input wire [9:0] addra_from_xpu,
       input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina_from_xpu,
       output wire tx_pkt_need_ack,
-      (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-      output reg quit_retrans,
+      `DEBUG_PREFIX output reg quit_retrans,
       output wire [3:0] tx_pkt_retrans_limit,
       output reg [9:0] tx_pkt_sn,
       // output reg [15:0] tx_pkt_num_dma_byte,
@@ -78,18 +80,17 @@
                        WAIT_SIFS =                      3'b100,
                        DO_TX =                          3'b101,
                        WAIT_TX_COMP =                   3'b110;
-    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-    reg [2:0] high_tx_ctl_state;
-    reg [2:0] high_tx_ctl_state_old;
+    `DEBUG_PREFIX reg [2:0] high_tx_ctl_state;
+    `DEBUG_PREFIX reg [2:0] high_tx_ctl_state_old;
     
     reg  [13:0] send_cts_toself_wait_count;
     reg  [12:0] wr_counter;
     reg read_from_s_axis_en;
     
-    wire wea_high;
-    wire wea;
-    wire [9:0] addra;
-    wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina;
+    `DEBUG_PREFIX wire wea_high;
+    `DEBUG_PREFIX wire wea;
+    `DEBUG_PREFIX wire [9:0] addra;
+    `DEBUG_PREFIX wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina;
     wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] bram_data_to_acc_int;
 
     reg wea_internal;
@@ -101,7 +102,7 @@
     wire [63:0] num_dma_symbol_fifo_rd_data2;
     wire [63:0] num_dma_symbol_fifo_rd_data3;
 
-    reg [63:0] num_dma_symbol_total_current;
+    `DEBUG_PREFIX reg [63:0] num_dma_symbol_total_current;
 
     reg num_dma_symbol_total_rden0;
     reg num_dma_symbol_total_rden1;
@@ -220,16 +221,15 @@
             read_from_s_axis_en <= 0;
             // num_dma_symbol_total_current <= num_dma_symbol_total_current;
             if ( high_tx_allowed0 && (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag)) begin
+                  num_dma_symbol_total_rden0<= 1;
                   num_dma_symbol_total_rden1<= 0;
                   num_dma_symbol_total_rden2<= 0;
                   num_dma_symbol_total_rden3<= 0;
-		    if(retrans_in_progress == 1) begin
-	            num_dma_symbol_total_rden0<= 0;
+                  if(retrans_in_progress == 1) begin
                     quit_retrans <= 1;
                     high_tx_ctl_state<=WAIT_TX_COMP;
                     tx_queue_idx_reg<=tx_queue_idx_reg;
                   end else begin
-	            num_dma_symbol_total_rden0<= 1;
                     quit_retrans<=0;
                     tx_queue_idx_reg<=0; 
                     high_tx_ctl_state<=PREPARE_TX_FETCH;
@@ -266,7 +266,6 @@
             if(tx_try_complete_dl2 == 1) begin
               high_tx_ctl_state  <= PREPARE_TX_FETCH;
               tx_queue_idx_reg<=0;
-	      num_dma_symbol_total_rden0<= 1;
             end
           end
           PREPARE_TX_FETCH: begin

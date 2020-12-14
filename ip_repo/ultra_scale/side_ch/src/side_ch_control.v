@@ -1,6 +1,9 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+// `define DEBUG_PREFIX
+
 `timescale 1 ns / 1 ps
 
 	module side_ch_control #
@@ -20,14 +23,14 @@
         input wire rstn,
 
 		// from pl
-	    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
-        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) input  wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
+		`DEBUG_PREFIX input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
+		`DEBUG_PREFIX input  wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
 
 		input wire [(TSF_TIMER_WIDTH-1):0] tsf_runtime_val,
 
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire [(2*IQ_DATA_WIDTH-1):0] iq0,
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire [(2*IQ_DATA_WIDTH-1):0] iq1,
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire iq_strobe,
+		`DEBUG_PREFIX input wire [(2*IQ_DATA_WIDTH-1):0] iq0,
+		`DEBUG_PREFIX input wire [(2*IQ_DATA_WIDTH-1):0] iq1,
+		`DEBUG_PREFIX input wire iq_strobe,
 		input wire demod_is_ongoing,
 		input wire ofdm_symbol_eq_out_pulse,
 		input wire long_preamble_detected,
@@ -60,21 +63,21 @@
 		// from tx
 		input wire phy_tx_start,
 		input wire tx_pkt_need_ack,
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire phy_tx_started,
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire phy_tx_done,
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire tx_bb_is_ongoing,
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire tx_rf_is_ongoing,
+		`DEBUG_PREFIX input wire phy_tx_started,
+		`DEBUG_PREFIX input wire phy_tx_done,
+		`DEBUG_PREFIX input wire tx_bb_is_ongoing,
+		`DEBUG_PREFIX input wire tx_rf_is_ongoing,
 
 		// from arm
 	 	input wire slv_reg_wren_signal, // to capture m axis num dma symbol write, so that auto trigger start
 	 	input wire [4:0] axi_awaddr_core,
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire iq_capture,
-		(* mark_debug = "true", DONT_TOUCH = "TRUE" *) input wire [1:0] iq_capture_cfg,
+		`DEBUG_PREFIX input wire iq_capture,
+		`DEBUG_PREFIX input wire [1:0] iq_capture_cfg,
 		input wire [4:0] iq_trigger_select,
-		input wire signed [(IQ_DATA_WIDTH-1):0] rssi_or_iq_th,
+		input wire [(IQ_DATA_WIDTH-1):0] rssi_or_iq_th,
 		input wire [(GPIO_STATUS_WIDTH-2):0] gain_th,
 		input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] pre_trigger_len,
-		 (* mark_debug = "true" *) input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] iq_len_target,
+		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] iq_len_target,
 		input wire [15 : 0] FC_target,
 		input wire [C_S_AXI_DATA_WIDTH-1 : 0] addr1_target,
 		input wire [C_S_AXI_DATA_WIDTH-1 : 0] addr2_target,
@@ -82,7 +85,6 @@
 		input wire [3:0] num_eq,
 		input wire [1:0] m_axis_start_mode,
 		input wire m_axis_start_ext_trigger,
-		// (* mark_debug = "true" *) input wire data_transfer_control,
 
 		// s_axis
         input wire  [C_S_AXIS_TDATA_WIDTH-1 : 0] data_to_pl,
@@ -98,7 +100,7 @@
 
         output wire [C_S_AXIS_TDATA_WIDTH-1 : 0] data_to_ps,
         output wire data_to_ps_valid,
-         (* mark_debug = "true" *) input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count,
+        `DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count,
         input wire fulln_to_pl,
         
 		output wire [31:0] MAX_NUM_DMA_SYMBOL_UDP_debug,
@@ -165,7 +167,7 @@
 	reg  last_ofdm_symbol_flag;
 	reg  [19:0] num_bit_decoded;
 	wire [19:0] num_bit_target;
-	//(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
+	//`DEBUG_PREFIX 
 	reg  [1:0] ofdm_rx_state;
 
 	reg csi_valid_reg;
@@ -215,7 +217,7 @@
 	reg [(bit_num-1):0] iq_waddr;
 	reg [(bit_num-1):0] iq_raddr;
 
-	wire signed [(IQ_DATA_WIDTH-1):0] iq1_i;
+	`DEBUG_PREFIX wire [(IQ_DATA_WIDTH-1):0] iq1_i_abs;
 	wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_th;
 	reg rssi_posedge;
 	reg rssi_negedge;
@@ -223,19 +225,19 @@
 	reg agc_unlock_to_lock;
 	reg gain_posedge;
 	reg gain_negedge;
-	(* mark_debug = "true", DONT_TOUCH = "TRUE" *) reg iq_trigger;
+	`DEBUG_PREFIX reg iq_trigger;
 	reg [(TSF_TIMER_WIDTH-1):0] tsf_val_lock_by_iq_trigger;
 	reg [(bit_num-1):0] iq_count;
-	(* mark_debug = "true", DONT_TOUCH = "TRUE" *) reg [1:0] iq_state;
+	`DEBUG_PREFIX reg [1:0] iq_state;
 	reg [(GPIO_STATUS_WIDTH-1):0] gpio_status_reg;
     reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_reg;
 
 	reg tx_bb_is_ongoing_reg;
 	reg tx_rf_is_ongoing_reg;
-	(* mark_debug = "true", DONT_TOUCH = "TRUE" *) reg tx_bb_is_ongoing_posedge;
-	(* mark_debug = "true", DONT_TOUCH = "TRUE" *) reg tx_bb_is_ongoing_negedge;
-	(* mark_debug = "true", DONT_TOUCH = "TRUE" *) reg tx_rf_is_ongoing_posedge;
-	(* mark_debug = "true", DONT_TOUCH = "TRUE" *) reg tx_rf_is_ongoing_negedge;
+	`DEBUG_PREFIX reg tx_bb_is_ongoing_posedge;
+	`DEBUG_PREFIX reg tx_bb_is_ongoing_negedge;
+	`DEBUG_PREFIX reg tx_rf_is_ongoing_posedge;
+	`DEBUG_PREFIX reg tx_rf_is_ongoing_negedge;
 
 	reg [63:0] subcarrier_mask;
 
@@ -266,7 +268,7 @@
 	assign data_to_ps_valid = data_to_ps_valid_reg;
 
 	assign rssi_th = rssi_or_iq_th[(RSSI_HALF_DB_WIDTH-1):0];
-	assign iq1_i = iq1[(IQ_DATA_WIDTH-1):0];
+	assign iq1_i_abs = (iq1[(IQ_DATA_WIDTH-1)]?(~iq1+1):iq1);
 
 	always @( ht_flag, rate_mcs )
 	begin
@@ -451,10 +453,10 @@
 					5'd25: begin  iq_trigger <= (tx_bb_is_ongoing_negedge&tx_pkt_need_ack);  end
 					5'd26: begin  iq_trigger <= (tx_rf_is_ongoing_posedge&tx_pkt_need_ack);  end
 					5'd27: begin  iq_trigger <= (tx_rf_is_ongoing_negedge&tx_pkt_need_ack);  end
-					5'd28: begin  iq_trigger <= (tx_bb_is_ongoing_reg&(iq1_i>rssi_or_iq_th)); end
-					5'd29: begin  iq_trigger <= (tx_rf_is_ongoing_reg&(iq1_i>rssi_or_iq_th)); end
-					5'd30: begin  iq_trigger <= (demod_is_ongoing_reg&phy_tx_start); end
-					5'd31: begin  iq_trigger <= (demod_is_ongoing_reg&tx_bb_is_ongoing_reg); end
+					5'd28: begin  iq_trigger <= (tx_bb_is_ongoing_reg&(iq1_i_abs>rssi_or_iq_th)); end
+					5'd29: begin  iq_trigger <= (tx_rf_is_ongoing_reg&(iq1_i_abs>rssi_or_iq_th)); end
+					5'd30: begin  iq_trigger <= (phy_tx_start&(iq1_i_abs>rssi_or_iq_th)); end
+					5'd31: begin  iq_trigger <= (phy_tx_start&tx_pkt_need_ack&(iq1_i_abs>rssi_or_iq_th)); end
 					default: begin  iq_trigger <=  fcs_in_strobe; end
 				endcase
 

@@ -1,5 +1,8 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 `timescale 1 ns / 1 ps
 
 	module xpu #
@@ -17,7 +20,6 @@
         parameter integer WIFI_TX_BRAM_ADDR_WIDTH = 10
 	)
 	(
-        //(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
         input  wire [31:0] git_rev,
 	    // ad9361 status and ctrl
 	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
@@ -60,10 +62,8 @@
         output wire [4:0] tx_status,
         output wire [47:0] mac_addr,
         output wire retrans_in_progress,
-        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-        output wire start_retrans,
-        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-        output wire start_tx_ack,
+        `DEBUG_PREFIX output wire start_retrans,
+        `DEBUG_PREFIX output wire start_tx_ack,
         output wire tx_try_complete,
 	    input  wire tx_iq_fifo_empty,
         output wire high_tx_allowed0,
@@ -126,7 +126,7 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg2; // tsf load value low
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg3; // tsf load value high (the rising edge of msb will trigger loading)
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg4; // 19:16 band; 15:0 channel
-    //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5; // 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5; // 
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6; //
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg7; // rssi report offset, and gpio delay ctrl for rssi calculation, and reset the fifo delay
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; // lbt rssi threshold
@@ -258,8 +258,7 @@
     wire [6:0] phy_rx_start_delay_time;
 
     wire [3:0] cw_exp_used ;
-    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-    wire [3:0] cw_exp_dynamic;
+    `DEBUG_PREFIX wire [3:0] cw_exp_dynamic;
     wire tx_try_complete_int;
     wire backoff_done ;
     assign tx_try_complete = tx_try_complete_int ;
@@ -339,7 +338,8 @@
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[0])),
 
-        .bb_rf_delay_count_top(slv_reg10[13:0]),
+        .bb_rf_delay_count_top(slv_reg10[7:0]),
+        .rf_end_ext_count_top(slv_reg10[11:8]),
         .phy_tx_started(phy_tx_started),
         .phy_tx_done(phy_tx_done),
 	    .tx_iq_fifo_empty(tx_iq_fifo_empty),
@@ -391,6 +391,8 @@
         .slot_time(slot_time),
         .sifs_time(sifs_time),
         .phy_rx_start_delay_time(phy_rx_start_delay_time),
+        .difs_advance(slv_reg5[7:0]),
+        .backoff_advance(slv_reg5[15:8]),
 
         .addr1_valid(addr1_valid),
         .addr1(addr1),
@@ -634,8 +636,8 @@
 		.SLV_REG1(slv_reg1),
 		.SLV_REG2(slv_reg2),
 		.SLV_REG3(slv_reg3),
-		.SLV_REG4(slv_reg4),/*
-        .SLV_REG5(slv_reg5),
+		.SLV_REG4(slv_reg4),
+        .SLV_REG5(slv_reg5),/*
         .SLV_REG6(slv_reg6),*/
         .SLV_REG7(slv_reg7),
 		.SLV_REG8(slv_reg8),

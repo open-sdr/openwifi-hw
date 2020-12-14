@@ -2,6 +2,9 @@
 `include "clock_speed.v"
 `include "board_def.v"
 
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+// `define DEBUG_PREFIX
+
 `timescale 1 ns / 1 ps
 
 	module tx_control #
@@ -50,8 +53,7 @@
         output reg retrans_in_progress,
         output reg start_retrans,
         input wire quit_retrans,
-        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-        output reg start_tx_ack,
+        `DEBUG_PREFIX output reg start_tx_ack,
         output reg tx_try_complete,
         output reg [4:0] tx_status,
         output reg ack_tx_flag,
@@ -69,17 +71,16 @@
                       RECV_ACK       =           3'b110,
                       RECV_ACK_WAIT_BACKOFF_DONE=3'b111;
 
-  wire [3:0] retrans_limit;
-  reg [3:0] num_retrans;
-  reg [14:0] ack_timeout_count;
-  reg [2:0] send_ack_count;
+  `DEBUG_PREFIX wire [3:0] retrans_limit;
+  `DEBUG_PREFIX reg [3:0] num_retrans;
+  `DEBUG_PREFIX reg [14:0] ack_timeout_count;
+  `DEBUG_PREFIX reg [2:0] send_ack_count;
   reg [47:0] ack_addr;
   reg [15:0] duration_received;
   reg FC_more_frag_received;
-  (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-  reg [2:0] tx_control_state;
-  reg tx_fail_lock;
-  reg [3:0] num_retrans_lock;
+  `DEBUG_PREFIX reg [2:0] tx_control_state;
+  `DEBUG_PREFIX reg tx_fail_lock;
+  `DEBUG_PREFIX reg [3:0] num_retrans_lock;
   // reg [2:0] tx_control_state_priv;
   wire is_data;
   wire is_management;
@@ -92,21 +93,21 @@
   wire [11:0] ackcts_signal_len;
 
   reg [63:0] douta_reg;
-  reg [1:0] tx_dpram_op_counter;
+  `DEBUG_PREFIX reg [1:0] tx_dpram_op_counter;
 
-  wire [2:0] num_data_ofdm_symbol;
+  `DEBUG_PREFIX wire [2:0] num_data_ofdm_symbol;
   reg  [2:0] num_data_ofdm_symbol_reg;
   reg [14:0] num_data_ofdm_symbol_reg_tmp;
-  wire [2:0] ackcts_n_sym;
+  `DEBUG_PREFIX wire [2:0] ackcts_n_sym;
   reg  [2:0] ackcts_n_sym_reg;
-  reg  [7:0] ackcts_time;
+  `DEBUG_PREFIX reg  [7:0] ackcts_time;
   reg  [6:0] sifs_time_reg;
 
   reg [14:0] recv_ack_timeout_top;
 
-  reg [15:0] duration_new;
-  reg [1:0]  FC_type_new;
-  reg [3:0]  FC_subtype_new;
+  `DEBUG_PREFIX reg [15:0] duration_new;
+  `DEBUG_PREFIX reg [1:0]  FC_type_new;
+  `DEBUG_PREFIX reg [3:0]  FC_subtype_new;
   reg is_data_received;
   reg is_management_received;
   reg is_blockackreq_received;
@@ -117,8 +118,7 @@
   reg [14:0] send_ack_wait_top_scale;
   reg [14:0] recv_ack_sig_valid_timeout_top_scale;
   reg [14:0] recv_ack_timeout_top_adj_scale;
-  (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-  reg retrans_started ;
+  `DEBUG_PREFIX reg retrans_started ;
 
   assign tx_control_state_idle = (((tx_control_state==IDLE) || (tx_control_state==RECV_ACK_WAIT_BACKOFF_DONE)) && (~retrans_started));
 
