@@ -54,6 +54,7 @@
       input wire [9:0] addra_from_xpu,
       input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina_from_xpu,
       output wire tx_pkt_need_ack,
+      (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
       output reg quit_retrans,
       output wire [3:0] tx_pkt_retrans_limit,
       output reg [9:0] tx_pkt_sn,
@@ -76,8 +77,8 @@
                        DO_CTS_TOSELF=                   3'b011,
                        WAIT_SIFS =                      3'b100,
                        DO_TX =                          3'b101,
-		       WAIT_TX_COMP =                   3'b110;
-    //(* mark_debug = "true" *) reg [2:0] high_tx_ctl_state;
+                       WAIT_TX_COMP =                   3'b110;
+    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
     reg [2:0] high_tx_ctl_state;
     reg [2:0] high_tx_ctl_state_old;
     
@@ -219,16 +220,15 @@
             read_from_s_axis_en <= 0;
             // num_dma_symbol_total_current <= num_dma_symbol_total_current;
             if ( high_tx_allowed0 && (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag)) begin
+                  num_dma_symbol_total_rden0<= 1;
                   num_dma_symbol_total_rden1<= 0;
                   num_dma_symbol_total_rden2<= 0;
                   num_dma_symbol_total_rden3<= 0;
                   if(retrans_in_progress == 1) begin
-                    num_dma_symbol_total_rden0<= 0;
                     quit_retrans <= 1;
                     high_tx_ctl_state<=WAIT_TX_COMP;
                     tx_queue_idx_reg<=tx_queue_idx_reg;
-                  end else begin 
-                    num_dma_symbol_total_rden0<= 1;
+                  end else begin
                     quit_retrans<=0;
                     tx_queue_idx_reg<=0; 
                     high_tx_ctl_state<=PREPARE_TX_FETCH;
@@ -265,7 +265,6 @@
             if(tx_try_complete_dl2 == 1) begin
               high_tx_ctl_state  <= PREPARE_TX_FETCH;
               tx_queue_idx_reg<=0;
-	      num_dma_symbol_total_rden0<= 1;
             end
           end
           PREPARE_TX_FETCH: begin

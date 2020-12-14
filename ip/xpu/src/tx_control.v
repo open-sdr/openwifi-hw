@@ -50,6 +50,7 @@
         output reg retrans_in_progress,
         output reg start_retrans,
         input wire quit_retrans,
+        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
         output reg start_tx_ack,
         output reg tx_try_complete,
         output reg [4:0] tx_status,
@@ -75,7 +76,7 @@
   reg [47:0] ack_addr;
   reg [15:0] duration_received;
   reg FC_more_frag_received;
-  //(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
+  (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
   reg [2:0] tx_control_state;
   reg tx_fail_lock;
   reg [3:0] num_retrans_lock;
@@ -116,6 +117,7 @@
   reg [14:0] send_ack_wait_top_scale;
   reg [14:0] recv_ack_sig_valid_timeout_top_scale;
   reg [14:0] recv_ack_timeout_top_adj_scale;
+  (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
   reg retrans_started ;
 
   assign tx_control_state_idle = (((tx_control_state==IDLE) || (tx_control_state==RECV_ACK_WAIT_BACKOFF_DONE)) && (~retrans_started));

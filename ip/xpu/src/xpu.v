@@ -60,7 +60,9 @@
         output wire [4:0] tx_status,
         output wire [47:0] mac_addr,
         output wire retrans_in_progress,
+        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
         output wire start_retrans,
+        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
         output wire start_tx_ack,
         output wire tx_try_complete,
 	    input  wire tx_iq_fifo_empty,
@@ -256,6 +258,7 @@
     wire [6:0] phy_rx_start_delay_time;
 
     wire [3:0] cw_exp_used ;
+    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
     wire [3:0] cw_exp_dynamic;
     wire tx_try_complete_int;
     wire backoff_done ;

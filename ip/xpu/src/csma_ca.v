@@ -30,8 +30,6 @@
     input wire [4:0] slot_time,
     input wire [6:0] sifs_time,
     input wire [6:0] phy_rx_start_delay_time,
-    input wire [7:0] difs_advance,
-    input wire [7:0] backoff_advance,
 
     input wire addr1_valid,
     input wire [47:0] addr1,
@@ -55,6 +53,7 @@
     output wire high_tx_allowed1,
     output wire high_tx_allowed2,
     output wire high_tx_allowed3,
+    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
     output wire backoff_done
 	);
 
@@ -68,12 +67,13 @@
                       NAV_WAIT_FOR_DURATION = 2'b01,
                       NAV_CHECK_RA =          2'b10,
                       NAV_UPDATE =            2'b11;
-    `DEBUG_PREFIX reg [2:0]  backoff_state;
-    `DEBUG_PREFIX reg [2:0]  backoff_state_old;
+    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
+    reg [2:0]  backoff_state;
+    reg [2:0]  backoff_state_old;
 
     reg [1:0]  nav_state;
     reg [1:0]  nav_state_old;
-
+    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
     wire ch_idle_final;
 
     reg [14:0] nav;
@@ -99,7 +99,9 @@
     reg [31:0] random_number = 32'h0b00a001;
     reg [12:0] backoff_timer;
     reg [11:0] backoff_wait_timer;
+    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
     reg first_try_failed;
+    //(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
     //wire backoff_done;
 
     assign is_pspoll = (((FC_type==2'b01) && (FC_subtype==4'b1010))?1:0);
@@ -292,7 +294,7 @@
               if (backoff_wait_timer==0) begin
                 backoff_state<=BACKOFF_RUN;
                 if (retrans_in_progress || first_try_failed) begin // only do back off for retransmit or not the first attempt, if channel is free transmit immediately
-                  backoff_timer <= (num_slot_random==0?0:((num_slot_random*slot_time) - backoff_advance));
+                  backoff_timer<=(num_slot_random*slot_time);
                 end else begin
                   backoff_timer<=0;
                 end
@@ -321,6 +323,7 @@
               end else begin
                 backoff_state<=backoff_state;
               end
+              
             end else begin
               backoff_timer<=backoff_timer;
               if (backoff_timer==0) begin
