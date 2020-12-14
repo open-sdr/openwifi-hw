@@ -225,12 +225,12 @@
                   num_dma_symbol_total_rden2<= 0;
                   num_dma_symbol_total_rden3<= 0;
                   if(retrans_in_progress == 1) begin
-		     num_dma_symbol_total_rden0<= 0;
+                    num_dma_symbol_total_rden0<= 0;
                     quit_retrans <= 1;
                     high_tx_ctl_state<=WAIT_TX_COMP;
                     tx_queue_idx_reg<=tx_queue_idx_reg;
-                  end else begin
-		    num_dma_symbol_total_rden0<= 1;
+                  end else begin 
+                    num_dma_symbol_total_rden0<= 1;
                     quit_retrans<=0;
                     tx_queue_idx_reg<=0; 
                     high_tx_ctl_state<=PREPARE_TX_FETCH;
@@ -265,9 +265,9 @@
           WAIT_TX_COMP: begin
             quit_retrans <= 0;
             if(tx_try_complete_dl2 == 1) begin
-	      num_dma_symbol_total_rden0<= 1;
               high_tx_ctl_state  <= PREPARE_TX_FETCH;
               tx_queue_idx_reg<=0;
+	      num_dma_symbol_total_rden0<= 1;
             end
           end
           PREPARE_TX_FETCH: begin
