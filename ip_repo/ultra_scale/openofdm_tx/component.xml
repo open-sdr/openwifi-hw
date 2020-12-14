@@ -1154,13 +1154,13 @@
       <xilinx:displayName>openofdm_tx_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-11-06T12:40:43Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-12-11T10:03:42Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@497c5cc8_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@43f108da_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@41f5ae87_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@196729b2_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@7289ce9a_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@279e08b_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@32ec4d60_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@235eb57e_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@229c14c7_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@51e09978_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/ultra_scale/openofdm_tx</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>

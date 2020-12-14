@@ -1154,13 +1154,13 @@
       <xilinx:displayName>openofdm_tx_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-11-06T12:39:22Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-12-11T09:59:19Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@598047ad_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@6ab8c4d3_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@2f9eea8f_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@52fe41b8_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4ae871ac_ARCHIVE_LOCATION">/home/mmehari/open-sdr/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@462d4bef_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@576f603_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ded87bb_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5bf41d7e_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@698f5ecc_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
