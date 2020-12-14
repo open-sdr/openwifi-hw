@@ -221,15 +221,16 @@
             read_from_s_axis_en <= 0;
             // num_dma_symbol_total_current <= num_dma_symbol_total_current;
             if ( high_tx_allowed0 && (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag)) begin
-                  num_dma_symbol_total_rden0<= 1;
                   num_dma_symbol_total_rden1<= 0;
                   num_dma_symbol_total_rden2<= 0;
                   num_dma_symbol_total_rden3<= 0;
                   if(retrans_in_progress == 1) begin
+		     num_dma_symbol_total_rden0<= 0;
                     quit_retrans <= 1;
                     high_tx_ctl_state<=WAIT_TX_COMP;
                     tx_queue_idx_reg<=tx_queue_idx_reg;
                   end else begin
+		    num_dma_symbol_total_rden0<= 1;
                     quit_retrans<=0;
                     tx_queue_idx_reg<=0; 
                     high_tx_ctl_state<=PREPARE_TX_FETCH;
@@ -264,6 +265,7 @@
           WAIT_TX_COMP: begin
             quit_retrans <= 0;
             if(tx_try_complete_dl2 == 1) begin
+	      num_dma_symbol_total_rden0<= 1;
               high_tx_ctl_state  <= PREPARE_TX_FETCH;
               tx_queue_idx_reg<=0;
             end
