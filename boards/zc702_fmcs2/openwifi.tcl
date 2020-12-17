@@ -355,6 +355,7 @@ set_property -name "nl.write_all_overrides" -value "0" -objects $obj
 set_property -name "source_set" -value "sources_1" -objects $obj
 set_property -name "systemc_include_dirs" -value "" -objects $obj
 set_property -name "top" -value "system_top" -objects $obj
+set_property -name "top_auto_set" -value "0" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 set_property -name "transport_int_delay" -value "0" -objects $obj
 set_property -name "transport_path_delay" -value "0" -objects $obj
@@ -442,7 +443,7 @@ set_property -name "steps.synth_design.args.gated_clock_conversion" -value "off"
 set_property -name "steps.synth_design.args.bufg" -value "12" -objects $obj
 set_property -name "steps.synth_design.args.fanout_limit" -value "10000" -objects $obj
 set_property -name "steps.synth_design.args.directive" -value "AreaOptimized_medium" -objects $obj
-set_property -name "steps.synth_design.args.retiming" -value "1" -objects $obj
+set_property -name "steps.synth_design.args.retiming" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.fsm_extraction" -value "auto" -objects $obj
 set_property -name "steps.synth_design.args.keep_equivalent_registers" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.resource_sharing" -value "auto" -objects $obj
