@@ -1,10 +1,10 @@
 /*
- * long_preamble_rom - TODO
+ * Legacy long_preamble_rom - TODO
  *
  * Michael Tetemke Mehari michael.mehari@ugent.be
  */
 
-module long_preamble_rom
+module l_ltf_rom
 (
   input      [7:0]  addr,
   output reg [31:0] dout  

@@ -36,13 +36,15 @@
         input wire adc_valid,
 
 	    // Ports to openofdm rx
-        output wire [(2*IQ_DATA_WIDTH-1) : 0] sample,
+        output wire [(2*IQ_DATA_WIDTH-1) : 0] sample0,
+        output wire [(2*IQ_DATA_WIDTH-1) : 0] sample1,
 	    output wire sample_strobe,
         input  wire pkt_header_valid,
         input  wire pkt_header_valid_strobe,
         input  wire ht_unsupport,
         input  wire [7:0] pkt_rate,
 		input  wire [15:0] pkt_len,
+		input  wire ht_sgi,
 		input  wire byte_in_strobe,
 		input  wire [7:0] byte_in,
 		input  wire [15:0] byte_count,
@@ -146,16 +148,20 @@
 	wire  m00_axis_tlast_inner;
     wire  m00_axis_tlast_auto_recover;
 
-    wire [(2*IQ_DATA_WIDTH-1) : 0] ant_data_after_sel;
+    wire [(ADC_PACK_DATA_WIDTH-1) : 0] ant_data_after_sel;
 
-    wire [(IQ_DATA_WIDTH-1) : 0] rf_i_to_acc;
-	wire [(IQ_DATA_WIDTH-1) : 0] rf_q_to_acc;
-    
+    wire [(IQ_DATA_WIDTH-1) : 0] rf_i0_to_acc;
+	wire [(IQ_DATA_WIDTH-1) : 0] rf_q0_to_acc;
+    wire [(IQ_DATA_WIDTH-1) : 0] rf_i1_to_acc;
+	wire [(IQ_DATA_WIDTH-1) : 0] rf_q1_to_acc;
+ 
 	wire [(IQ_DATA_WIDTH-1):0] bw20_i0;
     wire [(IQ_DATA_WIDTH-1):0] bw20_q0;
+	wire [(IQ_DATA_WIDTH-1):0] bw20_i1;
+    wire [(IQ_DATA_WIDTH-1):0] bw20_q1;
     wire bw20_iq_valid;
         
-    wire [(2*IQ_DATA_WIDTH-1) : 0] rf_iq_loopback;
+    wire [(4*IQ_DATA_WIDTH-1) : 0] rf_iq_loopback;
     
 	wire start_1trans_from_acc_to_m_axis;
     wire [(C_M00_AXIS_TDATA_WIDTH-1):0] data_from_acc_to_m_axis;
@@ -179,8 +185,8 @@
     
     wire ant_flag_in_rf_domain;
     wire mute_adc_out_to_bb_in_rf_domain;
-    wire [(2*IQ_DATA_WIDTH-1) : 0] adc_data_internal;
-    wire [(2*IQ_DATA_WIDTH-1) : 0] adc_data_after_sel;
+    wire [(ADC_PACK_DATA_WIDTH-1) : 0] adc_data_internal;
+    wire [(ADC_PACK_DATA_WIDTH-1) : 0] adc_data_after_sel;
 
     wire [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_from_acc;
 	wire data_ready_from_acc;
@@ -198,7 +204,8 @@
     assign trigger_out = (slv_reg1[0]&trigger_out_internal);
     // -------------debug purpose----------------
 
-    assign sample = {rf_i_to_acc,rf_q_to_acc};
+    assign sample0 = {rf_i0_to_acc,rf_q0_to_acc};
+    assign sample1 = {rf_i1_to_acc,rf_q1_to_acc};
     assign fcs_valid = (fcs_in_strobe&fcs_ok);
     assign fcs_invalid = (fcs_in_strobe&(~fcs_ok));
     assign sig_valid = (pkt_header_valid_strobe&pkt_header_valid);
@@ -221,11 +228,13 @@
     assign enable_m_axis_auto_rst = slv_reg5[16];
     assign m_axis_auto_rst = (m_axis_rst&enable_m_axis_auto_rst);
   
-    assign adc_data_after_sel = (ant_flag_in_rf_domain?adc_data[(ADC_PACK_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)]:adc_data[(2*IQ_DATA_WIDTH-1) : 0]);
-    assign adc_data_internal  = (mute_adc_out_to_bb_in_rf_domain?0:adc_data_after_sel);
+    assign adc_data_after_sel = (ant_flag_in_rf_domain?{adc_data[(2*IQ_DATA_WIDTH-1) : 0],adc_data[(ADC_PACK_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)]}:adc_data);
+    assign adc_data_internal  = (mute_adc_out_to_bb_in_rf_domain?{adc_data_after_sel[(ADC_PACK_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)],32'd0}:adc_data_after_sel);
 
     assign bw20_i0 = ant_data_after_sel[  (IQ_DATA_WIDTH-1) : 0];
     assign bw20_q0 = ant_data_after_sel[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH];
+    assign bw20_i1 = ant_data_after_sel[(3*IQ_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)];
+    assign bw20_q1 = ant_data_after_sel[(4*IQ_DATA_WIDTH-1) : (3*IQ_DATA_WIDTH)];
     
 // ---------------------------fro mute_adc_out_to_bb control from acc domain to adc domain-------------------------------------
     xpm_cdc_array_single #(
@@ -347,12 +356,16 @@
         .clk(m00_axis_aclk),
         .bw20_i0(bw20_i0),
         .bw20_q0(bw20_q0),
+        .bw20_i1(bw20_i1),
+        .bw20_q1(bw20_q1),
         .bw20_iq_valid(bw20_iq_valid),
         .fifo_in_en(~slv_reg4[1]),
         .fifo_out_en(~slv_reg4[2]),
         .bb_20M_en(slv_reg4[3]),
-        .rf_i(rf_i_to_acc),
-        .rf_q(rf_q_to_acc),
+        .rf_i0(rf_i0_to_acc),
+        .rf_q0(rf_q0_to_acc),
+        .rf_i1(rf_i1_to_acc),
+        .rf_q1(rf_q1_to_acc),
         .rf_iq_valid(sample_strobe),
         .rf_iq_valid_delay_sel(slv_reg3[4]),
         .rf_iq(rf_iq_loopback),
@@ -423,6 +436,7 @@
         .pkt_rate(pkt_rate),
 	    .pkt_len(pkt_len),
         .sig_valid(sig_valid),
+	    .ht_sgi(ht_sgi),
         .ht_unsupport(ht_unsupport),
         .fcs_valid(fcs_valid),
         

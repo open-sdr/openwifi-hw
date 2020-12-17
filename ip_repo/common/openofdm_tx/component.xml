@@ -260,7 +260,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>08ce1179</spirit:value>
+            <spirit:value>d24785ff</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -276,7 +276,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>08ce1179</spirit:value>
+            <spirit:value>d24785ff</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -862,6 +862,16 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>src/ht_ltf_rom.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/ht_stf_rom.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/hwbfly.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -877,12 +887,17 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/laststage.v</spirit:name>
+        <spirit:name>src/l_ltf_rom.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/long_preamble_rom.v</spirit:name>
+        <spirit:name>src/l_stf_rom.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/laststage.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -922,11 +937,6 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/short_preamble_rom.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>src/icmem_64.mem</spirit:name>
         <spirit:userFileType>mem</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -943,6 +953,11 @@
       </spirit:file>
       <spirit:file>
         <spirit:name>src/icmem_32.mem</spirit:name>
+        <spirit:userFileType>mem</spirit:userFileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/tx_intf.mem</spirit:name>
         <spirit:userFileType>mem</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -996,6 +1011,16 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>src/ht_ltf_rom.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/ht_stf_rom.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/hwbfly.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -1011,12 +1036,17 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/laststage.v</spirit:name>
+        <spirit:name>src/l_ltf_rom.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/long_preamble_rom.v</spirit:name>
+        <spirit:name>src/l_stf_rom.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/laststage.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -1056,11 +1086,6 @@
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/short_preamble_rom.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>src/icmem_64.mem</spirit:name>
         <spirit:userFileType>mem</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
@@ -1077,6 +1102,11 @@
       </spirit:file>
       <spirit:file>
         <spirit:name>src/icmem_32.mem</spirit:name>
+        <spirit:userFileType>mem</spirit:userFileType>
+        <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/tx_intf.mem</spirit:name>
         <spirit:userFileType>mem</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
@@ -1124,20 +1154,20 @@
       <xilinx:displayName>openofdm_tx_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-06-08T12:39:01Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-12-11T09:59:19Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3e90f565_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@70128017_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5738b1d9_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@1e9420_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@fdfb75f_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@462d4bef_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@576f603_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ded87bb_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5bf41d7e_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@698f5ecc_ARCHIVE_LOCATION">/home/mmehari/dot11/openwifi/openwifi-hw/ip_repo/common/openofdm_tx</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="3be2a4d2"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="871c369d"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="d48c8def"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="9a685dca"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="087d960e"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="aed2e092"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="8fec64ed"/>

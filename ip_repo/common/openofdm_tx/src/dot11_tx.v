@@ -10,7 +10,7 @@ module dot11_tx
   input  wire        phy_tx_arest,
 
   input  wire        phy_tx_start,
-  output wire        phy_tx_done,
+  output reg         phy_tx_done,
   output reg         phy_tx_started,
 
   input  wire [6:0]  init_pilot_scram_state,
@@ -25,55 +25,15 @@ module dot11_tx
   output wire [15:0] result_q
 );
 
-reg        FSM3_reset_old;
-// (* mark_debug = "true" *) reg        FSM3_reset;        // Reset after transmiting a whole packet
-reg        FSM3_reset;        // Reset after transmiting a whole packet
-reg  [2:0] safe_reset_counter;
-wire       reset_int;
-
-// decouple FSM3_reset and reset_int. generate safe/longer reset signal
-always @(posedge clk)
-if (phy_tx_arest) begin
-    FSM3_reset_old <= 0;
-end else begin
-    FSM3_reset_old <= FSM3_reset;
-end
-
-always @(posedge clk)
-if ( phy_tx_arest | (FSM3_reset_old==0 && FSM3_reset==1) ) begin
-    safe_reset_counter <= 0;
-end else begin
-    safe_reset_counter <= (safe_reset_counter<7?(safe_reset_counter+1):safe_reset_counter);
-end
-
-assign reset_int = (safe_reset_counter>0 && safe_reset_counter<7);
-
-// make sure phy_tx_done is a pulse and ready for next packet
-reg         phy_tx_done_reg0;
-reg         phy_tx_done_reg1;
-reg         phy_tx_done_reg2;
-reg         phy_tx_done_reg3;
-
-always @(posedge clk)
-if (phy_tx_arest) begin
-    phy_tx_done_reg0 <= 0;
-    phy_tx_done_reg1 <= 0;
-    phy_tx_done_reg2 <= 0;
-    phy_tx_done_reg3 <= 0;
-end else begin
-    phy_tx_done_reg0 <= (FSM3_reset_old==1 && FSM3_reset==0);
-    phy_tx_done_reg1 <= phy_tx_done_reg0;
-    phy_tx_done_reg2 <= phy_tx_done_reg1;
-    phy_tx_done_reg3 <= phy_tx_done_reg2;
-end
-
-assign phy_tx_done = phy_tx_done_reg3;
+reg  FSM3_reset;        // Reset after transmiting a whole packet
+wire reset_int = phy_tx_arest | FSM3_reset;
 
 // Data collection states
 reg [1:0] state1;
 localparam S1_WAIT_PKT = 0;
-localparam S1_SIGNAL   = 1;
-localparam S1_DATA     = 2;
+localparam S1_L_SIG    = 1;
+localparam S1_HT_SIG   = 2;
+localparam S1_DATA     = 3;
 reg [2:0] state11;
 localparam S11_SERVICE   = 0;
 localparam S11_PSDU_DATA = 1;
@@ -90,11 +50,19 @@ localparam S2_MOD_IFFT_INPUT = 2;
 localparam S2_RESET          = 3;
 
 // IQ sample forwarding states
-reg [1:0] state3;
-localparam S3_WAIT_PKT       = 0;
-localparam S3_SHORT_PREAMBLE = 1;
-localparam S3_LONG_PREAMBLE  = 2;
-localparam S3_DATA           = 3;
+reg [2:0] state3;
+localparam S3_WAIT_PKT = 0;
+localparam S3_L_STF    = 1;
+localparam S3_L_LTF    = 2;
+localparam S3_L_SIG    = 3;
+localparam S3_HT_SIG   = 4;
+localparam S3_HT_STF   = 5;
+localparam S3_HT_LTF   = 6;
+localparam S3_DATA     = 7;
+
+reg PKT_TYPE;
+localparam LEGACY = 0;
+localparam HT     = 1;
 
 localparam NO_OUTPUT_YET  = 0;
 localparam OUTPUT_STARTED = 1;
@@ -103,23 +71,39 @@ localparam CP_FIFO  = 0;
 localparam PKT_FIFO = 1;
 
 reg [5:0]  plcp_bit_cnt;
+reg [3:0]  service_bit_cnt;
 reg [14:0] psdu_bit_cnt;        // Maximum number of PSDU bits = 4095*8 = 32760
 reg [10:0] ofdm_cnt_FSM1;       // Maximum number of OFDM symbols = 1 + ceil((16+4095*8+6)/24) = 1367
 
 //////////////////////////////////////////////////////////////////////////
-// SHORT + LONG PREAMBLE
+// LEGACY SHORT + LONG PREAMBLE
 //////////////////////////////////////////////////////////////////////////
-wire [31:0] short_preamble;
-wire [31:0] long_preamble;
+wire [31:0] l_stf;
+wire [31:0] l_ltf;
 reg  [7:0] preamble_addr;
-short_preamble_rom short_preamble_rom (
+l_stf_rom l_stf_rom (
     .addr(preamble_addr[3:0]),
-    .dout(short_preamble)
+    .dout(l_stf)
 );
 
-long_preamble_rom long_preamble_rom (
+l_ltf_rom l_ltf_rom (
     .addr(preamble_addr),
-    .dout(long_preamble)
+    .dout(l_ltf)
+);
+
+//////////////////////////////////////////////////////////////////////////
+// HT SHORT + LONG PREAMBLE
+//////////////////////////////////////////////////////////////////////////
+wire [31:0] ht_stf;
+wire [31:0] ht_ltf;
+ht_stf_rom ht_stf_rom (
+    .addr(preamble_addr[3:0]),
+    .dout(ht_stf)
+);
+
+ht_ltf_rom ht_ltf_rom (
+    .addr(preamble_addr[6:0]),
+    .dout(ht_ltf)
 );
 
 //////////////////////////////////////////////////////////////////////////
@@ -138,23 +122,10 @@ crc32_tx fcs_inst (
     .clk(clk),
     .rst(reset_int),
     .crc_en(crc_en),
-    .data_in(psdu_bit_cnt[5:0] == 6'b111111 ? crc_data_reg_reg : crc_data),
+    .data_in(crc_data),
     .crc_out(pkt_fcs)
 );
 assign crc_en = (bits_enc_fifo_iready == 1 && state1 == S1_DATA && state11 == S11_PSDU_DATA && psdu_bit_cnt[1:0] == 2'b11);
-
-// This is a fix for block ram loosing 1 clock offset during FSM2 back pressure.
-// Since FSM2 does not consume data as fast as FSM1 can generate, bits_enc_fifo becomes full and FSM1 halts operation.
-// Furthermore, if we requested bram to provide new data, data appears one clock later than expected.
-reg [3:0] crc_data_reg, crc_data_reg_reg;
-reg       bram_din_bit63_reg, bram_din_bit63_reg_reg;
-always @(posedge clk) begin
-    crc_data_reg <= crc_data;
-    crc_data_reg_reg <= crc_data_reg;
-
-    bram_din_bit63_reg <= bram_din[63];
-    bram_din_bit63_reg_reg <= bram_din_bit63_reg;
-end
 //////////////////////////////////////////////////////////////////////////
 // bit source selection and scrambling operation
 //////////////////////////////////////////////////////////////////////////
@@ -163,8 +134,8 @@ reg [6:0] data_scram_state;
 always @* begin
     bit_scram = 0;
 
-    // PLCP [rate + reserved + length + parity + tail] fields
-    if(state1 == S1_SIGNAL)
+    // Legacy PLCP [rate + reserved + length + parity + tail] and HT PLCP [MCS + length + reserved + short/long GI + CRC + tail] fields
+    if(state1 == S1_L_SIG || state1 == S1_HT_SIG)
         bit_scram = bram_din[plcp_bit_cnt];
 
     // DATA [service + PSDU + CRC + tail + pad] fields
@@ -175,10 +146,7 @@ always @* begin
 
         // PSDU DATA feild
         end else if(state11 == S11_PSDU_DATA) begin
-            if(psdu_bit_cnt[5:0] == 6'b111111)
-                bit_scram = data_scram_state[6] ^ data_scram_state[3] ^ bram_din_bit63_reg_reg;
-            else
-                bit_scram = data_scram_state[6] ^ data_scram_state[3] ^ bram_din[psdu_bit_cnt[5:0]];
+            bit_scram = data_scram_state[6] ^ data_scram_state[3] ^ bram_din[psdu_bit_cnt[5:0]];
 
         // PSDU CRC field
         end else if(state11 == S11_PSDU_CRC) begin
@@ -196,7 +164,7 @@ always @* begin
 end
 
 //////////////////////////////////////////////////////////////////////////
-// Convolutional encoding and bit puncturing
+// Convolutional encoding
 //////////////////////////////////////////////////////////////////////////
 wire       enc_reset;
 wire       enc_en;
@@ -208,17 +176,18 @@ convenc convenc (
     .bit_in(bit_scram),
     .bits_out(bits_enc)
 );
-assign enc_reset = reset_int | state1 == S1_WAIT_PKT | plcp_bit_cnt == 23;
-assign enc_en = state1 >= S1_SIGNAL && state11 != S11_RESET && bits_enc_fifo_iready;
+assign enc_reset = phy_tx_arest | state1 == S1_WAIT_PKT | plcp_bit_cnt == 23 | plcp_bit_cnt == 47;
+assign enc_en = state1 >= S1_L_SIG && state11 != S11_RESET && bits_enc_fifo_iready;
 
 //////////////////////////////////////////////////////////////////////////
 // DOT11 TX FINITE STATE MACHINE 1
 //////////////////////////////////////////////////////////////////////////
 reg [2:0]  N_BPSC;
-reg [7:0]  N_DBPS;
-reg [3:0]  RATE;
+reg [8:0]  N_DBPS;
+reg [4:0]  RATE;
 reg [14:0] PSDU_BIT_LEN;
-reg [7:0]  dbps_cnt_FSM1;
+reg        S_GI;
+reg [8:0]  dbps_cnt_FSM1;
 
 always @(posedge clk)
 if (reset_int) begin
@@ -227,7 +196,9 @@ if (reset_int) begin
     N_DBPS <= 0;
     RATE <= 0;
     PSDU_BIT_LEN <= 0;
+    S_GI <= 0;
     plcp_bit_cnt <= 0;
+    service_bit_cnt <= 0;
     psdu_bit_cnt <= 0;
     pkt_fcs_idx <= 0;
     dbps_cnt_FSM1 <= 0;
@@ -242,30 +213,77 @@ end else if(bits_enc_fifo_iready == 1) begin
         if(phy_tx_start) begin
             bram_addr <= 0;
             plcp_bit_cnt <= 0;
-            state1 <= S1_SIGNAL;
+            state1 <= S1_L_SIG;
         end
     end
 
-    S1_SIGNAL: begin
-        case(bram_din[3:0])
-            4'b1011: begin  N_BPSC <= 1;  N_DBPS <= 24;  RATE <= 4'b1011; end  //  6 Mbps
-            4'b1111: begin  N_BPSC <= 1;  N_DBPS <= 36;  RATE <= 4'b1111; end  //  9 Mbps
-            4'b1010: begin  N_BPSC <= 2;  N_DBPS <= 48;  RATE <= 4'b1010; end  // 12 Mbps
-            4'b1110: begin  N_BPSC <= 2;  N_DBPS <= 72;  RATE <= 4'b1110; end  // 18 Mbps
-            4'b1001: begin  N_BPSC <= 4;  N_DBPS <= 96;  RATE <= 4'b1001; end  // 24 Mbps
-            4'b1101: begin  N_BPSC <= 4;  N_DBPS <= 144; RATE <= 4'b1101; end  // 36 Mbps
-            4'b1000: begin  N_BPSC <= 6;  N_DBPS <= 192; RATE <= 4'b1000; end  // 48 Mbps
-            4'b1100: begin  N_BPSC <= 6;  N_DBPS <= 216; RATE <= 4'b1100; end  // 54 Mbps
-            default: begin  N_BPSC <= 6;  N_DBPS <= 216; RATE <= 4'b1100; end  // 54 Mbps
-//            default: begin  N_BPSC <= 1;  N_DBPS <= 24;  RATE <= 4'b1011; end  //  6 Mbps
-        endcase
-        PSDU_BIT_LEN <= ({3'd0, bram_din[16:5]} << 3);
-
+    S1_L_SIG: begin
         plcp_bit_cnt <= plcp_bit_cnt + 1;
-        if(plcp_bit_cnt == 23) begin
+        if(plcp_bit_cnt == 0) begin
+            case(bram_din[3:0])
+                4'b1011: begin  N_BPSC <= 1;  N_DBPS <= 24;  RATE <= 5'b01011; end  //  6 Mbps
+                4'b1111: begin  N_BPSC <= 1;  N_DBPS <= 36;  RATE <= 5'b01111; end  //  9 Mbps
+                4'b1010: begin  N_BPSC <= 2;  N_DBPS <= 48;  RATE <= 5'b01010; end  // 12 Mbps
+                4'b1110: begin  N_BPSC <= 2;  N_DBPS <= 72;  RATE <= 5'b01110; end  // 18 Mbps
+                4'b1001: begin  N_BPSC <= 4;  N_DBPS <= 96;  RATE <= 5'b01001; end  // 24 Mbps
+                4'b1101: begin  N_BPSC <= 4;  N_DBPS <= 144; RATE <= 5'b01101; end  // 36 Mbps
+                4'b1000: begin  N_BPSC <= 6;  N_DBPS <= 192; RATE <= 5'b01000; end  // 48 Mbps
+                4'b1100: begin  N_BPSC <= 6;  N_DBPS <= 216; RATE <= 5'b01100; end  // 54 Mbps
+                default: begin  N_BPSC <= 1;  N_DBPS <= 24;  RATE <= 5'b01011; end  //  6 Mbps
+            endcase
+            PSDU_BIT_LEN <= ({3'd0, bram_din[16:5]} << 3);
+            PKT_TYPE <= bram_din[24];
+
+        end else if(plcp_bit_cnt == 22) begin
+            bram_addr <= 1;
+
+        end else if(plcp_bit_cnt == 23) begin
+            ofdm_cnt_FSM1 <= ofdm_cnt_FSM1 + 1;
+            plcp_bit_cnt <= 0;
+
+            // HT packet
+            if(RATE == 5'b01011 && PKT_TYPE == HT) begin
+                PKT_TYPE <= HT;
+                state1 <= S1_HT_SIG;
+
+            // Legacy packet
+            end else begin
+                PKT_TYPE <= LEGACY;
+                service_bit_cnt <= 0;
+                data_scram_state <= init_data_scram_state;
+                dbps_cnt_FSM1 <= 0;
+
+                state1 <= S1_DATA;
+                state11 <= S11_SERVICE;
+            end
+        end
+    end
+
+    S1_HT_SIG: begin
+        plcp_bit_cnt <= plcp_bit_cnt + 1;
+        if(plcp_bit_cnt == 0) begin
+            case(bram_din[2:0])
+                3'b000:  begin  N_BPSC <= 1;  N_DBPS <= 26;  RATE <= 5'b10000; end  //  6.5 Mbps
+                3'b001:  begin  N_BPSC <= 2;  N_DBPS <= 52;  RATE <= 5'b10001; end  // 13.0 Mbps
+                3'b010:  begin  N_BPSC <= 2;  N_DBPS <= 78;  RATE <= 5'b10010; end  // 19.5 Mbps
+                3'b011:  begin  N_BPSC <= 4;  N_DBPS <= 104; RATE <= 5'b10011; end  // 26.0 Mbps
+                3'b100:  begin  N_BPSC <= 4;  N_DBPS <= 156; RATE <= 5'b10100; end  // 39.0 Mbps
+                3'b101:  begin  N_BPSC <= 6;  N_DBPS <= 208; RATE <= 5'b10101; end  // 52.0 Mbps
+                3'b110:  begin  N_BPSC <= 6;  N_DBPS <= 234; RATE <= 5'b10110; end  // 58.5 Mbps
+                3'b111:  begin  N_BPSC <= 6;  N_DBPS <= 260; RATE <= 5'b10111; end  // 65.0 Mbps
+                default: begin  N_BPSC <= 1;  N_DBPS <= 26;  RATE <= 5'b10000; end  //  6.5 Mbps
+            endcase
+            PSDU_BIT_LEN <= ({3'd0, bram_din[19:8]} << 3);
+            S_GI <= bram_din[31];
+        end else if(plcp_bit_cnt == 23) begin
+            ofdm_cnt_FSM1 <= ofdm_cnt_FSM1 + 1;
+
+        end else if(plcp_bit_cnt == 47) begin
+            ofdm_cnt_FSM1 <= ofdm_cnt_FSM1 + 1;
+
+            service_bit_cnt <= 0;
             data_scram_state <= init_data_scram_state;
             dbps_cnt_FSM1 <= 0;
-            ofdm_cnt_FSM1 <= 1;
 
             state1 <= S1_DATA;
             state11 <= S11_SERVICE;
@@ -276,10 +294,10 @@ end else if(bits_enc_fifo_iready == 1) begin
         data_scram_state <= {data_scram_state[5:0], (data_scram_state[3] ^ data_scram_state[6])};
         case(state11)
         S11_SERVICE: begin
-            plcp_bit_cnt <= plcp_bit_cnt + 1;
-            if(plcp_bit_cnt == 38) begin
+            service_bit_cnt <= service_bit_cnt + 1;
+            if(service_bit_cnt == 14) begin
                 bram_addr <= 2;
-            end else if(plcp_bit_cnt == 39) begin
+            end else if(service_bit_cnt == 15) begin
                 psdu_bit_cnt <= 0;
                 state11 <= S11_PSDU_DATA;
             end
@@ -344,7 +362,7 @@ wire [1:0]  bits_enc_fifo_idata,  bits_enc_fifo_odata;
 wire        bits_enc_fifo_ivalid, bits_enc_fifo_ovalid;
 wire        bits_enc_fifo_iready, bits_enc_fifo_oready;
 wire [15:0] bits_enc_fifo_space;
-axi_fifo_bram #(.WIDTH(2), .SIZE(12)) bits_enc_fifo(
+axi_fifo_bram #(.WIDTH(2), .SIZE(14)) bits_enc_fifo(
     .clk(clk), .reset(reset_int), .clear(reset_int),
     .i_tdata(bits_enc_fifo_idata), .i_tvalid(bits_enc_fifo_ivalid), .i_tready(bits_enc_fifo_iready),
     .o_tdata(bits_enc_fifo_odata), .o_tvalid(bits_enc_fifo_ovalid), .o_tready(bits_enc_fifo_oready),
@@ -359,11 +377,11 @@ assign bits_enc_fifo_oready = (state2 == S2_PUNC_INTERLV && bits_enc_fifo_ovalid
 //////////////////////////////////////////////////////////////////////////
 // Puncturing and interleaving index look up table
 reg  [10:0] ofdm_cnt_FSM2;
-reg  [7:0]  dbps_cnt_FSM2;
+reg  [8:0]  dbps_cnt_FSM2;
 wire [1:0]  punc_info;
 wire [17:0] interlv_addrs;
 punc_interlv_lut punc_interlv_lut(
-    .rate(ofdm_cnt_FSM2 > 0 ? RATE : 4'b1011),
+    .rate(PKT_TYPE == LEGACY ? (ofdm_cnt_FSM2 > 0 ? RATE : 5'b01011) : (ofdm_cnt_FSM2 > 2 ? RATE : 5'b01011)),
     .idx_i(dbps_cnt_FSM2),
     .idx_o(interlv_addrs),
     .punc_o(punc_info)
@@ -377,7 +395,7 @@ wire       punc_bit;
 wire [8:0] bits_ram_waddr;
 reg  [5:0] mod_addr;
 wire [5:0] bits_to_mod;
-ram_simo #(.DEPTH(48)) bits_ram(
+ram_simo #(.DEPTH(52)) bits_ram(
     .clk(clk),
     .waddr(bits_ram_waddr),
     .raddr(mod_addr),
@@ -395,7 +413,7 @@ assign punc_bit = enc_pos == 1 ? bits_enc_fifo_odata[0] : (punc_info[0] == 0 ? b
 // BPSK, QPSK, 16-QAM and 64-QAM modulation
 wire [31:0] mod_IQ;
 modulation modulation(
-    .N_BPSC(ofdm_cnt_FSM2 > 0 ? N_BPSC : 3'd1),
+    .N_BPSC(PKT_TYPE == LEGACY ? (ofdm_cnt_FSM2 > 0 ? N_BPSC : 3'd1) : (ofdm_cnt_FSM2 > 2 ? N_BPSC : 3'd1)),
     .bits_in(bits_to_mod),
     .IQ(mod_IQ)
 );
@@ -405,6 +423,7 @@ modulation modulation(
 //////////////////////////////////////////////////////////////////////////
 reg  [31:0] pilot_iq [3:0];
 reg  [6:0]  pilot_scram_state;
+reg  [3:0]  ht_polarity;
 wire        pilot_gain = pilot_scram_state[6] ^ pilot_scram_state[3] ^ 0;
 wire [31:0] DC_SB_IQ = {16'h0000, 16'h0000};
 
@@ -415,19 +434,23 @@ reg [31:0] ifft_iq;
 reg [7:0]  iq_cnt;
 always @* begin
     ifft_iq = 0;
-    if(state1 == S1_SIGNAL || state1 == S1_DATA) begin
-        if(iq_cnt == 0 || (iq_cnt >= 27 && iq_cnt < 38))
+    if(state2 == S2_MOD_IFFT_INPUT) begin
+        if(iq_cnt == 0 || ((PKT_TYPE == LEGACY || PKT_TYPE == HT && ofdm_cnt_FSM2 <= 2) && iq_cnt >= 27 && iq_cnt < 38) || (PKT_TYPE == HT && ofdm_cnt_FSM2 > 2 && iq_cnt >= 29 && iq_cnt < 36)) begin
             ifft_iq = DC_SB_IQ;
-        else if(iq_cnt == 7)
+        end else if(iq_cnt == 7) begin
             ifft_iq = pilot_iq[2];
-        else if(iq_cnt == 21)
+        end else if(iq_cnt == 21) begin
             ifft_iq = pilot_iq[3];
-        else if(iq_cnt == 43)
+        end else if(iq_cnt == 43) begin
             ifft_iq = pilot_iq[0];
-        else if(iq_cnt == 57)
+        end else if(iq_cnt == 57) begin
             ifft_iq = pilot_iq[1];
-        else if(iq_cnt < 64)
-            ifft_iq = mod_IQ;
+        end else if(iq_cnt < 64) begin
+            if(PKT_TYPE == HT && (ofdm_cnt_FSM2 == 1 || ofdm_cnt_FSM2 == 2))
+                ifft_iq = {mod_IQ[15:0], mod_IQ[31:16]};
+            else
+                ifft_iq = mod_IQ;
+        end
     end
 end
 
@@ -445,7 +468,7 @@ ifftmain ifft64(
 //////////////////////////////////////////////////////////////////////////
 // DOT11 TX FINITE STATE MACHINE 2
 //////////////////////////////////////////////////////////////////////////
-wire [7:0]  dbps_size;
+wire [8:0]  dbps_size;
 
 always @(posedge clk)
 if (reset_int) begin
@@ -456,6 +479,7 @@ if (reset_int) begin
     ifft_ce <= 0;
     mod_addr <= 0;
     pilot_scram_state <= init_pilot_scram_state;
+    ht_polarity <= 4'b1000;
     state2 <= S2_PUNC_INTERLV;
 
 end else begin
@@ -480,19 +504,42 @@ end else begin
     end
 
     S2_PILOT_DC_SB: begin
-        if(pilot_gain == 0) begin
-            pilot_iq[0] <= {16'h4000, 16'h0000};
-            pilot_iq[1] <= {16'h4000, 16'h0000};
-            pilot_iq[2] <= {16'h4000, 16'h0000};
-            pilot_iq[3] <= {16'hC000, 16'h0000};
+        if(PKT_TYPE == HT && ofdm_cnt_FSM2 > 2) begin
+            if(ht_polarity[0] ^ pilot_gain == 0)
+                pilot_iq[0] <= {16'h4000, 16'h0000};
+            else
+                pilot_iq[0] <= {16'hC000, 16'h0000};
+
+            if(ht_polarity[1] ^ pilot_gain == 0)
+                pilot_iq[1] <= {16'h4000, 16'h0000};
+            else
+                pilot_iq[1] <= {16'hC000, 16'h0000};
+
+            if(ht_polarity[2] ^ pilot_gain == 0)
+                pilot_iq[2] <= {16'h4000, 16'h0000};
+            else
+                pilot_iq[2] <= {16'hC000, 16'h0000};
+
+            if(ht_polarity[3] ^ pilot_gain == 0)
+                pilot_iq[3] <= {16'h4000, 16'h0000};
+            else
+                pilot_iq[3] <= {16'hC000, 16'h0000};
+
+            ht_polarity <= {ht_polarity[0], ht_polarity[3:1]};
         end else begin
-            pilot_iq[0] <= {16'hC000, 16'h0000};
-            pilot_iq[1] <= {16'hC000, 16'h0000};
-            pilot_iq[2] <= {16'hC000, 16'h0000};
-            pilot_iq[3] <= {16'h4000, 16'h0000};
+            if(pilot_gain == 0) begin
+                pilot_iq[0] <= {16'h4000, 16'h0000};
+                pilot_iq[1] <= {16'h4000, 16'h0000};
+                pilot_iq[2] <= {16'h4000, 16'h0000};
+                pilot_iq[3] <= {16'hC000, 16'h0000};
+            end else begin
+                pilot_iq[0] <= {16'hC000, 16'h0000};
+                pilot_iq[1] <= {16'hC000, 16'h0000};
+                pilot_iq[2] <= {16'hC000, 16'h0000};
+                pilot_iq[3] <= {16'h4000, 16'h0000};
+            end
         end
-        if(ofdm_cnt_FSM2 > 0)
-            pilot_scram_state <= {pilot_scram_state[5:0], (pilot_scram_state[3] ^ pilot_scram_state[6])};
+        pilot_scram_state <= {pilot_scram_state[5:0], (pilot_scram_state[3] ^ pilot_scram_state[6])};
 
         iq_cnt <= 0;
         ifft_ce <= 1;
@@ -501,18 +548,33 @@ end else begin
 
     S2_MOD_IFFT_INPUT: begin
         if(iq_cnt < 63) begin
-            if(iq_cnt < 6)
-                mod_addr <= iq_cnt[5:0] + 24;
-            else if(iq_cnt < 20)
-                mod_addr <= iq_cnt[5:0] + 23;
-            else if(iq_cnt < 26)
-                mod_addr <= iq_cnt[5:0] + 22;
-            else if(iq_cnt < 42)
-                mod_addr <= iq_cnt[5:0] - 37;
-            else if(iq_cnt < 56)
-                mod_addr <= iq_cnt[5:0] - 38;
-            else if(iq_cnt < 63)
-                mod_addr <= iq_cnt[5:0] - 39;
+            if(PKT_TYPE == HT && ofdm_cnt_FSM2 > 2) begin
+                if(iq_cnt < 6)
+                    mod_addr <= iq_cnt[5:0] + 26;
+                else if(iq_cnt < 20)
+                    mod_addr <= iq_cnt[5:0] + 25;
+                else if(iq_cnt < 28)
+                    mod_addr <= iq_cnt[5:0] + 24;
+                else if(iq_cnt < 42)
+                    mod_addr <= iq_cnt[5:0] - 35;
+                else if(iq_cnt < 56)
+                    mod_addr <= iq_cnt[5:0] - 36;
+                else if(iq_cnt < 63)
+                    mod_addr <= iq_cnt[5:0] - 37;
+            end else begin
+                if(iq_cnt < 6)
+                    mod_addr <= iq_cnt[5:0] + 24;
+                else if(iq_cnt < 20)
+                    mod_addr <= iq_cnt[5:0] + 23;
+                else if(iq_cnt < 28)
+                    mod_addr <= iq_cnt[5:0] + 22;
+                else if(iq_cnt < 42)
+                    mod_addr <= iq_cnt[5:0] - 37;
+                else if(iq_cnt < 56)
+                    mod_addr <= iq_cnt[5:0] - 38;
+                else if(iq_cnt < 63)
+                    mod_addr <= iq_cnt[5:0] - 39;
+            end
 
             iq_cnt <= iq_cnt + 1;
 
@@ -540,7 +602,7 @@ end else begin
     end
     endcase
 end
-assign dbps_size = (ofdm_cnt_FSM2 == 0) ? 24 : N_DBPS;
+assign dbps_size = PKT_TYPE == LEGACY ? (ofdm_cnt_FSM2 > 0 ? N_DBPS : 24) : (ofdm_cnt_FSM2 > 2 ? N_DBPS : 24);
 
 //////////////////////////////////////////////////////////////////////////
 // Count number of [pkt/CP] IQ samples to send
@@ -548,32 +610,43 @@ assign dbps_size = (ofdm_cnt_FSM2 == 0) ? 24 : N_DBPS;
 reg        ifft_status;
 reg        ifft_ce_reg;
 reg [31:0] ifft_o_result_reg;
-reg [5:0]  ifft_o_cnt;
-reg [15:0] pkt_iq2send;
-reg [13:0] CP_iq2send;
+reg [5:0]  ifft_o_iq_cnt;
+reg [10:0] ifft_o_sync_cnt;
+reg [15:0] nof_iq2send;
 always @(posedge clk)
 if (reset_int) begin
-    ifft_o_cnt  <= 0;
+    ifft_o_iq_cnt <= 0;
+    ifft_o_sync_cnt <= 0;
     ifft_status <= NO_OUTPUT_YET;
-    pkt_iq2send <= 320;
-    CP_iq2send  <= 0;
+    nof_iq2send <= 320;
 
 end else begin
     ifft_o_result_reg <= ifft_o_result;
     ifft_ce_reg <= ifft_ce;
 
-    // The moment ifft outputs the first result, we change the status
-    if(ifft_o_sync == 1 && ifft_status == NO_OUTPUT_YET)
-        ifft_status <= OUTPUT_STARTED;
+    if(ifft_o_sync == 1) begin
+        ifft_o_sync_cnt <= ifft_o_sync_cnt + 1;
+        // The moment ifft outputs the first result, we change the status
+        if(ifft_status == NO_OUTPUT_YET)
+            ifft_status <= OUTPUT_STARTED;
+    end
 
     // IFFT output counter
     if(ifft_status == OUTPUT_STARTED && ifft_ce == 1)
-        ifft_o_cnt <= ifft_o_cnt + 1;
+        ifft_o_iq_cnt <= ifft_o_iq_cnt + 1;
 
-    // update number of packet/CP IQ samples to send
+    // update number of IQ samples to send
     if(state2 == S2_PILOT_DC_SB) begin
-        pkt_iq2send <= pkt_iq2send + 64;
-        CP_iq2send  <= CP_iq2send  + 16;
+        if(PKT_TYPE == HT) begin
+            if(nof_iq2send == 480)
+                nof_iq2send <= nof_iq2send + 240;
+            else if(nof_iq2send < 480 || S_GI == 0)
+                nof_iq2send <= nof_iq2send + 80;
+            else
+                nof_iq2send <= nof_iq2send + 72;
+        end else begin
+            nof_iq2send <= nof_iq2send + 80;
+        end
     end
 end
 
@@ -591,8 +664,8 @@ axi_fifo_bram #(.WIDTH(32), .SIZE(10)) CP_fifo(
     .space(CP_fifo_space), .occupied()
 );
 assign CP_fifo_idata  = ifft_o_result_reg;
-assign CP_fifo_ivalid = ifft_o_cnt[5:4] == 2'b11 ? ifft_ce_reg : 0;
-assign CP_fifo_oready = state3 == S3_DATA && fifo_turn == CP_FIFO ? result_iq_ready : 0;
+assign CP_fifo_ivalid = (S_GI == 1 && ifft_o_sync_cnt > 3) ? (ifft_o_iq_cnt[5:3] == 3'b111 ? ifft_ce_reg : 0) : (ifft_o_iq_cnt[5:4] == 2'b11 ? ifft_ce_reg : 0);
+assign CP_fifo_oready = (state3 == S3_L_SIG || state3 == S3_HT_SIG || state3 == S3_DATA) && fifo_turn == CP_FIFO ? result_iq_ready : 0;
 
 //////////////////////////////////////////////////////////////////////////
 // Packet IFFT output -> Axi stream fifo
@@ -609,7 +682,7 @@ axi_fifo_bram #(.WIDTH(32), .SIZE(12)) pkt_fifo(
 );
 assign pkt_fifo_idata  = ifft_o_result_reg;
 assign pkt_fifo_ivalid = ifft_status == OUTPUT_STARTED ? ifft_ce_reg : 0;
-assign pkt_fifo_oready = state3 == S3_DATA && fifo_turn == PKT_FIFO ? result_iq_ready : 0;
+assign pkt_fifo_oready = (state3 == S3_L_SIG || state3 == S3_HT_SIG || state3 == S3_DATA) && fifo_turn == PKT_FIFO ? result_iq_ready : 0;
 
 //////////////////////////////////////////////////////////////////////////
 // Count number of [pkt/CP] IQ samples sent
@@ -630,7 +703,7 @@ end else begin
                 fifo_turn <= CP_FIFO;
             pkt_iq_sent   <= pkt_iq_sent + 1;
         end else if(fifo_turn == CP_FIFO) begin
-            if(CP_iq_sent[3:0] == 4'b1111)
+            if((pkt_iq_sent < 640 && CP_iq_sent[3:0] == 4'b1111) || (S_GI == 0 && CP_iq_sent[3:0] == 4'b1111) || (S_GI == 1 && pkt_iq_sent >= 640 && CP_iq_sent[2:0] == 3'b111))
                 fifo_turn <= PKT_FIFO;
             CP_iq_sent    <= CP_iq_sent + 1;
         end
@@ -643,7 +716,7 @@ end
 always @(posedge clk)
 if (reset_int) begin
     preamble_addr <= 0;
-//    phy_tx_done_reg <= 0;
+    phy_tx_done <= 0;
     FSM3_reset <= 0;
 
     state3 <= S3_WAIT_PKT;
@@ -653,17 +726,17 @@ end else if(result_iq_ready == 1) begin
     S3_WAIT_PKT: begin
         if(phy_tx_start) begin
             preamble_addr <= 0;
-            state3 <= S3_SHORT_PREAMBLE;
+            state3 <= S3_L_STF;
         end
     end
 
-    S3_SHORT_PREAMBLE: begin
-        // short preamble form 10*16 = 160 samples
+    S3_L_STF: begin
+        // Legacy short preamble contains 10*16 = 160 samples
         if(preamble_addr < 159) begin
             preamble_addr <= preamble_addr + 1;
         end else begin
             preamble_addr <= 0;
-            state3 <= S3_LONG_PREAMBLE;
+            state3 <= S3_L_LTF;
         end
 
         // Send "OPERATION STARTED" message to upper layer
@@ -673,9 +746,47 @@ end else if(result_iq_ready == 1) begin
             phy_tx_started <= 0;
     end
 
-    S3_LONG_PREAMBLE: begin
-        // Long preamble form 320 samples
+    S3_L_LTF: begin
+        // Legacy long preamble contains 160 samples
         if(preamble_addr < 159) begin
+            preamble_addr <= preamble_addr + 1;
+
+        end else begin
+            state3 <= S3_L_SIG;
+        end
+    end
+
+    S3_L_SIG: begin
+        // Legacy SIGNAL contains 80 samples
+        if(pkt_iq_sent == 383 && CP_iq_sent == 16) begin
+            if(PKT_TYPE == LEGACY)
+                state3 <= S3_DATA;
+            else
+                state3 <= S3_HT_SIG;
+        end
+    end
+
+    S3_HT_SIG: begin
+        // HT SIGNAL contains 160 samples
+        if(pkt_iq_sent == 511 && CP_iq_sent == 48) begin
+            preamble_addr <= 0;
+            state3 <= S3_HT_STF;
+        end
+    end
+
+    S3_HT_STF: begin
+        // HT short preamble contains 5*16 = 80 samples
+        if(preamble_addr < 79) begin
+            preamble_addr <= preamble_addr + 1;
+        end else begin
+            preamble_addr <= 0;
+            state3 <= S3_HT_LTF;
+        end
+    end
+
+    S3_HT_LTF: begin
+        // HT long preamble contains 80 samples
+        if(preamble_addr < 79) begin
             preamble_addr <= preamble_addr + 1;
 
         end else begin
@@ -684,16 +795,16 @@ end else if(result_iq_ready == 1) begin
     end
 
     S3_DATA: begin
-        if(pkt_iq_sent == pkt_iq2send-2 && CP_iq_sent == CP_iq2send) begin
-            // phy_tx_done_reg <= 1;
+        if((pkt_iq_sent + {2'b00, CP_iq_sent}) == nof_iq2send-2) begin
+            phy_tx_done <= 1;
             FSM3_reset <= 1;
         end
     end
     endcase
 end
 
-assign result_i        = state3 == S3_SHORT_PREAMBLE ? short_preamble[31:16] : (state3 == S3_LONG_PREAMBLE ? long_preamble[31:16] : (fifo_turn == PKT_FIFO ? pkt_fifo_odata[31:16] : CP_fifo_odata[31:16]));
-assign result_q        = state3 == S3_SHORT_PREAMBLE ? short_preamble[15:0]  : (state3 == S3_LONG_PREAMBLE ? long_preamble[15:0]  : (fifo_turn == PKT_FIFO ? pkt_fifo_odata[15:0]  : CP_fifo_odata[15:0]));
-assign result_iq_valid = state3 == S3_SHORT_PREAMBLE || state3 == S3_LONG_PREAMBLE ? 1 : (fifo_turn == PKT_FIFO ? pkt_fifo_ovalid : CP_fifo_ovalid);
+assign result_i        = state3 == S3_L_STF ? l_stf[31:16] : (state3 == S3_L_LTF ? l_ltf[31:16] : (state3 == S3_HT_STF ? ht_stf[31:16] : (state3 == S3_HT_LTF ? ht_ltf[31:16] : (fifo_turn == PKT_FIFO ? pkt_fifo_odata[31:16] : CP_fifo_odata[31:16]))));
+assign result_q        = state3 == S3_L_STF ? l_stf[15:0]  : (state3 == S3_L_LTF ? l_ltf[15:0]  : (state3 == S3_HT_STF ? ht_stf[15:0]  : (state3 == S3_HT_LTF ? ht_ltf[15:0]  : (fifo_turn == PKT_FIFO ? pkt_fifo_odata[15:0]  : CP_fifo_odata[15:0]))));
+assign result_iq_valid = state3 == S3_L_STF || state3 == S3_L_LTF || state3 == S3_HT_STF || state3 == S3_HT_LTF ? 1 : (fifo_turn == PKT_FIFO ? pkt_fifo_ovalid : CP_fifo_ovalid);
 
 endmodule

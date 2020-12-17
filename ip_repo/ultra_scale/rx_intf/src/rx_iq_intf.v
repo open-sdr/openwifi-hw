@@ -22,6 +22,8 @@
     
     input wire [(IQ_DATA_WIDTH-1):0] bw20_i0,
     input wire [(IQ_DATA_WIDTH-1):0] bw20_q0,
+    input wire [(IQ_DATA_WIDTH-1):0] bw20_i1,
+    input wire [(IQ_DATA_WIDTH-1):0] bw20_q1,
     input wire bw20_iq_valid,
 
     input wire fifo_in_en,
@@ -29,14 +31,16 @@
     input wire bb_20M_en,
       
     // to wifi receiver
-    output wire [(IQ_DATA_WIDTH-1) : 0] rf_i,
-    output wire [(IQ_DATA_WIDTH-1) : 0] rf_q,
+    output wire [(IQ_DATA_WIDTH-1) : 0] rf_i0,
+    output wire [(IQ_DATA_WIDTH-1) : 0] rf_q0,
+    output wire [(IQ_DATA_WIDTH-1) : 0] rf_i1,
+    output wire [(IQ_DATA_WIDTH-1) : 0] rf_q1,
     output wire rf_iq_valid,
     input  wire rf_iq_valid_delay_sel,
     
     // to m_axis for loop back test
-    output wire [((2*IQ_DATA_WIDTH)-1):0] rf_iq,
-      
+    output wire [((4*IQ_DATA_WIDTH)-1):0] rf_iq,
+    
     output wire wifi_rx_iq_fifo_emptyn
 	);
     
@@ -46,7 +50,7 @@
     wire wren;
     wire bb_en;
     wire [5:0] data_count;
-    wire [((2*IQ_DATA_WIDTH)-1):0] data_selected;
+    wire [((4*IQ_DATA_WIDTH)-1):0] data_selected;
     wire wren_selected;
     reg [4:0] counter;
     reg [4:0] counter_top;
@@ -103,8 +107,10 @@
 //     end
 // // ------------end of debug----------
 
-    assign rf_i = rf_iq[    (IQ_DATA_WIDTH-1) : 0];
-    assign rf_q = rf_iq[((2*IQ_DATA_WIDTH)-1) : IQ_DATA_WIDTH];
+    assign rf_i0 = rf_iq[    (IQ_DATA_WIDTH-1) : 0];
+    assign rf_q0 = rf_iq[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)];
+    assign rf_i1 = rf_iq[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)];
+    assign rf_q1 = rf_iq[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)];
     assign bb_en = ( (counter==0)|bb_20M_en );
     assign rden = ( (bb_en&(~empty))?1'b1:1'b0 )&fifo_out_en;
     assign wren = wren_selected&fifo_in_en;
@@ -166,18 +172,65 @@
     // I/Q source selection
     assign data_selected[(IQ_DATA_WIDTH-1) : 0] = bw20_i0;
     assign data_selected[((2*IQ_DATA_WIDTH)-1) : IQ_DATA_WIDTH] = bw20_q0;
+    assign data_selected[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = bw20_i1;
+    assign data_selected[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = bw20_q1;
     assign wren_selected = bw20_iq_valid;
     
-    fifo32_1clk_dep32 fifo32_1clk_dep32_i (
-        .CLK(clk),
-        .DATAO(rf_iq),
-        .DI(data_selected),
-        .EMPTY(empty),
-        .FULL(full),
-        .RDEN(rden),
-        .RST(~rstn),
-        .WREN(wren),
-        .data_count(data_count)
+    // fifo32_1clk_dep32 fifo32_1clk_dep32_i (
+    //     .CLK(clk),
+    //     .DATAO(rf_iq),
+    //     .DI(data_selected),
+    //     .EMPTY(empty),
+    //     .FULL(full),
+    //     .RDEN(rden),
+    //     .RST(~rstn),
+    //     .WREN(wren),
+    //     .data_count(data_count)
+    // );
+
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(32),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(6),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(6)    // DECIMAL
+    )
+    xpm_fifo_sync_rx_iq_intf (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(rf_iq),
+      .empty(empty),
+      .full(full),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(data_count),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din(data_selected),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(rden),
+      .rst(~rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(wren)
     );
-    
+
 	endmodule

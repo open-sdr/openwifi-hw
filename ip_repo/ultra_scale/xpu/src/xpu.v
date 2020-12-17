@@ -1,5 +1,8 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 `timescale 1 ns / 1 ps
 
 	module xpu #
@@ -13,10 +16,10 @@
         parameter integer WIFI_TX_BRAM_DATA_WIDTH = 64,
 		parameter integer C_S00_AXI_DATA_WIDTH	= 32,
 		parameter integer C_S00_AXI_ADDR_WIDTH	= 8,
-        parameter integer TSF_TIMER_WIDTH = 64 // according to 802.11 standard
+        parameter integer TSF_TIMER_WIDTH = 64, // according to 802.11 standard
+        parameter integer WIFI_TX_BRAM_ADDR_WIDTH = 10
 	)
 	(
-        //(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
         input  wire [31:0] git_rev,
 	    // ad9361 status and ctrl
 	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
@@ -59,7 +62,8 @@
         output wire [4:0] tx_status,
         output wire [47:0] mac_addr,
         output wire retrans_in_progress,
-        output wire start_retrans,
+        `DEBUG_PREFIX output wire start_retrans,
+        `DEBUG_PREFIX output wire start_tx_ack,
         output wire tx_try_complete,
 	    input  wire tx_iq_fifo_empty,
         output wire high_tx_allowed0,
@@ -67,6 +71,7 @@
         output wire high_tx_allowed2,
         output wire high_tx_allowed3,
         output wire tx_bb_is_ongoing,
+        output wire tx_rf_is_ongoing,
         output wire ack_tx_flag,
         output wire wea,
         output wire [9:0] addra,
@@ -76,8 +81,10 @@
         input  wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] douta,//from dpram of tx_intf, for tx_control changing some bits to indicate it is the 1st pkt or retransmitted pkt
         input  wire cts_toself_bb_is_ongoing,//this should rise before the phy tx end valid of phy tx IP core to avoid tx_control waiting ack for this tx
         input  wire cts_toself_rf_is_ongoing,//just need to cover the SIFS gap between cts tx and following packet tx
+        input wire  [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr,
         output wire [3:0] band,
         output wire [7:0] channel,
+	input wire quit_retrans,
 
         // to side channel
         output wire [31:0] FC_DI,
@@ -119,7 +126,7 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg2; // tsf load value low
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg3; // tsf load value high (the rising edge of msb will trigger loading)
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg4; // 19:16 band; 15:0 channel
-    //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5; // 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5; // 
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6; //
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg7; // rssi report offset, and gpio delay ctrl for rssi calculation, and reset the fifo delay
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; // lbt rssi threshold
@@ -250,6 +257,14 @@
     wire [6:0] sifs_time;
     wire [6:0] phy_rx_start_delay_time;
 
+    wire [3:0] cw_exp_used ;
+    `DEBUG_PREFIX wire [3:0] cw_exp_dynamic;
+    wire tx_try_complete_int;
+    wire backoff_done ;
+    assign tx_try_complete = tx_try_complete_int ;
+    assign cw_exp_used = (slv_reg19[28]?cw_exp_dynamic:slv_reg19[3:0]) ;
+    
+
     assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
 
     assign erp_short_slot = slv_reg4[24];
@@ -323,7 +338,8 @@
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[0])),
 
-        .bb_rf_delay_count_top(slv_reg10[13:0]),
+        .bb_rf_delay_count_top(slv_reg10[7:0]),
+        .rf_end_ext_count_top(slv_reg10[11:8]),
         .phy_tx_started(phy_tx_started),
         .phy_tx_done(phy_tx_done),
 	    .tx_iq_fifo_empty(tx_iq_fifo_empty),
@@ -368,13 +384,15 @@
         .nav_enable(~slv_reg19[31]),
         .difs_enable(~slv_reg19[30]),
         .eifs_enable(~slv_reg19[29]),
-        .cw_min(slv_reg19[11:0]),
+        .cw_min({slv_reg19[11:4],cw_exp_used}),//.cw_min(slv_reg19[11:0]),
         //.cw_max(slv_reg19[23:12]),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .slot_time(slot_time),
         .sifs_time(sifs_time),
         .phy_rx_start_delay_time(phy_rx_start_delay_time),
+        .difs_advance(slv_reg5[7:0]),
+        .backoff_advance(slv_reg5[15:8]),
 
         .addr1_valid(addr1_valid),
         .addr1(addr1),
@@ -392,16 +410,30 @@
         .slice_en1(slice_en1),
         .slice_en2(slice_en2),
         .slice_en3(slice_en3),
+        .retrans_in_progress(retrans_in_progress),
 
         .high_tx_allowed0(high_tx_allowed_internal0),
         .high_tx_allowed1(high_tx_allowed_internal1),
         .high_tx_allowed2(high_tx_allowed_internal2),
-        .high_tx_allowed3(high_tx_allowed_internal3)
+        .high_tx_allowed3(high_tx_allowed_internal3),
+        .backoff_done(backoff_done)
+    );
+
+    cw_exp # (
+        .CW_EXP_MAX(8)
+    ) cw_exp_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn&(~slv_reg0[5])),
+        .tx_try_complete(tx_try_complete_int),
+        .cw_exp_min(slv_reg19[3:0]),
+        .start_retrans(start_retrans),
+        .cw_exp(cw_exp_dynamic)
     );
 
     tx_control # (
         .RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH),
-        .C_S00_AXIS_TDATA_WIDTH(C_S00_AXIS_TDATA_WIDTH)
+        .C_S00_AXIS_TDATA_WIDTH(C_S00_AXIS_TDATA_WIDTH),
+        .WIFI_TX_BRAM_ADDR_WIDTH(WIFI_TX_BRAM_ADDR_WIDTH)
     ) tx_control_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
@@ -433,12 +465,16 @@
         .self_mac_addr(mac_addr),
         .addr1(addr1),
         .cts_toself_bb_is_ongoing(cts_toself_bb_is_ongoing),
+        .backoff_done(backoff_done),
+        .bram_addr(bram_addr),
         
         .tx_control_state_idle(tx_control_state_idle),
         .ack_cts_is_ongoing(ack_cts_is_ongoing),
         .retrans_in_progress(retrans_in_progress),
         .start_retrans(start_retrans),
-        .tx_try_complete(tx_try_complete),
+        .quit_retrans(quit_retrans),
+        .start_tx_ack(start_tx_ack),
+        .tx_try_complete(tx_try_complete_int),
         .tx_status(tx_status),
         .ack_tx_flag(ack_tx_flag),
         .wea(wea),
@@ -600,8 +636,8 @@
 		.SLV_REG1(slv_reg1),
 		.SLV_REG2(slv_reg2),
 		.SLV_REG3(slv_reg3),
-		.SLV_REG4(slv_reg4),/*
-        .SLV_REG5(slv_reg5),
+		.SLV_REG4(slv_reg4),
+        .SLV_REG5(slv_reg5),/*
         .SLV_REG6(slv_reg6),*/
         .SLV_REG7(slv_reg7),
 		.SLV_REG8(slv_reg8),

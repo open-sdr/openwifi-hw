@@ -57,11 +57,12 @@
       input wire [7:0] pkt_rate,
 		  input wire [15:0] pkt_len,
       input wire sig_valid,
+      input wire ht_sgi,
       input wire ht_unsupport,
 	    input wire fcs_valid,
     
 	    // from wifi_rx_iq_intf loop back
-	    input wire [(2*IQ_DATA_WIDTH-1):0] rf_iq,
+	    input wire [(4*IQ_DATA_WIDTH-1):0] rf_iq,
 	    input wire rf_iq_valid,
 
       input wire tsf_pulse_1M
@@ -94,7 +95,7 @@
     reg [14:0] count_top_scale;
     reg [14:0] count_top_scale_plus1;
     
-	  assign data_to_m_axis_out =       (start_1trans_mode==3'b101)? data_to_m_axis:( (src_sel==1'b0)?data_from_acc:{32'd0,rf_iq} );
+	  assign data_to_m_axis_out =       (start_1trans_mode==3'b101)? data_to_m_axis:( (src_sel==1'b0)?data_from_acc:rf_iq );
     assign data_ready_to_m_axis_out = (start_1trans_mode==3'b101)? data_ready_to_m_axis:( (src_sel==1'b0)?data_ready_from_acc:rf_iq_valid );
 
     assign rx_pkt_sn_plus_one = (rx_state==WAIT_FILTER_FLAG && block_rx_dma_to_ps_valid==1 && block_rx_dma_to_ps==0);
@@ -199,7 +200,7 @@
             // timeout_timer_1M<=timeout_timer_1M;
             // rst_count <= rst_count;
             //data_to_m_axis <= (pad_test==1?64'hfedcba9876543210:{11'd0, pkt_rate[7],pkt_rate[3:0],pkt_len, 8'd0, gpio_status_lock_by_sig_valid, 5'd0, rssi_half_db_lock_by_sig_valid});
-            data_to_m_axis <= {11'd0, pkt_rate[7],pkt_rate[3:0],pkt_len, 8'd0, gpio_status_lock_by_sig_valid, 5'd0, rssi_half_db_lock_by_sig_valid};
+            data_to_m_axis <= {10'd0, ht_sgi, pkt_rate[7],pkt_rate[3:0],pkt_len, 8'd0, gpio_status_lock_by_sig_valid, 5'd0, rssi_half_db_lock_by_sig_valid};
             // data_ready_to_m_axis <= data_ready_to_m_axis;
             // start_m_axis <= start_m_axis;
             // monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;

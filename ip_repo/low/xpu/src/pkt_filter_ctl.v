@@ -2,6 +2,9 @@
 
 `timescale 1 ns / 1 ps
 
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 	module pkt_filter_ctl #
 	(
 	)
@@ -9,28 +12,28 @@
         input wire clk,
         input wire rstn,
 
-        input wire [13:0] filter_cfg, //we don't support BSSID filter for now
-        input wire [8:0] high_priority_discard_mask,
+        `DEBUG_PREFIX input wire [13:0] filter_cfg, //we don't support BSSID filter for now
+        `DEBUG_PREFIX input wire [8:0] high_priority_discard_mask,
 
-        output wire block_rx_dma_to_ps,
-        output reg  block_rx_dma_to_ps_valid,
-        input wire [47:0] self_mac_addr,
-        input wire [47:0] self_bssid,
+        `DEBUG_PREFIX output wire block_rx_dma_to_ps,
+        `DEBUG_PREFIX output reg  block_rx_dma_to_ps_valid,
+        `DEBUG_PREFIX input wire [47:0] self_mac_addr,
+        `DEBUG_PREFIX input wire [47:0] self_bssid,
         
 	    // Ports to phy_rx //
 	    input wire ht_unsupport,
 
-        input wire [1:0] FC_type,
-        input wire [3:0] FC_subtype,
-        input wire [1:0] FC_tofrom_ds,
-        input wire FC_DI_valid,
-        input wire [15:0] signal_len,
-        input wire sig_valid,
+        `DEBUG_PREFIX input wire [1:0] FC_type,
+        `DEBUG_PREFIX input wire [3:0] FC_subtype,
+        `DEBUG_PREFIX input wire [1:0] FC_tofrom_ds,
+        `DEBUG_PREFIX input wire FC_DI_valid,
+        `DEBUG_PREFIX input wire [15:0] signal_len,
+        `DEBUG_PREFIX input wire sig_valid,
 
-        input wire [47:0] addr1, //no matter to DS or from DS, addr1 is always used for incoming pkt addr filter
-        input wire addr1_valid,
-        input wire [47:0] addr2, //no matter to DS or from DS, addr2 is always the target addr we ACK to
-        input wire addr2_valid,
+        `DEBUG_PREFIX input wire [47:0] addr1, //no matter to DS or from DS, addr1 is always used for incoming pkt addr filter
+        `DEBUG_PREFIX input wire addr1_valid,
+        `DEBUG_PREFIX input wire [47:0] addr2, //no matter to DS or from DS, addr2 is always the target addr we ACK to
+        `DEBUG_PREFIX input wire addr2_valid,
         input wire [47:0] addr3,
         input wire addr3_valid
 	);
@@ -57,19 +60,19 @@
                        FILTER_ACTION   = 3'b100,
                        ABNORMAL_STATE  = 3'b101;
 
-    reg [2:0] filter_state;
-    reg [2:0] filter_state_pre;
+    `DEBUG_PREFIX reg [2:0] filter_state;
+    `DEBUG_PREFIX reg [2:0] filter_state_pre;
 
-    reg [47:0] filter_bssid;
-    reg filter_bssid_valid;
+    `DEBUG_PREFIX reg [47:0] filter_bssid;
+    `DEBUG_PREFIX reg filter_bssid_valid;
 
-    reg abnormal_flag;
+    `DEBUG_PREFIX reg abnormal_flag;
 
     // low 9 bits are the same as mac80211 definition. [9] - unicast, [10] - broadcast ALL 0xFF, [11] - broadcast ALL 0x00, [12] monitor ALL!
-    reg [13:0] allow_rx_dma_to_ps_reg;
-    reg [8:0] high_priority_discard_reg;
-    wire block_rx_dma_to_ps_tmp;
-    wire high_priority_discard_flag;
+    `DEBUG_PREFIX reg [13:0] allow_rx_dma_to_ps_reg;
+    `DEBUG_PREFIX reg [8:0] high_priority_discard_reg;
+    `DEBUG_PREFIX wire block_rx_dma_to_ps_tmp;
+    `DEBUG_PREFIX wire high_priority_discard_flag;
 
     assign high_priority_discard_flag =((high_priority_discard_mask[0]&high_priority_discard_reg[0])|
                                         (high_priority_discard_mask[1]&high_priority_discard_reg[1])|

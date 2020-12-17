@@ -46,6 +46,7 @@
 	    input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_q_from_acc,
 	    input wire rf_iq_valid_from_acc,
 	    output wire [(WIFI_TX_BRAM_DATA_WIDTH-1) : 0] data_to_acc,
+        output wire  [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr_to_xpu,
         input wire tx_start_from_acc,
         input wire tx_end_from_acc,
     
@@ -78,11 +79,13 @@
         input wire tx_try_complete,
         input wire retrans_in_progress,
         input wire start_retrans,
+        input wire start_tx_ack,
         output wire cts_toself_bb_is_ongoing,
         output wire cts_toself_rf_is_ongoing,
         input wire tsf_pulse_1M,
         input wire [3:0] band,
         input wire [7:0] channel,
+        output wire quit_retrans,
 
 		// Ports of Axi Slave Bus Interface S00_AXI
 		input wire  s00_axi_aclk,
@@ -205,6 +208,7 @@
 
     wire [13:0] send_cts_toself_wait_sifs_top;
 
+    assign bram_addr_to_xpu = bram_addr;
     assign send_cts_toself_wait_sifs_top = (band==1?slv_reg6[13:0]:slv_reg6[29:16]);
 
 	assign phy_tx_auto_start_mode = slv_reg2[3];
@@ -435,6 +439,7 @@
         .tx_try_complete(tx_try_complete),
         .retrans_in_progress(retrans_in_progress),
         .start_retrans(start_retrans),
+        .start_tx_ack(start_tx_ack),
         .high_tx_allowed0(high_tx_allowed0),
         .high_tx_allowed1(high_tx_allowed1),
         .high_tx_allowed2(high_tx_allowed2),
@@ -446,6 +451,7 @@
         .dina_from_xpu(dina_from_xpu),
         .tx_pkt_need_ack(tx_pkt_need_ack),
         .tx_pkt_retrans_limit(tx_pkt_retrans_limit),
+        .quit_retrans(quit_retrans),
         .tx_pkt_sn(tx_pkt_sn),
         // .tx_pkt_num_dma_byte(tx_pkt_num_dma_byte),
         .douta(douta),

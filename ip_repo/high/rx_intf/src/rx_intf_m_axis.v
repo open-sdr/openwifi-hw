@@ -165,16 +165,60 @@
 	      end                                                                        
 	end                                                                              
 
-    fifo64_1clk fifo64_1clk_i (
-        .CLK(M_AXIS_ACLK),
-        .DATAO(M_AXIS_TDATA),
-        .DI(DATA_FROM_ACC),
-        .EMPTY(EMPTY),
-        .FULL(FULL),
-        .RDEN(tx_en),
-        .RST(!M_AXIS_ARESETN),
-        .WREN(ACC_DATA_READY),
-        .data_count(data_count)
-    );
+    // fifo64_1clk fifo64_1clk_i (
+    //     .CLK(M_AXIS_ACLK),
+    //     .DATAO(M_AXIS_TDATA),
+    //     .DI(DATA_FROM_ACC),
+    //     .EMPTY(EMPTY),
+    //     .FULL(FULL),
+    //     .RDEN(tx_en),
+    //     .RST(!M_AXIS_ARESETN),
+    //     .WREN(ACC_DATA_READY),
+    //     .data_count(data_count)
+    // );
+
+	xpm_fifo_sync #(
+		.DOUT_RESET_VALUE("0"),    // String
+		.ECC_MODE("no_ecc"),       // String
+		.FIFO_MEMORY_TYPE("auto"), // String
+		.FIFO_READ_LATENCY(0),     // DECIMAL
+		.FIFO_WRITE_DEPTH(MAX_NUM_DMA_SYMBOL),   // DECIMAL
+		.FULL_RESET_VALUE(0),      // DECIMAL
+		.PROG_EMPTY_THRESH(10),    // DECIMAL
+		.PROG_FULL_THRESH(10),     // DECIMAL
+		.RD_DATA_COUNT_WIDTH(bit_num),   // DECIMAL
+		.READ_DATA_WIDTH(C_M_AXIS_TDATA_WIDTH),      // DECIMAL
+		.READ_MODE("fwft"),         // String
+		.USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+		.WAKEUP_TIME(0),           // DECIMAL
+		.WRITE_DATA_WIDTH(C_M_AXIS_TDATA_WIDTH),     // DECIMAL
+		.WR_DATA_COUNT_WIDTH(bit_num)    // DECIMAL
+	) xpm_fifo_sync_rx_intf_m_axis (
+		.almost_empty(),
+		.almost_full(),
+		.data_valid(),
+		.dbiterr(),
+		.dout(M_AXIS_TDATA),
+		.empty(EMPTY),
+		.full(FULL),
+		.overflow(),
+		.prog_empty(),
+		.prog_full(),
+		.rd_data_count(data_count),
+		.rd_rst_busy(),
+		.sbiterr(),
+		.underflow(),
+		.wr_ack(),
+		.wr_data_count(),
+		.wr_rst_busy(),
+		.din(DATA_FROM_ACC),
+		.injectdbiterr(),
+		.injectsbiterr(),
+		.rd_en(tx_en),
+		.rst(!M_AXIS_ARESETN),
+		.sleep(),
+		.wr_clk(M_AXIS_ACLK),
+		.wr_en(ACC_DATA_READY)
+	);
 
 	endmodule
