@@ -95,11 +95,11 @@
   reg [63:0] douta_reg;
   `DEBUG_PREFIX reg [1:0] tx_dpram_op_counter;
 
-  `DEBUG_PREFIX wire [2:0] num_data_ofdm_symbol;
-  reg  [2:0] num_data_ofdm_symbol_reg;
+  // `DEBUG_PREFIX wire [2:0] num_data_ofdm_symbol;
+  // reg  [2:0] num_data_ofdm_symbol_reg;
   reg [14:0] num_data_ofdm_symbol_reg_tmp;
-  `DEBUG_PREFIX wire [2:0] ackcts_n_sym;
-  reg  [2:0] ackcts_n_sym_reg;
+  // `DEBUG_PREFIX wire [2:0] ackcts_n_sym;
+  // reg  [2:0] ackcts_n_sym_reg;
   `DEBUG_PREFIX reg  [7:0] ackcts_time;
   reg  [6:0] sifs_time_reg;
 
@@ -135,19 +135,21 @@
   assign ackcts_signal_parity = (~(^ackcts_rate));//because the cts and ack pkt length field is always 14: 1110 that always has 3 1s
   assign ackcts_signal_len = 14;
 
-  n_sym_len14_pkt # (
-  ) n_sym_len14_pkt_i0 (
-    .ht_flag(signal_rate[7]),
-    .rate_mcs(signal_rate[3:0]),
-    .n_sym(num_data_ofdm_symbol)
-  );
+  // // this is not needed. we should assume the peer always send us ack @ 6Mbps
+  // n_sym_len14_pkt # (
+  // ) n_sym_len14_pkt_i0 (
+  //   .ht_flag(signal_rate[7]),
+  //   .rate_mcs(signal_rate[3:0]),
+  //   .n_sym(num_data_ofdm_symbol)
+  // );
 
-  n_sym_len14_pkt # (
-  ) n_sym_len14_pkt_i1 (
-    .ht_flag(0),
-    .rate_mcs(ackcts_rate),
-    .n_sym(ackcts_n_sym)
-  );
+  // // this is not needed. we should assume the peer always send us ack @ 6Mbps
+  // n_sym_len14_pkt # (
+  // ) n_sym_len14_pkt_i1 (
+  //   .ht_flag(0),
+  //   .rate_mcs(ackcts_rate),
+  //   .n_sym(ackcts_n_sym)
+  // );
 
 	always @(posedge clk)                                             
     begin
@@ -187,9 +189,10 @@
           is_pspoll_received<=0;
           is_rts_received<=0;
 
-          num_data_ofdm_symbol_reg <= 0;
-          num_data_ofdm_symbol_reg_tmp <= 0;
-          ackcts_n_sym_reg <= 0;
+          // num_data_ofdm_symbol_reg <= 0;
+          // num_data_ofdm_symbol_reg_tmp <= 0;
+          num_data_ofdm_symbol_reg_tmp <= (({3'd6,2'd0})*`NUM_CLK_PER_US); // ack/cts use 6 ofdm symbols at 6Mbps
+          // ackcts_n_sym_reg <= 0;
 
           send_ack_wait_top_scale <=0;
           recv_ack_sig_valid_timeout_top_scale <= 0;
@@ -197,14 +200,18 @@
         end
       else begin
         // tx_control_state_priv<=tx_control_state;
-        ackcts_rate <= (cts_torts_rate[4]?signal_rate[3:0]:cts_torts_rate[3:0]);
-        ackcts_time <= preamble_sig_time + ofdm_symbol_time*({4'd0,ackcts_n_sym_reg});
+        
+        //ackcts_rate <= (cts_torts_rate[4]?signal_rate[3:0]:cts_torts_rate[3:0]); // this is not needed. we should assume the peer always send us ack @ 6Mbps
+        ackcts_rate <= 4'b1011; //6Mbps.
+
+        // ackcts_time <= preamble_sig_time + ofdm_symbol_time*({4'd0,ackcts_n_sym_reg}); 
+        ackcts_time <= preamble_sig_time + ofdm_symbol_time*({4'd0,3'd6}); // ack/cts use 6 ofdm symbols at 6Mbps
         sifs_time_reg   <= sifs_time;
         tx_status <= {tx_fail_lock, num_retrans_lock};
 
-        num_data_ofdm_symbol_reg <= num_data_ofdm_symbol;
-        num_data_ofdm_symbol_reg_tmp <= (({num_data_ofdm_symbol_reg,2'd0})*`NUM_CLK_PER_US);
-        ackcts_n_sym_reg <= ackcts_n_sym;
+        // num_data_ofdm_symbol_reg <= num_data_ofdm_symbol;
+        // num_data_ofdm_symbol_reg_tmp <= (({num_data_ofdm_symbol_reg,2'd0})*`NUM_CLK_PER_US);
+        // ackcts_n_sym_reg <= ackcts_n_sym;
 
         send_ack_wait_top_scale <= (send_ack_wait_top*`COUNT_SCALE);
         recv_ack_sig_valid_timeout_top_scale <= (recv_ack_sig_valid_timeout_top*`COUNT_SCALE);
@@ -294,12 +301,12 @@
             //time, in microseconds, required to transmit the ACK frame and its SIFS interval.
             //assume we use 6M for ack(14byte): n_ofdm=6=(22+14*8)/24; time_us=20(preamble+SIGNAL)+6*4=44;
               //duration_new<= duration_extra+(duration_received-44-sifs_time);//SIFS 2.4GHz 10us; 5GHz 16us
-              duration_new<= duration_extra+(duration_received-ackcts_time-sifs_time_reg);
+              duration_new<= duration_extra+(duration_received==0?0:(duration_received-ackcts_time-sifs_time_reg));//avoid overflow corner case
               FC_type_new<=2'b01;
               FC_subtype_new<=4'b1101;
             end else if (is_rts_received) begin
               //duration_new<= duration_extra+(duration_received-44-sifs_time);//SIFS 2.4GHz 10us; 5GHz 16us
-              duration_new<= duration_extra+(duration_received-ackcts_time-sifs_time_reg);
+              duration_new<= duration_extra+(duration_received==0?0:(duration_received-ackcts_time-sifs_time_reg));
               FC_type_new<=2'b01;
               FC_subtype_new<=4'b1100;
             end

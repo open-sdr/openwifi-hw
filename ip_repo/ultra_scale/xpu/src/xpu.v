@@ -1,5 +1,8 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 `timescale 1 ns / 1 ps
 
 	module xpu #
@@ -17,7 +20,6 @@
         parameter integer WIFI_TX_BRAM_ADDR_WIDTH = 10
 	)
 	(
-        //(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
         input  wire [31:0] git_rev,
 	    // ad9361 status and ctrl
 	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
@@ -60,10 +62,8 @@
         output wire [4:0] tx_status,
         output wire [47:0] mac_addr,
         output wire retrans_in_progress,
-        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-        output wire start_retrans,
-        (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-        output wire start_tx_ack,
+        `DEBUG_PREFIX output wire start_retrans,
+        `DEBUG_PREFIX output wire start_tx_ack,
         output wire tx_try_complete,
 	    input  wire tx_iq_fifo_empty,
         output wire high_tx_allowed0,
@@ -258,8 +258,7 @@
     wire [6:0] phy_rx_start_delay_time;
 
     wire [3:0] cw_exp_used ;
-    (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-    wire [3:0] cw_exp_dynamic;
+    `DEBUG_PREFIX wire [3:0] cw_exp_dynamic;
     wire tx_try_complete_int;
     wire backoff_done ;
     assign tx_try_complete = tx_try_complete_int ;
