@@ -2,7 +2,7 @@
 `include "clock_speed.v"
 `include "board_def.v"
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
 `define DEBUG_PREFIX
 
 `timescale 1 ns / 1 ps

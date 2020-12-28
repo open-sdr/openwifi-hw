@@ -385,7 +385,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>746b7891</spirit:value>
+            <spirit:value>40517576</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -410,7 +410,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>746b7891</spirit:value>
+            <spirit:value>40517576</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -928,6 +928,23 @@
         <spirit:name>tx_try_complete</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>cw</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">3</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>wire</spirit:typeName>
@@ -1686,7 +1703,7 @@
       <spirit:file>
         <spirit:name>src/tx_intf.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_7393188b</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_d9cb136f</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1948,21 +1965,21 @@
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-11-04T19:54:50Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2020-12-21T13:30:43Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@438e8c3_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3bdd093d_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@14219003_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@4901fd42_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f385b19_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@33daa14d_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4a854c2d_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c012d0e_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4cb22352_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c6c9a1f_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="49bbe3ef"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="871c369d"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="c088622a"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="dadd470a"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="657b9baa"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="c4c919ea"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="f899969d"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="71c6d547"/>
     </xilinx:packagingInfo>

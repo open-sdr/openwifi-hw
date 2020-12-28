@@ -4,7 +4,7 @@
 `include "clock_speed.v"
 `include "board_def.v"
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
 `define DEBUG_PREFIX
 
 	module tx_on_detection #
