@@ -363,6 +363,7 @@ proc create_hier_cell_openwifi_ip { parentCell nameHier } {
   connect_bd_net -net xpu_0_tsf_runtime_val [get_bd_pins rx_intf_0/tsf_runtime_val] [get_bd_pins xpu_0/tsf_runtime_val]
   connect_bd_net -net xpu_0_tx_bb_is_ongoing [get_bd_pins tx_intf_0/tx_bb_is_ongoing] [get_bd_pins xpu_0/tx_bb_is_ongoing]
   connect_bd_net -net xpu_0_tx_try_complete [get_bd_pins tx_intf_0/tx_try_complete] [get_bd_pins xpu_0/tx_try_complete]
+  connect_bd_net -net xpu_0_cw [get_bd_pins tx_intf_0/cw] [get_bd_pins xpu_0/cw]
   connect_bd_net -net xpu_0_wea [get_bd_pins tx_intf_0/wea_from_xpu] [get_bd_pins xpu_0/wea]
 
   # Restore current instance

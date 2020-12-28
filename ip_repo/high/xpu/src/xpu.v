@@ -85,7 +85,7 @@
         output wire [3:0] band,
         output wire [7:0] channel,
 	input wire quit_retrans,
-
+	output wire [3:0] cw,
         // to side channel
         output wire [31:0] FC_DI,
     	output wire FC_DI_valid,
@@ -263,7 +263,7 @@
     wire backoff_done ;
     assign tx_try_complete = tx_try_complete_int ;
     assign cw_exp_used = (slv_reg19[28]?cw_exp_dynamic:slv_reg19[3:0]) ;
-    
+    assign cw = cw_exp_used ;
 
     assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
 

@@ -77,6 +77,7 @@
         output wire tx_pkt_need_ack,
         output wire [3:0] tx_pkt_retrans_limit,
         input wire tx_try_complete,
+        input wire [3:0] cw,
         input wire retrans_in_progress,
         input wire start_retrans,
         input wire start_tx_ack,
@@ -348,6 +349,7 @@
         .axi_araddr_core(axi_araddr_core),
 
         .tx_try_complete(tx_try_complete),
+        .cw(cw),
         .tx_status(tx_status),
         .linux_prio(linux_prio),
         .tx_queue_idx(tx_queue_idx),
@@ -357,7 +359,7 @@
         // .s_axis_fifo_data_count2(s_axis_fifo_data_count2),
         // .s_axis_fifo_data_count3(s_axis_fifo_data_count3),
         
-        .tx_status_out(slv_reg22[18:0])
+        .tx_status_out(slv_reg22[22:0])
     );
 
 // Instantiation of Axi Bus Interface S00_AXIS
