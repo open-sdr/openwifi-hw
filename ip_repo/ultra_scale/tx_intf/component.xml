@@ -385,7 +385,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>7d4104fc</spirit:value>
+            <spirit:value>80b79e31</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -410,7 +410,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>7d4104fc</spirit:value>
+            <spirit:value>80b79e31</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -938,6 +938,23 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
+        <spirit:name>num_slot_random</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">9</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
         <spirit:name>cw</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
@@ -982,6 +999,19 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>start_tx_ack</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>tx_control_state_idle</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -1070,6 +1100,36 @@
         <spirit:name>quit_retrans</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>high_trigger</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>tx_queue_idx_to_xpu</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>wire</spirit:typeName>
@@ -1599,13 +1659,13 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/clock_speed.v</spirit:name>
+        <spirit:name>src/board_def.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/board_def.v</spirit:name>
+        <spirit:name>src/clock_speed.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
@@ -1703,7 +1763,7 @@
       <spirit:file>
         <spirit:name>src/tx_intf.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_d9cb136f</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_7fb3d102</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1740,13 +1800,13 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/clock_speed.v</spirit:name>
+        <spirit:name>src/board_def.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/board_def.v</spirit:name>
+        <spirit:name>src/clock_speed.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
@@ -1964,22 +2024,24 @@
         <xilinx:xpmLibrary>XPM_FIFO</xilinx:xpmLibrary>
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
-      <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-12-18T15:57:56Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>3</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2021-01-14T11:51:22Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@737c6afb_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@66f93bc4_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@f9fbd4e_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@56680b30_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@1bae04d6_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2ff470bb_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6c8b19ac_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2f969d6d_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e86418b_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@21c669_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1282506_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3f3c245a_ARCHIVE_LOCATION">/media/lwei/SSDLinux/GitFolder/openwifi_collision/openwifi-hw/ip_repo/ultra_scale/tx_intf</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="49bbe3ef"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="871c369d"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="0378b290"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="c4c919ea"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="1643dad8"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="50f5f3eb"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="f899969d"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="71c6d547"/>
     </xilinx:packagingInfo>

@@ -77,16 +77,20 @@
         output wire tx_pkt_need_ack,
         output wire [3:0] tx_pkt_retrans_limit,
         input wire tx_try_complete,
+        input wire [9:0] num_slot_random,
         input wire [3:0] cw,
         input wire retrans_in_progress,
         input wire start_retrans,
         input wire start_tx_ack,
+        input wire tx_control_state_idle,
         output wire cts_toself_bb_is_ongoing,
         output wire cts_toself_rf_is_ongoing,
         input wire tsf_pulse_1M,
         input wire [3:0] band,
         input wire [7:0] channel,
         output wire quit_retrans,
+        output wire high_trigger,
+        output wire [1:0] tx_queue_idx_to_xpu,
 
 		// Ports of Axi Slave Bus Interface S00_AXI
 		input wire  s00_axi_aclk,
@@ -232,6 +236,8 @@
     assign slv_reg24[14:8] = num_dma_symbol_fifo_data_count1;
     assign slv_reg24[22:16] = num_dma_symbol_fifo_data_count2;
     assign slv_reg24[30:24] = num_dma_symbol_fifo_data_count3;
+
+    assign tx_queue_idx_to_xpu = tx_queue_idx ;
     
     dac_intf # (
         .IQ_DATA_WIDTH(IQ_DATA_WIDTH),
@@ -349,6 +355,7 @@
         .axi_araddr_core(axi_araddr_core),
 
         .tx_try_complete(tx_try_complete),
+        .num_slot_random(num_slot_random),
         .cw(cw),
         .tx_status(tx_status),
         .linux_prio(linux_prio),
@@ -359,7 +366,7 @@
         // .s_axis_fifo_data_count2(s_axis_fifo_data_count2),
         // .s_axis_fifo_data_count3(s_axis_fifo_data_count3),
         
-        .tx_status_out(slv_reg22[22:0])
+        .tx_status_out(slv_reg22)
     );
 
 // Instantiation of Axi Bus Interface S00_AXIS
@@ -454,6 +461,8 @@
         .tx_pkt_need_ack(tx_pkt_need_ack),
         .tx_pkt_retrans_limit(tx_pkt_retrans_limit),
         .quit_retrans(quit_retrans),
+        .high_trigger(high_trigger),
+        .tx_control_state_idle(tx_control_state_idle),
         .tx_pkt_sn(tx_pkt_sn),
         // .tx_pkt_num_dma_byte(tx_pkt_num_dma_byte),
         .douta(douta),

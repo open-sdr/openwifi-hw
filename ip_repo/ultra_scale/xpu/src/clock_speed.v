@@ -1,1 +1,1 @@
-`define NUM_CLK_PER_US 250
+`define NUM_CLK_PER_US 100

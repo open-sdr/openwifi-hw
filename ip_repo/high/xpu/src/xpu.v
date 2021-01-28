@@ -1,7 +1,7 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-`define DEBUG_PREFIX
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+//`define DEBUG_PREFIX
 
 `timescale 1 ns / 1 ps
 
@@ -84,8 +84,12 @@
         input wire  [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr,
         output wire [3:0] band,
         output wire [7:0] channel,
-	input wire quit_retrans,
-	output wire [3:0] cw,
+	    input wire quit_retrans,
+	    output wire tx_control_state_idle,
+        output wire [9:0] num_slot_random,
+        output wire [3:0] cw,
+        input wire high_trigger,
+        input wire [1:0] tx_queue_idx,
         // to side channel
         output wire [31:0] FC_DI,
     	output wire FC_DI_valid,
@@ -129,7 +133,7 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5; // 
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6; //
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg7; // rssi report offset, and gpio delay ctrl for rssi calculation, and reset the fifo delay
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; // lbt rssi threshold
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; // lbt rssi threshold [11:0] and cw setting for queue 3 [31:24] and the duration after fcs_strobe to force ch idle
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg9; // xIFS and slot time override for debug
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; // tx bb RF delay in number of clock
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg11; // max number of tx re-transmission
@@ -193,8 +197,9 @@
 	wire high_tx_allowed_internal2;
 	wire high_tx_allowed_internal3;
 
-    wire tx_control_state_idle;
+    
     wire ch_idle;
+    wire retrans_trigger;
 
     // wire [31:0] FC_DI;
     // wire FC_DI_valid;
@@ -258,13 +263,14 @@
     wire [6:0] phy_rx_start_delay_time;
 
     wire [3:0] cw_exp_used ;
-    `DEBUG_PREFIX wire [3:0] cw_exp_dynamic;
+    wire [3:0] cw_exp_dynamic;
     wire tx_try_complete_int;
     wire backoff_done ;
+    wire increase_cw;
+    wire cw_used ;
     assign tx_try_complete = tx_try_complete_int ;
     assign cw_exp_used = (slv_reg19[28]?cw_exp_dynamic:slv_reg19[3:0]) ;
-    assign cw = cw_exp_used ;
-
+    assign cw = (cw_used?cw_exp_used:0) ; 
     assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
 
     assign erp_short_slot = slv_reg4[24];
@@ -354,6 +360,9 @@
     cca # (
         .RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH)
     ) cca_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn&(~slv_reg0[6])),
+
         .rssi_half_db(rssi_half_db),
         .rssi_half_db_th(slv_reg8[(RSSI_HALF_DB_WIDTH-1):0]),
 
@@ -361,7 +370,8 @@
         .tx_rf_is_ongoing(tx_rf_is_ongoing),
         .cts_toself_rf_is_ongoing(cts_toself_rf_is_ongoing),
         .ack_cts_is_ongoing(ack_cts_is_ongoing),
-        .tx_control_state_idle(tx_control_state_idle),
+        .fcs_in_strobe(fcs_in_strobe),
+        .wait_after_decode_top(slv_reg8[23:16]),
 
         .ch_idle(ch_idle)
     );
@@ -410,23 +420,30 @@
         .slice_en1(slice_en1),
         .slice_en2(slice_en2),
         .slice_en3(slice_en3),
-        .retrans_in_progress(retrans_in_progress),
+        .retrans_trigger(retrans_trigger),
+        .quit_retrans(quit_retrans),
+        .high_trigger(high_trigger),
+        .tx_bb_is_ongoing(tx_bb_is_ongoing),
+        .ack_tx_flag(ack_tx_flag),
 
         .high_tx_allowed0(high_tx_allowed_internal0),
         .high_tx_allowed1(high_tx_allowed_internal1),
         .high_tx_allowed2(high_tx_allowed_internal2),
         .high_tx_allowed3(high_tx_allowed_internal3),
+        .num_slot_random_log_dl(num_slot_random),
+        .increase_cw(increase_cw),
+        .cw_used_dl(cw_used),
         .backoff_done(backoff_done)
     );
 
     cw_exp # (
-        .CW_EXP_MAX(8)
     ) cw_exp_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
         .tx_try_complete(tx_try_complete_int),
-        .cw_exp_min(slv_reg19[3:0]),
-        .start_retrans(start_retrans),
+        .cw_combined({slv_reg8[31:24],slv_reg19[23:0]}), // use high bits of slv_reg8, low 12 bits are lbt thr
+        .tx_queue_idx(tx_queue_idx),
+        .start_retrans(increase_cw),
         .cw_exp(cw_exp_dynamic)
     );
 
@@ -454,6 +471,7 @@
         .signal_rate(pkt_rate),
         .signal_len(pkt_len),
         .fcs_valid(fcs_valid),
+        .fcs_in_strobe(fcs_in_strobe),
         .FC_type(FC_type),
         .FC_subtype(FC_subtype),
         .FC_more_frag(FC_more_frag),
@@ -475,6 +493,7 @@
         .quit_retrans(quit_retrans),
         .start_tx_ack(start_tx_ack),
         .tx_try_complete(tx_try_complete_int),
+        .retrans_trigger(retrans_trigger),
         .tx_status(tx_status),
         .ack_tx_flag(ack_tx_flag),
         .wea(wea),
