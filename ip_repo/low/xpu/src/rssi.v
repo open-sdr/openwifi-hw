@@ -1,5 +1,5 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
-
+`define DEBUG_PREFIX 
 `timescale 1 ns / 1 ps
 
 	module rssi #
@@ -21,7 +21,7 @@
         input wire pkt_header_valid_strobe,
 
         input wire [(DELAY_CTL_WIDTH-1):0]    delay_ctl,
-        input wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_offset,
+        `DEBUG_PREFIX input wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_offset,
 
 	    // Ports to receive IQ from DDC
 	    input wire signed [(IQ_DATA_WIDTH-1):0] ddc_i,
@@ -29,17 +29,17 @@
         input wire ddc_iq_valid,
 
         // result outputs
-        output wire signed [(IQ_RSSI_HALF_DB_WIDTH-1):0] iq_rssi_half_db,
+        `DEBUG_PREFIX output wire signed [(IQ_RSSI_HALF_DB_WIDTH-1):0] iq_rssi_half_db,
         output wire iq_rssi_half_db_valid,
         output reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_lock_by_sig_valid,
         output reg [(GPIO_STATUS_WIDTH-1):0] gpio_status_lock_by_sig_valid,
-        output reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
+        `DEBUG_PREFIX output reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
         output reg rssi_half_db_valid
 	);
 
     wire signed [(IQ_DATA_WIDTH-1):0] iq_rssi;
     wire iq_rssi_valid;
-    wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_delay;
+   `DEBUG_PREFIX wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_delay;
     wire gpio_status_delay_valid;
 
     iq_abs_avg # (
