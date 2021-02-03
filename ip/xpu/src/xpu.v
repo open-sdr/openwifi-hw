@@ -1,7 +1,7 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-`define DEBUG_PREFIX
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+//`define DEBUG_PREFIX
 
 `timescale 1 ns / 1 ps
 

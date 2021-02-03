@@ -22,7 +22,7 @@
         input wire fcs_in_strobe,
         input wire [7:0] wait_after_decode_top,
 
-        output wire ch_idle
+        `DEBUG_PREFIX output wire ch_idle
 	);
 
   wire ch_idle_rssi;
