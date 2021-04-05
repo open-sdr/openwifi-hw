@@ -7,17 +7,17 @@ This repository includes Hardware/FPGA design. To be used together with [openwif
 
 Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opensource license, please contact Filip.Louagie@UGent.be. Openwifi project also leverages some 3rd party modules. It is user's duty to check and follow licenses of those modules according to the purpose/usage. You can find [an example explanation from Analog Devices](https://github.com/analogdevicesinc/hdl/blob/master/LICENSE) for this compound license conditions. [[How to contribute]](https://github.com/open-sdr/openwifi-hw/blob/master/CONTRIBUTING.md).
 
-**Pre-compiled FPGA files:** boards/board_name/sdk/ has FPGA bit file, ila .ltx file and some other files might be needed.
+**Pre-compiled FPGA files:** boards/board_name/sdk/ has FPGA bit file, ila .ltx file (if ila inserted) and some other files might be needed.
 
 **board_name** options:
 - **zc706_fmcs2** (Xilinx ZC706 dev board + FMCOMMS2/3/4)
-- **zed_fmcs2** (Xilinx zed board + FMCOMMS2/3/4)
+- **zed_fmcs2** (Xilinx zed board + FMCOMMS2/3/4) -- Vivado license **NOT** needed
 - **adrv9361z7035** (ADRV9361-Z7035 + ADRV1CRR-BOB/FMC)
-- **adrv9364z7020** (ADRV9364-Z7020 + ADRV1CRR-BOB)
-- **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4)
+- **adrv9364z7020** (ADRV9364-Z7020 + ADRV1CRR-BOB) -- Vivado license **NOT** needed
+- **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4) -- Vivado license **NOT** needed
 - **zcu102_fmcs2** (Xilinx ZCU102 dev board + FMCOMMS2/3/4)
 
-**Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2018.3 is needed. Example instructions are verified on Ubuntu 18)
+**Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2018.3 is needed. Example instructions are verified on Ubuntu 18/20)
 
 * In Linux, prepare Analgo Devices HDL library (only run once):
 
@@ -56,27 +56,27 @@ git push
 ```
 **Modify IP cores:**
 
-IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure. For IP project created by **_high.tcl** or **_low.tcl** or **_ultra_scale.tcl**, exporting target directory should be **ip_repo/high/** or **ip_repo/low/** or **ip_repo/ultra_scale/** (for ZynqMP SoC, like zcu102 board). Other IP should be exported to **ip_repo/common/**.
+IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure. For IP project created by **_high.tcl** or **_low.tcl** or **_ultra_scale.tcl**, exporting target directory should be **ip_repo/high/** or **ip_repo/low/** or **ip_repo/ultra_scale/** (for ZynqMP SoC, like zcu102 board). Other IP should be exported to **ip_repo/common/** (except that the side channel module has small/big postfix).
 
-* ***IP cores designed by HLS (mixer_ddc and mixer_duc). mixer_ddc as example:***
+* ***IP cores designed by HLS (mixer_duc):***
 
 ```
-Create a project "mixer_ddc" with file in ip/mixer_ddc/src directory in Vivado HLS.
-During creating, set mixer_ddc as top, select zc706 board as "Part" and set Clock Period 5 (means 200MHz).
+Create a project "mixer_duc" with file in ip/mixer_duc/src directory in Vivado HLS.
+During creating, set mixer_duc as top, select zc706 board as "Part" and set Clock Period 5 (means 200MHz).
 Run C synthesis.
 Click solution1, Solution --> Export RTL
-Copy project_directory/solution1/impl/ip to ip_repo/common/mixer_ddc
+Copy project_directory/solution1/impl/ip to ip_repo/common/mixer_duc
 ```
-* ***IP cores designed by block-diagram (ddc_bank_core, fifo32_1clk, etc). fifo32_1clk as example:***
+* ***IP cores designed by block-diagram (duc_bank_core_low, duc_bank_core_high, etc). duc_bank_core_high as example:***
 
 ```
 Open Vivado, then in Vivado Tcl Console:
-cd ip/fifo32_1clk
-source ./fifo32_1clk.tcl
+cd ip/duc_bank_core_high
+source ./duc_bank_core_high.tcl
 In Vivado:
 Open Block Design
 Tools --> Report --> Report IP Status
-Tools --> Create and Package New IP... --> Next --> Package a block design from ... --> Next --> set "ip_repo/common/fifo32_1clk" as target directory --> Next --> OK -- Finish
+Tools --> Create and Package New IP... --> Next --> Package a block design from ... --> Next --> set "ip_repo/high/duc_bank_core" as target directory --> Next --> OK -- Finish
 In new opened temporary project: Review and Package --> Package IP --> Yes
 ```
 * ***IP cores designed by verilog (rx_intf, xpu, etc). xpu as example:***
