@@ -147,13 +147,11 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- "[file normalize "$origin_dir/../../ip_repo/common/fifo8_1clk_dep64/src/fifo8_1clk_dep64_fifo_generator_0_0/fifo8_1clk_dep64_fifo_generator_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/high/mv_avg32/src/mv_avg32_fir_compiler_0_0/mv_avg32_fir_compiler_0_0.xci"]"\
  "[file normalize "$origin_dir/../../ip_repo/high/mv_avg128/src/mv_avg128_fir_compiler_0_0/mv_avg128_fir_compiler_0_0.xci"]"\
  "[file normalize "$origin_dir/src/cca.v"]"\
  "[file normalize "$origin_dir/src/csma_ca.v"]"\
  "[file normalize "$origin_dir/src/dc_rm.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/common/fifo8_1clk_dep64/src/fifo8_1clk_dep64.v"]"\
  "[file normalize "$origin_dir/src/fifo8_delay64.v"]"\
  "[file normalize "$origin_dir/src/iq_abs_avg.v"]"\
  "[file normalize "$origin_dir/src/iq_rssi_to_db.v"]"\
@@ -174,21 +172,6 @@ set files [list \
 add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/../../ip_repo/common/fifo8_1clk_dep64/src/fifo8_1clk_dep64_fifo_generator_0_0/fifo8_1clk_dep64_fifo_generator_0_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-}
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
 set file "$origin_dir/../../ip_repo/high/mv_avg32/src/mv_avg32_fir_compiler_0_0/mv_avg32_fir_compiler_0_0.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -246,19 +229,6 @@ set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/dc_rm.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog" -objects $file_obj
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
-set file "$origin_dir/../../ip_repo/common/fifo8_1clk_dep64/src/fifo8_1clk_dep64.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
