@@ -167,7 +167,6 @@
 	reg  last_ofdm_symbol_flag;
 	reg  [19:0] num_bit_decoded;
 	wire [19:0] num_bit_target;
-	//`DEBUG_PREFIX 
 	reg  [1:0] ofdm_rx_state;
 
 	reg csi_valid_reg;

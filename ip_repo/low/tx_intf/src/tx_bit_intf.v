@@ -4,8 +4,8 @@
 
 `timescale 1 ns / 1 ps
 
-`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-// `define DEBUG_PREFIX
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
 
 `define WAIT_FOR_TX_IQ_FILL_COUNT_TOP (20*`NUM_CLK_PER_US)
 
@@ -516,55 +516,227 @@
     end
     
     //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
-    fifo64_1clk_dep64 fifo64_1clk_dep64_i0 (// only store num_dma_symbol from high layer, not aware ack pkt
-        .CLK(clk),
-        .DATAO(num_dma_symbol_fifo_rd_data0),
-        .DI({cts_toself_config,num_dma_symbol_total}),
-        .EMPTY(num_dma_symbol_fifo_empty0),
-        .FULL(num_dma_symbol_fifo_full0),
-        .RDEN(num_dma_symbol_total_rden0),
-        .RST(!rstn),
-        .WREN(num_dma_symbol_total_wren0),
-        .data_count(num_dma_symbol_fifo_data_count0)
+    // fifo64_1clk_dep64 fifo64_1clk_dep64_i0 (// only store num_dma_symbol from high layer, not aware ack pkt
+    //     .CLK(clk),
+    //     .DATAO(num_dma_symbol_fifo_rd_data0),
+    //     .DI({cts_toself_config,num_dma_symbol_total}),
+    //     .EMPTY(num_dma_symbol_fifo_empty0),
+    //     .FULL(num_dma_symbol_fifo_full0),
+    //     .RDEN(num_dma_symbol_total_rden0),
+    //     .RST(!rstn),
+    //     .WREN(num_dma_symbol_total_wren0),
+    //     .data_count(num_dma_symbol_fifo_data_count0)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo64_1clk_dep64_i0 (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(num_dma_symbol_fifo_rd_data0),
+      .empty(num_dma_symbol_fifo_empty0),
+      .full(num_dma_symbol_fifo_full0),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(num_dma_symbol_fifo_data_count0),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cts_toself_config,num_dma_symbol_total}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(num_dma_symbol_total_rden0),
+      .rst(!rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(num_dma_symbol_total_wren0)
     );
 
     //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
-    fifo64_1clk_dep64 fifo64_1clk_dep64_i1 (// only store num_dma_symbol from high layer, not aware ack pkt
-        .CLK(clk),
-        .DATAO(num_dma_symbol_fifo_rd_data1),
-        .DI({cts_toself_config,num_dma_symbol_total}),
-        .EMPTY(num_dma_symbol_fifo_empty1),
-        .FULL(num_dma_symbol_fifo_full1),
-        .RDEN(num_dma_symbol_total_rden1),
-        .RST(!rstn),
-        .WREN(num_dma_symbol_total_wren1),
-        .data_count(num_dma_symbol_fifo_data_count1)
+    // fifo64_1clk_dep64 fifo64_1clk_dep64_i1 (// only store num_dma_symbol from high layer, not aware ack pkt
+    //     .CLK(clk),
+    //     .DATAO(num_dma_symbol_fifo_rd_data1),
+    //     .DI({cts_toself_config,num_dma_symbol_total}),
+    //     .EMPTY(num_dma_symbol_fifo_empty1),
+    //     .FULL(num_dma_symbol_fifo_full1),
+    //     .RDEN(num_dma_symbol_total_rden1),
+    //     .RST(!rstn),
+    //     .WREN(num_dma_symbol_total_wren1),
+    //     .data_count(num_dma_symbol_fifo_data_count1)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo64_1clk_dep64_i1 (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(num_dma_symbol_fifo_rd_data1),
+      .empty(num_dma_symbol_fifo_empty1),
+      .full(num_dma_symbol_fifo_full1),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(num_dma_symbol_fifo_data_count1),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cts_toself_config,num_dma_symbol_total}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(num_dma_symbol_total_rden1),
+      .rst(!rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(num_dma_symbol_total_wren1)
     );
 
     //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
-    fifo64_1clk_dep64 fifo64_1clk_dep64_i2 (// only store num_dma_symbol from high layer, not aware ack pkt
-        .CLK(clk),
-        .DATAO(num_dma_symbol_fifo_rd_data2),
-        .DI({cts_toself_config,num_dma_symbol_total}),
-        .EMPTY(num_dma_symbol_fifo_empty2),
-        .FULL(num_dma_symbol_fifo_full2),
-        .RDEN(num_dma_symbol_total_rden2),
-        .RST(!rstn),
-        .WREN(num_dma_symbol_total_wren2),
-        .data_count(num_dma_symbol_fifo_data_count2)
+    // fifo64_1clk_dep64 fifo64_1clk_dep64_i2 (// only store num_dma_symbol from high layer, not aware ack pkt
+    //     .CLK(clk),
+    //     .DATAO(num_dma_symbol_fifo_rd_data2),
+    //     .DI({cts_toself_config,num_dma_symbol_total}),
+    //     .EMPTY(num_dma_symbol_fifo_empty2),
+    //     .FULL(num_dma_symbol_fifo_full2),
+    //     .RDEN(num_dma_symbol_total_rden2),
+    //     .RST(!rstn),
+    //     .WREN(num_dma_symbol_total_wren2),
+    //     .data_count(num_dma_symbol_fifo_data_count2)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo64_1clk_dep64_i2 (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(num_dma_symbol_fifo_rd_data2),
+      .empty(num_dma_symbol_fifo_empty2),
+      .full(num_dma_symbol_fifo_full2),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(num_dma_symbol_fifo_data_count2),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cts_toself_config,num_dma_symbol_total}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(num_dma_symbol_total_rden2),
+      .rst(!rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(num_dma_symbol_total_wren2)
     );
 
     //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
-    fifo64_1clk_dep64 fifo64_1clk_dep64_i3 (// only store num_dma_symbol from high layer, not aware ack pkt
-        .CLK(clk),
-        .DATAO(num_dma_symbol_fifo_rd_data3),
-        .DI({cts_toself_config,num_dma_symbol_total}),
-        .EMPTY(num_dma_symbol_fifo_empty3),
-        .FULL(num_dma_symbol_fifo_full3),
-        .RDEN(num_dma_symbol_total_rden3),
-        .RST(!rstn),
-        .WREN(num_dma_symbol_total_wren3),
-        .data_count(num_dma_symbol_fifo_data_count3)
+    // fifo64_1clk_dep64 fifo64_1clk_dep64_i3 (// only store num_dma_symbol from high layer, not aware ack pkt
+    //     .CLK(clk),
+    //     .DATAO(num_dma_symbol_fifo_rd_data3),
+    //     .DI({cts_toself_config,num_dma_symbol_total}),
+    //     .EMPTY(num_dma_symbol_fifo_empty3),
+    //     .FULL(num_dma_symbol_fifo_full3),
+    //     .RDEN(num_dma_symbol_total_rden3),
+    //     .RST(!rstn),
+    //     .WREN(num_dma_symbol_total_wren3),
+    //     .data_count(num_dma_symbol_fifo_data_count3)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo64_1clk_dep64_i3 (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(num_dma_symbol_fifo_rd_data3),
+      .empty(num_dma_symbol_fifo_empty3),
+      .full(num_dma_symbol_fifo_full3),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(num_dma_symbol_fifo_data_count3),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cts_toself_config,num_dma_symbol_total}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(num_dma_symbol_total_rden3),
+      .rst(!rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(num_dma_symbol_total_wren3)
     );
 
     xpm_memory_tdpram # (

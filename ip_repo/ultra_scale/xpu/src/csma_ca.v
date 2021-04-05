@@ -2,8 +2,8 @@
 
 `timescale 1 ns / 1 ps
 
-`define DEBUG_PREFIX 
-// `define DEBUG_PREFIX
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
 
 	module csma_ca #
 	(
@@ -26,8 +26,7 @@
     input wire nav_enable,
     input wire difs_enable,
     input wire eifs_enable,
-    input wire [11:0] cw_min,
-//    input wire [11:0] cw_max,
+    input wire [3:0] cw_min,
     input wire [6:0] preamble_sig_time,
     input wire [4:0] ofdm_symbol_time,
     input wire [4:0] slot_time,

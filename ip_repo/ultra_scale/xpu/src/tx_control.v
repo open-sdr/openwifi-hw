@@ -2,8 +2,9 @@
 `include "clock_speed.v"
 `include "board_def.v"
 
-`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-// `define DEBUG_PREFIX
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 
 `timescale 1 ns / 1 ps
 
@@ -17,6 +18,7 @@
         input wire clk,
         input wire rstn,
         
+        input wire ack_disable,
         input wire [6:0] preamble_sig_time,
         input wire [4:0] ofdm_symbol_time,
         input wire [6:0] sifs_time,
@@ -256,7 +258,7 @@
             if ( fcs_valid && (is_data||is_management||is_blockackreq||is_blockack||is_pspoll||(is_rts&&(!cts_torts_disable))) 
                            && (self_mac_addr==addr1)) // send ACK will not back to this IDLE until the last IQ sample sent.
               begin
-                  tx_control_state  <= SEND_ACK; //we also send cts (if rts is received) in SEND_ACK status
+                  tx_control_state  <= (ack_disable?tx_control_state:SEND_ACK); //we also send cts (if rts is received) in SEND_ACK status
               end
             //else if ( pulse_tx_bb_end && tx_pkt_type[0]==1 && (core_state_old!=SEND_ACK) )// need to recv ACK! We need to miss this pulse_tx_bb_end intentionally when send ACK, because ACK don't need ACK
             //else if ( phy_tx_done && (core_state_old!=SEND_ACK) )// need to recv ACK! We need to miss this pulse_tx_bb_end intentionally when send ACK, because ACK don't need ACK

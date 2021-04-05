@@ -1,7 +1,7 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
-`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-//`define DEBUG_PREFIX
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
 
 `timescale 1 ns / 1 ps
 
@@ -131,9 +131,9 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg3; // tsf load value high (the rising edge of msb will trigger loading)
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg4; // 19:16 band; 15:0 channel
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5; // 
-    //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6; //
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6; // some static config: duration after fcs_strobe to force ch idle
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg7; // rssi report offset, and gpio delay ctrl for rssi calculation, and reset the fifo delay
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; // lbt rssi threshold [11:0] and cw setting for queue 3 [31:24] and the duration after fcs_strobe to force ch idle
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; // lbt rssi threshold [11:0] 
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg9; // xIFS and slot time override for debug
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; // tx bb RF delay in number of clock
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg11; // max number of tx re-transmission
@@ -262,15 +262,15 @@
     wire [6:0] sifs_time;
     wire [6:0] phy_rx_start_delay_time;
 
-    wire [3:0] cw_exp_used ;
+    wire [3:0] cw_exp_used;
     wire [3:0] cw_exp_dynamic;
     wire tx_try_complete_int;
-    wire backoff_done ;
+    wire backoff_done;
     wire increase_cw;
     wire cw_used ;
-    assign tx_try_complete = tx_try_complete_int ;
-    assign cw_exp_used = (slv_reg19[28]?cw_exp_dynamic:slv_reg19[3:0]) ;
-    assign cw = (cw_used?cw_exp_used:0) ; 
+    assign tx_try_complete = tx_try_complete_int;
+    assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg19[3:0]);
+    assign cw = (cw_used?cw_exp_used:0); 
     assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
 
     assign erp_short_slot = slv_reg4[24];
@@ -371,7 +371,7 @@
         .cts_toself_rf_is_ongoing(cts_toself_rf_is_ongoing),
         .ack_cts_is_ongoing(ack_cts_is_ongoing),
         .fcs_in_strobe(fcs_in_strobe),
-        .wait_after_decode_top(slv_reg8[23:16]),
+        .wait_after_decode_top(slv_reg6[7:0]),
 
         .ch_idle(ch_idle)
     );
@@ -391,11 +391,10 @@
         .fcs_in_strobe(fcs_in_strobe),
         .fcs_valid(fcs_valid),
 
-        .nav_enable(~slv_reg19[31]),
-        .difs_enable(~slv_reg19[30]),
-        .eifs_enable(~slv_reg19[29]),
-        .cw_min({slv_reg19[11:4],cw_exp_used}),//.cw_min(slv_reg19[11:0]),
-        //.cw_max(slv_reg19[23:12]),
+        .nav_enable(~slv_reg6[31]),
+        .difs_enable(~slv_reg6[30]),
+        .eifs_enable(~slv_reg6[29]),
+        .cw_min(cw_exp_used),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .slot_time(slot_time),
@@ -441,7 +440,7 @@
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
         .tx_try_complete(tx_try_complete_int),
-        .cw_combined({slv_reg8[31:24],slv_reg19[23:0]}), // use high bits of slv_reg8, low 12 bits are lbt thr
+        .cw_combined(slv_reg19),
         .tx_queue_idx(tx_queue_idx),
         .start_retrans(increase_cw),
         .cw_exp(cw_exp_dynamic)
@@ -455,6 +454,7 @@
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
 
+        .ack_disable(slv_reg11[4]),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .sifs_time(sifs_time),
@@ -656,8 +656,8 @@
 		.SLV_REG2(slv_reg2),
 		.SLV_REG3(slv_reg3),
 		.SLV_REG4(slv_reg4),
-        .SLV_REG5(slv_reg5),/*
-        .SLV_REG6(slv_reg6),*/
+        .SLV_REG5(slv_reg5),
+        .SLV_REG6(slv_reg6),
         .SLV_REG7(slv_reg7),
 		.SLV_REG8(slv_reg8),
         .SLV_REG9(slv_reg9),

@@ -15,7 +15,7 @@
       input  wire wifi_iq_ready,
       output wire wifi_iq_valid,
       
-      input wire [10:0] tx_hold_threshold,
+      input wire [9:0] tx_hold_threshold,
       input wire signed [9:0] bb_gain,
 
 	  input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_i,
@@ -39,7 +39,7 @@
     wire [(2*IQ_DATA_WIDTH-1):0] tx_iq_fifo_in;
     wire tx_iq_fifo_rden;
     wire tx_iq_fifo_full;
-    wire [10:0] data_count;
+    wire [9:0] data_count;
     
     assign bw02_iq_pack = 0;
     assign bw02_iq_valid = 1'b1;
@@ -72,16 +72,59 @@
       end
     end   
           
-    fifo32_1clk_dep512 fifo32_1clk_dep512_i (
-        .CLK(clk),
-        .DATAO(tx_iq_fifo_out),
-        .DI(tx_iq_fifo_in),
-        .EMPTY(tx_iq_fifo_empty),
-        .FULL(tx_iq_fifo_full),
-        .RDEN(tx_iq_fifo_rden),
-        .RST(~rstn),
-        .WREN(tx_iq_fifo_wren),
-        .data_count(data_count)
+    // fifo32_1clk_dep512 fifo32_1clk_dep512_i (
+    //     .CLK(clk),
+    //     .DATAO(tx_iq_fifo_out),
+    //     .DI(tx_iq_fifo_in),
+    //     .EMPTY(tx_iq_fifo_empty),
+    //     .FULL(tx_iq_fifo_full),
+    //     .RDEN(tx_iq_fifo_rden),
+    //     .RST(~rstn),
+    //     .WREN(tx_iq_fifo_wren),
+    //     .data_count(data_count)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(512),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(10),   // DECIMAL
+      .READ_DATA_WIDTH(32),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(32),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(10)    // DECIMAL
+    ) fifo32_1clk_dep512_i (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(tx_iq_fifo_out),
+      .empty(tx_iq_fifo_empty),
+      .full(tx_iq_fifo_full),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(data_count),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din(tx_iq_fifo_in),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(tx_iq_fifo_rden),
+      .rst(~rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(tx_iq_fifo_wren)
     );
 
 	endmodule

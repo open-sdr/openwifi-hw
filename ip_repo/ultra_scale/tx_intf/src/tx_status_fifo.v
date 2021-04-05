@@ -2,6 +2,9 @@
 
 `timescale 1 ns / 1 ps
 
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 	module tx_status_fifo
 	(
 	  input wire rstn,
@@ -53,16 +56,60 @@
         cw_delay1 <= cw_delay + num_slot_random[9];
     end 
 
-    fifo32_1clk_dep64 fifo32_1clk_dep64_i (
-        .CLK(clk),
-        .DATAO(datao),
-        .DI({cw_delay1,num_slot_random[8:0],linux_prio,tx_queue_idx,tx_pkt_sn,tx_status}), // highest MSB logs cw exponent + MSB of num_slot_random
-        .EMPTY(empty),
-        .FULL(full),
-        .RDEN(rden),
-        .RST(~rstn),
-        .WREN(tx_try_complete_reg),
-        .data_count(data_count)
+    // fifo32_1clk_dep64 fifo32_1clk_dep64_i (
+    //     .CLK(clk),
+    //     .DATAO(datao),
+    //     .DI({cw_delay1,num_slot_random[8:0],linux_prio,tx_queue_idx,tx_pkt_sn,tx_status}), // highest MSB logs cw exponent + MSB of num_slot_random
+    //     .EMPTY(empty),
+    //     .FULL(full),
+    //     .RDEN(rden),
+    //     .RST(~rstn),
+    //     .WREN(tx_try_complete_reg),
+    //     .data_count(data_count)
+    // );
+
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(32),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(32),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo32_1clk_dep64_i (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(datao),
+      .empty(empty),
+      .full(full),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(data_count),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cw_delay1,num_slot_random[8:0],linux_prio,tx_queue_idx,tx_pkt_sn,tx_status}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(rden),
+      .rst(~rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(tx_try_complete_reg)
     );
 
 	endmodule
