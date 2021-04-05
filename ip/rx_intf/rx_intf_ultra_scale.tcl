@@ -256,10 +256,6 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-
-# Set 'sources_1' fileset file properties for local files
-# None
-
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
 set_property -name "design_mode" -value "RTL" -objects $obj
@@ -274,39 +270,6 @@ set_property -name "name" -value "sources_1" -objects $obj
 set_property -name "top" -value "rx_intf" -objects $obj
 set_property -name "verilog_define" -value "" -objects $obj
 set_property -name "verilog_uppercase" -value "0" -objects $obj
-
-# Set 'sources_1' fileset file properties for local files
-# None
-
-# Set 'sources_1' fileset file properties for local files
-# None
-
-# # Set 'sources_1' fileset object
-# set obj [get_filesets sources_1]
-# set files [list \
-#  "[file normalize "$origin_dir/../../ip_repo/ultra_scale/fifo32_1clk_dep32/src/fifo32_1clk_dep32_fifo_generator_0_0/fifo32_1clk_dep32_fifo_generator_0_0.xci"]"\
-# ]
-# add_files -norecurse -fileset $obj $files
-
-# # Set 'sources_1' fileset file properties for remote files
-# set file "$origin_dir/../../ip_repo/ultra_scale/fifo32_1clk_dep32/src/fifo32_1clk_dep32_fifo_generator_0_0/fifo32_1clk_dep32_fifo_generator_0_0.xci"
-# set file [file normalize $file]
-# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-# if { ![get_property "is_locked" $file_obj] } {
-#   set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-# }
-# set_property -name "is_enabled" -value "1" -objects $file_obj
-# set_property -name "is_global_include" -value "0" -objects $file_obj
-# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-# set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-# set_property -name "used_in_implementation" -value "1" -objects $file_obj
-# set_property -name "used_in_simulation" -value "1" -objects $file_obj
-# set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
-
-# Set 'sources_1' fileset file properties for local files
-# None
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
