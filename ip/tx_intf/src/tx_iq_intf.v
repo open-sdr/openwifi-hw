@@ -15,7 +15,7 @@
       input  wire wifi_iq_ready,
       output wire wifi_iq_valid,
       
-      input wire [10:0] tx_hold_threshold,
+      input wire [9:0] tx_hold_threshold,
       input wire signed [9:0] bb_gain,
 
 	  input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_i,
@@ -39,7 +39,7 @@
     wire [(2*IQ_DATA_WIDTH-1):0] tx_iq_fifo_in;
     wire tx_iq_fifo_rden;
     wire tx_iq_fifo_full;
-    wire [10:0] data_count;
+    wire [9:0] data_count;
     
     assign bw02_iq_pack = 0;
     assign bw02_iq_valid = 1'b1;
