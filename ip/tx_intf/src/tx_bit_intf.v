@@ -4,8 +4,8 @@
 
 `timescale 1 ns / 1 ps
 
-`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-// `define DEBUG_PREFIX
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
 
 `define WAIT_FOR_TX_IQ_FILL_COUNT_TOP (20*`NUM_CLK_PER_US)
 

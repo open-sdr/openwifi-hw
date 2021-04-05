@@ -2,6 +2,9 @@
 
 `timescale 1 ns / 1 ps
 
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 	module tx_status_fifo
 	(
 	  input wire rstn,

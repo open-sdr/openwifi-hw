@@ -1,8 +1,8 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
-`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-// `define DEBUG_PREFIX
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
 
 `timescale 1 ns / 1 ps
 
@@ -167,7 +167,6 @@
 	reg  last_ofdm_symbol_flag;
 	reg  [19:0] num_bit_decoded;
 	wire [19:0] num_bit_target;
-	//`DEBUG_PREFIX 
 	reg  [1:0] ofdm_rx_state;
 
 	reg csi_valid_reg;
