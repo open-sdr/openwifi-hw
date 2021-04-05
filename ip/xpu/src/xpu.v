@@ -455,6 +455,7 @@
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
 
+        .ack_disable(slv_reg11[4]),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .sifs_time(sifs_time),
