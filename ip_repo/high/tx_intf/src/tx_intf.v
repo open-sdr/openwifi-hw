@@ -38,6 +38,11 @@
         output wire [(DAC_PACK_DATA_WIDTH-1) : 0] dac_data,
         input  wire dac_ready,
 
+        // Ports to side_ch for check
+        output wire [(2*IQ_DATA_WIDTH-1) : 0] iq0_for_check,
+        output wire [(2*IQ_DATA_WIDTH-1) : 0] iq1_for_check,
+        output wire iq_valid_for_check,
+
 	    // Ports to ACC: PHY_TX
 	    output wire phy_tx_start,
         output wire tx_hold,
@@ -212,6 +217,11 @@
     wire tx_itrpt_internal;
 
     wire [13:0] send_cts_toself_wait_sifs_top;
+
+    assign iq0_for_check = wifi_iq_pack;
+    assign iq1_for_check = 0; //wifi_iq1_pack;
+    // assign iq_valid_for_check = wifi_iq_valid; // always 1, it is controled by ready actually
+    assign iq_valid_for_check = wifi_iq_ready;
 
     assign bram_addr_to_xpu = bram_addr;
     assign send_cts_toself_wait_sifs_top = (band==1?slv_reg6[13:0]:slv_reg6[29:16]);

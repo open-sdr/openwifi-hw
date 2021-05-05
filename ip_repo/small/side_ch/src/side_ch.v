@@ -4,6 +4,9 @@
 
 `timescale 1 ns / 1 ps
 
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 	module side_ch #
 	(
 		parameter integer TSF_TIMER_WIDTH = 64, // according to 802.11 standard
@@ -33,6 +36,12 @@
 	    input wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
         input wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
 		input wire [(TSF_TIMER_WIDTH-1):0]  tsf_runtime_val,
+		input wire [(2*IQ_DATA_WIDTH-1):0] openofdm_tx_iq0,
+		input wire [(2*IQ_DATA_WIDTH-1):0] openofdm_tx_iq1,
+    	input wire openofdm_tx_iq_valid,
+		input wire [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq0,
+		input wire [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq1,
+    	input wire tx_intf_iq_valid,
 		input wire [(2*IQ_DATA_WIDTH-1):0] sample0_in,
 		input wire [(2*IQ_DATA_WIDTH-1):0] sample1_in,
     	input wire sample_in_strobe,
@@ -77,11 +86,11 @@
 		// Ports of Axi Master Bus Interface M00_AXIS to PS
 		input wire  m00_axis_aclk,
 		input wire  m00_axis_aresetn,
-		output wire  m00_axis_tvalid,
-		output wire [C_M00_AXIS_TDATA_WIDTH-1 : 0] m00_axis_tdata,
+		`DEBUG_PREFIX output wire  m00_axis_tvalid,
+		`DEBUG_PREFIX output wire [C_M00_AXIS_TDATA_WIDTH-1 : 0] m00_axis_tdata,
 		output wire [(C_M00_AXIS_TDATA_WIDTH/8)-1 : 0] m00_axis_tstrb,
-		output wire  m00_axis_tlast,
-		input wire  m00_axis_tready,
+		`DEBUG_PREFIX output wire  m00_axis_tlast,
+		`DEBUG_PREFIX input wire  m00_axis_tready,
 
 		// Ports of Axi Slave Bus Interface S00_AXIS to PS
 		input wire  s00_axis_aclk,
@@ -194,6 +203,12 @@
 		.gpio_status(gpio_status),
 		.rssi_half_db(rssi_half_db),
 		.tsf_runtime_val(tsf_runtime_val),
+		.openofdm_tx_iq0(openofdm_tx_iq0),
+		.openofdm_tx_iq1(openofdm_tx_iq1),
+    	.openofdm_tx_iq_valid(openofdm_tx_iq_valid),
+		.tx_intf_iq0(tx_intf_iq0),
+		.tx_intf_iq1(tx_intf_iq1),
+    	.tx_intf_iq_valid(tx_intf_iq_valid),
 		.iq0(sample0_in),
 		.iq1(sample1_in),
 		.iq_strobe(sample_in_strobe),
@@ -239,6 +254,8 @@
 		.iq_capture(slv_reg3[0]),
 		.iq_capture_cfg(slv_reg3[5:4]),
 		.iq_trigger_select(slv_reg8[4:0]),
+		.iq_trigger_free_run_flag(slv_reg5[0]),
+		.iq_source_select(slv_reg5[2:1]),
 		.rssi_or_iq_th(slv_reg9[(IQ_DATA_WIDTH-1):0]),
 		.gain_th(slv_reg10[(GPIO_STATUS_WIDTH-2):0]),
 		.pre_trigger_len(slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),

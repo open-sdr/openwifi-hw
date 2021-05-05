@@ -382,7 +382,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>a77bbce6</spirit:value>
+            <spirit:value>48549a5c</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -404,7 +404,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>a77bbce6</spirit:value>
+            <spirit:value>48549a5c</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -527,6 +527,53 @@
         <spirit:name>dac_ready</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>iq0_for_check</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="((2 * spirit:decode(id(&apos;MODELPARAM_VALUE.IQ_DATA_WIDTH&apos;))) - 1)">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>iq1_for_check</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="((2 * spirit:decode(id(&apos;MODELPARAM_VALUE.IQ_DATA_WIDTH&apos;))) - 1)">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>iq_valid_for_check</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>wire</spirit:typeName>
@@ -1653,13 +1700,13 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/clock_speed.v</spirit:name>
+        <spirit:name>src/board_def.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/board_def.v</spirit:name>
+        <spirit:name>src/clock_speed.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
@@ -1717,7 +1764,7 @@
       <spirit:file>
         <spirit:name>src/tx_intf.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_be73831c</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_234aa50d</spirit:userFileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1744,13 +1791,13 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/clock_speed.v</spirit:name>
+        <spirit:name>src/board_def.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
       </spirit:file>
       <spirit:file>
-        <spirit:name>src/board_def.v</spirit:name>
+        <spirit:name>src/clock_speed.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
@@ -1919,20 +1966,20 @@
         <xilinx:xpmLibrary>XPM_MEMORY</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
       <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2021-03-29T13:58:28Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2021-05-04T12:45:34Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3b608e1b_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@5e608b31_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@3517e68a_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
-        <xilinx:tag xilinx:name="ui.data.coregen.dd@6aebb383_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67ea74b0_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b3c67b3_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a56a7d5_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@465816a9_ARCHIVE_LOCATION">/home/jxj/git/openwifi-hw/ip_repo/high/tx_intf</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.3</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="49bbe3ef"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="871c369d"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="373ee39e"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="50f5f3eb"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="a0070eee"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="f222cd27"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="f899969d"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="71c6d547"/>
     </xilinx:packagingInfo>
