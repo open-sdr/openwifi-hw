@@ -16,9 +16,9 @@
     input wire acc_rstn,
 
     input wire [2:0] bb_gain,
-    output reg [(4*IQ_DATA_WIDTH-1) : 0] data_to_acc,
-    output wire emptyn_to_acc,
-    input wire acc_ask_data
+    output reg [(4*IQ_DATA_WIDTH-1) : 0] data_to_bb,
+    output wire emptyn_to_bb,
+    input wire bb_ask_data
 	);
     wire FULL_internal;
     wire EMPTY_internal;
@@ -72,46 +72,46 @@
     assign adc_valid_decimate = (adc_valid_count==1);
 
    //  assign RST_internal = (!acc_rstn);
-    assign emptyn_to_acc = (!EMPTY_internal);
+    assign emptyn_to_bb = (!EMPTY_internal);
 
     always @( bb_gain, data_to_acc_internal)
     begin
        case (bb_gain)
           3'b000 : begin
-                        data_to_acc[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = data_to_acc_internal[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)];
-                        data_to_acc[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = data_to_acc_internal[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)];
-                        data_to_acc[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = data_to_acc_internal[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)];
-                        data_to_acc[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = data_to_acc_internal[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)];
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = data_to_acc_internal[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)];
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = data_to_acc_internal[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)];
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = data_to_acc_internal[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)];
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = data_to_acc_internal[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)];
                    end
           3'b001 : begin
-                        data_to_acc[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-2) : (0*IQ_DATA_WIDTH)], 1'd0};
-                        data_to_acc[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-2) : (1*IQ_DATA_WIDTH)], 1'd0};
-                        data_to_acc[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-2) : (2*IQ_DATA_WIDTH)], 1'd0};
-                        data_to_acc[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-2) : (3*IQ_DATA_WIDTH)], 1'd0};
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-2) : (0*IQ_DATA_WIDTH)], 1'd0};
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-2) : (1*IQ_DATA_WIDTH)], 1'd0};
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-2) : (2*IQ_DATA_WIDTH)], 1'd0};
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-2) : (3*IQ_DATA_WIDTH)], 1'd0};
                    end
           3'b010 : begin
-                        data_to_acc[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-3) : (0*IQ_DATA_WIDTH)], 2'd0};
-                        data_to_acc[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-3) : (1*IQ_DATA_WIDTH)], 2'd0};
-                        data_to_acc[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-3) : (2*IQ_DATA_WIDTH)], 2'd0};
-                        data_to_acc[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-3) : (3*IQ_DATA_WIDTH)], 2'd0};
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-3) : (0*IQ_DATA_WIDTH)], 2'd0};
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-3) : (1*IQ_DATA_WIDTH)], 2'd0};
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-3) : (2*IQ_DATA_WIDTH)], 2'd0};
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-3) : (3*IQ_DATA_WIDTH)], 2'd0};
                    end
           3'b011 : begin
-                        data_to_acc[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-4) : (0*IQ_DATA_WIDTH)], 3'd0};
-                        data_to_acc[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-4) : (1*IQ_DATA_WIDTH)], 3'd0};
-                        data_to_acc[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-4) : (2*IQ_DATA_WIDTH)], 3'd0};
-                        data_to_acc[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-4) : (3*IQ_DATA_WIDTH)], 3'd0};
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-4) : (0*IQ_DATA_WIDTH)], 3'd0};
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-4) : (1*IQ_DATA_WIDTH)], 3'd0};
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-4) : (2*IQ_DATA_WIDTH)], 3'd0};
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-4) : (3*IQ_DATA_WIDTH)], 3'd0};
                    end
           3'b100 : begin
-                        data_to_acc[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-5) : (0*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_acc[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-5) : (1*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_acc[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-5) : (2*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_acc[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-5) : (3*IQ_DATA_WIDTH)], 4'd0};
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-5) : (0*IQ_DATA_WIDTH)], 4'd0};
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-5) : (1*IQ_DATA_WIDTH)], 4'd0};
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-5) : (2*IQ_DATA_WIDTH)], 4'd0};
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-5) : (3*IQ_DATA_WIDTH)], 4'd0};
                    end
           default: begin
-                        data_to_acc[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = data_to_acc_internal[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)];
-                        data_to_acc[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = data_to_acc_internal[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)];
-                        data_to_acc[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = data_to_acc_internal[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)];
-                        data_to_acc[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = data_to_acc_internal[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)];
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = data_to_acc_internal[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)];
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = data_to_acc_internal[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)];
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = data_to_acc_internal[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)];
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = data_to_acc_internal[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)];
                    end
        endcase
     end
@@ -136,7 +136,7 @@
     //         .EMPTY(EMPTY_internal),
     //         .FULL(FULL_internal),
     //         .RDCLK(acc_clk),
-    //         .RDEN(acc_ask_data),
+    //         .RDEN(bb_ask_data),
     //         .RD_DATA_COUNT(),
     //         .RST(RST_internal),
     //         .WRCLK(adc_clk),
@@ -184,7 +184,7 @@
       .injectdbiterr(), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
       .injectsbiterr(), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
       .rd_clk(acc_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free
-      .rd_en(acc_ask_data),                 // 1-bit input: Read Enable: If the FIFO is not empty, asserting this
+      .rd_en(bb_ask_data),                 // 1-bit input: Read Enable: If the FIFO is not empty, asserting this
       .rst(adc_rst),                     // 1-bit input: Reset: Must be synchronous to wr_clk. The clock(s) can be
       .sleep(),                 // 1-bit input: Dynamic power saving: If sleep is High, the memory/fifo
       .wr_clk(adc_clk),               // 1-bit input: Write clock: Used for write operation. wr_clk must be a
