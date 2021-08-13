@@ -34,6 +34,8 @@ elif [ "$BOARD_NAME" == "adrv9361z7035" ]; then
 #    ADI_PROJECT_DIR=./adi-hdl/projects/adrv9361z7035/ccfmc_lvds/
 elif [ "$BOARD_NAME" == "adrv9364z7020" ]; then
     ADI_PROJECT_DIR=./adi-hdl/projects/adrv9364z7020/ccbob_lvds/
+elif [ "$BOARD_NAME" == "antsdr" ]; then
+    ADI_PROJECT_DIR=./adi-hdl/projects/adrv9364z7020/ccbob_lvds/
 else
     echo "\$BOARD_NAME is not correct. Please check!"
     exit 1
