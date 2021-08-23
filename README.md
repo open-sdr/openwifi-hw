@@ -7,38 +7,46 @@ This repository includes Hardware/FPGA design. To be used together with [openwif
 
 Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opensource and advanced feature license, please contact Filip.Louagie@UGent.be. Openwifi project also leverages some 3rd party modules. It is user's duty to check and follow licenses of those modules according to the purpose/usage. You can find [an example explanation from Analog Devices](https://github.com/analogdevicesinc/hdl/blob/master/LICENSE) for this compound license conditions. [[How to contribute]](https://github.com/open-sdr/openwifi-hw/blob/master/CONTRIBUTING.md).
 
-**Pre-compiled FPGA files:** boards/board_name/sdk/ has FPGA bit file, ila .ltx file (if ila inserted) and some other files might be needed.
+**Pre-compiled FPGA files:** boards/**$BOARD_NAME**/sdk/ has FPGA bit file, ila .ltx file (if ila inserted) and other initilization files.
 
-**board_name** options:
+Environment variable **BOARD_NAME** options:
 - **zc706_fmcs2** (Xilinx ZC706 dev board + FMCOMMS2/3/4)
 - **zed_fmcs2** (Xilinx zed board + FMCOMMS2/3/4) -- Vivado license **NOT** needed
 - **adrv9361z7035** (ADRV9361-Z7035 + ADRV1CRR-BOB/FMC)
 - **adrv9364z7020** (ADRV9364-Z7020 + ADRV1CRR-BOB) -- Vivado license **NOT** needed
 - **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4) -- Vivado license **NOT** needed
 - **zcu102_fmcs2** (Xilinx ZCU102 dev board + FMCOMMS2/3/4)
+- **antsdr** ([MicroPhase](https://github.com/MicroPhase/) enhanced ADALM-PLUTO SDR. [Notes](boards/antsdr/notes.md))
 
-**Build FPGA:** (Xilinx Vivado (also SDK and HLS) 2018.3 is needed. Example instructions are verified on Ubuntu 18/20)
+**Build FPGA:** 
 
-* In Linux, prepare Analgo Devices HDL library (only run once):
+* Pre-conditions: 
+  * Xilinx Vivado (with SDK and HLS) 2018.3
+  * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado.
+  * Ubuntu 18/20 LTS release (We test in these OS. Other OS might also work.)
 
+* Prepare Analgo Devices HDL library (only run once):
 ```
 export XILINX_DIR=your_Xilinx_directory
+(Example: export XILINX_DIR=/opt/Xilinx)
 ./prepare_adi_lib.sh $XILINX_DIR
 ```
-* In Linux, prepare Analgo Devices board specific ip (only run once for each board you have):
-
+* Prepare Analgo Devices specific ip (only run once for each board you have):
 ```
+export BOARD_NAME=your_board_name
+(Example: export BOARD_NAME=zc706_fmcs2)
 ./prepare_adi_board_ip.sh $XILINX_DIR $BOARD_NAME
 (Don't need to wait till the building end. When you see "Building ABCD project [...", you can stop it.)
 ```
-* Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado. Otherwise there will be errors when you build the whole FPGA design. 
-* Open Vivado, then in Vivado Tcl Console:
+* Launch Vivado:
 ```
-Change to openwifi-hw/boards/board_name/ directory by "cd" command, if Vivado is launched in different directory.
-source ./openwifi.tcl
+cd openwifi-hw/boards/$BOARD_NAME/
+source $XILINX_DIR/Vivado/2018.3/settings64.sh
+vivado
 ```
 * In Vivado:
 ```
+source ./openwifi.tcl
 Open Block Design
 Tools --> Report --> Report IP Status
 Generate Bitstream
