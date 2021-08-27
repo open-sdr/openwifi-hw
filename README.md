@@ -10,13 +10,13 @@ Openwifi code has dual licenses. AGPLv3 is the opensource license. For non-opens
 **Pre-compiled FPGA files:** boards/**$BOARD_NAME**/sdk/ has FPGA bit file, ila .ltx file (if ila inserted) and other initilization files.
 
 Environment variable **BOARD_NAME** options:
-- **zc706_fmcs2** (Xilinx ZC706 dev board + FMCOMMS2/3/4)
-- **zed_fmcs2** (Xilinx zed board + FMCOMMS2/3/4) -- Vivado license **NOT** needed
-- **adrv9361z7035** (ADRV9361-Z7035 + ADRV1CRR-BOB/FMC)
-- **adrv9364z7020** (ADRV9364-Z7020 + ADRV1CRR-BOB) -- Vivado license **NOT** needed
-- **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4) -- Vivado license **NOT** needed
+- **zc706_fmcs2** ([Xilinx ZC706 board](https://www.xilinx.com/products/boards-and-kits/ek-z7-zc706-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html))
+- **zed_fmcs2** ([Xilinx zed board](https://www.xilinx.com/products/boards-and-kits/1-8dyf-11.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html)) -- Vivado license **NOT** needed
+- **adrv9364z7020** ([ADRV9364-Z7020 + ADRV1CRR-BOB](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adrv9364-z7020.html)) -- Vivado license **NOT** needed
+- **adrv9361z7035** ([ADRV9361-Z7035 + ADRV1CRR-BOB/FMC](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/ADRV9361-Z7035.html))
+- **zc702_fmcs2** ([Xilinx ZC702 board](https://www.xilinx.com/products/boards-and-kits/ek-z7-zc702-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html)) -- Vivado license **NOT** needed
 - **antsdr** ([MicroPhase](https://github.com/MicroPhase/) enhanced ADALM-PLUTO SDR. [Notes](boards/antsdr/notes.md)) -- Vivado license NOT needed
-- **zcu102_fmcs2** (Xilinx ZCU102 dev board + FMCOMMS2/3/4)
+- **zcu102_fmcs2** ([Xilinx ZCU102 board](https://www.xilinx.com/products/boards-and-kits/ek-u1-zcu102-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html))
 
 **Build FPGA:** 
 
