@@ -15,8 +15,8 @@ Environment variable **BOARD_NAME** options:
 - **adrv9361z7035** (ADRV9361-Z7035 + ADRV1CRR-BOB/FMC)
 - **adrv9364z7020** (ADRV9364-Z7020 + ADRV1CRR-BOB) -- Vivado license **NOT** needed
 - **zc702_fmcs2** (Xilinx ZC702 dev board + FMCOMMS2/3/4) -- Vivado license **NOT** needed
+- **antsdr** ([MicroPhase](https://github.com/MicroPhase/) enhanced ADALM-PLUTO SDR. [Notes](boards/antsdr/notes.md)) -- Vivado license NOT needed
 - **zcu102_fmcs2** (Xilinx ZCU102 dev board + FMCOMMS2/3/4)
-- **antsdr** ([MicroPhase](https://github.com/MicroPhase/) enhanced ADALM-PLUTO SDR. [Notes](boards/antsdr/notes.md))
 
 **Build FPGA:** 
 
