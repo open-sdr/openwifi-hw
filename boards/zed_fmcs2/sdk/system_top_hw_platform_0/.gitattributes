@@ -1,0 +1,2 @@
+system.hdf filter=lfs diff=lfs merge=lfs -text
+system.bit filter=lfs diff=lfs merge=lfs -text
