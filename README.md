@@ -54,14 +54,19 @@ Generate Bitstream
 File --> Export --> Export Hardware... --> Include bitstream --> OK
 File --> Launch SDK --> OK, then close SDK
 ```
-* In Linux:
+* In Linux, store the FPGA files to a specific directory:
 ```
 cd openwifi-hw/boards
-./sdk_update.sh board_name
-git commit -a -m "new fpga img for openwifi (or comments you want to make)"
-git push
-(Above make sure you can pull this new FPGA from openwifi submodule directory: openwifi-hw)
+./sdk_update.sh $BOARD_NAME
 ```
+* Add the FPGA files to git (only if you want):
+```
+git add $BOARD_NAME/sdk/*
+git commit -m "new fpga img for openwifi (or comments you want to make)"
+git push
+```
+"git lfs (Git Large File Storage)" operation is recommended for **system_top.bit** and **system.hdf** before git add (avoid too big repo!)
+
 **Modify IP cores:**
 
 IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure. For IP project created by **_high.tcl** or **_low.tcl** or **_ultra_scale.tcl**, exporting target directory should be **ip_repo/high/** or **ip_repo/low/** or **ip_repo/ultra_scale/** (for ZynqMP SoC, like zcu102 board). Other IP should be exported to **ip_repo/common/** (except that the side channel module has small/big postfix).
