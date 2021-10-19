@@ -500,7 +500,7 @@
             tx_try_complete_dl1<=tx_try_complete_dl0;
             tx_try_complete_dl2<=tx_try_complete_dl1;
             
-            start_delay0<= ( ack_tx_flag?start_tx_ack:(retrans_in_progress==1?start_retrans:(addra==num_dma_symbol_th)) );//controle the width of tx pulse
+            start_delay0<= ( ack_tx_flag?start_tx_ack:(retrans_in_progress==1?start_retrans:(addra==num_dma_symbol_th && num_dma_symbol_th!=0)) );//controle the width of tx pulse
             start_delay1<=start_delay0;
             start_delay2<=start_delay1;
             start_delay3<=start_delay2;
