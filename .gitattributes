@@ -7,3 +7,5 @@
 *.xml linguist-generated
 *.xci linguist-generated
 *.tcl linguist-generated
+boards/zed_fmcs2/sdk/system_top_hw_platform_0/system.hdf filter=lfs diff=lfs merge=lfs -text
+boards/zed_fmcs2/sdk/system_top_hw_platform_0/system_top.bit filter=lfs diff=lfs merge=lfs -text
