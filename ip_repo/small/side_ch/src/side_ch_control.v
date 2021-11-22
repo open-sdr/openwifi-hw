@@ -217,7 +217,6 @@
 	`DEBUG_PREFIX wire [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info_iq_dpram_in;
 	`DEBUG_PREFIX wire [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info_iq_dpram;
 	`DEBUG_PREFIX reg  [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info_iq;
-	`DEBUG_PREFIX reg  side_info_iq_valid_tmp;
 	`DEBUG_PREFIX reg  side_info_iq_valid;
 	`DEBUG_PREFIX wire [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info;
 	`DEBUG_PREFIX wire side_info_valid;
@@ -393,7 +392,6 @@
 			iq_raddr <= 0;
 
 			side_info_iq <= 0;
-			side_info_iq_valid_tmp <= 0;
 			side_info_iq_valid <= 0;
 
 			rssi_half_db_reg <= 0;
@@ -421,8 +419,6 @@
 			iq_state <= IQ_WAIT_FOR_CONDITION;
 		end else begin
 			if (iq_capture) begin
-				// extra delay is needed to sync the dpram input with output
-				side_info_iq_valid <= side_info_iq_valid_tmp;
 				// keep writing dpram with incoming iq
 				iq_waddr <= (iq_strobe_inner?(iq_waddr+1):iq_waddr);
 
@@ -482,7 +478,7 @@
 				case (iq_state)
 					IQ_WAIT_FOR_CONDITION: begin
 						side_info_iq <= 0;
-						side_info_iq_valid_tmp <= 0;
+						side_info_iq_valid <= 0;
 						iq_count <= 0;
 						if (iq_trigger) begin
 							iq_raddr <= iq_waddr - pre_trigger_len;
@@ -497,14 +493,14 @@
 
 					IQ_HEADER_TO_M_AXIS: begin
 						side_info_iq <= tsf_val_lock_by_iq_trigger;
-						side_info_iq_valid_tmp <= 1;
+						side_info_iq_valid <= 1;
 
 						iq_state <= IQ_INFO_TO_M_AXIS;
 					end
 
 					IQ_INFO_TO_M_AXIS: begin
 						side_info_iq <= side_info_iq_dpram;
-						side_info_iq_valid_tmp <= iq_strobe_inner;
+						side_info_iq_valid <= iq_strobe_inner;
 
 						if (iq_strobe_inner) begin
 							iq_raddr <= iq_raddr + 1;
