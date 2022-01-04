@@ -47,6 +47,7 @@
       `DEBUG_PREFIX input wire retrans_in_progress,
       `DEBUG_PREFIX input wire start_retrans,
       `DEBUG_PREFIX input wire start_tx_ack,
+      input wire tx_control_state_idle,
 	    `DEBUG_PREFIX input wire high_tx_allowed0,
 	    `DEBUG_PREFIX input wire high_tx_allowed1,
 	    `DEBUG_PREFIX input wire high_tx_allowed2,
@@ -58,6 +59,7 @@
       input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina_from_xpu,
       output wire tx_pkt_need_ack,
       `DEBUG_PREFIX output reg quit_retrans,
+      output reg high_trigger,
       output wire [3:0] tx_pkt_retrans_limit,
       output reg [9:0] tx_pkt_sn,
       // output reg [15:0] tx_pkt_num_dma_byte,
@@ -73,13 +75,14 @@
       input wire tsf_pulse_1M
 	);
     
-    localparam [2:0]   WAIT_CHANCE =                    3'b000,
-                       PREPARE_TX_FETCH=                3'b001,
-                       PREPARE_TX_JUDGE=                3'b010,
-                       DO_CTS_TOSELF=                   3'b011,
-                       WAIT_SIFS =                      3'b100,
-                       DO_TX =                          3'b101,
-                       WAIT_TX_COMP =                   3'b110;
+    localparam [2:0]   WAIT_TO_TRIG=                    3'b000,
+                       WAIT_CHANCE =                    3'b001,
+                       PREPARE_TX_FETCH=                3'b010,
+                       PREPARE_TX_JUDGE=                3'b011,
+                       DO_CTS_TOSELF=                   3'b100,
+                       WAIT_SIFS =                      3'b101,
+                       DO_TX =                          3'b110,
+                       WAIT_TX_COMP =                   3'b111;
     `DEBUG_PREFIX reg [2:0] high_tx_ctl_state;
     `DEBUG_PREFIX reg [2:0] high_tx_ctl_state_old;
     
@@ -137,7 +140,8 @@
     reg tx_try_complete_dl0;
     reg tx_try_complete_dl1;
     reg tx_try_complete_dl2;
-    
+    wire tx_try_complete_dl_pulses;
+ 
     reg s_axis_recv_data_from_high_delay;
 
     reg [3:0] cts_toself_rate;
@@ -148,6 +152,7 @@
 
     reg [13:0] send_cts_toself_wait_sifs_top_scale;
 
+    assign tx_try_complete_dl_pulses = (tx_try_complete || tx_try_complete_dl0 || tx_try_complete_dl1 || tx_try_complete_dl2) ;
     assign ask_data_from_s_axis = read_from_s_axis_en;
     assign start = ( (auto_start_mode==1'b0)?(1'b0): (start_delay0|start_delay1|start_delay2|start_delay3|start_delay4|start_delay5) );
 
@@ -186,8 +191,8 @@
           num_dma_symbol_total_rden1<= 0;   
           num_dma_symbol_total_rden2<= 0;   
           num_dma_symbol_total_rden3<= 0;   
-          high_tx_ctl_state <= WAIT_CHANCE;
-          high_tx_ctl_state_old<=WAIT_CHANCE;
+          high_tx_ctl_state <= WAIT_TO_TRIG;
+          high_tx_ctl_state_old<=WAIT_TO_TRIG;
           wr_counter <= 13'b0;
           tx_queue_idx_reg<=0;
           send_cts_toself_wait_count<=0;
@@ -195,6 +200,7 @@
           cts_toself_bb_is_ongoing<=0;
           cts_toself_rf_is_ongoing<=0;
           quit_retrans<=0;
+          high_trigger<=0;
           mac_addr_reg<=0;
         end                                                                   
       else begin
@@ -210,7 +216,7 @@
         send_cts_toself_wait_sifs_top_scale <= (send_cts_toself_wait_sifs_top*`COUNT_SCALE);
 
         case (high_tx_ctl_state)                                                 
-          WAIT_CHANCE: begin
+          WAIT_TO_TRIG:begin
             wea_internal<=0;
             addra_internal<=0;
             dina_internal<=0;
@@ -219,43 +225,71 @@
             cts_toself_rf_is_ongoing<=0;
 
             read_from_s_axis_en <= 0;
+            if ( (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+              if(retrans_in_progress == 1) begin
+                quit_retrans <= 1;
+                high_tx_ctl_state<=WAIT_TX_COMP;
+                tx_queue_idx_reg<=tx_queue_idx_reg;
+                high_trigger<=0;
+              end else begin
+                quit_retrans<=0;
+                tx_queue_idx_reg<=0; 
+                high_tx_ctl_state<=WAIT_CHANCE;
+                high_trigger<=1;
+              end            
+            end else if  ( (~num_dma_symbol_fifo_empty1) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+              high_tx_ctl_state  <= WAIT_CHANCE;
+              tx_queue_idx_reg<=1; 
+              high_trigger<=1;             
+            end else if  ( (~num_dma_symbol_fifo_empty2) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+              high_tx_ctl_state  <= WAIT_CHANCE;
+              tx_queue_idx_reg<=2; 
+              high_trigger<=1;     
+            end else if  ( (~num_dma_symbol_fifo_empty3) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+              high_tx_ctl_state  <= WAIT_CHANCE;
+              tx_queue_idx_reg<=3; 
+              high_trigger<=1;             
+            end
+            wr_counter <= 13'b0;
+            send_cts_toself_wait_count<=0;
+          end
+          
+          
+          
+          WAIT_CHANCE: begin
+            wea_internal<=0;
+            addra_internal<=0;
+            dina_internal<=0;
+            high_trigger<=0;
+            cts_toself_bb_is_ongoing<=0;
+            cts_toself_rf_is_ongoing<=0;
+
+            read_from_s_axis_en <= 0;
             // num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            if ( high_tx_allowed0 && (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag)) begin
-                  num_dma_symbol_total_rden1<= 0;
-                  num_dma_symbol_total_rden2<= 0;
-                  num_dma_symbol_total_rden3<= 0;
-                  if(retrans_in_progress == 1) begin
-                    num_dma_symbol_total_rden0<= 0;
-                    quit_retrans <= 1;
-                    high_tx_ctl_state<=WAIT_TX_COMP;
-                    tx_queue_idx_reg<=tx_queue_idx_reg;
-                  end else begin 
-                    num_dma_symbol_total_rden0<= 1;
-                    quit_retrans<=0;
-                    tx_queue_idx_reg<=0; 
-                    high_tx_ctl_state<=PREPARE_TX_FETCH;
-                  end
-            end else if ( high_tx_allowed1 && (~num_dma_symbol_fifo_empty1) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) ) begin
-                  num_dma_symbol_total_rden0<= 0;
-                  num_dma_symbol_total_rden1<= 1;
-                  num_dma_symbol_total_rden2<= 0;
-                  num_dma_symbol_total_rden3<= 0;
-                  high_tx_ctl_state  <= PREPARE_TX_FETCH;
-                  tx_queue_idx_reg<=1;
-            end else if ( high_tx_allowed2 && (~num_dma_symbol_fifo_empty2) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) ) begin
-                  num_dma_symbol_total_rden0<= 0;
-                  num_dma_symbol_total_rden1<= 0;
-                  num_dma_symbol_total_rden2<= 1;
-                  num_dma_symbol_total_rden3<= 0;
-                  high_tx_ctl_state  <= PREPARE_TX_FETCH;
-                  tx_queue_idx_reg<=2;
-            end else if ( high_tx_allowed3 && (~num_dma_symbol_fifo_empty3) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) ) begin
-                  num_dma_symbol_total_rden0<= 0;
-                  num_dma_symbol_total_rden1<= 0;
-                  num_dma_symbol_total_rden2<= 0;
-                  num_dma_symbol_total_rden3<= 1;
-                  high_tx_ctl_state  <= PREPARE_TX_FETCH;
-                  tx_queue_idx_reg<=3;
+            if( high_tx_allowed0 && (tx_queue_idx_reg==0)) begin
+              num_dma_symbol_total_rden0<= 1;
+              num_dma_symbol_total_rden1<= 0;
+              num_dma_symbol_total_rden2<= 0;
+              num_dma_symbol_total_rden3<= 0;
+              high_tx_ctl_state<=PREPARE_TX_FETCH;
+            end else if ( high_tx_allowed1 && (tx_queue_idx_reg==1)) begin
+              num_dma_symbol_total_rden0<= 0;
+              num_dma_symbol_total_rden1<= 1;
+              num_dma_symbol_total_rden2<= 0;
+              num_dma_symbol_total_rden3<= 0; 
+              high_tx_ctl_state<=PREPARE_TX_FETCH;             
+            end else if ( high_tx_allowed2 && (tx_queue_idx_reg==2)) begin
+              num_dma_symbol_total_rden0<= 0;
+              num_dma_symbol_total_rden1<= 0;
+              num_dma_symbol_total_rden2<= 1;
+              num_dma_symbol_total_rden3<= 0;
+              high_tx_ctl_state<=PREPARE_TX_FETCH;              
+            end else if ( high_tx_allowed3 && (tx_queue_idx_reg==3)) begin
+              num_dma_symbol_total_rden0<= 0;
+              num_dma_symbol_total_rden1<= 0;
+              num_dma_symbol_total_rden2<= 0;
+              num_dma_symbol_total_rden3<= 1;
+              high_tx_ctl_state<=PREPARE_TX_FETCH;
             end
 
             wr_counter <= 13'b0;
@@ -264,10 +298,10 @@
 
           WAIT_TX_COMP: begin
             quit_retrans <= 0;
+            high_trigger <= 0;
             if(tx_try_complete_dl2 == 1) begin
-              high_tx_ctl_state  <= PREPARE_TX_FETCH;
+              high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=0;
-	      num_dma_symbol_total_rden0<= 1;
             end
           end
           PREPARE_TX_FETCH: begin
@@ -398,7 +432,7 @@
             else
               read_from_s_axis_en<= read_from_s_axis_en;
 
-            high_tx_ctl_state<= ( tx_end_from_acc?WAIT_CHANCE:high_tx_ctl_state );
+            high_tx_ctl_state<= ( tx_end_from_acc?WAIT_TO_TRIG:high_tx_ctl_state );
             cts_toself_rf_is_ongoing<=( tx_end_from_acc?0:cts_toself_rf_is_ongoing );
           end
 
@@ -427,7 +461,7 @@
     //    duplicated_sn_catch <= (duplicated_sn==tx_pkt_sn?1:0);
     //  end
     //end
-    
+
     // store num_dma_symbol_total into fifo
     always @( posedge clk )
     begin
@@ -482,55 +516,227 @@
     end
     
     //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
-    fifo64_1clk_dep64 fifo64_1clk_dep64_i0 (// only store num_dma_symbol from high layer, not aware ack pkt
-        .CLK(clk),
-        .DATAO(num_dma_symbol_fifo_rd_data0),
-        .DI({cts_toself_config,num_dma_symbol_total}),
-        .EMPTY(num_dma_symbol_fifo_empty0),
-        .FULL(num_dma_symbol_fifo_full0),
-        .RDEN(num_dma_symbol_total_rden0),
-        .RST(!rstn),
-        .WREN(num_dma_symbol_total_wren0),
-        .data_count(num_dma_symbol_fifo_data_count0)
+    // fifo64_1clk_dep64 fifo64_1clk_dep64_i0 (// only store num_dma_symbol from high layer, not aware ack pkt
+    //     .CLK(clk),
+    //     .DATAO(num_dma_symbol_fifo_rd_data0),
+    //     .DI({cts_toself_config,num_dma_symbol_total}),
+    //     .EMPTY(num_dma_symbol_fifo_empty0),
+    //     .FULL(num_dma_symbol_fifo_full0),
+    //     .RDEN(num_dma_symbol_total_rden0),
+    //     .RST(!rstn),
+    //     .WREN(num_dma_symbol_total_wren0),
+    //     .data_count(num_dma_symbol_fifo_data_count0)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo64_1clk_dep64_i0 (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(num_dma_symbol_fifo_rd_data0),
+      .empty(num_dma_symbol_fifo_empty0),
+      .full(num_dma_symbol_fifo_full0),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(num_dma_symbol_fifo_data_count0),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cts_toself_config,num_dma_symbol_total}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(num_dma_symbol_total_rden0),
+      .rst(!rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(num_dma_symbol_total_wren0)
     );
 
     //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
-    fifo64_1clk_dep64 fifo64_1clk_dep64_i1 (// only store num_dma_symbol from high layer, not aware ack pkt
-        .CLK(clk),
-        .DATAO(num_dma_symbol_fifo_rd_data1),
-        .DI({cts_toself_config,num_dma_symbol_total}),
-        .EMPTY(num_dma_symbol_fifo_empty1),
-        .FULL(num_dma_symbol_fifo_full1),
-        .RDEN(num_dma_symbol_total_rden1),
-        .RST(!rstn),
-        .WREN(num_dma_symbol_total_wren1),
-        .data_count(num_dma_symbol_fifo_data_count1)
+    // fifo64_1clk_dep64 fifo64_1clk_dep64_i1 (// only store num_dma_symbol from high layer, not aware ack pkt
+    //     .CLK(clk),
+    //     .DATAO(num_dma_symbol_fifo_rd_data1),
+    //     .DI({cts_toself_config,num_dma_symbol_total}),
+    //     .EMPTY(num_dma_symbol_fifo_empty1),
+    //     .FULL(num_dma_symbol_fifo_full1),
+    //     .RDEN(num_dma_symbol_total_rden1),
+    //     .RST(!rstn),
+    //     .WREN(num_dma_symbol_total_wren1),
+    //     .data_count(num_dma_symbol_fifo_data_count1)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo64_1clk_dep64_i1 (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(num_dma_symbol_fifo_rd_data1),
+      .empty(num_dma_symbol_fifo_empty1),
+      .full(num_dma_symbol_fifo_full1),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(num_dma_symbol_fifo_data_count1),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cts_toself_config,num_dma_symbol_total}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(num_dma_symbol_total_rden1),
+      .rst(!rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(num_dma_symbol_total_wren1)
     );
 
     //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
-    fifo64_1clk_dep64 fifo64_1clk_dep64_i2 (// only store num_dma_symbol from high layer, not aware ack pkt
-        .CLK(clk),
-        .DATAO(num_dma_symbol_fifo_rd_data2),
-        .DI({cts_toself_config,num_dma_symbol_total}),
-        .EMPTY(num_dma_symbol_fifo_empty2),
-        .FULL(num_dma_symbol_fifo_full2),
-        .RDEN(num_dma_symbol_total_rden2),
-        .RST(!rstn),
-        .WREN(num_dma_symbol_total_wren2),
-        .data_count(num_dma_symbol_fifo_data_count2)
+    // fifo64_1clk_dep64 fifo64_1clk_dep64_i2 (// only store num_dma_symbol from high layer, not aware ack pkt
+    //     .CLK(clk),
+    //     .DATAO(num_dma_symbol_fifo_rd_data2),
+    //     .DI({cts_toself_config,num_dma_symbol_total}),
+    //     .EMPTY(num_dma_symbol_fifo_empty2),
+    //     .FULL(num_dma_symbol_fifo_full2),
+    //     .RDEN(num_dma_symbol_total_rden2),
+    //     .RST(!rstn),
+    //     .WREN(num_dma_symbol_total_wren2),
+    //     .data_count(num_dma_symbol_fifo_data_count2)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo64_1clk_dep64_i2 (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(num_dma_symbol_fifo_rd_data2),
+      .empty(num_dma_symbol_fifo_empty2),
+      .full(num_dma_symbol_fifo_full2),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(num_dma_symbol_fifo_data_count2),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cts_toself_config,num_dma_symbol_total}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(num_dma_symbol_total_rden2),
+      .rst(!rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(num_dma_symbol_total_wren2)
     );
 
     //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
-    fifo64_1clk_dep64 fifo64_1clk_dep64_i3 (// only store num_dma_symbol from high layer, not aware ack pkt
-        .CLK(clk),
-        .DATAO(num_dma_symbol_fifo_rd_data3),
-        .DI({cts_toself_config,num_dma_symbol_total}),
-        .EMPTY(num_dma_symbol_fifo_empty3),
-        .FULL(num_dma_symbol_fifo_full3),
-        .RDEN(num_dma_symbol_total_rden3),
-        .RST(!rstn),
-        .WREN(num_dma_symbol_total_wren3),
-        .data_count(num_dma_symbol_fifo_data_count3)
+    // fifo64_1clk_dep64 fifo64_1clk_dep64_i3 (// only store num_dma_symbol from high layer, not aware ack pkt
+    //     .CLK(clk),
+    //     .DATAO(num_dma_symbol_fifo_rd_data3),
+    //     .DI({cts_toself_config,num_dma_symbol_total}),
+    //     .EMPTY(num_dma_symbol_fifo_empty3),
+    //     .FULL(num_dma_symbol_fifo_full3),
+    //     .RDEN(num_dma_symbol_total_rden3),
+    //     .RST(!rstn),
+    //     .WREN(num_dma_symbol_total_wren3),
+    //     .data_count(num_dma_symbol_fifo_data_count3)
+    // );
+    xpm_fifo_sync #(
+      .DOUT_RESET_VALUE("0"),    // String
+      .ECC_MODE("no_ecc"),       // String
+      .FIFO_MEMORY_TYPE("auto"), // String
+      .FIFO_READ_LATENCY(0),     // DECIMAL
+      .FIFO_WRITE_DEPTH(64),   // DECIMAL
+      .FULL_RESET_VALUE(0),      // DECIMAL
+      .PROG_EMPTY_THRESH(10),    // DECIMAL
+      .PROG_FULL_THRESH(10),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(7),   // DECIMAL
+      .READ_DATA_WIDTH(64),      // DECIMAL
+      .READ_MODE("fwft"),         // String
+      .USE_ADV_FEATURES("0404"), // only enable rd_data_count and wr_data_count
+      .WAKEUP_TIME(0),           // DECIMAL
+      .WRITE_DATA_WIDTH(64),     // DECIMAL
+      .WR_DATA_COUNT_WIDTH(7)    // DECIMAL
+    ) fifo64_1clk_dep64_i3 (
+      .almost_empty(),
+      .almost_full(),
+      .data_valid(),
+      .dbiterr(),
+      .dout(num_dma_symbol_fifo_rd_data3),
+      .empty(num_dma_symbol_fifo_empty3),
+      .full(num_dma_symbol_fifo_full3),
+      .overflow(),
+      .prog_empty(),
+      .prog_full(),
+      .rd_data_count(num_dma_symbol_fifo_data_count3),
+      .rd_rst_busy(),
+      .sbiterr(),
+      .underflow(),
+      .wr_ack(),
+      .wr_data_count(),
+      .wr_rst_busy(),
+      .din({cts_toself_config,num_dma_symbol_total}),
+      .injectdbiterr(),
+      .injectsbiterr(),
+      .rd_en(num_dma_symbol_total_rden3),
+      .rst(!rstn),
+      .sleep(),
+      .wr_clk(clk),
+      .wr_en(num_dma_symbol_total_wren3)
     );
 
     xpm_memory_tdpram # (

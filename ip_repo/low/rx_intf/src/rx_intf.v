@@ -35,6 +35,11 @@
         //(* mark_debug = "true" *) input wire adc_sync,
         input wire adc_valid,
 
+        // I/Q ports from tx_intf for loop back
+        input wire [(2*IQ_DATA_WIDTH-1) : 0] iq0_from_tx_intf,
+        input wire [(2*IQ_DATA_WIDTH-1) : 0] iq1_from_tx_intf,
+        input wire iq_valid_from_tx_intf,
+
 	    // Ports to openofdm rx
         output wire [(2*IQ_DATA_WIDTH-1) : 0] sample0,
         output wire [(2*IQ_DATA_WIDTH-1) : 0] sample1,
@@ -148,6 +153,7 @@
 	wire  m00_axis_tlast_inner;
     wire  m00_axis_tlast_auto_recover;
 
+    wire emptyn_to_bb;
     wire [(ADC_PACK_DATA_WIDTH-1) : 0] ant_data_after_sel;
 
     wire [(IQ_DATA_WIDTH-1) : 0] rf_i0_to_acc;
@@ -231,10 +237,11 @@
     assign adc_data_after_sel = (ant_flag_in_rf_domain?{adc_data[(2*IQ_DATA_WIDTH-1) : 0],adc_data[(ADC_PACK_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)]}:adc_data);
     assign adc_data_internal  = (mute_adc_out_to_bb_in_rf_domain?{adc_data_after_sel[(ADC_PACK_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)],32'd0}:adc_data_after_sel);
 
-    assign bw20_i0 = ant_data_after_sel[  (IQ_DATA_WIDTH-1) : 0];
-    assign bw20_q0 = ant_data_after_sel[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH];
-    assign bw20_i1 = ant_data_after_sel[(3*IQ_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)];
-    assign bw20_q1 = ant_data_after_sel[(4*IQ_DATA_WIDTH-1) : (3*IQ_DATA_WIDTH)];
+    assign bw20_i0 = (slv_reg3[8]?iq0_from_tx_intf[  (IQ_DATA_WIDTH-1) :             0]:ant_data_after_sel[  (IQ_DATA_WIDTH-1) : 0]);
+    assign bw20_q0 = (slv_reg3[8]?iq0_from_tx_intf[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH]:ant_data_after_sel[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH]);
+    assign bw20_i1 = (slv_reg3[8]?iq1_from_tx_intf[  (IQ_DATA_WIDTH-1) :             0]:ant_data_after_sel[(3*IQ_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)]);
+    assign bw20_q1 = (slv_reg3[8]?iq1_from_tx_intf[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH]:ant_data_after_sel[(4*IQ_DATA_WIDTH-1) : (3*IQ_DATA_WIDTH)]);
+    assign bw20_iq_valid = (slv_reg3[8]?iq_valid_from_tx_intf:emptyn_to_bb);
     
 // ---------------------------fro mute_adc_out_to_bb control from acc domain to adc domain-------------------------------------
     xpm_cdc_array_single #(
@@ -278,9 +285,9 @@
         .acc_rstn(m00_axis_aresetn&(~slv_reg0[5])),
 
         .bb_gain(slv_reg11[2:0]), // number of bit shift to left
-        .data_to_acc(ant_data_after_sel),
-        .emptyn_to_acc(bw20_iq_valid),
-        .acc_ask_data(1'b1&(~slv_reg10[1]))
+        .data_to_bb(ant_data_after_sel),
+        .emptyn_to_bb(emptyn_to_bb),
+        .bb_ask_data(1'b1&(~slv_reg10[1]))
     );
 
 // Instantiation of Axi Bus Interface S00_AXI

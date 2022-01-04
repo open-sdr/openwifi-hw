@@ -2,11 +2,10 @@
   "design": {
     "design_info": {
       "boundary_crc": "0x8ADA253D3311EE9D",
-      "device": "xc7z045ffg900-2",
+      "device": "xczu9eg-ffvb1156-2-e",
       "name": "duc_bank_core",
       "synth_flow_mode": "None",
-      "tool_version": "2018.3",
-      "validated": "true"
+      "tool_version": "2018.3"
     },
     "design_tree": {
       "fir_compiler_0": "",
@@ -35,16 +34,8 @@
           "HAS_TSTRB": {
             "value": "0"
           },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "LAYERED_METADATA": {
             "value": "undef"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           },
           "TDATA_NUM_BYTES": {
             "value": "4"
@@ -73,40 +64,14 @@
           "ASSOCIATED_BUSIF": {
             "value": "bw20_data"
           },
-          "ASSOCIATED_RESET": {
-            "value": "rstn",
-            "value_src": "default"
-          },
-          "CLK_DOMAIN": {
-            "value": "duc_bank_core_clk",
-            "value_src": "default"
-          },
           "FREQ_HZ": {
             "value": "200000000"
-          },
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "PHASE": {
-            "value": "0.000",
-            "value_src": "default"
           }
         }
       },
       "rstn": {
         "type": "rst",
-        "direction": "I",
-        "parameters": {
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
-          "POLARITY": {
-            "value": "ACTIVE_LOW",
-            "value_src": "default"
-          }
-        }
+        "direction": "I"
       },
       "cfg0": {
         "type": "data",

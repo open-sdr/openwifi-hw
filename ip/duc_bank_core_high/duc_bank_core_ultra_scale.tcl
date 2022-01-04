@@ -25,7 +25,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set project_name "duc_bank_core"
+set project_name "duc_bank_core_ultra_scale"
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -33,7 +33,7 @@ if { [info exists ::user_project_name] } {
 }
 
 variable script_file
-set script_file "duc_bank_core.tcl"
+set script_file "duc_bank_core_ultra_scale.tcl"
 
 # Help information for this script
 proc help {} {
@@ -81,7 +81,7 @@ if { $::argc > 0 } {
 }
 
 # Set the directory path for the original project from where this script was exported
-set orig_proj_dir "[file normalize "$origin_dir/duc_bank_core"]"
+set orig_proj_dir "[file normalize "$origin_dir/duc_bank_core_ultra_scale"]"
 
 # Create project
 create_project ${project_name} ./${project_name} -part xczu9eg-ffvb1156-2-e

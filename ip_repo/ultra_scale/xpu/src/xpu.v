@@ -84,8 +84,12 @@
         input wire  [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr,
         output wire [3:0] band,
         output wire [7:0] channel,
-	input wire quit_retrans,
-
+	    input wire quit_retrans,
+	    output wire tx_control_state_idle,
+        output wire [9:0] num_slot_random,
+        output wire [3:0] cw,
+        input wire high_trigger,
+        input wire [1:0] tx_queue_idx,
         // to side channel
         output wire [31:0] FC_DI,
     	output wire FC_DI_valid,
@@ -127,9 +131,9 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg3; // tsf load value high (the rising edge of msb will trigger loading)
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg4; // 19:16 band; 15:0 channel
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5; // 
-    //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6; //
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6; // some static config: duration after fcs_strobe to force ch idle
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg7; // rssi report offset, and gpio delay ctrl for rssi calculation, and reset the fifo delay
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; // lbt rssi threshold
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; // lbt rssi threshold [11:0] 
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg9; // xIFS and slot time override for debug
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; // tx bb RF delay in number of clock
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg11; // max number of tx re-transmission
@@ -193,8 +197,9 @@
 	wire high_tx_allowed_internal2;
 	wire high_tx_allowed_internal3;
 
-    wire tx_control_state_idle;
+    
     wire ch_idle;
+    wire retrans_trigger;
 
     // wire [31:0] FC_DI;
     // wire FC_DI_valid;
@@ -257,14 +262,15 @@
     wire [6:0] sifs_time;
     wire [6:0] phy_rx_start_delay_time;
 
-    wire [3:0] cw_exp_used ;
-    `DEBUG_PREFIX wire [3:0] cw_exp_dynamic;
+    wire [3:0] cw_exp_used;
+    wire [3:0] cw_exp_dynamic;
     wire tx_try_complete_int;
-    wire backoff_done ;
-    assign tx_try_complete = tx_try_complete_int ;
-    assign cw_exp_used = (slv_reg19[28]?cw_exp_dynamic:slv_reg19[3:0]) ;
-    
-
+    wire backoff_done;
+    wire increase_cw;
+    wire cw_used ;
+    assign tx_try_complete = tx_try_complete_int;
+    assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg19[3:0]);
+    assign cw = (cw_used?cw_exp_used:0); 
     assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
 
     assign erp_short_slot = slv_reg4[24];
@@ -354,6 +360,9 @@
     cca # (
         .RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH)
     ) cca_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn&(~slv_reg0[6])),
+
         .rssi_half_db(rssi_half_db),
         .rssi_half_db_th(slv_reg8[(RSSI_HALF_DB_WIDTH-1):0]),
 
@@ -361,7 +370,8 @@
         .tx_rf_is_ongoing(tx_rf_is_ongoing),
         .cts_toself_rf_is_ongoing(cts_toself_rf_is_ongoing),
         .ack_cts_is_ongoing(ack_cts_is_ongoing),
-        .tx_control_state_idle(tx_control_state_idle),
+        .fcs_in_strobe(fcs_in_strobe),
+        .wait_after_decode_top(slv_reg6[7:0]),
 
         .ch_idle(ch_idle)
     );
@@ -381,11 +391,10 @@
         .fcs_in_strobe(fcs_in_strobe),
         .fcs_valid(fcs_valid),
 
-        .nav_enable(~slv_reg19[31]),
-        .difs_enable(~slv_reg19[30]),
-        .eifs_enable(~slv_reg19[29]),
-        .cw_min({slv_reg19[11:4],cw_exp_used}),//.cw_min(slv_reg19[11:0]),
-        //.cw_max(slv_reg19[23:12]),
+        .nav_enable(~slv_reg6[31]),
+        .difs_enable(~slv_reg6[30]),
+        .eifs_enable(~slv_reg6[29]),
+        .cw_min(cw_exp_used),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .slot_time(slot_time),
@@ -410,23 +419,30 @@
         .slice_en1(slice_en1),
         .slice_en2(slice_en2),
         .slice_en3(slice_en3),
-        .retrans_in_progress(retrans_in_progress),
+        .retrans_trigger(retrans_trigger),
+        .quit_retrans(quit_retrans),
+        .high_trigger(high_trigger),
+        .tx_bb_is_ongoing(tx_bb_is_ongoing),
+        .ack_tx_flag(ack_tx_flag),
 
         .high_tx_allowed0(high_tx_allowed_internal0),
         .high_tx_allowed1(high_tx_allowed_internal1),
         .high_tx_allowed2(high_tx_allowed_internal2),
         .high_tx_allowed3(high_tx_allowed_internal3),
+        .num_slot_random_log_dl(num_slot_random),
+        .increase_cw(increase_cw),
+        .cw_used_dl(cw_used),
         .backoff_done(backoff_done)
     );
 
     cw_exp # (
-        .CW_EXP_MAX(8)
     ) cw_exp_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
         .tx_try_complete(tx_try_complete_int),
-        .cw_exp_min(slv_reg19[3:0]),
-        .start_retrans(start_retrans),
+        .cw_combined(slv_reg19),
+        .tx_queue_idx(tx_queue_idx),
+        .start_retrans(increase_cw),
         .cw_exp(cw_exp_dynamic)
     );
 
@@ -438,6 +454,7 @@
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
 
+        .ack_disable(slv_reg11[4]),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .sifs_time(sifs_time),
@@ -454,6 +471,7 @@
         .signal_rate(pkt_rate),
         .signal_len(pkt_len),
         .fcs_valid(fcs_valid),
+        .fcs_in_strobe(fcs_in_strobe),
         .FC_type(FC_type),
         .FC_subtype(FC_subtype),
         .FC_more_frag(FC_more_frag),
@@ -475,6 +493,7 @@
         .quit_retrans(quit_retrans),
         .start_tx_ack(start_tx_ack),
         .tx_try_complete(tx_try_complete_int),
+        .retrans_trigger(retrans_trigger),
         .tx_status(tx_status),
         .ack_tx_flag(ack_tx_flag),
         .wea(wea),
@@ -637,8 +656,8 @@
 		.SLV_REG2(slv_reg2),
 		.SLV_REG3(slv_reg3),
 		.SLV_REG4(slv_reg4),
-        .SLV_REG5(slv_reg5),/*
-        .SLV_REG6(slv_reg6),*/
+        .SLV_REG5(slv_reg5),
+        .SLV_REG6(slv_reg6),
         .SLV_REG7(slv_reg7),
 		.SLV_REG8(slv_reg8),
         .SLV_REG9(slv_reg9),

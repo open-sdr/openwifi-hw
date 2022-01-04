@@ -2,8 +2,9 @@
 `include "clock_speed.v"
 `include "board_def.v"
 
-`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-// `define DEBUG_PREFIX
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 
 `timescale 1 ns / 1 ps
 
@@ -17,6 +18,7 @@
         input wire clk,
         input wire rstn,
         
+        input wire ack_disable,
         input wire [6:0] preamble_sig_time,
         input wire [4:0] ofdm_symbol_time,
         input wire [6:0] sifs_time,
@@ -33,6 +35,7 @@
         input wire [7:0] signal_rate,
         input wire [15:0] signal_len,
         input wire fcs_valid,
+        input wire fcs_in_strobe,
         input wire [1:0] FC_type,
         input wire [3:0] FC_subtype,
         input wire       FC_more_frag,
@@ -54,6 +57,7 @@
         output reg start_retrans,
         input wire quit_retrans,
         `DEBUG_PREFIX output reg start_tx_ack,
+        output reg retrans_trigger,
         output reg tx_try_complete,
         output reg [4:0] tx_status,
         output reg ack_tx_flag,
@@ -120,7 +124,7 @@
   reg [14:0] recv_ack_timeout_top_adj_scale;
   `DEBUG_PREFIX reg retrans_started ;
 
-  assign tx_control_state_idle = (((tx_control_state==IDLE) || (tx_control_state==RECV_ACK_WAIT_BACKOFF_DONE)) && (~retrans_started));
+  assign tx_control_state_idle =((tx_control_state==IDLE) && (~retrans_started));
 
   assign retrans_limit = (max_num_retrans>0?max_num_retrans:tx_pkt_retrans_limit);
 
@@ -174,6 +178,7 @@
           start_tx_ack<=0;
           retrans_started<=0;
           retrans_in_progress<=0;
+          retrans_trigger<=0;
           tx_dpram_op_counter<=0;
           douta_reg<=0;
           recv_ack_timeout_top<=0;
@@ -230,6 +235,7 @@
             start_tx_ack<=0;
             tx_dpram_op_counter<=0;
             douta_reg<=0;
+            retrans_trigger<=0;
             recv_ack_timeout_top<=0;
             duration_new<=0;
             FC_type_new<=0;
@@ -252,7 +258,7 @@
             if ( fcs_valid && (is_data||is_management||is_blockackreq||is_blockack||is_pspoll||(is_rts&&(!cts_torts_disable))) 
                            && (self_mac_addr==addr1)) // send ACK will not back to this IDLE until the last IQ sample sent.
               begin
-                  tx_control_state  <= SEND_ACK; //we also send cts (if rts is received) in SEND_ACK status
+                  tx_control_state  <= (ack_disable?tx_control_state:SEND_ACK); //we also send cts (if rts is received) in SEND_ACK status
               end
             //else if ( pulse_tx_bb_end && tx_pkt_type[0]==1 && (core_state_old!=SEND_ACK) )// need to recv ACK! We need to miss this pulse_tx_bb_end intentionally when send ACK, because ACK don't need ACK
             //else if ( phy_tx_done && (core_state_old!=SEND_ACK) )// need to recv ACK! We need to miss this pulse_tx_bb_end intentionally when send ACK, because ACK don't need ACK
@@ -271,7 +277,7 @@
                   retrans_in_progress<=0;
                   retrans_started<=0;
               end 
-            else if ((backoff_done == 1) && (retrans_in_progress == 1))
+            else if ((backoff_done==1) && (retrans_in_progress==1) && (retrans_started==0))
               begin
                   tx_control_state  <= RECV_ACK_WAIT_BACKOFF_DONE;
               end
@@ -434,7 +440,7 @@
                     // tx_try_complete<=tx_try_complete;
                     // tx_status<=tx_status;
                     num_retrans<=num_retrans+1;
-                    //start_retrans<=1; // start retransmission if ack did not arrive in time --
+                    retrans_trigger<=1;// start retransmission if ack did not arrive in time --
                     // retrans_in_progress<=retrans_in_progress;
                 end
             end 
@@ -460,7 +466,7 @@
             // recv_ack_timeout_top <= recv_ack_timeout_top;
 
             ack_timeout_count<=ack_timeout_count+1;
-            if ( (ack_timeout_count<recv_ack_timeout_top) && (recv_ack_fcs_valid_disable|fcs_valid) && (FC_type==2'b01) && (FC_subtype==4'b1101) && (self_mac_addr==addr1)) begin//before timeout, we detect a ACK type frame fcs valid
+            if ( (ack_timeout_count<recv_ack_timeout_top) && (recv_ack_fcs_valid_disable|fcs_in_strobe) && (FC_type==2'b01) && (FC_subtype==4'b1101) && (self_mac_addr==addr1)) begin//before timeout, we detect a ACK type frame fcs valid
                 tx_control_state<= IDLE;
                 tx_try_complete<=1;
                 // tx_status<={1'b0,num_retrans};
@@ -483,7 +489,7 @@
                     // tx_try_complete<=tx_try_complete;
                     // tx_status<=tx_status;
                     num_retrans<=num_retrans+1;
-                    //start_retrans<=1; // start retranmission if ack did not receive in time -- 
+                    retrans_trigger<=1; // start retranmission if ack did not receive in time -- 
                     // retrans_in_progress<=retrans_in_progress;
                 end
             end 
