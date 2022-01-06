@@ -54,6 +54,9 @@
         input  wire fcs_in_strobe,
 		input  wire fcs_ok,
 
+		input  wire rx_ht_aggr,
+		input  wire rx_ht_aggr_last,
+
         // Ports to phy_tx
         input  wire phy_tx_started,
         input  wire phy_tx_done,
@@ -137,7 +140,7 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg9; // xIFS and slot time override for debug
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; // tx bb RF delay in number of clock
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg11; // max number of tx re-transmission
-    //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg12; // 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg12; // 
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg13; // 
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg14; // 
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg15; //
@@ -500,6 +503,17 @@
         .cts_toself_bb_is_ongoing(cts_toself_bb_is_ongoing),
         .backoff_done(backoff_done),
         .bram_addr(bram_addr),
+
+        .ampdu_rx_tid(slv_reg12[4:1]),
+        .ampdu_rx_start(slv_reg12[0]),
+
+        .SC_seq_num(SC_sequence_number),
+        .rx_ht_aggr(rx_ht_aggr),
+        .rx_ht_aggr_last(rx_ht_aggr_last),
+
+        .qos_tid(qos_tid),
+        .blk_ack_req_ctrl(blk_ack_req_ctrl),
+        .blk_ack_req_ssc(blk_ack_req_ssc),
         
         .tx_control_state_idle(tx_control_state_idle),
         .ack_cts_is_ongoing(ack_cts_is_ongoing),
@@ -692,8 +706,8 @@
 		.SLV_REG8(slv_reg8),
         .SLV_REG9(slv_reg9),
         .SLV_REG10(slv_reg10),
-        .SLV_REG11(slv_reg11),/*
-        .SLV_REG12(slv_reg12),
+        .SLV_REG11(slv_reg11),
+        .SLV_REG12(slv_reg12),/*
         .SLV_REG13(slv_reg13),
         .SLV_REG14(slv_reg14),
         .SLV_REG15(slv_reg15),*/
