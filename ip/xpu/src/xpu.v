@@ -69,10 +69,7 @@
         `DEBUG_PREFIX output wire start_tx_ack,
         output wire tx_try_complete,
 	    input  wire tx_iq_fifo_empty,
-        output wire high_tx_allowed0,
-        output wire high_tx_allowed1,
-        output wire high_tx_allowed2,
-        output wire high_tx_allowed3,
+        output wire [3:0] high_tx_allowed,
         output wire tx_bb_is_ongoing,
         output wire tx_rf_is_ongoing,
         output wire ack_tx_flag,
@@ -196,10 +193,7 @@
 	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg63;//FPGA version info
 	
 	wire block_rx_dma_to_ps_internal;
-	wire high_tx_allowed_internal0;
-	wire high_tx_allowed_internal1;
-	wire high_tx_allowed_internal2;
-	wire high_tx_allowed_internal3;
+	wire [3:0] high_tx_allowed_internal;
 
     
     wire ch_idle;
@@ -313,13 +307,13 @@
 
 	assign mute_adc_out_to_bb = (slv_reg1[0]?slv_reg1[31]:(tx_rf_is_ongoing|cts_toself_rf_is_ongoing|ack_cts_is_ongoing));
 	assign block_rx_dma_to_ps = (block_rx_dma_to_ps_internal&(~slv_reg1[2]));	
-	assign high_tx_allowed0 = (  slv_reg1[4]==0?high_tx_allowed_internal0:slv_reg1[1] );
-	assign high_tx_allowed1 = ( slv_reg1[12]==0?high_tx_allowed_internal1:slv_reg1[8] );
-	assign high_tx_allowed2 = ( slv_reg1[20]==0?high_tx_allowed_internal2:slv_reg1[16] );
-	assign high_tx_allowed3 = ( slv_reg1[28]==0?high_tx_allowed_internal3:slv_reg1[24] );
+	assign high_tx_allowed[0] = (  slv_reg1[4]==0?high_tx_allowed_internal[0]:slv_reg1[1] );
+	assign high_tx_allowed[1] = ( slv_reg1[12]==0?high_tx_allowed_internal[1]:slv_reg1[8] );
+	assign high_tx_allowed[2] = ( slv_reg1[20]==0?high_tx_allowed_internal[2]:slv_reg1[16] );
+	assign high_tx_allowed[3] = ( slv_reg1[28]==0?high_tx_allowed_internal[3]:slv_reg1[24] );
 	assign mac_addr = {slv_reg31[15:0], slv_reg30};
 	
-	// assign slv_reg50 = {high_tx_allowed_internal1, high_tx_allowed_internal0, 4'h0,ack_tx_flag,demod_is_ongoing,tx_rf_is_ongoing,tx_bb_is_ongoing}; // we should use ack_tx_flag to disable tx interrupt to linux!
+	// assign slv_reg50 = {high_tx_allowed_internal[1], high_tx_allowed_internal[0], 4'h0,ack_tx_flag,demod_is_ongoing,tx_rf_is_ongoing,tx_bb_is_ongoing}; // we should use ack_tx_flag to disable tx interrupt to linux!
 	// assign slv_reg51[4:0] = tx_status;
 
 	// assign slv_reg34 =  FC_DI;
@@ -444,10 +438,10 @@
         .tx_bb_is_ongoing(tx_bb_is_ongoing),
         .ack_tx_flag(ack_tx_flag),
 
-        .high_tx_allowed0(high_tx_allowed_internal0),
-        .high_tx_allowed1(high_tx_allowed_internal1),
-        .high_tx_allowed2(high_tx_allowed_internal2),
-        .high_tx_allowed3(high_tx_allowed_internal3),
+        .high_tx_allowed0(high_tx_allowed_internal[0]),
+        .high_tx_allowed1(high_tx_allowed_internal[1]),
+        .high_tx_allowed2(high_tx_allowed_internal[2]),
+        .high_tx_allowed3(high_tx_allowed_internal[3]),
         .num_slot_random_log_dl(num_slot_random),
         .increase_cw(increase_cw),
         .cw_used_dl(cw_used),
