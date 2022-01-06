@@ -229,10 +229,8 @@
 	assign phy_tx_auto_start_mode = slv_reg2[3];
 	assign phy_tx_auto_start_num_dma_symbol_th = slv_reg2[13:4];
 
-    assign slv_reg21[0] = (s_axis_fifo_data_count0>slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]?1:0);
-    assign slv_reg21[1] = (s_axis_fifo_data_count1>slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]?1:0);
-    assign slv_reg21[2] = (s_axis_fifo_data_count2>slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]?1:0);
-    assign slv_reg21[3] = (s_axis_fifo_data_count3>slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]?1:0);
+    assign slv_reg21[31:MAX_BIT_NUM_DMA_SYMBOL] = 0;
+	assign slv_reg21[(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] = (tx_queue_idx == 0) ? s_axis_fifo_data_count0 : ((tx_queue_idx == 1) ? s_axis_fifo_data_count1 : ((tx_queue_idx == 2) ? s_axis_fifo_data_count2 : s_axis_fifo_data_count3));
 
     assign acc_ask_data_from_s_axis = tx_bit_intf_acc_ask_data_from_s_axis;
 
