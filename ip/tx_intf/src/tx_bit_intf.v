@@ -29,15 +29,15 @@
 	    //input wire src_indication,//0-s_axis-->phy_tx-->iq-->duc; 1-s_axis-->iq-->duc
 	    input wire auto_start_mode,
 	    input wire [9:0] num_dma_symbol_th,
-	    input wire [31:0] num_dma_symbol_total,
+	    input wire [31:0] tx_config,
 	    input wire [1:0] tx_queue_idx_indication_from_ps,
 	    input wire s_axis_recv_data_from_high,
 	    output wire start,
 
-      output wire [6:0] num_dma_symbol_fifo_data_count0,
-      output wire [6:0] num_dma_symbol_fifo_data_count1,
-      output wire [6:0] num_dma_symbol_fifo_data_count2,
-      output wire [6:0] num_dma_symbol_fifo_data_count3,
+      output wire [6:0] tx_config_fifo_data_count0,
+      output wire [6:0] tx_config_fifo_data_count1,
+      output wire [6:0] tx_config_fifo_data_count2,
+      output wire [6:0] tx_config_fifo_data_count3,
 
       `DEBUG_PREFIX input wire tx_iq_fifo_empty,
       input wire [31:0] cts_toself_config,
@@ -100,32 +100,32 @@
     reg [12:0] addra_internal;
     reg [(C_S00_AXIS_TDATA_WIDTH-1):0] dina_internal;
     
-    wire [63:0] num_dma_symbol_fifo_rd_data0;
-    wire [63:0] num_dma_symbol_fifo_rd_data1;
-    wire [63:0] num_dma_symbol_fifo_rd_data2;
-    wire [63:0] num_dma_symbol_fifo_rd_data3;
+    wire [63:0] tx_config_fifo_rd_data0;
+    wire [63:0] tx_config_fifo_rd_data1;
+    wire [63:0] tx_config_fifo_rd_data2;
+    wire [63:0] tx_config_fifo_rd_data3;
 
-    `DEBUG_PREFIX reg [63:0] num_dma_symbol_total_current;
+    `DEBUG_PREFIX reg [63:0] tx_config_current;
 
-    reg num_dma_symbol_total_rden0;
-    reg num_dma_symbol_total_rden1;
-    reg num_dma_symbol_total_rden2;
-    reg num_dma_symbol_total_rden3;
+    reg tx_config_fifo_rden0;
+    reg tx_config_fifo_rden1;
+    reg tx_config_fifo_rden2;
+    reg tx_config_fifo_rden3;
 
-    reg num_dma_symbol_total_wren0;
-    reg num_dma_symbol_total_wren1;
-    reg num_dma_symbol_total_wren2;
-    reg num_dma_symbol_total_wren3;
+    reg tx_config_fifo_wren0;
+    reg tx_config_fifo_wren1;
+    reg tx_config_fifo_wren2;
+    reg tx_config_fifo_wren3;
 
-    wire num_dma_symbol_fifo_empty0;
-    wire num_dma_symbol_fifo_empty1;
-    wire num_dma_symbol_fifo_empty2;
-    wire num_dma_symbol_fifo_empty3;
+    wire tx_config_fifo_empty0;
+    wire tx_config_fifo_empty1;
+    wire tx_config_fifo_empty2;
+    wire tx_config_fifo_empty3;
 
-    wire num_dma_symbol_fifo_full0;
-    wire num_dma_symbol_fifo_full1;
-    wire num_dma_symbol_fifo_full2;
-    wire num_dma_symbol_fifo_full3;
+    wire tx_config_fifo_full0;
+    wire tx_config_fifo_full1;
+    wire tx_config_fifo_full2;
+    wire tx_config_fifo_full3;
 
     wire s_axis_recv_data_from_high_valid;
     reg [1:0] tx_queue_idx_reg;
@@ -162,8 +162,8 @@
     assign dina = ( (retrans_in_progress)?dina_from_xpu:dina_internal );
     assign bram_data_to_acc = (ack_tx_flag? dina_from_xpu:bram_data_to_acc_int);
 
-    assign tx_pkt_need_ack = num_dma_symbol_total_current[13];
-    assign tx_pkt_retrans_limit = num_dma_symbol_total_current[17:14];
+    assign tx_pkt_need_ack = tx_config_current[13];
+    assign tx_pkt_retrans_limit = tx_config_current[17:14];
     
     assign s_axis_recv_data_from_high_valid = ( ((s_axis_recv_data_from_high==0) && (s_axis_recv_data_from_high_delay==1))?1:0 );
     
@@ -186,11 +186,11 @@
           send_cts_toself_wait_sifs_top_scale <= 0;
 
           read_from_s_axis_en <= 0;      
-          num_dma_symbol_total_current <= 0;                            
-          num_dma_symbol_total_rden0<= 0;   
-          num_dma_symbol_total_rden1<= 0;   
-          num_dma_symbol_total_rden2<= 0;   
-          num_dma_symbol_total_rden3<= 0;   
+          tx_config_current <= 0;                            
+          tx_config_fifo_rden0<= 0;   
+          tx_config_fifo_rden1<= 0;   
+          tx_config_fifo_rden2<= 0;   
+          tx_config_fifo_rden3<= 0;   
           high_tx_ctl_state <= WAIT_TO_TRIG;
           high_tx_ctl_state_old<=WAIT_TO_TRIG;
           wr_counter <= 13'b0;
@@ -205,12 +205,12 @@
         end                                                                   
       else begin
         high_tx_ctl_state_old <= high_tx_ctl_state;
-        //cts_toself_config[31:0] restored to num_dma_symbol_total_current[63:32] before actual tx
-        //cts_toself_config[31]/num_dma_symbol_total_current[63] enable/disable cts to self
-        //cts_toself_config[30]/num_dma_symbol_total_current[62] select cts to self rate. 1 select the actual traffic pkt rate that is in cts_toself_config[3:0]/num_dma_symbol_total_current[35:32]
-        //cts_toself_config[30]/num_dma_symbol_total_current[62] select cts to self rate. 0 select specified cts to self rate by mac80211 in cts_toself_config[7:4]/num_dma_symbol_total_current[39:36]
-        //cts_toself_config[23:8]/num_dma_symbol_total_current[55:40] cts to self duration 
-        cts_toself_rate <= (num_dma_symbol_total_current[62]?num_dma_symbol_total_current[35:32]:num_dma_symbol_total_current[39:36]);//cts_toself_config[23:8]
+        //cts_toself_config[31:0] restored to tx_config_current[63:32] before actual tx
+        //cts_toself_config[31]/tx_config_current[63] enable/disable cts to self
+        //cts_toself_config[30]/tx_config_current[62] select cts to self rate. 1 select the actual traffic pkt rate that is in cts_toself_config[3:0]/tx_config_current[35:32]
+        //cts_toself_config[30]/tx_config_current[62] select cts to self rate. 0 select specified cts to self rate by mac80211 in cts_toself_config[7:4]/tx_config_current[39:36]
+        //cts_toself_config[23:8]/tx_config_current[55:40] cts to self duration 
+        cts_toself_rate <= (tx_config_current[62]?tx_config_current[35:32]:tx_config_current[39:36]);//cts_toself_config[23:8]
         mac_addr_reg <= mac_addr;
 
         send_cts_toself_wait_sifs_top_scale <= (send_cts_toself_wait_sifs_top*`COUNT_SCALE);
@@ -225,7 +225,7 @@
             cts_toself_rf_is_ongoing<=0;
 
             read_from_s_axis_en <= 0;
-            if ( (~num_dma_symbol_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            if ( (~tx_config_fifo_empty0) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
               if(retrans_in_progress == 1) begin
                 quit_retrans <= 1;
                 high_tx_ctl_state<=WAIT_TX_COMP;
@@ -237,15 +237,15 @@
                 high_tx_ctl_state<=WAIT_CHANCE;
                 high_trigger<=1;
               end            
-            end else if  ( (~num_dma_symbol_fifo_empty1) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty1) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=1; 
               high_trigger<=1;             
-            end else if  ( (~num_dma_symbol_fifo_empty2) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty2) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=2; 
               high_trigger<=1;     
-            end else if  ( (~num_dma_symbol_fifo_empty3) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty3) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=3; 
               high_trigger<=1;             
@@ -265,30 +265,30 @@
             cts_toself_rf_is_ongoing<=0;
 
             read_from_s_axis_en <= 0;
-            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
+            // tx_config_current <= tx_config_current;
             if( high_tx_allowed0 && (tx_queue_idx_reg==0)) begin
-              num_dma_symbol_total_rden0<= 1;
-              num_dma_symbol_total_rden1<= 0;
-              num_dma_symbol_total_rden2<= 0;
-              num_dma_symbol_total_rden3<= 0;
+              tx_config_fifo_rden0<= 1;
+              tx_config_fifo_rden1<= 0;
+              tx_config_fifo_rden2<= 0;
+              tx_config_fifo_rden3<= 0;
               high_tx_ctl_state<=PREPARE_TX_FETCH;
             end else if ( high_tx_allowed1 && (tx_queue_idx_reg==1)) begin
-              num_dma_symbol_total_rden0<= 0;
-              num_dma_symbol_total_rden1<= 1;
-              num_dma_symbol_total_rden2<= 0;
-              num_dma_symbol_total_rden3<= 0; 
+              tx_config_fifo_rden0<= 0;
+              tx_config_fifo_rden1<= 1;
+              tx_config_fifo_rden2<= 0;
+              tx_config_fifo_rden3<= 0; 
               high_tx_ctl_state<=PREPARE_TX_FETCH;             
             end else if ( high_tx_allowed2 && (tx_queue_idx_reg==2)) begin
-              num_dma_symbol_total_rden0<= 0;
-              num_dma_symbol_total_rden1<= 0;
-              num_dma_symbol_total_rden2<= 1;
-              num_dma_symbol_total_rden3<= 0;
+              tx_config_fifo_rden0<= 0;
+              tx_config_fifo_rden1<= 0;
+              tx_config_fifo_rden2<= 1;
+              tx_config_fifo_rden3<= 0;
               high_tx_ctl_state<=PREPARE_TX_FETCH;              
             end else if ( high_tx_allowed3 && (tx_queue_idx_reg==3)) begin
-              num_dma_symbol_total_rden0<= 0;
-              num_dma_symbol_total_rden1<= 0;
-              num_dma_symbol_total_rden2<= 0;
-              num_dma_symbol_total_rden3<= 1;
+              tx_config_fifo_rden0<= 0;
+              tx_config_fifo_rden1<= 0;
+              tx_config_fifo_rden2<= 0;
+              tx_config_fifo_rden3<= 1;
               high_tx_ctl_state<=PREPARE_TX_FETCH;
             end
 
@@ -312,11 +312,11 @@
             // cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
             // cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
 
-            num_dma_symbol_total_current <= ( tx_queue_idx_reg[1]?(tx_queue_idx_reg[0]?num_dma_symbol_fifo_rd_data3:num_dma_symbol_fifo_rd_data2):(tx_queue_idx_reg[0]?num_dma_symbol_fifo_rd_data1:num_dma_symbol_fifo_rd_data0) );
-            num_dma_symbol_total_rden0<= 0;
-            num_dma_symbol_total_rden1<= 0;
-            num_dma_symbol_total_rden2<= 0;
-            num_dma_symbol_total_rden3<= 0;
+            tx_config_current <= ( tx_queue_idx_reg[1]?(tx_queue_idx_reg[0]?tx_config_fifo_rd_data3:tx_config_fifo_rd_data2):(tx_queue_idx_reg[0]?tx_config_fifo_rd_data1:tx_config_fifo_rd_data0) );
+            tx_config_fifo_rden0<= 0;
+            tx_config_fifo_rden1<= 0;
+            tx_config_fifo_rden2<= 0;
+            tx_config_fifo_rden3<= 0;
             // read_from_s_axis_en <= read_from_s_axis_en;
             // wr_counter <= wr_counter;
             // tx_queue_idx_reg<=tx_queue_idx_reg;
@@ -325,14 +325,14 @@
           end
 
           PREPARE_TX_JUDGE: begin
-            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            // num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
-            // num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
+            // tx_config_current <= tx_config_current;
+            // tx_config_fifo_rden0<= tx_config_fifo_rden0;
+            // tx_config_fifo_rden1<= tx_config_fifo_rden1;
 
             // cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
             // cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
 
-            if (num_dma_symbol_total_current[63]==1) begin // from cts_toself_config[31] in tx queue
+            if (tx_config_current[63]==1) begin // from cts_toself_config[31] in tx queue
               // read_from_s_axis_en <= read_from_s_axis_en;
               high_tx_ctl_state  <= DO_CTS_TOSELF;
 
@@ -353,9 +353,9 @@
           end
 
           DO_CTS_TOSELF: begin
-            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            // num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
-            // num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
+            // tx_config_current <= tx_config_current;
+            // tx_config_fifo_rden0<= tx_config_fifo_rden0;
+            // tx_config_fifo_rden1<= tx_config_fifo_rden1;
             // read_from_s_axis_en <= read_from_s_axis_en;
 
             send_cts_toself_wait_count <= ( ( send_cts_toself_wait_count != (`WAIT_FOR_TX_IQ_FILL_COUNT_TOP) )?(send_cts_toself_wait_count + 1): (tx_iq_fifo_empty?0:send_cts_toself_wait_count) );
@@ -370,7 +370,7 @@
                 //dina_internal<={32'h0, 32'h000001cb};
                 dina_internal<={32'h0, 14'd0, cts_toself_signal_parity, cts_toself_signal_len, 1'b0, cts_toself_rate};
             end else if (send_cts_toself_wait_count==2)begin
-                dina_internal<={mac_addr_reg[31:0], num_dma_symbol_total_current[55:40], 8'd0, 4'b1100, 2'b01, 2'd0};//CTS FC_type 2'b01 FC_subtype 4'b1100 duration num_dma_symbol_total_current[55:40] from cts_toself_config[23:8] in tx queue
+                dina_internal<={mac_addr_reg[31:0], tx_config_current[55:40], 8'd0, 4'b1100, 2'b01, 2'd0};//CTS FC_type 2'b01 FC_subtype 4'b1100 duration tx_config_current[55:40] from cts_toself_config[23:8] in tx queue
             end else if (send_cts_toself_wait_count==3) begin
                 dina_internal<={48'h0,mac_addr_reg[47:32]};
             end 
@@ -383,9 +383,9 @@
           end
 
           WAIT_SIFS: begin
-            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            // num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
-            // num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
+            // tx_config_current <= tx_config_current;
+            // tx_config_fifo_rden0<= tx_config_fifo_rden0;
+            // tx_config_fifo_rden1<= tx_config_fifo_rden1;
             
             // cts_toself_bb_is_ongoing<=cts_toself_bb_is_ongoing;
             // cts_toself_rf_is_ongoing<=cts_toself_rf_is_ongoing;
@@ -414,9 +414,9 @@
           end
           
           DO_TX: begin
-            // num_dma_symbol_total_current <= num_dma_symbol_total_current;
-            // num_dma_symbol_total_rden0<= num_dma_symbol_total_rden0;
-            // num_dma_symbol_total_rden1<= num_dma_symbol_total_rden1;
+            // tx_config_current <= tx_config_current;
+            // tx_config_fifo_rden0<= tx_config_fifo_rden0;
+            // tx_config_fifo_rden1<= tx_config_fifo_rden1;
             // send_cts_toself_wait_count<=send_cts_toself_wait_count;
             // tx_queue_idx_reg<=tx_queue_idx_reg;
 
@@ -427,7 +427,7 @@
             dina_internal<=data_from_s_axis;
 
             wr_counter <= ( wea_high?(wr_counter + 1):wr_counter );
-            if (wr_counter == (num_dma_symbol_total_current[12:0]-1))
+            if (wr_counter == (tx_config_current[12:0]-1))
               read_from_s_axis_en<= 0;
             else
               read_from_s_axis_en<= read_from_s_axis_en;
@@ -462,7 +462,7 @@
     //  end
     //end
 
-    // store num_dma_symbol_total into fifo
+    // store tx configuration into fifo
     always @( posedge clk )
     begin
       if ( rstn == 1'b0 )
@@ -482,18 +482,18 @@
             tx_try_complete_dl1<=0;
             tx_try_complete_dl2<=0;
             
-            num_dma_symbol_total_wren0 <= 0;
-            num_dma_symbol_total_wren1 <= 0;
-            num_dma_symbol_total_wren2 <= 0;
-            num_dma_symbol_total_wren3 <= 0;
+            tx_config_fifo_wren0 <= 0;
+            tx_config_fifo_wren1 <= 0;
+            tx_config_fifo_wren2 <= 0;
+            tx_config_fifo_wren3 <= 0;
             s_axis_recv_data_from_high_delay <= 0;
         end 
       else
         begin
             if (tx_try_complete) begin
-              tx_pkt_sn <= num_dma_symbol_total_current[29:20];
-              // tx_pkt_num_dma_byte <= {num_dma_symbol_total_current[12:0],3'd0};
-              linux_prio <= num_dma_symbol_total_current[31:30];
+              tx_pkt_sn <= tx_config_current[29:20];
+              // tx_pkt_num_dma_byte <= {tx_config_current[12:0],3'd0};
+              linux_prio <= tx_config_current[31:30];
             end
 
             tx_try_complete_dl0<=tx_try_complete;
@@ -508,24 +508,24 @@
             start_delay5<=start_delay4;
 
             s_axis_recv_data_from_high_delay<=s_axis_recv_data_from_high;
-            num_dma_symbol_total_wren0<= (tx_queue_idx_indication_from_ps==0?s_axis_recv_data_from_high_valid:0);//assure DMA is done
-            num_dma_symbol_total_wren1<= (tx_queue_idx_indication_from_ps==1?s_axis_recv_data_from_high_valid:0);//assure DMA is done
-            num_dma_symbol_total_wren2<= (tx_queue_idx_indication_from_ps==2?s_axis_recv_data_from_high_valid:0);//assure DMA is done
-            num_dma_symbol_total_wren3<= (tx_queue_idx_indication_from_ps==3?s_axis_recv_data_from_high_valid:0);//assure DMA is done
+            tx_config_fifo_wren0<= (tx_queue_idx_indication_from_ps==0?s_axis_recv_data_from_high_valid:0);//assure DMA is done
+            tx_config_fifo_wren1<= (tx_queue_idx_indication_from_ps==1?s_axis_recv_data_from_high_valid:0);//assure DMA is done
+            tx_config_fifo_wren2<= (tx_queue_idx_indication_from_ps==2?s_axis_recv_data_from_high_valid:0);//assure DMA is done
+            tx_config_fifo_wren3<= (tx_queue_idx_indication_from_ps==3?s_axis_recv_data_from_high_valid:0);//assure DMA is done
         end
     end
     
-    //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
+    //fifio to store tx configuration each time s_axis_recv_data_from_high becomes high
     // fifo64_1clk_dep64 fifo64_1clk_dep64_i0 (// only store num_dma_symbol from high layer, not aware ack pkt
     //     .CLK(clk),
-    //     .DATAO(num_dma_symbol_fifo_rd_data0),
-    //     .DI({cts_toself_config,num_dma_symbol_total}),
-    //     .EMPTY(num_dma_symbol_fifo_empty0),
-    //     .FULL(num_dma_symbol_fifo_full0),
-    //     .RDEN(num_dma_symbol_total_rden0),
+    //     .DATAO(tx_config_fifo_rd_data0),
+    //     .DI({cts_toself_config,tx_config}),
+    //     .EMPTY(tx_config_fifo_empty0),
+    //     .FULL(tx_config_fifo_full0),
+    //     .RDEN(tx_config_fifo_rden0),
     //     .RST(!rstn),
-    //     .WREN(num_dma_symbol_total_wren0),
-    //     .data_count(num_dma_symbol_fifo_data_count0)
+    //     .WREN(tx_config_fifo_wren0),
+    //     .data_count(tx_config_fifo_data_count0)
     // );
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
@@ -548,40 +548,40 @@
       .almost_full(),
       .data_valid(),
       .dbiterr(),
-      .dout(num_dma_symbol_fifo_rd_data0),
-      .empty(num_dma_symbol_fifo_empty0),
-      .full(num_dma_symbol_fifo_full0),
+      .dout(tx_config_fifo_rd_data0),
+      .empty(tx_config_fifo_empty0),
+      .full(tx_config_fifo_full0),
       .overflow(),
       .prog_empty(),
       .prog_full(),
-      .rd_data_count(num_dma_symbol_fifo_data_count0),
+      .rd_data_count(tx_config_fifo_data_count0),
       .rd_rst_busy(),
       .sbiterr(),
       .underflow(),
       .wr_ack(),
       .wr_data_count(),
       .wr_rst_busy(),
-      .din({cts_toself_config,num_dma_symbol_total}),
+      .din({cts_toself_config,tx_config}),
       .injectdbiterr(),
       .injectsbiterr(),
-      .rd_en(num_dma_symbol_total_rden0),
+      .rd_en(tx_config_fifo_rden0),
       .rst(!rstn),
       .sleep(),
       .wr_clk(clk),
-      .wr_en(num_dma_symbol_total_wren0)
+      .wr_en(tx_config_fifo_wren0)
     );
 
-    //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
+    //fifio to store tx configuration each time s_axis_recv_data_from_high becomes high
     // fifo64_1clk_dep64 fifo64_1clk_dep64_i1 (// only store num_dma_symbol from high layer, not aware ack pkt
     //     .CLK(clk),
-    //     .DATAO(num_dma_symbol_fifo_rd_data1),
-    //     .DI({cts_toself_config,num_dma_symbol_total}),
-    //     .EMPTY(num_dma_symbol_fifo_empty1),
-    //     .FULL(num_dma_symbol_fifo_full1),
-    //     .RDEN(num_dma_symbol_total_rden1),
+    //     .DATAO(tx_config_fifo_rd_data1),
+    //     .DI({cts_toself_config,tx_config}),
+    //     .EMPTY(tx_config_fifo_empty1),
+    //     .FULL(tx_config_fifo_full1),
+    //     .RDEN(tx_config_fifo_rden1),
     //     .RST(!rstn),
-    //     .WREN(num_dma_symbol_total_wren1),
-    //     .data_count(num_dma_symbol_fifo_data_count1)
+    //     .WREN(tx_config_fifo_wren1),
+    //     .data_count(tx_config_fifo_data_count1)
     // );
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
@@ -604,40 +604,40 @@
       .almost_full(),
       .data_valid(),
       .dbiterr(),
-      .dout(num_dma_symbol_fifo_rd_data1),
-      .empty(num_dma_symbol_fifo_empty1),
-      .full(num_dma_symbol_fifo_full1),
+      .dout(tx_config_fifo_rd_data1),
+      .empty(tx_config_fifo_empty1),
+      .full(tx_config_fifo_full1),
       .overflow(),
       .prog_empty(),
       .prog_full(),
-      .rd_data_count(num_dma_symbol_fifo_data_count1),
+      .rd_data_count(tx_config_fifo_data_count1),
       .rd_rst_busy(),
       .sbiterr(),
       .underflow(),
       .wr_ack(),
       .wr_data_count(),
       .wr_rst_busy(),
-      .din({cts_toself_config,num_dma_symbol_total}),
+      .din({cts_toself_config,tx_config}),
       .injectdbiterr(),
       .injectsbiterr(),
-      .rd_en(num_dma_symbol_total_rden1),
+      .rd_en(tx_config_fifo_rden1),
       .rst(!rstn),
       .sleep(),
       .wr_clk(clk),
-      .wr_en(num_dma_symbol_total_wren1)
+      .wr_en(tx_config_fifo_wren1)
     );
 
-    //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
+    //fifio to store tx configuration each time s_axis_recv_data_from_high becomes high
     // fifo64_1clk_dep64 fifo64_1clk_dep64_i2 (// only store num_dma_symbol from high layer, not aware ack pkt
     //     .CLK(clk),
-    //     .DATAO(num_dma_symbol_fifo_rd_data2),
-    //     .DI({cts_toself_config,num_dma_symbol_total}),
-    //     .EMPTY(num_dma_symbol_fifo_empty2),
-    //     .FULL(num_dma_symbol_fifo_full2),
-    //     .RDEN(num_dma_symbol_total_rden2),
+    //     .DATAO(tx_config_fifo_rd_data2),
+    //     .DI({cts_toself_config,tx_config}),
+    //     .EMPTY(tx_config_fifo_empty2),
+    //     .FULL(tx_config_fifo_full2),
+    //     .RDEN(tx_config_fifo_rden2),
     //     .RST(!rstn),
-    //     .WREN(num_dma_symbol_total_wren2),
-    //     .data_count(num_dma_symbol_fifo_data_count2)
+    //     .WREN(tx_config_fifo_wren2),
+    //     .data_count(tx_config_fifo_data_count2)
     // );
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
@@ -660,40 +660,40 @@
       .almost_full(),
       .data_valid(),
       .dbiterr(),
-      .dout(num_dma_symbol_fifo_rd_data2),
-      .empty(num_dma_symbol_fifo_empty2),
-      .full(num_dma_symbol_fifo_full2),
+      .dout(tx_config_fifo_rd_data2),
+      .empty(tx_config_fifo_empty2),
+      .full(tx_config_fifo_full2),
       .overflow(),
       .prog_empty(),
       .prog_full(),
-      .rd_data_count(num_dma_symbol_fifo_data_count2),
+      .rd_data_count(tx_config_fifo_data_count2),
       .rd_rst_busy(),
       .sbiterr(),
       .underflow(),
       .wr_ack(),
       .wr_data_count(),
       .wr_rst_busy(),
-      .din({cts_toself_config,num_dma_symbol_total}),
+      .din({cts_toself_config,tx_config}),
       .injectdbiterr(),
       .injectsbiterr(),
-      .rd_en(num_dma_symbol_total_rden2),
+      .rd_en(tx_config_fifo_rden2),
       .rst(!rstn),
       .sleep(),
       .wr_clk(clk),
-      .wr_en(num_dma_symbol_total_wren2)
+      .wr_en(tx_config_fifo_wren2)
     );
 
-    //fifio to store num_dma_symbol_total each time s_axis_recv_data_from_high becomes high
+    //fifio to store tx configuration each time s_axis_recv_data_from_high becomes high
     // fifo64_1clk_dep64 fifo64_1clk_dep64_i3 (// only store num_dma_symbol from high layer, not aware ack pkt
     //     .CLK(clk),
-    //     .DATAO(num_dma_symbol_fifo_rd_data3),
-    //     .DI({cts_toself_config,num_dma_symbol_total}),
-    //     .EMPTY(num_dma_symbol_fifo_empty3),
-    //     .FULL(num_dma_symbol_fifo_full3),
-    //     .RDEN(num_dma_symbol_total_rden3),
+    //     .DATAO(tx_config_fifo_rd_data3),
+    //     .DI({cts_toself_config,tx_config}),
+    //     .EMPTY(tx_config_fifo_empty3),
+    //     .FULL(tx_config_fifo_full3),
+    //     .RDEN(tx_config_fifo_rden3),
     //     .RST(!rstn),
-    //     .WREN(num_dma_symbol_total_wren3),
-    //     .data_count(num_dma_symbol_fifo_data_count3)
+    //     .WREN(tx_config_fifo_wren3),
+    //     .data_count(tx_config_fifo_data_count3)
     // );
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
@@ -716,27 +716,27 @@
       .almost_full(),
       .data_valid(),
       .dbiterr(),
-      .dout(num_dma_symbol_fifo_rd_data3),
-      .empty(num_dma_symbol_fifo_empty3),
-      .full(num_dma_symbol_fifo_full3),
+      .dout(tx_config_fifo_rd_data3),
+      .empty(tx_config_fifo_empty3),
+      .full(tx_config_fifo_full3),
       .overflow(),
       .prog_empty(),
       .prog_full(),
-      .rd_data_count(num_dma_symbol_fifo_data_count3),
+      .rd_data_count(tx_config_fifo_data_count3),
       .rd_rst_busy(),
       .sbiterr(),
       .underflow(),
       .wr_ack(),
       .wr_data_count(),
       .wr_rst_busy(),
-      .din({cts_toself_config,num_dma_symbol_total}),
+      .din({cts_toself_config,tx_config}),
       .injectdbiterr(),
       .injectsbiterr(),
-      .rd_en(num_dma_symbol_total_rden3),
+      .rd_en(tx_config_fifo_rden3),
       .rst(!rstn),
       .sleep(),
       .wr_clk(clk),
-      .wr_en(num_dma_symbol_total_wren3)
+      .wr_en(tx_config_fifo_wren3)
     );
 
     xpm_memory_tdpram # (

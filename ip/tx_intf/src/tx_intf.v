@@ -198,10 +198,10 @@
     wire [9:0] tx_pkt_sn;
     // wire [15:0] tx_pkt_num_dma_byte;
 
-    wire [6:0] num_dma_symbol_fifo_data_count0;
-    wire [6:0] num_dma_symbol_fifo_data_count1;
-    wire [6:0] num_dma_symbol_fifo_data_count2;
-    wire [6:0] num_dma_symbol_fifo_data_count3;
+    wire [6:0] tx_config_fifo_data_count0;
+    wire [6:0] tx_config_fifo_data_count1;
+    wire [6:0] tx_config_fifo_data_count2;
+    wire [6:0] tx_config_fifo_data_count3;
 
     wire [5:0] dac_intf_rd_data_count;
     wire [5:0] dac_intf_wr_data_count;
@@ -243,10 +243,10 @@
 
     // assign slv_reg24[1:0] = tx_queue_idx;
     // assign slv_reg24[13:2] = tx_pkt_sn;
-    assign slv_reg24[6:0] = num_dma_symbol_fifo_data_count0;
-    assign slv_reg24[14:8] = num_dma_symbol_fifo_data_count1;
-    assign slv_reg24[22:16] = num_dma_symbol_fifo_data_count2;
-    assign slv_reg24[30:24] = num_dma_symbol_fifo_data_count3;
+    assign slv_reg24[6:0] = tx_config_fifo_data_count0;
+    assign slv_reg24[14:8] = tx_config_fifo_data_count1;
+    assign slv_reg24[22:16] = tx_config_fifo_data_count2;
+    assign slv_reg24[30:24] = tx_config_fifo_data_count3;
 
     assign tx_queue_idx_to_xpu = tx_queue_idx ;
     
@@ -442,15 +442,15 @@
         // src indication
         .auto_start_mode(phy_tx_auto_start_mode),
         .num_dma_symbol_th(phy_tx_auto_start_num_dma_symbol_th),
-        .num_dma_symbol_total(slv_reg8[31:0]), // high two bits to indicate whether tx should be disable after certain type of tx (for waiting ack)
+        .tx_config(slv_reg8), // high two bits to indicate whether tx should be disable after certain type of tx (for waiting ack)
         .tx_queue_idx_indication_from_ps(slv_reg8[19:18]),
         .s_axis_recv_data_from_high(s_axis_recv_data_from_high),
         .start(phy_tx_start),
 
-        .num_dma_symbol_fifo_data_count0(num_dma_symbol_fifo_data_count0), 
-        .num_dma_symbol_fifo_data_count1(num_dma_symbol_fifo_data_count1),
-        .num_dma_symbol_fifo_data_count2(num_dma_symbol_fifo_data_count2), 
-        .num_dma_symbol_fifo_data_count3(num_dma_symbol_fifo_data_count3),
+        .tx_config_fifo_data_count0(tx_config_fifo_data_count0), 
+        .tx_config_fifo_data_count1(tx_config_fifo_data_count1),
+        .tx_config_fifo_data_count2(tx_config_fifo_data_count2), 
+        .tx_config_fifo_data_count3(tx_config_fifo_data_count3),
 
         .tx_iq_fifo_empty(tx_iq_fifo_empty),
         .cts_toself_config(slv_reg4),
