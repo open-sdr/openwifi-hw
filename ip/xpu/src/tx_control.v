@@ -413,7 +413,7 @@
               duration_new<=duration_extra+0;
               FC_type_new<=2'b01;
               FC_subtype_new<=4'b1101;
-            end else if (is_data_received||is_management_received||is_blockackreq_received||is_pspoll_received) begin
+            end else if (is_data_received||is_management_received||is_pspoll_received) begin
             //standard: In other ACK frames sent by non-QoS STAs, the duration value is the value obtained from the Duration/ID
             //field of the immediately previous data, management, PS-Poll, BlockAckReq, or BlockAck frame minus the
             //time, in microseconds, required to transmit the ACK frame and its SIFS interval.
@@ -464,9 +464,9 @@
                 dina<={self_mac_addr,ack_addr[47:32]};
             end else if (bram_addr==4) begin
                 if(rx_ht_aggr_last_flag) begin
-                    dina<={blk_ack_bitmap_lock[31:0], rx_ht_aggr_ssn, 4'd0, 4'd0, 7'd0, 4'b0010, 1'd0};
+                    dina<={blk_ack_bitmap_lock[31:0], rx_ht_aggr_ssn, ampdu_rx_tid, 4'd0, 7'd0, 4'b0010, 1'd0};
                 end else begin
-                    dina<={blk_ack_bitmap_lock[31:0], blk_ack_req_ssn, 4'd0, 4'd0, 7'd0, 4'b0010, 1'd0};
+                    dina<={blk_ack_bitmap_lock[31:0], blk_ack_req_ssn, ampdu_rx_tid, 4'd0, 7'd0, 4'b0010, 1'd0};
                 end
             end else if (bram_addr==5) begin
                 dina<={32'h0, blk_ack_bitmap_lock[63:32]};
