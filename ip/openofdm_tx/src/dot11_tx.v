@@ -113,11 +113,19 @@ wire        crc_en;
 wire [3:0]  crc_data;
 wire [31:0] pkt_fcs;
 reg  [4:0]  pkt_fcs_idx;
+reg  [3:0]  bram_din_last_nibble;
 
-assign crc_data[0] = state11 == S11_PSDU_DATA ? bram_din[(psdu_bit_cnt[5:2] << 2) + 0] : 0;
-assign crc_data[1] = state11 == S11_PSDU_DATA ? bram_din[(psdu_bit_cnt[5:2] << 2) + 1] : 0;
-assign crc_data[2] = state11 == S11_PSDU_DATA ? bram_din[(psdu_bit_cnt[5:2] << 2) + 2] : 0;
-assign crc_data[3] = state11 == S11_PSDU_DATA ? bram_din[(psdu_bit_cnt[5:2] << 2) + 3] : 0;
+always @(posedge clk)
+if (reset_int) begin
+    bram_din_last_nibble <= 0;
+end else begin
+    bram_din_last_nibble <= bram_din[63:60];
+end
+
+assign crc_data[0] = state11 == S11_PSDU_DATA ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[0] : bram_din[(psdu_bit_cnt[5:2] << 2) + 0]) : 0;
+assign crc_data[1] = state11 == S11_PSDU_DATA ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[1] : bram_din[(psdu_bit_cnt[5:2] << 2) + 1]) : 0;
+assign crc_data[2] = state11 == S11_PSDU_DATA ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[2] : bram_din[(psdu_bit_cnt[5:2] << 2) + 2]) : 0;
+assign crc_data[3] = state11 == S11_PSDU_DATA ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[3] : bram_din[(psdu_bit_cnt[5:2] << 2) + 3]) : 0;
 crc32_tx fcs_inst (
     .clk(clk),
     .rst(reset_int),
@@ -126,6 +134,7 @@ crc32_tx fcs_inst (
     .crc_out(pkt_fcs)
 );
 assign crc_en = (bits_enc_fifo_iready == 1 && state1 == S1_DATA && state11 == S11_PSDU_DATA && psdu_bit_cnt[1:0] == 2'b11);
+
 //////////////////////////////////////////////////////////////////////////
 // bit source selection and scrambling operation
 //////////////////////////////////////////////////////////////////////////
@@ -146,7 +155,10 @@ always @* begin
 
         // PSDU DATA feild
         end else if(state11 == S11_PSDU_DATA) begin
-            bit_scram = data_scram_state[6] ^ data_scram_state[3] ^ bram_din[psdu_bit_cnt[5:0]];
+            if(psdu_bit_cnt[5:2] == 6'b1111)
+                bit_scram = data_scram_state[6] ^ data_scram_state[3] ^ bram_din_last_nibble[psdu_bit_cnt[1:0]];
+            else
+                bit_scram = data_scram_state[6] ^ data_scram_state[3] ^ bram_din[psdu_bit_cnt[5:0]];
 
         // PSDU CRC field
         end else if(state11 == S11_PSDU_CRC) begin
@@ -367,7 +379,7 @@ wire [1:0]  bits_enc_fifo_idata,  bits_enc_fifo_odata;
 wire        bits_enc_fifo_ivalid, bits_enc_fifo_ovalid;
 wire        bits_enc_fifo_iready, bits_enc_fifo_oready;
 wire [15:0] bits_enc_fifo_space;
-axi_fifo_bram #(.WIDTH(2), .SIZE(20)) bits_enc_fifo(
+axi_fifo_bram #(.WIDTH(2), .SIZE(10)) bits_enc_fifo(
     .clk(clk), .reset(reset_int), .clear(reset_int),
     .i_tdata(bits_enc_fifo_idata), .i_tvalid(bits_enc_fifo_ivalid), .i_tready(bits_enc_fifo_iready),
     .o_tdata(bits_enc_fifo_odata), .o_tvalid(bits_enc_fifo_ovalid), .o_tready(bits_enc_fifo_oready),
@@ -617,7 +629,7 @@ reg        ifft_ce_reg;
 reg [31:0] ifft_o_result_reg;
 reg [5:0]  ifft_o_iq_cnt;
 reg [14:0] ifft_o_sync_cnt;
-reg [20:0] nof_iq2send;			// 480 + 20169*80 = 1614000 OFDM symbols
+reg [20:0] nof_iq2send;			// 480 + 20169*80 = 1614000 IQ samples
 always @(posedge clk)
 if (reset_int) begin
     ifft_o_iq_cnt <= 0;
@@ -662,7 +674,7 @@ wire [31:0] CP_fifo_idata,  CP_fifo_odata;
 wire        CP_fifo_ivalid, CP_fifo_ovalid;
 wire        CP_fifo_iready, CP_fifo_oready;
 wire [15:0] CP_fifo_space;
-axi_fifo_bram #(.WIDTH(32), .SIZE(13)) CP_fifo(
+axi_fifo_bram #(.WIDTH(32), .SIZE(6)) CP_fifo(
     .clk(clk), .reset(reset_int), .clear(reset_int),
     .i_tdata(CP_fifo_idata), .i_tvalid(CP_fifo_ivalid), .i_tready(CP_fifo_iready),
     .o_tdata(CP_fifo_odata), .o_tvalid(CP_fifo_ovalid), .o_tready(CP_fifo_oready),
@@ -679,7 +691,7 @@ wire [31:0] pkt_fifo_idata,  pkt_fifo_odata;
 wire        pkt_fifo_ivalid, pkt_fifo_ovalid;
 wire        pkt_fifo_iready, pkt_fifo_oready;
 wire [15:0] pkt_fifo_space;
-axi_fifo_bram #(.WIDTH(32), .SIZE(15)) pkt_fifo(
+axi_fifo_bram #(.WIDTH(32), .SIZE(8)) pkt_fifo(
     .clk(clk), .reset(reset_int), .clear(reset_int),
     .i_tdata(pkt_fifo_idata), .i_tvalid(pkt_fifo_ivalid), .i_tready(pkt_fifo_iready),
     .o_tdata(pkt_fifo_odata), .o_tvalid(pkt_fifo_ovalid), .o_tready(pkt_fifo_oready),
