@@ -112,7 +112,8 @@
     wire [63:0] tx_config_fifo_rd_data1;
     wire [63:0] tx_config_fifo_rd_data2;
     wire [63:0] tx_config_fifo_rd_data3;
-    reg [63:0] tx_config_current, tx_config_current_prev, tx_config_current_next;
+    reg [63:0] tx_config_current, tx_config_current_prev;
+    reg [63:0] tx_config_current_next [3:0];
 
     // wire [12:0] len_mpdu_plus_crc;
     wire [3:0] rate_signal_value;
@@ -134,7 +135,8 @@
     wire [31:0] phy_hdr_config_fifo_rd_data2;
     wire [31:0] phy_hdr_config_fifo_rd_data3;
 
-    reg [31:0] phy_hdr_config_current, phy_hdr_config_current_prev, phy_hdr_config_current_next;
+    reg [31:0] phy_hdr_config_current, phy_hdr_config_current_prev;
+    reg [31:0] phy_hdr_config_current_next [3:0];
     wire [12:0] len_psdu;
     wire use_short_gi;
     wire use_ht_rate;
@@ -169,7 +171,6 @@
       15: begin rate_legacy = 4'd0;  dbps_ht = 9'd26; end
     endcase
 
-
     reg num_data_sym_ready;
     reg len_legacy_ready;
     reg [11:0] len_legacy;
@@ -192,10 +193,10 @@
 
     wire [15:0] max_tx_bytes;
     wire [5:0] buf_size;
-    // wire [10:0] aggr_dur_us;
+    wire [2:0] ampdu_density;
     assign max_tx_bytes = ampdu_action_config[15:0];
-    assign buf_size = ampdu_action_config[20:16];
-    // assign aggr_dur_us = ampdu_action_config[31:21];
+    assign buf_size = ampdu_action_config[21:16];
+    assign ampdu_density = ampdu_action_config[24:22];
     
     reg start_delay0;
     reg start_delay1;
@@ -335,7 +336,7 @@
             cts_toself_rf_is_ongoing<=0;
 
             read_from_s_axis_en <= 0;
-            if ( ((~tx_config_fifo_empty[0] && |floating_pkt_flag == 0) || floating_pkt_flag[0]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            if ( (~tx_config_fifo_empty[0] || floating_pkt_flag[0]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
               if(retrans_in_progress == 1) begin
                 quit_retrans <= 1;
                 high_tx_ctl_state<=WAIT_TX_COMP;
@@ -347,15 +348,15 @@
                 high_tx_ctl_state<=WAIT_CHANCE;
                 high_trigger<=1;
               end            
-            end else if  ( ((~tx_config_fifo_empty[1] && |floating_pkt_flag == 0) || floating_pkt_flag[1]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty[1] || floating_pkt_flag[1]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=1; 
               high_trigger<=1;             
-            end else if  ( ((~tx_config_fifo_empty[2] && |floating_pkt_flag == 0) || floating_pkt_flag[2]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty[2] || floating_pkt_flag[2]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=2; 
               high_trigger<=1;     
-            end else if  ( ((~tx_config_fifo_empty[3] && |floating_pkt_flag == 0) || floating_pkt_flag[3]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty[3] || floating_pkt_flag[3]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=3; 
               high_trigger<=1;             
@@ -413,15 +414,15 @@
 
           PREPARE_TX_FETCH: begin
 
-            if(|floating_pkt_flag == 0) begin
+            if(~floating_pkt_flag[tx_queue_idx_reg]) begin
               tx_config_current <= ( tx_queue_idx_reg[1]?(tx_queue_idx_reg[0]?tx_config_fifo_rd_data3:tx_config_fifo_rd_data2):(tx_queue_idx_reg[0]?tx_config_fifo_rd_data1:tx_config_fifo_rd_data0) );
               phy_hdr_config_current <= ( tx_queue_idx_reg[1]?(tx_queue_idx_reg[0]?phy_hdr_config_fifo_rd_data3:phy_hdr_config_fifo_rd_data2):(tx_queue_idx_reg[0]?phy_hdr_config_fifo_rd_data1:phy_hdr_config_fifo_rd_data0) );
             end else begin
-              tx_config_current <= tx_config_current_next;
-              phy_hdr_config_current <= phy_hdr_config_current_next;
+              tx_config_current <= tx_config_current_next[tx_queue_idx_reg];
+              phy_hdr_config_current <= phy_hdr_config_current_next[tx_queue_idx_reg];
+              floating_pkt_flag[tx_queue_idx_reg] <= 0;
             end
             tx_config_fifo_rden<= 4'b0000;
-            floating_pkt_flag<= 4'b0000;
 
             if(high_tx_ctl_state_old == WAIT_CHANCE) begin
               pkt_cnt <= 0;
@@ -476,7 +477,6 @@
 
 				pkt_cnt <= pkt_cnt + 1;
 				len_pkt_sym <= (|len_psdu[2:0] == 0 ? (len_psdu>>3) : (len_psdu>>3)+1);
-				floating_pkt_flag <= 4'b0000;
 				high_tx_ctl_state <= PREP_PHY_HDR;
 
 			// 802.11n packets
@@ -488,7 +488,6 @@
 					pkt_cnt <= pkt_cnt + 1;
 					len_ht <= len_psdu + 4;	// CRC to be calculated
 					len_pkt_sym <= (|len_psdu[2:0] == 0 ? (len_psdu>>3) : (len_psdu>>3)+1);
-					floating_pkt_flag <= 4'b0000;
 					high_tx_ctl_state <= PREP_PHY_HDR;
 
 				// Aggregation packet
@@ -504,29 +503,25 @@
 						len_pkt_sym <= len_ht >> 3;
 
 						// This last packet is floating as it will not be used in current aggregation. Leave this packet for next round and continue the aggregation process
-						floating_pkt_flag <= (1 << tx_queue_idx_reg);
-						tx_config_current_next <= tx_config_current;
-						phy_hdr_config_current_next <= phy_hdr_config_current;
+						floating_pkt_flag[tx_queue_idx_reg] <= 1;
+						tx_config_current_next[tx_queue_idx_reg] <= tx_config_current;
+						phy_hdr_config_current_next[tx_queue_idx_reg] <= phy_hdr_config_current;
 						tx_config_current <= tx_config_current_prev;
 						phy_hdr_config_current <= phy_hdr_config_current_prev;
 
-						tx_config_fifo_rden <= 4'b0000;
 						high_tx_ctl_state <= PREP_PHY_HDR;
 
 					end else if(high_prio_pkt_waiting || tx_config_fifo_empty[tx_queue_idx_reg]) begin
 						pkt_cnt <= pkt_cnt + 1;
 						len_ht <= len_ht + len_psdu;
 						len_pkt_sym <= (len_ht + len_psdu) >> 3;
-						floating_pkt_flag <= 4'b0000;
 
-						tx_config_fifo_rden <= 4'b0000;
 						high_tx_ctl_state <= PREP_PHY_HDR;
 
 					end else begin
 						pkt_cnt <= pkt_cnt + 1;
 						len_ht <= len_ht + len_psdu;
 						len_pkt_sym <= (len_ht + len_psdu) >> 3;
-						floating_pkt_flag <= 4'b0000;
 
 						tx_config_current_prev <= tx_config_current;
 						phy_hdr_config_current_prev <= phy_hdr_config_current;
@@ -640,7 +635,7 @@
           
           DO_TX: begin
 
-            wea_internal<=wea_high;
+            wea_internal<= wea_high;
             addra_internal<=wr_counter;
             dina_internal<=data_from_s_axis;
 

@@ -230,9 +230,6 @@
     wire [47:0] addr4;
     wire addr4_valid;
 
-    wire [3:0] qos_tid;
-    wire qos_tid_valid;
-
     wire [15:0] blk_ack_req_ctrl;
     wire blk_ack_req_ctrl_valid;
 
@@ -244,6 +241,11 @@
 
     wire [63:0] blk_ack_resp_bitmap;
     wire blk_ack_resp_bitmap_valid;
+
+    wire [3:0] qos_tid;
+    wire [1:0] qos_ack_policy;
+    wire qos_tid_valid;
+    wire qos_ack_policy_valid;
     
     wire pulse_tx_bb_end;
 
@@ -507,11 +509,12 @@
         .rx_ht_aggr(rx_ht_aggr),
         .rx_ht_aggr_last(rx_ht_aggr_last),
 
-        .qos_tid(qos_tid),
         .blk_ack_req_ctrl(blk_ack_req_ctrl),
         .blk_ack_req_ssc(blk_ack_req_ssc),
         .blk_ack_resp_ssn(blk_ack_resp_ssn),
         .blk_ack_resp_bitmap(blk_ack_resp_bitmap),
+        .qos_tid(qos_tid),
+        .qos_ack_policy(qos_ack_policy),
        
         .tx_control_state_idle(tx_control_state_idle),
         .ack_cts_is_ongoing(ack_cts_is_ongoing),
@@ -588,9 +591,6 @@
         .src_addr(addr4),
         .src_addr_valid(addr4_valid),
 
-        .qos_tid(qos_tid),
-        .qos_tid_valid(qos_tid_valid),
-
         .blk_ack_req_ctrl(blk_ack_req_ctrl),
         .blk_ack_req_ctrl_valid(blk_ack_req_ctrl_valid),
 
@@ -601,7 +601,12 @@
         .blk_ack_resp_ssn_valid(blk_ack_resp_ssn_valid),
 
         .blk_ack_resp_bitmap(blk_ack_resp_bitmap),
-        .blk_ack_resp_bitmap_valid(blk_ack_resp_bitmap_valid)
+        .blk_ack_resp_bitmap_valid(blk_ack_resp_bitmap_valid),
+
+        .qos_tid(qos_tid),
+        .qos_ack_policy(qos_ack_policy),
+        .qos_tid_valid(qos_tid_valid),
+        .qos_ack_policy_valid(qos_ack_policy_valid)
     );
 
     rssi # (

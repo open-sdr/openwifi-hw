@@ -59,11 +59,12 @@
         input wire rx_ht_aggr,
         input wire rx_ht_aggr_last,
 
-        input wire [3:0] qos_tid,
         input wire [15:0] blk_ack_req_ctrl,
         input wire [15:0] blk_ack_req_ssc,
         input wire [11:0] blk_ack_resp_ssn,
         input wire [63:0] blk_ack_resp_bitmap,
+        input wire [3:0] qos_tid,
+        input wire [1:0] qos_ack_policy,
 
         output wire tx_control_state_idle,
         output wire ack_cts_is_ongoing,
@@ -104,11 +105,13 @@
   // reg [3:0] tx_control_state_priv;
   reg [63:0] blk_ack_bitmap_lock;
   wire is_data;
+  wire is_qosdata;
   wire is_management;
   wire is_blockackreq;
   wire  is_blockackresp;
   wire is_pspoll;
   wire is_rts;
+  wire is_ack;
   reg  [3:0] ackcts_rate;
   wire ackcts_signal_parity;
   wire [11:0] ackcts_signal_len;
@@ -154,11 +157,13 @@
   assign retrans_limit = (max_num_retrans>0?max_num_retrans:tx_pkt_retrans_limit);
 
   assign is_data =        ((FC_type==2'b10)?1:0);
+  assign is_qosdata =     (((FC_type==2'b10) && (FC_subtype[3]==1'b1))?1:0);
   assign is_management =  (((FC_type==2'b00) && (FC_subtype!=4'b1110))?1:0);
   assign is_blockackreq = (((FC_type==2'b01) && (FC_subtype==4'b1000))?1:0);
-  assign is_blockackresp= (((FC_type==2'b01) && (FC_subtype==4'b1001))?1:0);
+  assign is_blockackresp= (((FC_type==2'b01) && (FC_subtype==4'b1001) && (signal_len==32))?1:0);
   assign is_pspoll =      (((FC_type==2'b01) && (FC_subtype==4'b1010))?1:0);
   assign is_rts =         (((FC_type==2'b01) && (FC_subtype==4'b1011) && (signal_len==20))?1:0);
+  assign is_ack =         (((FC_type==2'b01) && (FC_subtype==4'b1101) && (signal_len==14))?1:0);
 
   assign ack_cts_is_ongoing = ((tx_control_state==PREP_ACK) || (tx_control_state==SEND_DFL_ACK) || (tx_control_state==SEND_BLK_ACK));
   assign ackcts_signal_parity = (~(^ackcts_rate));//because the cts and ack pkt length field is always 14: 1110 that always has 3 1s
@@ -291,7 +296,7 @@
             // This is the last packet of aggregation
             if ( rx_ht_aggr_last )
               begin
-                  if (fcs_valid && is_data && (self_mac_addr==addr1) && (ampdu_rx_tid == qos_tid) ) begin
+                  if (fcs_valid && is_qosdata && (self_mac_addr==addr1) && (ampdu_rx_tid == qos_tid) ) begin
                       // In case the last packet from A-MPDU makes it through
                       if(rx_ht_aggr_flag == 0) begin
                           rx_ht_aggr_flag <= 1;
@@ -315,10 +320,10 @@
               end
             //8.3.1.4 ACK frame format: The RA field of the ACK frame is copied from the Address 2 field of the immediately previous individually
             //addressed data, management, BlockAckReq, BlockAck, or PS-Poll frames.
-            else if ( fcs_valid && (is_data||is_management||is_blockackreq||is_pspoll||(is_rts&&(!cts_torts_disable))) 
+            else if ( fcs_valid && ((is_data&&(~is_qosdata))||(is_qosdata&&(~^qos_ack_policy))||is_management||is_blockackreq||is_pspoll||(is_rts&&(!cts_torts_disable)))
                            && (self_mac_addr==addr1)) // send ACK will not back to this IDLE until the last IQ sample sent.
               begin
-                  if(rx_ht_aggr && (rx_ht_aggr_last == 0) && (ampdu_rx_tid == qos_tid)) begin
+                  if(rx_ht_aggr && (ampdu_rx_tid == qos_tid)) begin
                       // First packet from aggregated A-MPDU
                       if(rx_ht_aggr_flag == 0) begin
                           rx_ht_aggr_flag <= 1;
@@ -555,9 +560,9 @@
                 // start_retrans<=start_retrans;
                 // retrans_in_progress<=retrans_in_progress;
                 // ack_timeout_count<=0;
-                if(signal_len == 14)
+                if(signal_len==14)
                    recv_ack_timeout_top <= (({4'd6, 2'd0})*`NUM_CLK_PER_US)+recv_ack_timeout_top_adj_scale;	// ack/cts uses 6 ofdm symbols at 6Mbps
-                else
+                else if(signal_len==32)
                    recv_ack_timeout_top <= (({4'd12,2'd0})*`NUM_CLK_PER_US)+recv_ack_timeout_top_adj_scale;	// blk_ack_resp uses 12 ofdm symbols at 6Mbps
             end else if ( ack_timeout_count==recv_ack_sig_valid_timeout_top_scale ) begin // sig valid timeout
                 tx_control_state<= IDLE;
@@ -600,7 +605,7 @@
 
             ack_timeout_count<=ack_timeout_count+1;
             // Detection of a normal ack packet is sufficient to acknowledge a traffic. However for aggregation traffic, a valid block ack response is required.
-            if ( (ack_timeout_count<recv_ack_timeout_top) && (recv_ack_fcs_valid_disable|((fcs_in_strobe && signal_len==14) || (fcs_valid && signal_len==32))) && (FC_type==2'b01) && (FC_subtype==4'b1101) && (self_mac_addr==addr1)) begin//before timeout, we detect a ACK type frame fcs valid
+            if ( (ack_timeout_count<recv_ack_timeout_top) && (((recv_ack_fcs_valid_disable|fcs_in_strobe) && is_ack) || (fcs_valid && is_blockackresp)) && (self_mac_addr==addr1)) begin//before timeout, we detect a ACK type frame fcs valid
                 tx_control_state<= IDLE;
                 tx_try_complete<=1;
                 // tx_status<={1'b0,num_retrans};

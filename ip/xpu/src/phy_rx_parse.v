@@ -32,9 +32,6 @@
         output reg src_addr_valid,
         
         /* ---------- Block acknowledgment request ---------- */
-        output reg [3:0] qos_tid,
-        output reg qos_tid_valid,
-        
         output reg [15:0] blk_ack_req_ctrl,
         output reg blk_ack_req_ctrl_valid,
 
@@ -47,8 +44,15 @@
         output reg blk_ack_resp_ssn_valid,
 
         output reg [63:0] blk_ack_resp_bitmap,
-        output reg blk_ack_resp_bitmap_valid
-        /* --------------------------------------- ----------- */
+        output reg blk_ack_resp_bitmap_valid,
+        /* --------------------------------------------------- */
+
+        /* ---------- QoS control field ---------- */
+        output reg [3:0] qos_tid,
+        output reg [1:0] qos_ack_policy,
+        output reg qos_tid_valid,
+        output reg qos_ack_policy_valid
+        /* --------------------------------------- */
 	);
 
     always @( posedge clk )
@@ -257,31 +261,63 @@
                         SC[15:8] <= ofdm_byte;
                         SC_valid <=1;
                     end
-                    
-                    // 6 bytes src_addr
-                    else if (ofdm_byte_index==(24)) begin
-                        src_addr[7:0] <= ofdm_byte;
-                        SC_valid <=0;
-                    end
-                    else if (ofdm_byte_index==(25)) begin
-                        src_addr[15:8] <= ofdm_byte;
-                    end
-                    else if (ofdm_byte_index==(26)) begin
-                        src_addr[23:16] <= ofdm_byte;
-                    end
-                    else if (ofdm_byte_index==(27)) begin
-                        src_addr[31:24] <= ofdm_byte;
-                    end
-                    else if (ofdm_byte_index==(28)) begin
-                        src_addr[39:32] <= ofdm_byte;
-                    end
-                    else if (ofdm_byte_index==(29)) begin
-                        src_addr[47:40] <= ofdm_byte;
-                        src_addr_valid<=1;
-                    end
-                    
-                    else if (ofdm_byte_index==(30)) begin
-                        src_addr_valid<=0;
+
+                    else begin
+                        // 6 bytes src_addr (i.e. To DS == 1 and From DS == 1)
+                        if(FC_DI[9:8] == 2'b11) begin
+                            if (ofdm_byte_index==(24)) begin
+                                src_addr[7:0] <= ofdm_byte;
+                                SC_valid <=0;
+                            end
+                            else if (ofdm_byte_index==(25)) begin
+                                src_addr[15:8] <= ofdm_byte;
+                            end
+                            else if (ofdm_byte_index==(26)) begin
+                                src_addr[23:16] <= ofdm_byte;
+                            end
+                            else if (ofdm_byte_index==(27)) begin
+                                src_addr[31:24] <= ofdm_byte;
+                            end
+                            else if (ofdm_byte_index==(28)) begin
+                                src_addr[39:32] <= ofdm_byte;
+                            end
+                            else if (ofdm_byte_index==(29)) begin
+                                src_addr[47:40] <= ofdm_byte;
+                                src_addr_valid<=1;
+                            end
+
+                            // Qos Cpntrol field
+                            else if (ofdm_byte_index==(30)) begin
+                                qos_tid <= ofdm_byte[3:0];
+                                qos_ack_policy <= ofdm_byte[6:5];
+
+                                qos_tid_valid <=1;
+                                qos_ack_policy_valid <=1;
+                                src_addr_valid<=0;
+                            end
+
+                            else if (ofdm_byte_index==(31)) begin
+                                qos_tid_valid <=0;
+                                qos_ack_policy_valid <=0;
+                            end
+                        end
+
+                        // Qos Cpntrol field
+                        else begin
+                            if (ofdm_byte_index==(24)) begin
+                                qos_tid <= ofdm_byte[3:0];
+                                qos_ack_policy <= ofdm_byte[6:5];
+
+                                qos_tid_valid <=1;
+                                qos_ack_policy_valid <=1;
+                                SC_valid <=0;
+                            end
+
+                            else if (ofdm_byte_index==(25)) begin
+                                qos_tid_valid <=0;
+                                qos_ack_policy_valid <=0;
+                            end
+                        end
                     end
                 end
             end
