@@ -549,11 +549,11 @@
         .rx_addr(addr1),
         .rx_addr_valid(addr1_valid),
         
-        .dst_addr(addr2),
-        .dst_addr_valid(addr2_valid),
+        .tx_addr(addr2),
+        .tx_addr_valid(addr2_valid),
         
-        .tx_addr(addr3),
-        .tx_addr_valid(addr3_valid),
+        .dst_addr(addr3),
+        .dst_addr_valid(addr3_valid),
         
         .SC(SC),
         .SC_valid(SC_valid),

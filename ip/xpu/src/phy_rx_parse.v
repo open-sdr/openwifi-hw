@@ -19,11 +19,11 @@
         output reg [47:0] rx_addr,
         output reg rx_addr_valid,
         
-        output reg [47:0] dst_addr,
-        output reg dst_addr_valid,
-        
         output reg [47:0] tx_addr,
         output reg tx_addr_valid,
+        
+        output reg [47:0] dst_addr,
+        output reg dst_addr_valid,
         
         output reg [15:0] SC,
         output reg SC_valid,
@@ -41,11 +41,11 @@
         rx_addr <= 0;
         rx_addr_valid <= 0;
         
-        dst_addr <= 0;
-        dst_addr_valid <= 0;
-        
         tx_addr <= 0;
         tx_addr_valid <= 0;
+        
+        dst_addr <= 0;
+        dst_addr_valid <= 0;
         
         SC <= 0;
         SC_valid <= 0;
@@ -93,54 +93,54 @@
                 rx_addr_valid<=1;
             end
             
-            // 6 bytes dst_addr
+            // 6 bytes tx_addr
             else if (ofdm_byte_index==(10)) begin
-                dst_addr[7:0] <= ofdm_byte;
+                tx_addr[7:0] <= ofdm_byte;
                 rx_addr_valid<=0;
             end
             else if (ofdm_byte_index==(11)) begin
-                dst_addr[15:8] <= ofdm_byte;
-            end
-            else if (ofdm_byte_index==(12)) begin
-                dst_addr[23:16] <= ofdm_byte;
-            end
-            else if (ofdm_byte_index==(13)) begin
-                dst_addr[31:24] <= ofdm_byte;
-            end
-            else if (ofdm_byte_index==(14)) begin
-                dst_addr[39:32] <= ofdm_byte;
-            end
-            else if (ofdm_byte_index==(15)) begin
-                dst_addr[47:40] <= ofdm_byte;
-                dst_addr_valid <= 1;
-            end
-            
-            // 6 bytes tx_addr
-            else if (ofdm_byte_index==(16)) begin
-                tx_addr[7:0] <= ofdm_byte;
-                dst_addr_valid <= 0;
-            end
-            else if (ofdm_byte_index==(17)) begin
                 tx_addr[15:8] <= ofdm_byte;
             end
-            else if (ofdm_byte_index==(18)) begin
+            else if (ofdm_byte_index==(12)) begin
                 tx_addr[23:16] <= ofdm_byte;
             end
-            else if (ofdm_byte_index==(19)) begin
+            else if (ofdm_byte_index==(13)) begin
                 tx_addr[31:24] <= ofdm_byte;
             end
-            else if (ofdm_byte_index==(20)) begin
+            else if (ofdm_byte_index==(14)) begin
                 tx_addr[39:32] <= ofdm_byte;
             end
-            else if (ofdm_byte_index==(21)) begin
+            else if (ofdm_byte_index==(15)) begin
                 tx_addr[47:40] <= ofdm_byte;
-                tx_addr_valid<=1;
+                tx_addr_valid <= 1;
+            end
+            
+            // 6 bytes dst_addr
+            else if (ofdm_byte_index==(16)) begin
+                dst_addr[7:0] <= ofdm_byte;
+                tx_addr_valid <= 0;
+            end
+            else if (ofdm_byte_index==(17)) begin
+                dst_addr[15:8] <= ofdm_byte;
+            end
+            else if (ofdm_byte_index==(18)) begin
+                dst_addr[23:16] <= ofdm_byte;
+            end
+            else if (ofdm_byte_index==(19)) begin
+                dst_addr[31:24] <= ofdm_byte;
+            end
+            else if (ofdm_byte_index==(20)) begin
+                dst_addr[39:32] <= ofdm_byte;
+            end
+            else if (ofdm_byte_index==(21)) begin
+                dst_addr[47:40] <= ofdm_byte;
+                dst_addr_valid<=1;
             end
             
             // 2 bytes sequence control
             else if (ofdm_byte_index==(22)) begin
                 SC[7:0] <= ofdm_byte;
-                tx_addr_valid<=0;
+                dst_addr_valid<=0;
             end
             else if (ofdm_byte_index==(23)) begin
                 SC[15:8] <= ofdm_byte;
