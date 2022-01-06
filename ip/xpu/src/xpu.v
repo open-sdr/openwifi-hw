@@ -62,7 +62,7 @@
         input  wire phy_tx_done,
 
 	    // Ports to tx_intf
-        output wire [4:0] tx_status,
+        output wire [79:0] tx_status,
         output wire [47:0] mac_addr,
         output wire retrans_in_progress,
         `DEBUG_PREFIX output wire start_retrans,
@@ -81,6 +81,7 @@
         output wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina,
         input  wire tx_pkt_need_ack,
         input  wire [3:0] tx_pkt_retrans_limit,
+        input  wire tx_ht_aggr,
         input  wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] douta,//from dpram of tx_intf, for tx_control changing some bits to indicate it is the 1st pkt or retransmitted pkt
         input  wire cts_toself_bb_is_ongoing,//this should rise before the phy tx end valid of phy tx IP core to avoid tx_control waiting ack for this tx
         input  wire cts_toself_rf_is_ongoing,//just need to cover the SIFS gap between cts tx and following packet tx
@@ -479,6 +480,7 @@
         .max_num_retrans(slv_reg11[3:0]),
         .tx_pkt_need_ack(tx_pkt_need_ack),
         .tx_pkt_retrans_limit(tx_pkt_retrans_limit),
+        .tx_ht_aggr(tx_ht_aggr),
         .send_ack_wait_top(send_ack_wait_top),
         .recv_ack_timeout_top_adj(recv_ack_timeout_top_adj),
         .recv_ack_sig_valid_timeout_top(recv_ack_sig_valid_timeout_top),
@@ -514,7 +516,9 @@
         .qos_tid(qos_tid),
         .blk_ack_req_ctrl(blk_ack_req_ctrl),
         .blk_ack_req_ssc(blk_ack_req_ssc),
-        
+        .blk_ack_resp_ssn(blk_ack_resp_ssn),
+        .blk_ack_resp_bitmap(blk_ack_resp_bitmap),
+       
         .tx_control_state_idle(tx_control_state_idle),
         .ack_cts_is_ongoing(ack_cts_is_ongoing),
         .retrans_in_progress(retrans_in_progress),

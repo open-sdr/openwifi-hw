@@ -165,7 +165,7 @@
                         filter_bssid_valid<=filter_bssid_valid;
                         end
 
-                    if (signal_len==14) 
+                    if (signal_len==14 || signal_len==32) 
                         begin
                         filter_state <= FILTER_ACTION;
                         end

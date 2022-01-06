@@ -25,6 +25,7 @@
         input wire [3:0] max_num_retrans,
         input wire tx_pkt_need_ack,
         input wire [3:0] tx_pkt_retrans_limit,
+        input wire tx_ht_aggr,
         input wire [14:0] send_ack_wait_top,//0 means 2.4GHz, non-zeros means 5GHz
         input wire [14:0] recv_ack_timeout_top_adj,
         input wire [14:0] recv_ack_sig_valid_timeout_top,
@@ -61,6 +62,8 @@
         input wire [3:0] qos_tid,
         input wire [15:0] blk_ack_req_ctrl,
         input wire [15:0] blk_ack_req_ssc,
+        input wire [11:0] blk_ack_resp_ssn,
+        input wire [63:0] blk_ack_resp_bitmap,
 
         output wire tx_control_state_idle,
         output wire ack_cts_is_ongoing,
@@ -70,7 +73,7 @@
         `DEBUG_PREFIX output reg start_tx_ack,
         output reg retrans_trigger,
         output reg tx_try_complete,
-        output reg [4:0] tx_status,
+        output reg [79:0] tx_status,
         output reg ack_tx_flag,
         output reg wea,
         output reg [9:0] addra,
@@ -96,14 +99,14 @@
   reg [15:0] duration_received;
   reg FC_more_frag_received;
   `DEBUG_PREFIX reg [3:0] tx_control_state;
-  `DEBUG_PREFIX reg tx_fail_lock;
   `DEBUG_PREFIX reg [3:0] num_retrans_lock;
+  reg [11:0] blk_ack_resp_ssn_lock;
   // reg [3:0] tx_control_state_priv;
   reg [63:0] blk_ack_bitmap_lock;
   wire is_data;
   wire is_management;
   wire is_blockackreq;
-  wire is_blockack;
+  wire  is_blockackresp;
   wire is_pspoll;
   wire is_rts;
   reg  [3:0] ackcts_rate;
@@ -121,12 +124,10 @@
   reg ampdu_rx_start_reg;
   reg reset_blk_ack_bitmap_mem;
 
-  reg [63:0] douta_reg;
   `DEBUG_PREFIX reg [1:0] tx_dpram_op_counter;
 
   // `DEBUG_PREFIX wire [2:0] num_data_ofdm_symbol;
   // reg  [2:0] num_data_ofdm_symbol_reg;
-  reg [14:0] num_data_ofdm_symbol_reg_tmp;
   // `DEBUG_PREFIX wire [2:0] ackcts_n_sym;
   // reg  [2:0] ackcts_n_sym_reg;
   `DEBUG_PREFIX reg  [7:0] ackcts_time;
@@ -140,7 +141,6 @@
   reg is_data_received;
   reg is_management_received;
   reg is_blockackreq_received;
-  reg is_blockack_received;
   reg is_pspoll_received;
   reg is_rts_received;
 
@@ -156,7 +156,7 @@
   assign is_data =        ((FC_type==2'b10)?1:0);
   assign is_management =  (((FC_type==2'b00) && (FC_subtype!=4'b1110))?1:0);
   assign is_blockackreq = (((FC_type==2'b01) && (FC_subtype==4'b1000))?1:0);
-  assign is_blockack =    (((FC_type==2'b01) && (FC_subtype==4'b1001))?1:0);
+  assign is_blockackresp= (((FC_type==2'b01) && (FC_subtype==4'b1001))?1:0);
   assign is_pspoll =      (((FC_type==2'b01) && (FC_subtype==4'b1010))?1:0);
   assign is_rts =         (((FC_type==2'b01) && (FC_subtype==4'b1011) && (signal_len==20))?1:0);
 
@@ -200,8 +200,8 @@
           // tx_control_state_priv <= IDLE;
           tx_try_complete<=0;
           tx_status<=0;
-          tx_fail_lock <= 0;
           num_retrans_lock <= 0;
+          blk_ack_resp_ssn_lock <= 0;
           blk_ack_bitmap_lock <= 0;
           num_retrans<=0;
           start_retrans<=0;
@@ -210,7 +210,6 @@
           retrans_in_progress<=0;
           retrans_trigger<=0;
           tx_dpram_op_counter<=0;
-          douta_reg<=0;
           recv_ack_timeout_top<=0;
           duration_new<=0;
           FC_type_new<=0;
@@ -220,7 +219,6 @@
           is_data_received<=0;
           is_management_received<=0;
           is_blockackreq_received<=0;
-          is_blockack_received<=0;
           is_pspoll_received<=0;
           is_rts_received<=0;
 
@@ -229,8 +227,6 @@
           rx_ht_aggr_last_flag<=0;
 
           // num_data_ofdm_symbol_reg <= 0;
-          // num_data_ofdm_symbol_reg_tmp <= 0;
-          num_data_ofdm_symbol_reg_tmp <= (({3'd6,2'd0})*`NUM_CLK_PER_US); // ack/cts use 6 ofdm symbols at 6Mbps
           // ackcts_n_sym_reg <= 0;
 
           bitmap_count <=0;
@@ -249,10 +245,9 @@
         // ackcts_time <= preamble_sig_time + ofdm_symbol_time*({4'd0,ackcts_n_sym_reg}); 
         ackcts_time <= preamble_sig_time + ofdm_symbol_time*({4'd0,3'd6}); // ack/cts use 6 ofdm symbols at 6Mbps
         sifs_time_reg   <= sifs_time;
-        tx_status <= {tx_fail_lock, num_retrans_lock};
+        tx_status <= {blk_ack_bitmap_lock, blk_ack_resp_ssn_lock, num_retrans_lock};
 
         // num_data_ofdm_symbol_reg <= num_data_ofdm_symbol;
-        // num_data_ofdm_symbol_reg_tmp <= (({num_data_ofdm_symbol_reg,2'd0})*`NUM_CLK_PER_US);
         // ackcts_n_sym_reg <= ackcts_n_sym;
 
         send_ack_wait_top_scale <= (send_ack_wait_top*`COUNT_SCALE);
@@ -275,7 +270,6 @@
             start_retrans<=0;
             start_tx_ack<=0;
             tx_dpram_op_counter<=0;
-            douta_reg<=0;
             retrans_trigger<=0;
             recv_ack_timeout_top<=0;
             duration_new<=0;
@@ -287,7 +281,6 @@
             is_data_received<=is_data;
             is_management_received<=is_management;
             is_blockackreq_received<=is_blockackreq;
-            is_blockack_received<=is_blockack;
             is_pspoll_received<=is_pspoll;
             is_rts_received<=is_rts;
             // tx_status<=tx_status; //maintain status from state RECV_ACK for ARM reading
@@ -322,7 +315,7 @@
               end
             //8.3.1.4 ACK frame format: The RA field of the ACK frame is copied from the Address 2 field of the immediately previous individually
             //addressed data, management, BlockAckReq, BlockAck, or PS-Poll frames.
-            else if ( fcs_valid && (is_data||is_management||is_blockackreq||is_blockack||is_pspoll||(is_rts&&(!cts_torts_disable))) 
+            else if ( fcs_valid && (is_data||is_management||is_blockackreq||is_pspoll||(is_rts&&(!cts_torts_disable))) 
                            && (self_mac_addr==addr1)) // send ACK will not back to this IDLE until the last IQ sample sent.
               begin
                   if(rx_ht_aggr && (rx_ht_aggr_last == 0) && (ampdu_rx_tid == qos_tid)) begin
@@ -352,8 +345,8 @@
                   //tx_control_state <= QUIT_RETX;
                   tx_control_state<= IDLE;
                   tx_try_complete<=1;
-                  tx_fail_lock <= 1;
                   num_retrans_lock <= num_retrans;
+                  blk_ack_resp_ssn_lock <= 0;
                   blk_ack_bitmap_lock <= 0;
                   num_retrans<=0;
                   retrans_in_progress<=0;
@@ -387,7 +380,6 @@
             // start_retrans<=start_retrans;
             // retrans_in_progress<=retrans_in_progress;
             // tx_dpram_op_counter<=tx_dpram_op_counter;
-            // douta_reg<=douta_reg;
             // recv_ack_timeout_top<=recv_ack_timeout_top;
 
             if ((rx_ht_aggr_last_flag && (ampdu_rx_tid == qos_tid)) || (is_blockackreq_received && (ampdu_rx_tid == blk_ack_req_tid))) begin
@@ -416,7 +408,7 @@
               duration_new<=duration_extra+0;
               FC_type_new<=2'b01;
               FC_subtype_new<=4'b1101;
-            end else if (is_data_received||is_management_received||is_blockack_received||is_pspoll_received) begin
+            end else if (is_data_received||is_management_received||is_blockackreq_received||is_pspoll_received) begin
             //standard: In other ACK frames sent by non-QoS STAs, the duration value is the value obtained from the Duration/ID
             //field of the immediately previous data, management, PS-Poll, BlockAckReq, or BlockAck frame minus the
             //time, in microseconds, required to transmit the ACK frame and its SIFS interval.
@@ -485,7 +477,6 @@
             // ack_timeout_count<=ack_timeout_count;
             // start_retrans<=start_retrans;
             // tx_dpram_op_counter<=tx_dpram_op_counter;
-            // douta_reg<=douta_reg;
             // recv_ack_timeout_top<=recv_ack_timeout_top;
             retrans_started<=0;
             if (tx_pkt_need_ack==1) // continue to actual ACK receiving
@@ -503,8 +494,9 @@
                 // addra<=addra;
                 tx_try_complete<=1;
                 // tx_status<={1'b0,num_retrans}; // because interrupt will be raised, set status
-                tx_fail_lock <= 0;
                 num_retrans_lock <= num_retrans;
+                blk_ack_resp_ssn_lock <= 0;
+                blk_ack_bitmap_lock <= 1;
                 num_retrans<=0;
                 retrans_in_progress<=0;
                 end
@@ -518,11 +510,13 @@
             // addra<=addra;
 
             tx_dpram_op_counter <= ( tx_dpram_op_counter!=3?(tx_dpram_op_counter + 1):tx_dpram_op_counter );
-            
-            wea <= ( tx_dpram_op_counter==2?1:wea );
-            douta_reg <= ( tx_dpram_op_counter==2?({douta[63:12], 1'b1, douta[10:0]}):douta_reg );
-            //dina <= ( tx_dpram_op_counter==3?douta_reg:dina );
-            dina <= douta_reg;
+            if(tx_ht_aggr==0 && tx_dpram_op_counter==2) begin
+                wea <= 1;
+                dina <= {douta[63:12], 1'b1, douta[10:0]};
+            end else begin
+                wea <= 0;
+                dina <= douta;
+            end
 
             // send_ack_count <= send_ack_count;
             // ack_addr <= ack_addr;
@@ -550,11 +544,10 @@
             // send_ack_count <= send_ack_count;
             // ack_addr <= ack_addr;
             // tx_dpram_op_counter<=tx_dpram_op_counter;
-            // douta_reg<=douta_reg;
             // recv_ack_timeout_top<=recv_ack_timeout_top;
 
-            ack_timeout_count<= ( (sig_valid && (signal_len==14))?0:(ack_timeout_count+1) );
-            if ( (ack_timeout_count<recv_ack_sig_valid_timeout_top_scale) && sig_valid && (signal_len==14) ) begin //before timeout, we detect a sig valid, signal length field is ACK
+            ack_timeout_count<= ( (sig_valid && (signal_len==14||signal_len==32))?0:(ack_timeout_count+1) );
+            if ( (ack_timeout_count<recv_ack_sig_valid_timeout_top_scale) && sig_valid && (signal_len==14||signal_len==32) ) begin //before timeout, we detect a sig valid, signal length field is ACK/BLK_ACK
                 tx_control_state<= RECV_ACK;
                 // tx_try_complete<=tx_try_complete;
                 // tx_status<=tx_status;
@@ -562,14 +555,18 @@
                 // start_retrans<=start_retrans;
                 // retrans_in_progress<=retrans_in_progress;
                 // ack_timeout_count<=0;
-                recv_ack_timeout_top <= num_data_ofdm_symbol_reg_tmp+recv_ack_timeout_top_adj_scale;
+                if(signal_len == 14)
+                   recv_ack_timeout_top <= (({4'd6, 2'd0})*`NUM_CLK_PER_US)+recv_ack_timeout_top_adj_scale;	// ack/cts uses 6 ofdm symbols at 6Mbps
+                else
+                   recv_ack_timeout_top <= (({4'd12,2'd0})*`NUM_CLK_PER_US)+recv_ack_timeout_top_adj_scale;	// blk_ack_resp uses 12 ofdm symbols at 6Mbps
             end else if ( ack_timeout_count==recv_ack_sig_valid_timeout_top_scale ) begin // sig valid timeout
                 tx_control_state<= IDLE;
                 if  ((num_retrans==retrans_limit) || (retrans_limit==0)) begin// should not run into this state. but just in case
                     tx_try_complete<=1;
                     // tx_status<={1'b1,num_retrans};
-                    tx_fail_lock <= 1;
                     num_retrans_lock <= num_retrans;
+                    blk_ack_resp_ssn_lock <= 0;
+                    blk_ack_bitmap_lock <= 0;
                     num_retrans<=0;
                     // start_retrans<=start_retrans;
                     retrans_in_progress<=0;
@@ -599,16 +596,22 @@
             // send_ack_count <= send_ack_count;
             // ack_addr <= ack_addr;
             // tx_dpram_op_counter<=tx_dpram_op_counter;
-            // douta_reg<=douta_reg;
             // recv_ack_timeout_top <= recv_ack_timeout_top;
 
             ack_timeout_count<=ack_timeout_count+1;
-            if ( (ack_timeout_count<recv_ack_timeout_top) && (recv_ack_fcs_valid_disable|fcs_in_strobe) && (FC_type==2'b01) && (FC_subtype==4'b1101) && (self_mac_addr==addr1)) begin//before timeout, we detect a ACK type frame fcs valid
+            // Detection of a normal ack packet is sufficient to acknowledge a traffic. However for aggregation traffic, a valid block ack response is required.
+            if ( (ack_timeout_count<recv_ack_timeout_top) && (recv_ack_fcs_valid_disable|((fcs_in_strobe && signal_len==14) || (fcs_valid && signal_len==32))) && (FC_type==2'b01) && (FC_subtype==4'b1101) && (self_mac_addr==addr1)) begin//before timeout, we detect a ACK type frame fcs valid
                 tx_control_state<= IDLE;
                 tx_try_complete<=1;
                 // tx_status<={1'b0,num_retrans};
-                tx_fail_lock <= 0;
                 num_retrans_lock <= num_retrans;
+                if (is_blockackresp) begin
+                    blk_ack_resp_ssn_lock <= blk_ack_resp_ssn;
+                    blk_ack_bitmap_lock <= blk_ack_resp_bitmap;
+                end else begin
+                    blk_ack_resp_ssn_lock <= 0;
+                    blk_ack_bitmap_lock <= 1;
+                end
                 num_retrans<=0;
                 // start_retrans<=start_retrans;
                 retrans_in_progress<=0;
@@ -617,8 +620,9 @@
                 if  ((num_retrans==retrans_limit) || (retrans_limit==0)) begin// should not run into this state. but just in case
                     tx_try_complete<=1;
                     // tx_status<={1'b1,num_retrans};
-                    tx_fail_lock <= 1;
                     num_retrans_lock <= num_retrans;
+                    blk_ack_resp_ssn_lock <= 0;
+                    blk_ack_bitmap_lock <= 0;
                     num_retrans<=0;
                     // start_retrans<=start_retrans;
                     retrans_in_progress<=0;
@@ -645,8 +649,9 @@
             tx_control_state<= IDLE;
             if(quit_retrans) begin
               tx_try_complete<=1;
-              tx_fail_lock <= 1;
               num_retrans_lock <= num_retrans;
+              blk_ack_resp_ssn_lock <= 0;
+              blk_ack_bitmap_lock <= 0;
               num_retrans<=0;
               retrans_in_progress<=0;
               retrans_started<=0;
