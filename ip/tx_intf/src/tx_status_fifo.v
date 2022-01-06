@@ -19,7 +19,7 @@
       input wire [4:0] tx_status,
       input wire [1:0]  linux_prio,
       input wire [1:0]  tx_queue_idx,
-      input wire [9:0]  tx_pkt_sn,
+      input wire [5:0]  bd_wr_idx,
     //   input wire [12:0] s_axis_fifo_data_count0,
     //   input wire [12:0] s_axis_fifo_data_count1,
     //   input wire [12:0] s_axis_fifo_data_count2,
@@ -59,7 +59,7 @@
     // fifo32_1clk_dep64 fifo32_1clk_dep64_i (
     //     .CLK(clk),
     //     .DATAO(datao),
-    //     .DI({cw_delay1,num_slot_random[8:0],linux_prio,tx_queue_idx,tx_pkt_sn,tx_status}), // highest MSB logs cw exponent + MSB of num_slot_random
+    //     .DI({cw_delay1,num_slot_random[8:0],linux_prio,tx_queue_idx,4'd0,bd_wr_idx,tx_status}), // highest MSB logs cw exponent + MSB of num_slot_random
     //     .EMPTY(empty),
     //     .FULL(full),
     //     .RDEN(rden),
@@ -102,7 +102,7 @@
       .wr_ack(),
       .wr_data_count(),
       .wr_rst_busy(),
-      .din({cw_delay1,num_slot_random[8:0],linux_prio,tx_queue_idx,tx_pkt_sn,tx_status}),
+      .din({cw_delay1,num_slot_random[8:0],linux_prio,tx_queue_idx,4'd0,bd_wr_idx,tx_status}),
       .injectdbiterr(),
       .injectsbiterr(),
       .rd_en(rden),

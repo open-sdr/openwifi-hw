@@ -195,7 +195,7 @@
     //(* mark_debug = "true" *) wire [1:0] tx_queue_idx;
     wire [1:0] tx_queue_idx;
     wire [1:0] linux_prio;
-    wire [9:0] tx_pkt_sn;
+    wire [5:0] bd_wr_idx;
     // wire [15:0] tx_pkt_num_dma_byte;
 
     wire [6:0] tx_config_fifo_data_count0;
@@ -239,10 +239,10 @@
 
     assign tx_itrpt = (slv_reg14[17]==0?(slv_reg14[8]?tx_itrpt_internal: (tx_itrpt_internal&(~ack_tx_flag)) ):0);
 
-    // assign slv_reg22[29:0] = {linux_prio,tx_queue_idx,tx_pkt_sn,tx_pkt_num_dma_byte};
+    // assign slv_reg22[29:0] = {linux_prio,tx_queue_idx,bd_wr_idx,tx_pkt_num_dma_byte};
 
     // assign slv_reg24[1:0] = tx_queue_idx;
-    // assign slv_reg24[13:2] = tx_pkt_sn;
+    // assign slv_reg24[13:2] = bd_wr_idx;
     assign slv_reg24[6:0] = tx_config_fifo_data_count0;
     assign slv_reg24[14:8] = tx_config_fifo_data_count1;
     assign slv_reg24[22:16] = tx_config_fifo_data_count2;
@@ -371,7 +371,7 @@
         .tx_status(tx_status),
         .linux_prio(linux_prio),
         .tx_queue_idx(tx_queue_idx),
-        .tx_pkt_sn(tx_pkt_sn),
+        .bd_wr_idx(bd_wr_idx),
         // .s_axis_fifo_data_count0(s_axis_fifo_data_count0),
         // .s_axis_fifo_data_count1(s_axis_fifo_data_count1),
         // .s_axis_fifo_data_count2(s_axis_fifo_data_count2),
@@ -474,7 +474,7 @@
         .quit_retrans(quit_retrans),
         .high_trigger(high_trigger),
         .tx_control_state_idle(tx_control_state_idle),
-        .tx_pkt_sn(tx_pkt_sn),
+        .bd_wr_idx(bd_wr_idx),
         // .tx_pkt_num_dma_byte(tx_pkt_num_dma_byte),
         .douta(douta),
         .cts_toself_bb_is_ongoing(cts_toself_bb_is_ongoing),

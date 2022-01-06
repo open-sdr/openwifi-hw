@@ -61,7 +61,7 @@
       `DEBUG_PREFIX output reg quit_retrans,
       output reg high_trigger,
       output wire [3:0] tx_pkt_retrans_limit,
-      output reg [9:0] tx_pkt_sn,
+      output reg [5:0] bd_wr_idx,
       // output reg [15:0] tx_pkt_num_dma_byte,
       output wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] douta,
       output reg cts_toself_bb_is_ongoing,
@@ -457,8 +457,8 @@
     //    duplicated_sn    <= 10'd123;
     //    duplicated_sn_catch <= 0;
     //  end else if (tx_try_complete) begin
-    //    duplicated_sn <= tx_pkt_sn;
-    //    duplicated_sn_catch <= (duplicated_sn==tx_pkt_sn?1:0);
+    //    duplicated_sn <= bd_wr_idx;
+    //    duplicated_sn_catch <= (duplicated_sn==bd_wr_idx?1:0);
     //  end
     //end
 
@@ -467,7 +467,7 @@
     begin
       if ( rstn == 1'b0 )
         begin
-            tx_pkt_sn <= 0;
+            bd_wr_idx <= 0;
             // tx_pkt_num_dma_byte<=0;
             linux_prio <= 0;
 
@@ -491,7 +491,7 @@
       else
         begin
             if (tx_try_complete) begin
-              tx_pkt_sn <= tx_config_current[29:20];
+              bd_wr_idx <= tx_config_current[25:20];
               // tx_pkt_num_dma_byte <= {tx_config_current[12:0],3'd0};
               linux_prio <= tx_config_current[31:30];
             end
