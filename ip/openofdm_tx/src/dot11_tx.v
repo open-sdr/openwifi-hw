@@ -72,8 +72,8 @@ localparam PKT_FIFO = 1;
 
 reg [5:0]  plcp_bit_cnt;
 reg [3:0]  service_bit_cnt;
-reg [14:0] psdu_bit_cnt;        // Maximum number of PSDU bits = 4095*8 = 32760
-reg [10:0] ofdm_cnt_FSM1;       // Maximum number of OFDM symbols = 1 + ceil((16+4095*8+6)/24) = 1367
+reg [18:0] psdu_bit_cnt;        // Maximum number of PSDU bits = 65536*8 = 524288
+reg [14:0] ofdm_cnt_FSM1;       // Maximum number of OFDM symbols = 3 + ceil((16+524288+6)/26) = 20169
 
 //////////////////////////////////////////////////////////////////////////
 // LEGACY SHORT + LONG PREAMBLE
@@ -185,7 +185,8 @@ assign enc_en = state1 >= S1_L_SIG && state11 != S11_RESET && bits_enc_fifo_irea
 reg [2:0]  N_BPSC;
 reg [8:0]  N_DBPS;
 reg [4:0]  RATE;
-reg [14:0] PSDU_BIT_LEN;
+reg [18:0] PSDU_BIT_LEN;
+reg        HT_AGGR;
 reg        S_GI;
 reg [8:0]  dbps_cnt_FSM1;
 
@@ -196,6 +197,7 @@ if (reset_int) begin
     N_DBPS <= 0;
     RATE <= 0;
     PSDU_BIT_LEN <= 0;
+    HT_AGGR <= 0;
     S_GI <= 0;
     plcp_bit_cnt <= 0;
     service_bit_cnt <= 0;
@@ -231,7 +233,7 @@ end else if(bits_enc_fifo_iready == 1) begin
                 4'b1100: begin  N_BPSC <= 6;  N_DBPS <= 216; RATE <= 5'b01100; end  // 54 Mbps
                 default: begin  N_BPSC <= 1;  N_DBPS <= 24;  RATE <= 5'b01011; end  //  6 Mbps
             endcase
-            PSDU_BIT_LEN <= ({3'd0, bram_din[16:5]} << 3);
+            PSDU_BIT_LEN <= {4'd0, bram_din[16:5], 3'd0};
             PKT_TYPE <= bram_din[24];
 
         end else if(plcp_bit_cnt == 22) begin
@@ -273,7 +275,8 @@ end else if(bits_enc_fifo_iready == 1) begin
                 3'b111:  begin  N_BPSC <= 6;  N_DBPS <= 260; RATE <= 5'b10111; end  // 65.0 Mbps
                 default: begin  N_BPSC <= 1;  N_DBPS <= 26;  RATE <= 5'b10000; end  //  6.5 Mbps
             endcase
-            PSDU_BIT_LEN <= ({3'd0, bram_din[19:8]} << 3);
+            PSDU_BIT_LEN <= {bram_din[23:8], 3'd0};
+            HT_AGGR <= bram_din[27];
             S_GI <= bram_din[31];
         end else if(plcp_bit_cnt == 23) begin
             ofdm_cnt_FSM1 <= ofdm_cnt_FSM1 + 1;
@@ -305,8 +308,10 @@ end else if(bits_enc_fifo_iready == 1) begin
 
         S11_PSDU_DATA: begin
             psdu_bit_cnt <= psdu_bit_cnt + 1;
-            if(psdu_bit_cnt == (PSDU_BIT_LEN - 33))
+            if((HT_AGGR == 0) && (psdu_bit_cnt == PSDU_BIT_LEN-33))
                 state11 <= S11_PSDU_CRC;
+            else if((HT_AGGR == 1) && (psdu_bit_cnt == PSDU_BIT_LEN-1))
+                state11 <= S11_TAIL;
         end
 
         S11_PSDU_CRC: begin
@@ -362,7 +367,7 @@ wire [1:0]  bits_enc_fifo_idata,  bits_enc_fifo_odata;
 wire        bits_enc_fifo_ivalid, bits_enc_fifo_ovalid;
 wire        bits_enc_fifo_iready, bits_enc_fifo_oready;
 wire [15:0] bits_enc_fifo_space;
-axi_fifo_bram #(.WIDTH(2), .SIZE(14)) bits_enc_fifo(
+axi_fifo_bram #(.WIDTH(2), .SIZE(20)) bits_enc_fifo(
     .clk(clk), .reset(reset_int), .clear(reset_int),
     .i_tdata(bits_enc_fifo_idata), .i_tvalid(bits_enc_fifo_ivalid), .i_tready(bits_enc_fifo_iready),
     .o_tdata(bits_enc_fifo_odata), .o_tvalid(bits_enc_fifo_ovalid), .o_tready(bits_enc_fifo_oready),
@@ -376,7 +381,7 @@ assign bits_enc_fifo_oready = (state2 == S2_PUNC_INTERLV && bits_enc_fifo_ovalid
 // Bit puncturing and bit interleaving
 //////////////////////////////////////////////////////////////////////////
 // Puncturing and interleaving index look up table
-reg  [10:0] ofdm_cnt_FSM2;
+reg  [14:0] ofdm_cnt_FSM2;
 reg  [8:0]  dbps_cnt_FSM2;
 wire [1:0]  punc_info;
 wire [17:0] interlv_addrs;
@@ -611,8 +616,8 @@ reg        ifft_status;
 reg        ifft_ce_reg;
 reg [31:0] ifft_o_result_reg;
 reg [5:0]  ifft_o_iq_cnt;
-reg [10:0] ifft_o_sync_cnt;
-reg [15:0] nof_iq2send;
+reg [14:0] ifft_o_sync_cnt;
+reg [20:0] nof_iq2send;			// 480 + 20169*80 = 1614000 OFDM symbols
 always @(posedge clk)
 if (reset_int) begin
     ifft_o_iq_cnt <= 0;
@@ -657,7 +662,7 @@ wire [31:0] CP_fifo_idata,  CP_fifo_odata;
 wire        CP_fifo_ivalid, CP_fifo_ovalid;
 wire        CP_fifo_iready, CP_fifo_oready;
 wire [15:0] CP_fifo_space;
-axi_fifo_bram #(.WIDTH(32), .SIZE(10)) CP_fifo(
+axi_fifo_bram #(.WIDTH(32), .SIZE(13)) CP_fifo(
     .clk(clk), .reset(reset_int), .clear(reset_int),
     .i_tdata(CP_fifo_idata), .i_tvalid(CP_fifo_ivalid), .i_tready(CP_fifo_iready),
     .o_tdata(CP_fifo_odata), .o_tvalid(CP_fifo_ovalid), .o_tready(CP_fifo_oready),
@@ -674,7 +679,7 @@ wire [31:0] pkt_fifo_idata,  pkt_fifo_odata;
 wire        pkt_fifo_ivalid, pkt_fifo_ovalid;
 wire        pkt_fifo_iready, pkt_fifo_oready;
 wire [15:0] pkt_fifo_space;
-axi_fifo_bram #(.WIDTH(32), .SIZE(12)) pkt_fifo(
+axi_fifo_bram #(.WIDTH(32), .SIZE(15)) pkt_fifo(
     .clk(clk), .reset(reset_int), .clear(reset_int),
     .i_tdata(pkt_fifo_idata), .i_tvalid(pkt_fifo_ivalid), .i_tready(pkt_fifo_iready),
     .o_tdata(pkt_fifo_odata), .o_tvalid(pkt_fifo_ovalid), .o_tready(pkt_fifo_oready),
@@ -688,8 +693,8 @@ assign pkt_fifo_oready = (state3 == S3_L_SIG || state3 == S3_HT_SIG || state3 ==
 // Count number of [pkt/CP] IQ samples sent
 //////////////////////////////////////////////////////////////////////////
 reg        fifo_turn;
-reg [15:0] pkt_iq_sent;
-reg [13:0] CP_iq_sent;
+reg [20:0] pkt_iq_sent;
+reg [18:0] CP_iq_sent;
 always @(posedge clk)
 if (reset_int) begin
     fifo_turn   <= PKT_FIFO;
