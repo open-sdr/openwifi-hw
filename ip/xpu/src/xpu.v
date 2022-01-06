@@ -381,6 +381,9 @@
         .rssi_half_db(rssi_half_db),
         .rssi_half_db_th(slv_reg8[(RSSI_HALF_DB_WIDTH-1):0]),
 
+        .rx_ht_aggr(rx_ht_aggr),
+        .rx_ht_aggr_last(rx_ht_aggr_last),
+
         .demod_is_ongoing(demod_is_ongoing),
         .tx_rf_is_ongoing(tx_rf_is_ongoing),
         .cts_toself_rf_is_ongoing(cts_toself_rf_is_ongoing),
