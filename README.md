@@ -140,6 +140,9 @@ You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www
 * When the previous step is finished, you should see a simulation window displays many variable names and waveforms. Now click the small triangle, which points to the right and has "Run All (F3)" hints, on top to start the simulation.
 * Please check the ..._tb.v to see how do we use $fopen, $fscanf and $fwrite to read test vectors and save the variables we want to check later. Of course you can also check everything in the waveform window.
 * After you modify some design files, just click the small circle with arrow, which has "Relaunch Simulation" hints, on top to re-launch the simulation.
+* You can always drag the signals you need from the "SIMULATION" --> "Scope" window to the waveform window, and relaunch the simulation to check those signals' waveform. An example:
+
+        SIMULATION --> Scope --> Name --> dot11_tb --> dot11_inst --> ofdm_decoder_inst --> viterbi_inst
 
 ***Note: openwifi adds necessary modules/modifications on top of [Analog Devices HDL reference design](https://github.com/analogdevicesinc/hdl). For general issues, Analog Devices wiki pages would be helpful!***
 
