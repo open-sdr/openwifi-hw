@@ -38,6 +38,10 @@ export BOARD_NAME=your_board_name
 ./prepare_adi_board_ip.sh $XILINX_DIR $BOARD_NAME
 (Don't need to wait till the building end. When you see "Building ABCD project [...", you can stop it.)
 ```
+* Get the openofdm_rx into ip directory (only run once after openofdm is udpated):
+```
+./get_ip_openofdm_rx.sh
+```
 * Launch Vivado:
 ```
 cd openwifi-hw/boards/$BOARD_NAME/
