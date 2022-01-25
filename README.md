@@ -136,7 +136,6 @@ You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www
 * Normally you should see the top level testbench (..._tb.v) of that ip core in the Vivado "Sources" window (take openofdm_rx as example):
 
         Sources --> Simulation Sources --> sim_1 --> dot11_tb
-
 * To run the simulation, click "Run Simulation" --> "Run Behavoiral Simulation" under the "SIMULATION" in the "PROJECT MANAGER" window. It will take quite long time for the 1st time run due to the sub-ip-core compiling. Fortunately the sub-ip-core compiling is a time consuming step that occurs only one time.
 * When the previous step is finished, you should see a simulation window displays many variable names and waveforms. Now click the small triangle, which points to the right and has "Run All (F3)" hints, on top to start the simulation.
 * Please check the ..._tb.v to see how do we use $fopen, $fscanf and $fwrite to read test vectors and save the variables we want to check later. Of course you can also check everything in the waveform window.
