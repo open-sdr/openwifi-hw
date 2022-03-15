@@ -18,7 +18,7 @@
 
 # -----------generate openwifi_rev.coe---------------
 set  fd  [open  "openwifi_rev.coe"  w]
-set HASHCODE [exec git log -1 --pretty=%h]
+set HASHCODE [exec ../../get_git_rev.sh]
 puts $fd "memory_initialization_radix=16;"
 puts $fd "memory_initialization_vector="
 puts $fd $HASHCODE,
