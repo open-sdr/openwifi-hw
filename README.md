@@ -28,14 +28,14 @@ Environment variable **BOARD_NAME** options:
 ## Build FPGA
 
 * Pre-conditions: 
-  * Xilinx Vivado (with SDK and HLS) 2018.3
+  * Xilinx Vivado (with SDK and HLS) 2018.3 (Vivado Design Suite - HLx Editions - 2018.3  Full Product Installation)
   * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado.
   * Ubuntu 18/20 LTS release (We test in these OS. Other OS might also work.)
 
 * Prepare Analgo Devices HDL library (only run once):
 ```
 export XILINX_DIR=your_Xilinx_directory
-(Example: export XILINX_DIR=/opt/Xilinx)
+(Example: export XILINX_DIR=/opt/Xilinx. The Xilinx directory should include sth like: Downloads, SDK, Vivado, xic)
 ./prepare_adi_lib.sh $XILINX_DIR
 ```
 * Prepare Analgo Devices specific ip (only run once for each board you have):
