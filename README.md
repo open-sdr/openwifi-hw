@@ -34,7 +34,7 @@ Environment variable **BOARD_NAME** options:
 
 * Prepare Analgo Devices HDL library (only run once):
 ```
-export XILINX_DIR=your_Xilinx_directory
+export XILINX_DIR=your_Xilinx_install_directory
 (Example: export XILINX_DIR=/opt/Xilinx. The Xilinx directory should include sth like: Downloads, SDK, Vivado, xic)
 ./prepare_adi_lib.sh $XILINX_DIR
 ```
