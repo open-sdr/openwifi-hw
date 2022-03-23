@@ -16,17 +16,22 @@
 #
 #*****************************************************************************************
 
-# -----------generate openwifi_rev.coe---------------
-set  fd  [open  "openwifi_rev.coe"  w]
-set HASHCODE [exec ../../get_git_rev.sh]
-puts $fd "memory_initialization_radix=16;"
-puts $fd "memory_initialization_vector="
-puts $fd $HASHCODE,
-puts $fd $HASHCODE,
-puts $fd $HASHCODE,
-puts $fd $HASHCODE,
+# This overrides the value in ip_repo_gen.tcl!
+set NUM_CLK_PER_US 100
+set  fd  [open  "./ip_repo/clock_speed.v"  w]
+puts $fd "`define NUM_CLK_PER_US $NUM_CLK_PER_US"
+# puts $fd "`define SMALL_FPGA 1"
 close $fd
-# ----end of generate openwifi_rev.coe---------------
+exec cp ./ip_repo/clock_speed.v ./ip_repo/tx_intf/src/ -f
+exec cp ./ip_repo/clock_speed.v ./ip_repo/rx_intf/src/ -f
+exec cp ./ip_repo/clock_speed.v ./ip_repo/xpu/src/ -f
+
+# -----------generate git rev info (overwrite ip_repo_gen.tcl)---
+set  fd  [open  "./ip_repo/xpu/src/openwifi_hw_git_rev.v"  w]
+set HASHCODE [exec ../../get_git_rev.sh]
+puts $fd "`define OPENWIFI_HW_GIT_REV (32'h$HASHCODE)"
+close $fd
+# ----end of generate generate git rev info----------------------
 
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
@@ -166,7 +171,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set IP repository paths
 set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo/ultra_scale"]" $obj
+set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/ip_repo/"]" $obj
 
 # Rebuild user ip_repo's index before adding any source files
 update_ip_catalog -rebuild
@@ -175,25 +180,25 @@ update_ip_catalog -rebuild
 set obj [get_filesets sources_1]
 # Add local files from the original project (-no_copy_sources specified)
 set files [list \
- "[file normalize "$origin_dir/../../adi-hdl/projects/common/zcu102/zcu102_system_constr.xdc"]"\
- "[file normalize "$origin_dir/../../adi-hdl/projects/fmcomms2/zcu102/system_constr.xdc"]"\
+ [file normalize "$origin_dir/../../adi-hdl/projects/common/zcu102/zcu102_system_constr.xdc"]\
+ [file normalize "$origin_dir/../../adi-hdl/projects/fmcomms2/zcu102/system_constr.xdc"]\
+ [file normalize "$origin_dir/src/system_wrapper.v"]\
 ]
 add_files -norecurse -fileset $obj $files
 
 # Import local files from the original project
 set files [list \
- "[file normalize "$origin_dir/src/system.bd"]"\
- "[file normalize "$origin_dir/src/system_wrapper.v"]"\
- "[file normalize "$origin_dir/src/system_top.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/ultra_scale/openofdm_tx/src/icmem_8.mem"]"\
- "[file normalize "$origin_dir/../../ip_repo/ultra_scale/openofdm_tx/src/icmem_16.mem"]"\
- "[file normalize "$origin_dir/../../ip_repo/ultra_scale/openofdm_tx/src/icmem_32.mem"]"\
- "[file normalize "$origin_dir/../../ip_repo/ultra_scale/openofdm_tx/src/icmem_64.mem"]"\
- "[file normalize "$origin_dir/../../ip_repo/ultra_scale/openofdm_rx/src/atan_lut.coe"]"\
- "[file normalize "$origin_dir/../../ip_repo/ultra_scale/openofdm_rx/src/deinter_lut.coe"]"\
- "[file normalize "$origin_dir/../../ip_repo/ultra_scale/openofdm_rx/src/rot_lut.coe"]"\
+ [file normalize "$origin_dir/src/system.bd"]\
+ [file normalize "$origin_dir/src/system_top.v"]\
+ [file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_8.mem"]\
+ [file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_16.mem"]\
+ [file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_32.mem"]\
+ [file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_64.mem"]\
+ [file normalize "$origin_dir/ip_repo/openofdm_rx/src/atan_lut.coe"]\
+ [file normalize "$origin_dir/ip_repo/openofdm_rx/src/deinter_lut.coe"]\
+ [file normalize "$origin_dir/ip_repo/openofdm_rx/src/rot_lut.coe"]\
 ]
-set imported_files [import_files -fileset sources_1 $files]
+set added_files [add_files -fileset sources_1 $files]
 
 set file "$origin_dir/../../adi-hdl/projects/common/zcu102/zcu102_system_constr.xdc"
 set file [file normalize $file]
@@ -416,9 +421,9 @@ set_property -name "xsim.simulate.xsim.more_options" -value "" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xczu9eg-ffvb1156-2-e -flow {Vivado Synthesis 2018} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part xczu9eg-ffvb1156-2-e -flow {Vivado Synthesis 2018} -strategy "Flow_PerfOptimized_high" -report_strategy {No Reports} -constrset constrs_1
 } else {
-  set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
+  set_property strategy "Flow_PerfOptimized_high" [get_runs synth_1]
   set_property flow "Vivado Synthesis 2018" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
@@ -445,29 +450,29 @@ set_property -name "options.more_options" -value "" -objects $obj
 }
 set obj [get_runs synth_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
-set_property -name "description" -value "Vivado Synthesis Defaults" -objects $obj
+set_property -name "description" -value "Higher performance designs, resource sharing is turned off, the global fanout guide is set to a lower number, FSM extraction forced to one-hot, LUT combining is disabled, equivalent registers are preserved, SRL are inferred  with a larger threshold" -objects $obj
 set_property -name "flow" -value "Vivado Synthesis 2018" -objects $obj
 set_property -name "name" -value "synth_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "gen_full_bitstream" -value "1" -objects $obj
-set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
+set_property -name "strategy" -value "Flow_PerfOptimized_high" -objects $obj
 set_property -name "steps.synth_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.synth_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.synth_design.args.flatten_hierarchy" -value "rebuilt" -objects $obj
 set_property -name "steps.synth_design.args.gated_clock_conversion" -value "off" -objects $obj
 set_property -name "steps.synth_design.args.bufg" -value "12" -objects $obj
-set_property -name "steps.synth_design.args.fanout_limit" -value "10000" -objects $obj
+set_property -name "steps.synth_design.args.fanout_limit" -value "400" -objects $obj
 set_property -name "steps.synth_design.args.directive" -value "Default" -objects $obj
-set_property -name "steps.synth_design.args.retiming" -value "0" -objects $obj
-set_property -name "steps.synth_design.args.fsm_extraction" -value "auto" -objects $obj
-set_property -name "steps.synth_design.args.keep_equivalent_registers" -value "0" -objects $obj
-set_property -name "steps.synth_design.args.resource_sharing" -value "auto" -objects $obj
+set_property -name "steps.synth_design.args.retiming" -value "1" -objects $obj
+set_property -name "steps.synth_design.args.fsm_extraction" -value "one_hot" -objects $obj
+set_property -name "steps.synth_design.args.keep_equivalent_registers" -value "1" -objects $obj
+set_property -name "steps.synth_design.args.resource_sharing" -value "off" -objects $obj
 set_property -name "steps.synth_design.args.control_set_opt_threshold" -value "auto" -objects $obj
-set_property -name "steps.synth_design.args.no_lc" -value "0" -objects $obj
+set_property -name "steps.synth_design.args.no_lc" -value "1" -objects $obj
 set_property -name "steps.synth_design.args.no_srlextract" -value "0" -objects $obj
-set_property -name "steps.synth_design.args.shreg_min_size" -value "3" -objects $obj
+set_property -name "steps.synth_design.args.shreg_min_size" -value "5" -objects $obj
 set_property -name "steps.synth_design.args.max_bram" -value "-1" -objects $obj
 set_property -name "steps.synth_design.args.max_uram" -value "-1" -objects $obj
 set_property -name "steps.synth_design.args.max_dsp" -value "-1" -objects $obj
@@ -482,9 +487,9 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xczu9eg-ffvb1156-2-e -flow {Vivado Implementation 2018} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part xczu9eg-ffvb1156-2-e -flow {Vivado Implementation 2018} -strategy "Performance_ExplorePostRoutePhysOpt" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
-  set_property strategy "Vivado Implementation Defaults" [get_runs impl_1]
+  set_property strategy "Performance_ExplorePostRoutePhysOpt" [get_runs impl_1]
   set_property flow "Vivado Implementation 2018" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
@@ -895,7 +900,7 @@ set_property -name "options.more_options" -value "" -objects $obj
 }
 set obj [get_runs impl_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
-set_property -name "description" -value "Default settings for Implementation." -objects $obj
+set_property -name "description" -value "Similar to Peformance_Explore, but enables the physical optimization step (phys_opt_design) with the Explore directive after routing." -objects $obj
 set_property -name "flow" -value "Vivado Implementation 2018" -objects $obj
 set_property -name "name" -value "impl_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
@@ -906,14 +911,14 @@ set_property -name "incremental_checkpoint" -value "" -objects $obj
 set_property -name "incremental_checkpoint.more_options" -value "" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "gen_full_bitstream" -value "1" -objects $obj
-set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
+set_property -name "strategy" -value "Performance_ExplorePostRoutePhysOpt" -objects $obj
 set_property -name "steps.init_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.init_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.opt_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.opt_design.args.verbose" -value "0" -objects $obj
-set_property -name "steps.opt_design.args.directive" -value "Default" -objects $obj
+set_property -name "steps.opt_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.power_opt_design.is_enabled" -value "0" -objects $obj
 set_property -name "steps.power_opt_design.tcl.pre" -value "" -objects $obj
@@ -921,25 +926,25 @@ set_property -name "steps.power_opt_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.power_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.place_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.place_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.place_design.args.directive" -value "Default" -objects $obj
+set_property -name "steps.place_design.args.directive" -value "Explore" -objects $obj
 set_property -name "steps.place_design.args.more options" -value "" -objects $obj
 set_property -name "steps.post_place_power_opt_design.is_enabled" -value "0" -objects $obj
 set_property -name "steps.post_place_power_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.post_place_power_opt_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.post_place_power_opt_design.args.more options" -value "" -objects $obj
-set_property -name "steps.phys_opt_design.is_enabled" -value "0" -objects $obj
+set_property -name "steps.phys_opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.phys_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.phys_opt_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.phys_opt_design.args.directive" -value "Default" -objects $obj
+set_property -name "steps.phys_opt_design.args.directive" -value "AddRetime" -objects $obj
 set_property -name "steps.phys_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.route_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.route_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.route_design.args.directive" -value "Default" -objects $obj
-set_property -name "steps.route_design.args.more options" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "0" -objects $obj
+set_property -name "steps.route_design.args.directive" -value "AggressiveExplore" -objects $obj
+set_property -name "steps.route_design.args.more options" -value "-tns_cleanup" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.args.directive" -value "Default" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.args.directive" -value "AggressiveExplore" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.pre" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.post" -value "" -objects $obj
@@ -1114,3 +1119,28 @@ move_dashboard_gadget -name {utilization_2} -row 1 -col 1
 move_dashboard_gadget -name {methodology_1} -row 2 -col 1
 # Set current dashboard to 'default_dashboard' 
 current_dashboard default_dashboard 
+
+# needed to avoid conflict with clk_wiz which needs input 40MHz output 250MHz
+open_bd_design {./src/system.bd}
+set_property CONFIG.FREQ_HZ 40000000 [get_bd_pins /util_ad9361_divclk/clk_out]
+
+update_compile_order -fileset sources_1
+
+#jitter balanced 
+startgroup
+if {$NUM_CLK_PER_US == 240} {
+  set_property -dict [list CONFIG.JITTER_SEL {No_Jitter} CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {240} CONFIG.MMCM_DIVCLK_DIVIDE {1} CONFIG.MMCM_BANDWIDTH {OPTIMIZED} CONFIG.MMCM_CLKFBOUT_MULT_F {30.000} CONFIG.MMCM_CLKOUT0_DIVIDE_F {5.000} CONFIG.CLKOUT1_JITTER {134.175} CONFIG.CLKOUT1_PHASE_ERROR {166.174}] [get_bd_cells clk_wiz_0]
+} elseif {$NUM_CLK_PER_US == 100} {
+  set_property -dict [list CONFIG.JITTER_SEL {No_Jitter} CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {100} CONFIG.MMCM_DIVCLK_DIVIDE {1} CONFIG.MMCM_BANDWIDTH {OPTIMIZED} CONFIG.MMCM_CLKFBOUT_MULT_F {30.000} CONFIG.MMCM_CLKOUT0_DIVIDE_F {12.000} CONFIG.CLKOUT1_JITTER {152.933} CONFIG.CLKOUT1_PHASE_ERROR {166.174}] [get_bd_cells clk_wiz_0]
+} else {
+  throw {NUM_CLK_PER_US MUST BE 240 or 100. For other values, please add support in this if ... else ... conditions.}
+}
+endgroup
+
+
+report_ip_status -name ip_status 
+upgrade_ip [get_ips  {system_rx_intf_0_0 system_tx_intf_0_0 system_openofdm_tx_0_0 system_xpu_0_0 system_side_ch_0_0}] -log ip_upgrade.log
+export_ip_user_files -of_objects [get_ips {system_rx_intf_0_0 system_tx_intf_0_0 system_openofdm_tx_0_0 system_xpu_0_0 system_side_ch_0_0}] -no_script -sync -force -quiet
+report_ip_status -name ip_status 
+
+save_bd_design

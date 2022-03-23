@@ -18,17 +18,22 @@
 #   run results please launch the synthesis/implementation runs as needed.
 #*****************************************************************************************
 
-# -----------generate openwifi_rev.coe---------------
-set  fd  [open  "openwifi_rev.coe"  w]
-set HASHCODE [exec ../../get_git_rev.sh]
-puts $fd "memory_initialization_radix=16;"
-puts $fd "memory_initialization_vector="
-puts $fd $HASHCODE,
-puts $fd $HASHCODE,
-puts $fd $HASHCODE,
-puts $fd $HASHCODE,
+# This overrides the value in ip_repo_gen.tcl!
+set NUM_CLK_PER_US 100
+set  fd  [open  "./ip_repo/clock_speed.v"  w]
+puts $fd "`define NUM_CLK_PER_US $NUM_CLK_PER_US"
+puts $fd "`define SMALL_FPGA 1"
 close $fd
-# ----end of generate openwifi_rev.coe---------------
+exec cp ./ip_repo/clock_speed.v ./ip_repo/tx_intf/src/ -f
+exec cp ./ip_repo/clock_speed.v ./ip_repo/rx_intf/src/ -f
+exec cp ./ip_repo/clock_speed.v ./ip_repo/xpu/src/ -f
+
+# -----------generate git rev info (overwrite ip_repo_gen.tcl)---
+set  fd  [open  "./ip_repo/xpu/src/openwifi_hw_git_rev.v"  w]
+set HASHCODE [exec ../../get_git_rev.sh]
+puts $fd "`define OPENWIFI_HW_GIT_REV (32'h$HASHCODE)"
+close $fd
+# ----end of generate generate git rev info----------------------
 
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
@@ -168,7 +173,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set IP repository paths
 set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/../../ip_repo/low"] [file normalize "$origin_dir/../../ip_repo/small"] [file normalize "$origin_dir/../../ip_repo/common"]" $obj
+set_property "ip_repo_paths" "[file normalize "$origin_dir/../../adi-hdl/library"] [file normalize "$origin_dir/ip_repo/"]" $obj
 
 # Rebuild user ip_repo's index before adding any source files
 update_ip_catalog -rebuild
@@ -420,9 +425,9 @@ set_property -name "name" -value "utils_1" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7z020clg400-1 -flow {Vivado Synthesis 2018} -strategy "Flow_AreaOptimized_medium" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part xc7z020clg400-1 -flow {Vivado Synthesis 2018} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
 } else {
-  set_property strategy "Flow_AreaOptimized_medium" [get_runs synth_1]
+  set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
   set_property flow "Vivado Synthesis 2018" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
@@ -449,7 +454,7 @@ set_property -name "options.more_options" -value "" -objects $obj
 }
 set obj [get_runs synth_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
-set_property -name "description" -value "Performs general area optimizations including changing the threshold for control set optimizations, forcing ternary adder implementation, lowering multiplier threshold of inference into DSP blocks, moving  shift register into BRAM, applying lower thresholds for use of carry chain in comparators and also area optimized mux optimizations" -objects $obj
+set_property -name "description" -value "Vivado Synthesis Defaults" -objects $obj
 set_property -name "flow" -value "Vivado Synthesis 2018" -objects $obj
 set_property -name "name" -value "synth_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
@@ -457,19 +462,19 @@ set_property -name "part" -value "xc7z020clg400-1" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
 set_property -name "include_in_archive" -value "1" -objects $obj
 set_property -name "gen_full_bitstream" -value "1" -objects $obj
-set_property -name "strategy" -value "Flow_AreaOptimized_medium" -objects $obj
+set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
 set_property -name "steps.synth_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.synth_design.tcl.post" -value "" -objects $obj
 set_property -name "steps.synth_design.args.flatten_hierarchy" -value "rebuilt" -objects $obj
 set_property -name "steps.synth_design.args.gated_clock_conversion" -value "off" -objects $obj
 set_property -name "steps.synth_design.args.bufg" -value "12" -objects $obj
 set_property -name "steps.synth_design.args.fanout_limit" -value "10000" -objects $obj
-set_property -name "steps.synth_design.args.directive" -value "AreaOptimized_medium" -objects $obj
-set_property -name "steps.synth_design.args.retiming" -value "1" -objects $obj
+set_property -name "steps.synth_design.args.directive" -value "Default" -objects $obj
+set_property -name "steps.synth_design.args.retiming" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.fsm_extraction" -value "auto" -objects $obj
 set_property -name "steps.synth_design.args.keep_equivalent_registers" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.resource_sharing" -value "auto" -objects $obj
-set_property -name "steps.synth_design.args.control_set_opt_threshold" -value "1" -objects $obj
+set_property -name "steps.synth_design.args.control_set_opt_threshold" -value "auto" -objects $obj
 set_property -name "steps.synth_design.args.no_lc" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.no_srlextract" -value "0" -objects $obj
 set_property -name "steps.synth_design.args.shreg_min_size" -value "3" -objects $obj
@@ -973,7 +978,7 @@ set_property -name "active_reports" -value "" -objects $obj
 set_property -name "active_reports_invalid" -value "" -objects $obj
 set_property -name "active_run" -value "0" -objects $obj
 set_property -name "hide_unused_data" -value "1" -objects $obj
-set_property -name "reports" -value "impl_1#impl_1_route_report_drc_0" -objects $obj
+set_property -name "reports" -value "" -objects $obj
 set_property -name "run.step" -value "route_design" -objects $obj
 set_property -name "run.type" -value "implementation" -objects $obj
 set_property -name "statistics.critical_warning" -value "1" -objects $obj
@@ -992,7 +997,7 @@ set_property -name "active_reports" -value "" -objects $obj
 set_property -name "active_reports_invalid" -value "" -objects $obj
 set_property -name "active_run" -value "0" -objects $obj
 set_property -name "hide_unused_data" -value "1" -objects $obj
-set_property -name "reports" -value "impl_1#impl_1_route_report_methodology_0" -objects $obj
+set_property -name "reports" -value "" -objects $obj
 set_property -name "run.step" -value "route_design" -objects $obj
 set_property -name "run.type" -value "implementation" -objects $obj
 set_property -name "statistics.critical_warning" -value "1" -objects $obj
@@ -1011,7 +1016,7 @@ set_property -name "active_reports" -value "" -objects $obj
 set_property -name "active_reports_invalid" -value "" -objects $obj
 set_property -name "active_run" -value "0" -objects $obj
 set_property -name "hide_unused_data" -value "1" -objects $obj
-set_property -name "reports" -value "impl_1#impl_1_route_report_power_0" -objects $obj
+set_property -name "reports" -value "" -objects $obj
 set_property -name "run.step" -value "route_design" -objects $obj
 set_property -name "run.type" -value "implementation" -objects $obj
 set_property -name "statistics.bram" -value "1" -objects $obj
@@ -1047,7 +1052,7 @@ set_property -name "active_reports" -value "" -objects $obj
 set_property -name "active_reports_invalid" -value "" -objects $obj
 set_property -name "active_run" -value "0" -objects $obj
 set_property -name "hide_unused_data" -value "1" -objects $obj
-set_property -name "reports" -value "impl_1#impl_1_route_report_timing_summary_0" -objects $obj
+set_property -name "reports" -value "" -objects $obj
 set_property -name "run.step" -value "route_design" -objects $obj
 set_property -name "run.type" -value "implementation" -objects $obj
 set_property -name "statistics.ths" -value "1" -objects $obj
@@ -1067,7 +1072,7 @@ set_property -name "active_reports" -value "" -objects $obj
 set_property -name "active_reports_invalid" -value "" -objects $obj
 set_property -name "active_run" -value "0" -objects $obj
 set_property -name "hide_unused_data" -value "1" -objects $obj
-set_property -name "reports" -value "synth_1#synth_1_synth_report_utilization_0" -objects $obj
+set_property -name "reports" -value "" -objects $obj
 set_property -name "run.step" -value "synth_design" -objects $obj
 set_property -name "run.type" -value "synthesis" -objects $obj
 set_property -name "statistics.bram" -value "1" -objects $obj
@@ -1094,7 +1099,7 @@ set_property -name "active_reports" -value "" -objects $obj
 set_property -name "active_reports_invalid" -value "" -objects $obj
 set_property -name "active_run" -value "0" -objects $obj
 set_property -name "hide_unused_data" -value "1" -objects $obj
-set_property -name "reports" -value "impl_1#impl_1_place_report_utilization_0" -objects $obj
+set_property -name "reports" -value "" -objects $obj
 set_property -name "run.step" -value "place_design" -objects $obj
 set_property -name "run.type" -value "implementation" -objects $obj
 set_property -name "statistics.bram" -value "1" -objects $obj
@@ -1120,3 +1125,17 @@ move_dashboard_gadget -name {utilization_2} -row 1 -col 1
 move_dashboard_gadget -name {methodology_1} -row 2 -col 1
 # Set current dashboard to 'default_dashboard' 
 current_dashboard default_dashboard 
+
+open_bd_design {./src/system.bd}
+set_property CONFIG.FREQ_HZ 40000000 [get_bd_pins /util_ad9361_divclk/clk_out]
+
+startgroup
+set_property -dict [list CONFIG.JITTER_SEL {No_Jitter} CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {100} CONFIG.MMCM_DIVCLK_DIVIDE {1} CONFIG.MMCM_BANDWIDTH {OPTIMIZED} CONFIG.MMCM_CLKFBOUT_MULT_F {25.000} CONFIG.MMCM_CLKOUT0_DIVIDE_F {10.000} CONFIG.CLKOUT1_JITTER {180.876} CONFIG.CLKOUT1_PHASE_ERROR {191.950}] [get_bd_cells clk_wiz_0]
+endgroup
+
+report_ip_status -name ip_status 
+upgrade_ip [get_ips  {system_rx_intf_0_0 system_tx_intf_0_0 system_openofdm_tx_0_0 system_xpu_0_0 system_side_ch_0_0}] -log ip_upgrade.log
+export_ip_user_files -of_objects [get_ips {system_rx_intf_0_0 system_tx_intf_0_0 system_openofdm_tx_0_0 system_xpu_0_0 system_side_ch_0_0}] -no_script -sync -force -quiet
+report_ip_status -name ip_status 
+
+save_bd_design
