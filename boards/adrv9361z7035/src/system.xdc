@@ -38,14 +38,3 @@ set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf
 # set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_ant_flag/syncstages_ff_reg[3][0]/Q}]
 # set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_ant_flag/syncstages_ff_reg[3][0]/R}]
 
-connect_debug_port u_ila_0/probe0 [get_nets [list {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[0]} {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[1]} {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_control_i/tx_control_state[2]}]]
-
-connect_debug_port u_ila_0/probe5 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_on_detection_i/pulse_tx_bb_end]]
-connect_debug_port u_ila_0/probe6 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/tx_on_detection_i/pulse_tx_bb_start]]
-
-
-
-
-
-connect_debug_port u_ila_0/probe0 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/fcs_valid]]
-
