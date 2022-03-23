@@ -118,14 +118,14 @@ reg  [3:0]  bram_din_last_nibble;
 always @(posedge clk)
 if (reset_int) begin
     bram_din_last_nibble <= 0;
-end else begin
+end else if (bits_enc_fifo_iready) begin
     bram_din_last_nibble <= bram_din[63:60];
 end
 
-assign crc_data[0] = state11 == S11_PSDU_DATA ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[0] : bram_din[(psdu_bit_cnt[5:2] << 2) + 0]) : 0;
-assign crc_data[1] = state11 == S11_PSDU_DATA ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[1] : bram_din[(psdu_bit_cnt[5:2] << 2) + 1]) : 0;
-assign crc_data[2] = state11 == S11_PSDU_DATA ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[2] : bram_din[(psdu_bit_cnt[5:2] << 2) + 2]) : 0;
-assign crc_data[3] = state11 == S11_PSDU_DATA ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[3] : bram_din[(psdu_bit_cnt[5:2] << 2) + 3]) : 0;
+assign crc_data[0] = (state1 == S1_DATA && state11 == S11_PSDU_DATA) ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[0] : bram_din[(psdu_bit_cnt[5:2] << 2) + 0]) : 0;
+assign crc_data[1] = (state1 == S1_DATA && state11 == S11_PSDU_DATA) ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[1] : bram_din[(psdu_bit_cnt[5:2] << 2) + 1]) : 0;
+assign crc_data[2] = (state1 == S1_DATA && state11 == S11_PSDU_DATA) ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[2] : bram_din[(psdu_bit_cnt[5:2] << 2) + 2]) : 0;
+assign crc_data[3] = (state1 == S1_DATA && state11 == S11_PSDU_DATA) ? (psdu_bit_cnt[5:0] == 6'b111111 ? bram_din_last_nibble[3] : bram_din[(psdu_bit_cnt[5:2] << 2) + 3]) : 0;
 crc32_tx fcs_inst (
     .clk(clk),
     .rst(reset_int),
