@@ -40,10 +40,3 @@ set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf
 
 
 
-
-
-
-
-
-connect_debug_port u_ila_0/probe3 [get_nets [list i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/fcs_valid]]
-
