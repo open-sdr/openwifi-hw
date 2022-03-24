@@ -455,6 +455,8 @@
         .count_top(slv_reg13[14:0]),
 //        .pad_test(slv_reg13[31]),
         
+        .max_signal_len_th(slv_reg6[31:16]),
+
         .data_from_acc(data_from_acc),
         .data_ready_from_acc(data_ready_from_acc),
         .pkt_rate(pkt_rate),

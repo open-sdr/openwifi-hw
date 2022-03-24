@@ -54,6 +54,7 @@
 	    input wire [14:0] count_top,
 //	    input wire pad_test,
 	    
+      input wire [15:0] max_signal_len_th,
 	    // from wifi rx
 	    input wire [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_from_acc,
 	    input wire data_ready_from_acc,
@@ -182,7 +183,7 @@
             start_m_axis <= 0;
             m_axis_rst<=0;
             m_axis_tlast_auto_recover<=0;
-            if (sig_valid && (ht_unsupport==0)) begin
+            if ( sig_valid && (ht_unsupport==0) && (pkt_len>=14 && pkt_len<=max_signal_len_th) ) begin
               monitor_num_dma_symbol_to_ps<=( pkt_len[15:3] + (pkt_len[2:0]!=0) ) + 2; // 2 for tsf, rf_info and rate/len insertion at the beginnig;
               rx_state <= DMA_HEADER0_INSERT;
             end
