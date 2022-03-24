@@ -19,6 +19,7 @@ if { [info exists ::origin_dir_loc] } {
 
 # Set the project name
 set project_name "side_ch_big"
+exec rm -rf $project_name
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -140,6 +141,8 @@ update_ip_catalog -rebuild
 set obj [get_filesets sources_1]
 set files [list \
  "[file normalize "$origin_dir/src/ram_2port.v"]"\
+ "[file normalize "$origin_dir/src/side_ch_counter.v"]"\
+ "[file normalize "$origin_dir/src/side_ch_counter_event_cfg.v"]"\
  "[file normalize "$origin_dir/src/side_ch_control.v"]"\
  "[file normalize "$origin_dir/src/side_ch_m_axis.v"]"\
  "[file normalize "$origin_dir/src/side_ch_s_axi.v"]"\
@@ -218,6 +221,32 @@ add_files -norecurse -fileset $obj $files
 # set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/ram_2port.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog" -objects $file_obj
+set_property -name "is_enabled" -value "1" -objects $file_obj
+set_property -name "is_global_include" -value "0" -objects $file_obj
+set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+set_property -name "used_in_implementation" -value "1" -objects $file_obj
+set_property -name "used_in_simulation" -value "1" -objects $file_obj
+set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+
+set file "$origin_dir/src/side_ch_counter.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog" -objects $file_obj
+set_property -name "is_enabled" -value "1" -objects $file_obj
+set_property -name "is_global_include" -value "0" -objects $file_obj
+set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+set_property -name "used_in_implementation" -value "1" -objects $file_obj
+set_property -name "used_in_simulation" -value "1" -objects $file_obj
+set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+
+set file "$origin_dir/src/side_ch_counter_event_cfg.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
