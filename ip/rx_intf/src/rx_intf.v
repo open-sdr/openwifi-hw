@@ -62,6 +62,9 @@
         input  wire fcs_in_strobe,
 		input  wire fcs_ok,
 
+        // led
+        output wire fcs_ok_led,
+
 	    // interrupt to PS
         output wire rx_pkt_intr,
         
@@ -276,6 +279,13 @@
       .dest_clk (adc_clk),
       .dest_out (ant_flag_in_rf_domain)
     );
+
+    edge_to_flip edge_to_flip_fcs_ok_i (
+        .clk(m00_axis_aclk),
+        .rstn(m00_axis_aresetn),
+        .data_in(fcs_ok),
+        .flip_output(fcs_ok_led)
+	);
 
     gpio_status_rf_to_bb # (
         .GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH)        
