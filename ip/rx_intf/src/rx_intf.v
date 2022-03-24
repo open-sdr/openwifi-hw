@@ -28,6 +28,10 @@
         output wire trigger_out1,
         // -------------debug purpose----------------
 
+        // ad9361 status and ctrl
+	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_rf,
+        output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb,
+
 	    // from ad9361_adc_pack
         input wire adc_clk,
         input wire adc_rst,
@@ -224,8 +228,6 @@
 	assign m00_axis_tstrb  = m00_axis_tstrb_inner;
 	assign m00_axis_tlast  = (m00_axis_tlast_inner|m00_axis_tlast_auto_recover);
 
-    //assign slv_reg23[(GPIO_STATUS_WIDTH-1):0] = gpio_status;
-
     assign fcs_valid_internal = (slv_reg5[3]==0?fcs_valid:fcs_in_strobe);
     assign rx_pkt_intr = (slv_reg2[8]==0?intr_internal:slv_reg2[0]);
     
@@ -273,6 +275,19 @@
       .src_in   (slv_reg16[0]),
       .dest_clk (adc_clk),
       .dest_out (ant_flag_in_rf_domain)
+    );
+
+    gpio_status_rf_to_bb # (
+        .GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH)        
+    ) gpio_status_rf_to_bb_i (
+        .rf_rst(adc_rst),
+        .rf_clk(adc_clk),
+        .gpio_status_rf(gpio_status_rf),
+
+        .bb_rstn(m00_axis_aresetn),
+        .bb_clk(m00_axis_aclk),
+        .bb_iq_valid(bw20_iq_valid),
+        .gpio_status_bb(gpio_status_bb)
     );
 
     adc_intf # (
