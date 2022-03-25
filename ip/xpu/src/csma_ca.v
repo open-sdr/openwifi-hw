@@ -206,7 +206,7 @@
               if (is_pspoll) begin
                 nav_new<=ackcts_time+sifs_time;//9.3.2.4 Setting and resetting the NAV
               end else begin
-                nav_new<=duration[14:0];
+                nav_new<=(duration[15]==0?duration[14:0]:0);//table 8-3 in 802.11-2012
               end
 
               if (fcs_valid) begin

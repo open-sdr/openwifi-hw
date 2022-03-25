@@ -14,7 +14,7 @@
 	   parameter integer C_S00_AXIS_TDATA_WIDTH	= 64,
      parameter integer WIFI_TX_BRAM_ADDR_WIDTH = 10
 	)
-	(// main function: after receive data, send ack; after send data, disable tx for a while because need to wait for ack from peer.
+	(
         input wire clk,
         input wire rstn,
         
@@ -30,6 +30,7 @@
         input wire [14:0] recv_ack_timeout_top_adj,
         input wire [14:0] recv_ack_sig_valid_timeout_top,
         input wire recv_ack_fcs_valid_disable,
+	      input wire tx_core_is_ongoing,
         input wire pulse_tx_bb_end,
         input wire phy_tx_done,
         input wire sig_valid,
@@ -97,7 +98,8 @@
   `DEBUG_PREFIX reg [14:0] ack_timeout_count;
   `DEBUG_PREFIX reg [2:0] send_ack_count;
   reg [47:0] ack_addr;
-  reg [15:0] duration_received;
+  reg signed [15:0] duration_received;
+  reg signed [15:0] duration_standard;
   reg FC_more_frag_received;
   `DEBUG_PREFIX reg [3:0] tx_control_state;
   `DEBUG_PREFIX reg [3:0] num_retrans_lock;
@@ -220,6 +222,7 @@
           FC_type_new<=0;
           FC_subtype_new<=0;
           duration_received<=0;
+          duration_standard<=0;
           FC_more_frag_received<=0;
           is_data_received<=0;
           is_management_received<=0;
@@ -248,8 +251,10 @@
         ackcts_rate <= 4'b1011; //6Mbps.
 
         // ackcts_time <= preamble_sig_time + ofdm_symbol_time*({4'd0,ackcts_n_sym_reg}); 
-        ackcts_time <= preamble_sig_time + ofdm_symbol_time*({4'd0,3'd6}); // ack/cts use 6 ofdm symbols at 6Mbps
-        sifs_time_reg   <= sifs_time;
+        ackcts_time       <= preamble_sig_time + ofdm_symbol_time*({4'd0,3'd6}); // ack/cts use 6 ofdm symbols at 6Mbps
+        sifs_time_reg     <= sifs_time;
+        duration_standard <= (duration_received - ackcts_time - sifs_time_reg);
+
         tx_status <= {blk_ack_bitmap_lock, blk_ack_resp_ssn_lock, num_retrans_lock};
 
         // num_data_ofdm_symbol_reg <= num_data_ofdm_symbol;
@@ -281,7 +286,7 @@
             FC_type_new<=0;
             FC_subtype_new<=0;
             ack_addr <= addr2;
-            duration_received<=duration;
+            duration_received<=(duration[15]==0?duration[14:0]:0);
             FC_more_frag_received<=FC_more_frag;
             is_data_received<=is_data;
             is_management_received<=is_management;
@@ -377,61 +382,55 @@
            end
 
           PREP_ACK: begin // data is calculated by calc_phy_header C program
-            ack_tx_flag<=1;
-            // ack_addr <= ack_addr;
-            // tx_try_complete<=tx_try_complete;
-            // tx_status<=tx_status; //maintain status from state RECV_ACK for ARM reading
-            // num_retrans<=num_retrans;
-            // start_retrans<=start_retrans;
-            // retrans_in_progress<=retrans_in_progress;
-            // tx_dpram_op_counter<=tx_dpram_op_counter;
-            // recv_ack_timeout_top<=recv_ack_timeout_top;
+              ack_tx_flag<=1;
+              // ack_addr <= ack_addr;
+              // tx_try_complete<=tx_try_complete;
+              // tx_status<=tx_status; //maintain status from state RECV_ACK for ARM reading
+              // num_retrans<=num_retrans;
+              // start_retrans<=start_retrans;
+              // retrans_in_progress<=retrans_in_progress;
+              // tx_dpram_op_counter<=tx_dpram_op_counter;
+              // recv_ack_timeout_top<=recv_ack_timeout_top;
 
-            if ((rx_ht_aggr_last_flag && (ampdu_rx_tid == qos_tid)) || (is_blockackreq_received && (ampdu_rx_tid == blk_ack_req_tid))) begin
-              duration_new<= duration_extra+0;
               FC_type_new<=2'b01;
-              FC_subtype_new<=4'b1001;
+              if ((rx_ht_aggr_last_flag && (ampdu_rx_tid == qos_tid)) || (is_blockackreq_received && (ampdu_rx_tid == blk_ack_req_tid))) begin
+                duration_new<= duration_extra+0;
+                FC_subtype_new<=4'b1001;
 
-              // Prepare block ack response bitmap
-              if(rx_ht_aggr_last_flag) begin
-                  blk_ack_bitmap_lock[bitmap_count[5:0]] <= blk_ack_bitmap_mem[(rx_ht_aggr_ssn[6:0]+bitmap_count)];
-                  // Clear past bitmap history
-                  if(bitmap_count < 32)
-                      blk_ack_bitmap_mem[(rx_ht_aggr_ssn[6:0]+bitmap_count+7'd64)] <= 0;
+                // Prepare block ack response bitmap
+                if(rx_ht_aggr_last_flag) begin
+                    blk_ack_bitmap_lock[bitmap_count[5:0]] <= blk_ack_bitmap_mem[(rx_ht_aggr_ssn[6:0]+bitmap_count)];
+                    // Clear past bitmap history
+                    if(bitmap_count < 32)
+                        blk_ack_bitmap_mem[(rx_ht_aggr_ssn[6:0]+bitmap_count+7'd64)] <= 0;
+                end else begin
+                    blk_ack_bitmap_lock[bitmap_count[5:0]] <= blk_ack_bitmap_mem[(blk_ack_req_ssn[6:0]+bitmap_count)];
+                    // Clear past bitmap history
+                    if(bitmap_count < 32)
+                        blk_ack_bitmap_mem[(blk_ack_req_ssn[6:0]+bitmap_count+7'd64)] <= 0;
+                end
+                if(bitmap_count < 63)
+                    bitmap_count <= bitmap_count + 1;
+
+              //standard: For ACK frames sent by non-QoS STAs, if the More Fragments bit was equal to 0 in the Frame Control field
+              //of the immediately previous individually addressed data or management frame, the duration value is set to 0.
               end else begin
-                  blk_ack_bitmap_lock[bitmap_count[5:0]] <= blk_ack_bitmap_mem[(blk_ack_req_ssn[6:0]+bitmap_count)];
-                  // Clear past bitmap history
-                  if(bitmap_count < 32)
-                      blk_ack_bitmap_mem[(blk_ack_req_ssn[6:0]+bitmap_count+7'd64)] <= 0;
+                FC_subtype_new <= (is_rts_received?(4'b1100):(4'b1101));
+
+                //standard: In other ACK frames sent by non-QoS STAs, the duration value is the value obtained from the Duration/ID
+                //field of the immediately previous data, management, PS-Poll, BlockAckReq, or BlockAck frame minus the
+                //time, in microseconds, required to transmit the ACK frame and its SIFS interval.
+                //we use 6M for ack(14byte): n_ofdm=6=(22+14*8)/24; time_us=20(preamble+SIGNAL)+6*4=44;
+                if ( ((is_data_received||is_management_received)&&(FC_more_frag_received==1)) || is_rts_received ) begin
+                  duration_new<= duration_extra+((duration_standard<=0)?0:duration_standard);
+                end else begin //pspoll doesn't carry duration. instead it carries AID. no sense to calculate duration based on AID
+                  duration_new<=duration_extra+0;
+                end
               end
-              if(bitmap_count < 63)
-                  bitmap_count <= bitmap_count + 1;
 
-            //standard: For ACK frames sent by non-QoS STAs, if the More Fragments bit was equal to 0 in the Frame Control field
-            //of the immediately previous individually addressed data or management frame, the duration value is set to 0.
-            end else if ( (is_data_received||is_management_received) && (FC_more_frag_received==0)) begin
-              duration_new<=duration_extra+0;
-              FC_type_new<=2'b01;
-              FC_subtype_new<=4'b1101;
-            end else if (is_data_received||is_management_received||is_pspoll_received) begin
-            //standard: In other ACK frames sent by non-QoS STAs, the duration value is the value obtained from the Duration/ID
-            //field of the immediately previous data, management, PS-Poll, BlockAckReq, or BlockAck frame minus the
-            //time, in microseconds, required to transmit the ACK frame and its SIFS interval.
-            //assume we use 6M for ack(14byte): n_ofdm=6=(22+14*8)/24; time_us=20(preamble+SIGNAL)+6*4=44;
-              //duration_new<= duration_extra+(duration_received-44-sifs_time);//SIFS 2.4GHz 10us; 5GHz 16us
-              duration_new<= duration_extra+(duration_received==0?0:(duration_received-ackcts_time-sifs_time_reg));//avoid overflow corner case
-              FC_type_new<=2'b01;
-              FC_subtype_new<=4'b1101;
-            end else if (is_rts_received) begin
-              //duration_new<= duration_extra+(duration_received-44-sifs_time);//SIFS 2.4GHz 10us; 5GHz 16us
-              duration_new<= duration_extra+(duration_received==0?0:(duration_received-ackcts_time-sifs_time_reg));
-              FC_type_new<=2'b01;
-              FC_subtype_new<=4'b1100;
-            end
-
-            ack_timeout_count <= ( ( ack_timeout_count != send_ack_wait_top_scale )?(ack_timeout_count + 1):ack_timeout_count );
-            tx_control_state  <= ( ( ack_timeout_count != send_ack_wait_top_scale )?tx_control_state:((rx_ht_aggr_last_flag||is_blockackreq_received) ? SEND_BLK_ACK : SEND_DFL_ACK) );
-            start_tx_ack <= ( ( ack_timeout_count != send_ack_wait_top_scale )? 0:1);
+              ack_timeout_count <= ( ( ack_timeout_count != send_ack_wait_top_scale )?(ack_timeout_count + 1):ack_timeout_count );
+              tx_control_state  <= ( ( ack_timeout_count != send_ack_wait_top_scale )?tx_control_state:((rx_ht_aggr_last_flag||is_blockackreq_received) ? SEND_BLK_ACK : SEND_DFL_ACK) );
+              start_tx_ack <= ( ( ack_timeout_count != send_ack_wait_top_scale )? 0:1);
           end
 
           SEND_DFL_ACK: begin
