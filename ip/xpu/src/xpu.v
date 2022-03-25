@@ -291,7 +291,7 @@
     wire tx_core_is_ongoing;
     wire tx_chain_on;
 
-    assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg19[3:0]);
+    assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg6[19:16]);
     assign cw = cw_exp_log; 
     assign slv_reg63 = `OPENWIFI_HW_GIT_REV;
 
