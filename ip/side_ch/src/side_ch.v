@@ -1,6 +1,7 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 `include "fpga_scale.v"
+`include "has_side_ch_flag.v"
 
 `timescale 1 ns / 1 ps
 
@@ -127,6 +128,8 @@
 		output wire  s00_axi_rvalid,
 		input wire  s00_axi_rready
 	);
+
+`ifdef HAS_SIDE_CH
 
 	function integer clogb2 (input integer bit_depth);                                   
       begin                                                                              
@@ -494,5 +497,22 @@
         .SLV_REG30(slv_reg30),
         .SLV_REG31(slv_reg31)
 	);
+`else
+
+		assign m00_axis_tvalid = 0;
+		assign m00_axis_tdata = 0;
+		assign m00_axis_tstrb = 0;
+		assign m00_axis_tlast = 0;
+		assign s00_axis_tready = 0;
+		assign s00_axi_awready = 0;
+		assign s00_axi_wready = 0;
+		assign s00_axi_bresp = 0;
+		assign s00_axi_bvalid = 0;
+		assign s00_axi_arready = 0;
+		assign s00_axi_rdata = 0;
+		assign s00_axi_rresp = 0;
+		assign s00_axi_rvalid = 0;
+
+`endif
 
 	endmodule
