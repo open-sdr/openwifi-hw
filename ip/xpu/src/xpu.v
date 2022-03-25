@@ -164,7 +164,7 @@
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg34;//FC_DI
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg35;//addr1
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg36;//addr1
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg37;//addr2
+	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg37;//addr2
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg38;//addr2
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg39;//addr3
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg40;//addr3
@@ -334,7 +334,8 @@
     
     // assign slv_reg35 = addr1[31:0];
     // assign slv_reg36 = addr1[47:32];
-        
+    
+    assign slv_reg37 = {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]};
     // assign slv_reg37 = addr2[31:0];
     // assign slv_reg38 = addr2[47:32];
 
@@ -738,7 +739,7 @@
         //.SLV_REG34(slv_reg34),
         //.SLV_REG35(slv_reg35),
         //.SLV_REG36(slv_reg36),
-        //.SLV_REG37(slv_reg37),
+        .SLV_REG37(slv_reg37),
         //.SLV_REG38(slv_reg38),
         //.SLV_REG39(slv_reg39),
         //.SLV_REG40(slv_reg40),
