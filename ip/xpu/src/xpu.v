@@ -73,7 +73,8 @@
         `DEBUG_PREFIX output wire start_tx_ack,
         output wire tx_try_complete,
 	    input  wire tx_iq_fifo_empty,
-        output wire [3:0] high_tx_allowed,
+        output wire [3:0] slice_en,
+        output wire backoff_done,
         output wire tx_bb_is_ongoing,
         output wire tx_rf_is_ongoing,
         output wire ack_tx_flag,
@@ -90,6 +91,7 @@
         output wire [3:0] band,
         output wire [7:0] channel,
 	    input wire quit_retrans,
+        input wire reset_backoff,
 	    output wire tx_control_state_idle,
         output wire [9:0] num_slot_random,
         output wire [3:0] cw,
@@ -199,7 +201,6 @@
 	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg63;//FPGA version info
 	
 	wire block_rx_dma_to_ps_internal;
-	wire [3:0] high_tx_allowed_internal;
 
     wire ch_idle;
     wire retrans_trigger;
@@ -284,7 +285,6 @@
 
     wire [3:0] cw_exp_used;
     wire [3:0] cw_exp_dynamic;
-    wire backoff_done;
     // wire increase_cw;
     `DEBUG_PREFIX wire [3:0] cw_exp_log;
     
@@ -316,10 +316,9 @@
 
 	assign mute_adc_out_to_bb = (slv_reg1[0]?slv_reg1[31]:(tx_rf_is_ongoing|cts_toself_rf_is_ongoing|ack_cts_is_ongoing));
 	assign block_rx_dma_to_ps = (block_rx_dma_to_ps_internal&(~slv_reg1[2]));	
-	assign high_tx_allowed[0] = (  slv_reg1[4]==0?high_tx_allowed_internal[0]:slv_reg1[1] );
-	assign high_tx_allowed[1] = ( slv_reg1[12]==0?high_tx_allowed_internal[1]:slv_reg1[8] );
-	assign high_tx_allowed[2] = ( slv_reg1[20]==0?high_tx_allowed_internal[2]:slv_reg1[16] );
-	assign high_tx_allowed[3] = ( slv_reg1[28]==0?high_tx_allowed_internal[3]:slv_reg1[24] );
+
+    assign slice_en = {slice_en3, slice_en2, slice_en1, slice_en0};
+
 	assign mac_addr = {slv_reg31[15:0], slv_reg30};
 	
 	// assign slv_reg34 =  FC_DI;
@@ -451,20 +450,13 @@
         .random_seed({ddc_q[2],ddc_i[0]}),
         .ch_idle(ch_idle),
 
-        .slice_en0(slice_en0),
-        .slice_en1(slice_en1),
-        .slice_en2(slice_en2),
-        .slice_en3(slice_en3),
         .retrans_trigger(retrans_trigger),
         .quit_retrans(quit_retrans),
+        .reset_backoff(reset_backoff),
         .high_trigger(high_trigger),
         .tx_bb_is_ongoing(tx_bb_is_ongoing),
         .ack_tx_flag(ack_tx_flag),
 
-        .high_tx_allowed0(high_tx_allowed_internal[0]),
-        .high_tx_allowed1(high_tx_allowed_internal[1]),
-        .high_tx_allowed2(high_tx_allowed_internal[2]),
-        .high_tx_allowed3(high_tx_allowed_internal[3]),
         .num_slot_random_log_dl(num_slot_random),
         // .increase_cw(increase_cw),
         .cw_exp_log_dl(cw_exp_log),

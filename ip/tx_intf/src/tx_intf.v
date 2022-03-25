@@ -83,7 +83,8 @@
         //output wire [31:0] mixer_cfg,
         output wire tx_iq_fifo_empty,
         //output wire [13:0] tx_iq_fifo_data_count,
-        input wire [3:0] high_tx_allowed, // when this is valid, driver takes over tx, other wise xpu takes over tx for another queue
+        input wire [3:0] slice_en, // allow sending new Linux packet or not
+        input wire backoff_done,
         input wire tx_bb_is_ongoing,
         input wire ack_tx_flag,
         input wire wea_from_xpu,
@@ -105,6 +106,7 @@
         input wire [3:0] band,
         input wire [7:0] channel,
         output wire quit_retrans,
+        output wire reset_backoff,
         output wire high_trigger,
         output wire [1:0] tx_queue_idx_to_xpu,
 
@@ -497,7 +499,8 @@
         .retrans_in_progress(retrans_in_progress),
         .start_retrans(start_retrans),
         .start_tx_ack(start_tx_ack),
-        .high_tx_allowed(high_tx_allowed),
+        .slice_en(slice_en),
+        .backoff_done(backoff_done),
         .tx_bb_is_ongoing(tx_bb_is_ongoing),
         .ack_tx_flag(ack_tx_flag),
         .wea_from_xpu(wea_from_xpu),
@@ -507,6 +510,7 @@
         .tx_pkt_retrans_limit(tx_pkt_retrans_limit),
         .use_ht_aggr(use_ht_aggr),
         .quit_retrans(quit_retrans),
+        .reset_backoff(reset_backoff),
         .high_trigger(high_trigger),
         .tx_control_state_idle(tx_control_state_idle),
         .bd_wr_idx(bd_wr_idx),

@@ -47,20 +47,13 @@
     input wire [1:0] random_seed,
     input wire ch_idle,
 
-    input wire slice_en0,
-    input wire slice_en1,
-    input wire slice_en2,
-    input wire slice_en3,
     input wire retrans_trigger,
     input wire quit_retrans,
+    input wire reset_backoff,
     input wire high_trigger,
     input wire tx_bb_is_ongoing,
     input wire ack_tx_flag,
 
-    output wire high_tx_allowed0,
-    output wire high_tx_allowed1,
-    output wire high_tx_allowed2,
-    output wire high_tx_allowed3,
     output reg [9:0] num_slot_random_log_dl,
     // `DEBUG_PREFIX output reg increase_cw,
     `DEBUG_PREFIX output reg [3:0] cw_exp_log_dl,
@@ -125,10 +118,6 @@
 
     assign ch_idle_final = (ch_idle&&(nav_for_mac==0));
     assign backoff_done =   (backoff_state==BACKOFF_WAIT_FOR_OWN);
-    assign high_tx_allowed0 = (backoff_done && slice_en0);
-    assign high_tx_allowed1 = (backoff_done && slice_en1);
-    assign high_tx_allowed2 = (backoff_done && slice_en2);
-    assign high_tx_allowed3 = (backoff_done && slice_en3);
 
     n_sym_len14_pkt # (
     ) n_sym_ackcts_pkt_i (
@@ -275,7 +264,7 @@
     // media access random backoff state machine
     always @(posedge clk) 
     begin
-      if (!rstn) begin
+      if ( (!rstn) || reset_backoff ) begin
         backoff_timer<=0;
         backoff_wait_timer<=0;
         last_fcs_valid<=0;

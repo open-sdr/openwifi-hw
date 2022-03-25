@@ -54,7 +54,8 @@
       `DEBUG_PREFIX input wire start_retrans,
       `DEBUG_PREFIX input wire start_tx_ack,
       input wire tx_control_state_idle,
-	    `DEBUG_PREFIX input wire [3:0] high_tx_allowed,
+	    `DEBUG_PREFIX input wire [3:0] slice_en,
+      `DEBUG_PREFIX input wire backoff_done,
 	    input wire tx_bb_is_ongoing,
 	    input wire ack_tx_flag,
 	    input wire wea_from_xpu,
@@ -64,6 +65,7 @@
       output wire [3:0] tx_pkt_retrans_limit,
       output wire use_ht_aggr,
       `DEBUG_PREFIX output reg quit_retrans,
+      `DEBUG_PREFIX output reg reset_backoff,
       output reg high_trigger,
       output reg [5:0] bd_wr_idx,
       // output reg [15:0] tx_pkt_num_dma_byte,
@@ -288,7 +290,7 @@
         .crc(ht_sig_crc)
     );
     
-    // state machine to do tx for high layer if high_tx_allowed
+    // state machine to do tx for high layer if slice_en and csma allowed
 	  always @(posedge clk)                                             
     begin
       if (!rstn)
@@ -324,6 +326,7 @@
           cts_toself_bb_is_ongoing<=0;
           cts_toself_rf_is_ongoing<=0;
           quit_retrans<=0;
+          reset_backoff<=0;
           high_trigger<=0;
           mac_addr_reg<=0;
         end                                                                   
@@ -340,11 +343,13 @@
             addra_internal<=0;
             dina_internal<=0;
 
+            reset_backoff<=0;
+
             cts_toself_bb_is_ongoing<=0;
             cts_toself_rf_is_ongoing<=0;
 
             read_from_s_axis_en <= 0;
-            if ( (~tx_config_fifo_empty[0] || floating_pkt_flag[0]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
+            if ( slice_en[0] && (~tx_config_fifo_empty[0] || floating_pkt_flag[0]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
               if(retrans_in_progress == 1) begin
                 quit_retrans <= 1;
                 high_tx_ctl_state<=WAIT_TX_COMP;
@@ -356,15 +361,15 @@
                 high_tx_ctl_state<=WAIT_CHANCE;
                 high_trigger<=1;
               end            
-            end else if  ( (~tx_config_fifo_empty[1] || floating_pkt_flag[1]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
+            end else if  ( slice_en[1] && (~tx_config_fifo_empty[1] || floating_pkt_flag[1]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=1; 
               high_trigger<=1;             
-            end else if  ( (~tx_config_fifo_empty[2] || floating_pkt_flag[2]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
+            end else if  ( slice_en[2] && (~tx_config_fifo_empty[2] || floating_pkt_flag[2]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=2; 
               high_trigger<=1;     
-            end else if  ( (~tx_config_fifo_empty[3] || floating_pkt_flag[3]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
+            end else if  ( slice_en[3] && (~tx_config_fifo_empty[3] || floating_pkt_flag[3]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=3; 
               high_trigger<=1;             
@@ -384,27 +389,47 @@
             cts_toself_rf_is_ongoing<=0;
 
             read_from_s_axis_en <= 0;
-            // tx_config_current <= tx_config_current;
-            if( high_tx_allowed[0] && (tx_queue_idx_reg==0)) begin
-              if(~floating_pkt_flag[0]) begin
-                tx_config_fifo_rden<= 4'b0001;
+            
+            if(tx_queue_idx_reg==0) begin
+              if (~slice_en[0]) begin
+                high_tx_ctl_state<=WAIT_TO_TRIG;
+                reset_backoff<=1;
+              end else if(backoff_done) begin
+                if(~floating_pkt_flag[0]) begin
+                  tx_config_fifo_rden<= 4'b0001;
+                end
+                high_tx_ctl_state<=PREPARE_TX_FETCH;
               end
-              high_tx_ctl_state<=PREPARE_TX_FETCH;
-            end else if ( high_tx_allowed[1] && (tx_queue_idx_reg==1)) begin
-              if(~floating_pkt_flag[1]) begin
-                tx_config_fifo_rden<= 4'b0010;
+            end else if(tx_queue_idx_reg==1) begin
+              if(~slice_en[1]) begin
+                high_tx_ctl_state<=WAIT_TO_TRIG;
+                reset_backoff<=1;
+              end else if(backoff_done) begin
+                if(~floating_pkt_flag[1]) begin
+                  tx_config_fifo_rden<= 4'b0010;
+                end
+                high_tx_ctl_state<=PREPARE_TX_FETCH;
               end
-              high_tx_ctl_state<=PREPARE_TX_FETCH;             
-            end else if ( high_tx_allowed[2] && (tx_queue_idx_reg==2)) begin
-              if(~floating_pkt_flag[2]) begin
-                tx_config_fifo_rden<= 4'b0100;
+            end else if(tx_queue_idx_reg==2) begin
+              if(~slice_en[2]) begin
+                high_tx_ctl_state<=WAIT_TO_TRIG;
+                reset_backoff<=1;
+              end else if(backoff_done) begin
+                if(~floating_pkt_flag[2]) begin
+                  tx_config_fifo_rden<= 4'b0100;
+                end
+                high_tx_ctl_state<=PREPARE_TX_FETCH;
               end
-              high_tx_ctl_state<=PREPARE_TX_FETCH;              
-            end else if ( high_tx_allowed[3] && (tx_queue_idx_reg==3)) begin
-              if(~floating_pkt_flag[3]) begin
-                tx_config_fifo_rden<= 4'b1000;
+            end else if(tx_queue_idx_reg==3) begin
+              if(~slice_en[3]) begin
+                high_tx_ctl_state<=WAIT_TO_TRIG;
+                reset_backoff<=1;
+              end else if(backoff_done) begin
+                if(~floating_pkt_flag[3]) begin
+                  tx_config_fifo_rden<= 4'b1000;
+                end
+                high_tx_ctl_state<=PREPARE_TX_FETCH;
               end
-              high_tx_ctl_state<=PREPARE_TX_FETCH;
             end
 
             wr_counter <= 13'b0;
