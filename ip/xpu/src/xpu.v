@@ -57,6 +57,9 @@
 		input  wire rx_ht_aggr,
 		input  wire rx_ht_aggr_last,
 
+        // led
+        output wire demod_is_ongoing_led,
+
         // Ports to phy_tx
         input  wire phy_tx_started,
         input  wire phy_tx_done,
@@ -354,6 +357,13 @@
 
     // assign slv_reg60 = rssi_half_db;
     // assign slv_reg61 = iq_rssi_half_db;
+
+    edge_to_flip edge_to_flip_demod_is_ongoing_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .data_in(demod_is_ongoing),
+        .flip_output(demod_is_ongoing_led)
+	);
 
     tx_on_detection # (
     ) tx_on_detection_i (
