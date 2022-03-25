@@ -15,6 +15,8 @@
         `DEBUG_PREFIX input wire [13:0] filter_cfg, //we don't support BSSID filter for now
         `DEBUG_PREFIX input wire [8:0] high_priority_discard_mask,
 
+        `DEBUG_PREFIX input wire [15:0] max_signal_len_th,
+
         `DEBUG_PREFIX output wire block_rx_dma_to_ps,
         `DEBUG_PREFIX output reg  block_rx_dma_to_ps_valid,
         `DEBUG_PREFIX input wire [47:0] self_mac_addr,
@@ -152,7 +154,7 @@
                     allow_rx_dma_to_ps_reg <= 0;
                     high_priority_discard_reg<=0;
                     filter_state_pre <= filter_state;
-                    if (signal_len>=14) 
+                    if (signal_len>=14 && signal_len<=max_signal_len_th) 
                         begin
                         filter_state <= WAIT_FOR_ADDR1;
                         end
