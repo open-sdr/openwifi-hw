@@ -6,6 +6,8 @@
 //`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*) 
 `define DEBUG_PREFIX
 
+`define TX_BB_CLK_GEN_FROM_RF 1
+
 	module tx_intf #
 	(
 		parameter integer DAC_PACK_DATA_WIDTH	= 64,
@@ -272,7 +274,7 @@
         .IQ_DATA_WIDTH(IQ_DATA_WIDTH),
         .DAC_PACK_DATA_WIDTH(DAC_PACK_DATA_WIDTH)
     ) dac_intf_i (
-        .dac_rst(dac_rst|slv_reg0[0]),
+        .dac_rst(dac_rst),
         .dac_clk(dac_clk),
 
         //connect util_ad9361_dac_upack
@@ -294,11 +296,17 @@
         .acc_rstn(s00_axi_aresetn&(~slv_reg0[5])),
 
         //from duc&ant_selection
-        .data_from_acc(ant_data),
         .data_valid_from_acc(ant_data_valid&(~slv_reg10[1])),
+`ifndef TX_BB_CLK_GEN_FROM_RF
+        .data_from_acc(ant_data),
         .fulln_to_acc(fulln_from_dac_to_duc)
+`else
+        .data_from_acc(wifi_iq_pack),
+        .read_bb_fifo(wifi_iq_ready)
+`endif
     );
-        
+
+`ifndef TX_BB_CLK_GEN_FROM_RF
     duc_bank_core # (
     ) duc_bank_core_i (
         .clk(s00_axis_aclk),
@@ -311,7 +319,8 @@
         .bw20_data_tready(wifi_iq_ready),
         .bw20_data_tvalid(wifi_iq_valid)
     );
-    
+`endif
+
 // Instantiation of Axi Bus Interface S00_AXI
 	tx_intf_s_axi # ( 
 		.C_S_AXI_DATA_WIDTH(C_S00_AXI_DATA_WIDTH),

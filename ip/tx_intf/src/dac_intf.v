@@ -7,6 +7,10 @@
 //`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
 `define DEBUG_PREFIX
 
+`define COUNT_TOP_20M (`NUM_CLK_PER_SAMPLE-1)
+
+`define TX_BB_CLK_GEN_FROM_RF 1
+
 	module dac_intf #
 	(
     parameter integer IQ_DATA_WIDTH = 16,
@@ -18,7 +22,7 @@
     
     //connect util_ad9361_dac_upack
     output wire [DAC_PACK_DATA_WIDTH-1 : 0] dac_data,
-    output wire dac_valid,
+    `DEBUG_PREFIX output wire dac_valid,
     `DEBUG_PREFIX input  wire dac_ready,
     
     //connect axi_ad9361_dac_dma
@@ -34,7 +38,13 @@
 	  input wire acc_rstn,
     input wire [(2*IQ_DATA_WIDTH-1) : 0] data_from_acc,
     `DEBUG_PREFIX input wire data_valid_from_acc,
+
+`ifndef TX_BB_CLK_GEN_FROM_RF
     `DEBUG_PREFIX output wire fulln_to_acc
+`else
+    output reg read_bb_fifo
+`endif
+
 	);
 
     wire ALMOSTEMPTY;
@@ -44,6 +54,8 @@
     wire RDERR;
     wire WRERR;
     wire RST_internal;
+    wire [5:0] rd_data_count;
+    wire [5:0] wr_data_count;
 
     wire src_sel_in_rf_domain;
     wire ant_flag_in_rf_domain;
@@ -53,17 +65,50 @@
 
     wire rden_internal;
     wire wren_internal;
-    
+        
     assign dac_data_internal_after_sel = (ant_flag_in_rf_domain?{dac_data_internal,32'd0}:{32'd0,dac_data_internal});
     assign dac_data  = ((src_sel_in_rf_domain==1'b0)?dma_data:dac_data_internal_after_sel);
+
+`ifndef TX_BB_CLK_GEN_FROM_RF
     assign dac_valid = ((src_sel_in_rf_domain==1'b0)?dma_valid:(!EMPTY_internal));
+`else
+    assign dac_valid = ((src_sel_in_rf_domain==1'b0)?dma_valid:1); //dac always need 40Msps IQ data
+`endif
+
     assign dma_ready = ((src_sel_in_rf_domain==1'b0)?dac_ready:1'b0);
     
     assign RST_internal = (!acc_rstn);
     assign fulln_to_acc = (!FULL_internal);
 
     assign rden_internal = ((src_sel_in_rf_domain==1'b0)?1'b0:dac_ready);
+
+`ifndef TX_BB_CLK_GEN_FROM_RF
     assign wren_internal = ((src_sel_in_rf_domain==1'b0)?1'b0:data_valid_from_acc);
+`else // keep reading bb fifo via read_bb_fifo at 20M, keep writing fifo here at 40M (2x interpolation with 0)
+
+    assign wren_internal = wren_internal_reg;
+
+    reg [(2*IQ_DATA_WIDTH-1) : 0] dac_intf_fifo_in;
+    reg wren_internal_reg;
+    reg [4:0] counter;
+
+    // 20MHz
+    always @( posedge acc_clk )
+    begin
+      if ( acc_rstn == 0 ) begin
+        counter <= 0;
+        wren_internal_reg <= 0;
+        read_bb_fifo <= 0;
+        dac_intf_fifo_in <= 0;
+      end else begin
+        counter <= ( counter==`COUNT_TOP_20M?0:(counter+1'b1) );
+        wren_internal_reg <= (counter==0 || counter==1); // 0 for IQ from bb fifo, 1 for zero insertion
+        read_bb_fifo <= (counter==0);
+        dac_intf_fifo_in <= (counter==0?data_from_acc:0);
+      end
+    end
+
+`endif
 
     xpm_cdc_array_single #(
       //Common module parameters
@@ -103,14 +148,14 @@
       .FULL_RESET_VALUE(0),      // DECIMAL
       .PROG_EMPTY_THRESH(10),    // DECIMAL
       .PROG_FULL_THRESH(10),     // DECIMAL
-      .RD_DATA_COUNT_WIDTH(5),   // DECIMAL
+      .RD_DATA_COUNT_WIDTH(6),   // DECIMAL
       .READ_DATA_WIDTH(32),      // DECIMAL
       .READ_MODE("fwft"),         // String
       .RELATED_CLOCKS(0),        // DECIMAL
       .USE_ADV_FEATURES("0404"), // String
       .WAKEUP_TIME(0),           // DECIMAL
       .WRITE_DATA_WIDTH(32),     // DECIMAL
-      .WR_DATA_COUNT_WIDTH(5)    // DECIMAL
+      .WR_DATA_COUNT_WIDTH(6)    // DECIMAL
    ) fifo32_2clk_dep32_i (
       .almost_empty(),
       .almost_full(),     // 1-bit output: Almost Full: When asserted, this signal indicates that
@@ -122,14 +167,18 @@
       .overflow(),           // 1-bit output: Overflow: This signal indicates that a write request
       .prog_empty(),       // 1-bit output: Programmable Empty: This signal is asserted when the
       .prog_full(),         // 1-bit output: Programmable Full: This signal is asserted when the
-      .rd_data_count(), // RD_DATA_COUNT_WIDTH-bit output: Read Data Count: This bus indicates the
+      .rd_data_count(rd_data_count), // RD_DATA_COUNT_WIDTH-bit output: Read Data Count: This bus indicates the
       .rd_rst_busy(),     // 1-bit output: Read Reset Busy: Active-High indicator that the FIFO read
       .sbiterr(),             // 1-bit output: Single Bit Error: Indicates that the ECC decoder detected
       .underflow(),         // 1-bit output: Underflow: Indicates that the read request (rd_en) during
       .wr_ack(),               // 1-bit output: Write Acknowledge: This signal indicates that a write
-      .wr_data_count(), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
+      .wr_data_count(wr_data_count), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
       .wr_rst_busy(),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
+`ifndef TX_BB_CLK_GEN_FROM_RF
       .din(data_from_acc),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
+`else
+      .din(dac_intf_fifo_in),
+`endif
       .injectdbiterr(), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
       .injectsbiterr(), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
       .rd_clk(dac_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free
