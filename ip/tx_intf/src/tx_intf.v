@@ -423,7 +423,7 @@
 		
 		.tx_queue_idx_indication_from_ps(slv_reg8[19:18]),
 		.tx_queue_idx(tx_queue_idx),
-		.endless_mode(slv_reg7[8]),
+		.endless_mode(0),
 		.data_count0(s_axis_fifo_data_count0),
 		.data_count1(s_axis_fifo_data_count1),
 		.data_count2(s_axis_fifo_data_count2),
