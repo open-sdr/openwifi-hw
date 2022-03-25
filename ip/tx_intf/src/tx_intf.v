@@ -282,15 +282,8 @@
         .dac_valid(dac_valid),
         .dac_ready(dac_ready),
         
-        //connect axi_ad9361_dac_dma
-        .dma_data(dma_data),
-        .dma_valid(dma_valid),
-        .dma_ready(dma_ready),
-        
-        //select between original dma and our own wifi tx and duc
-        .src_sel(slv_reg7[1]),
-        
-        .ant_flag(slv_reg16[1]), //slv_reg16: 1: first antenna; 2: second antenna
+        .ant_flag(slv_reg16[1]), //slv_reg16[3:0]: 1: first antenna; 2: second antenna
+        .simple_cdd_flag(slv_reg16[4]), 
 
         .acc_clk(s00_axi_aclk),
         .acc_rstn(s00_axi_aresetn&(~slv_reg0[5])),

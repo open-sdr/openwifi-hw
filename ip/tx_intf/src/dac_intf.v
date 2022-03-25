@@ -22,17 +22,11 @@
     
     //connect util_ad9361_dac_upack
     output wire [DAC_PACK_DATA_WIDTH-1 : 0] dac_data,
-    `DEBUG_PREFIX output wire dac_valid,
+    output wire dac_valid,
     `DEBUG_PREFIX input  wire dac_ready,
     
-    //connect axi_ad9361_dac_dma
-    input  wire [DAC_PACK_DATA_WIDTH-1 : 0] dma_data,
-    input  wire dma_valid,
-    output wire dma_ready,
-      
-    input wire src_sel,
-
     input wire ant_flag,
+    input wire simple_cdd_flag,
   
     input wire acc_clk,
 	  input wire acc_rstn,
@@ -57,33 +51,45 @@
     wire [5:0] rd_data_count;
     wire [5:0] wr_data_count;
 
-    wire src_sel_in_rf_domain;
     wire ant_flag_in_rf_domain;
+    wire simple_cdd_flag_in_rf_domain;
 
     wire [(2*IQ_DATA_WIDTH-1) : 0] dac_data_internal;
+    reg  [(2*IQ_DATA_WIDTH-1) : 0] dac_data_internal_delay1;
+    reg  [(2*IQ_DATA_WIDTH-1) : 0] dac_data_internal_delay2;
     wire [(DAC_PACK_DATA_WIDTH-1) : 0] dac_data_internal_after_sel;
 
     wire rden_internal;
     wire wren_internal;
-        
+    
     assign dac_data_internal_after_sel = (ant_flag_in_rf_domain?{dac_data_internal,32'd0}:{32'd0,dac_data_internal});
-    assign dac_data  = ((src_sel_in_rf_domain==1'b0)?dma_data:dac_data_internal_after_sel);
+    assign dac_data = (simple_cdd_flag_in_rf_domain?{dac_data_internal_delay2, dac_data_internal}:dac_data_internal_after_sel);
 
 `ifndef TX_BB_CLK_GEN_FROM_RF
-    assign dac_valid = ((src_sel_in_rf_domain==1'b0)?dma_valid:(!EMPTY_internal));
+    assign dac_valid = (!EMPTY_internal);
 `else
-    assign dac_valid = ((src_sel_in_rf_domain==1'b0)?dma_valid:1); //dac always need 40Msps IQ data
+    assign dac_valid = 1; //dac always need 40Msps IQ data
 `endif
-
-    assign dma_ready = ((src_sel_in_rf_domain==1'b0)?dac_ready:1'b0);
     
     assign RST_internal = (!acc_rstn);
     assign fulln_to_acc = (!FULL_internal);
 
-    assign rden_internal = ((src_sel_in_rf_domain==1'b0)?1'b0:dac_ready);
+    assign rden_internal = dac_ready;
+
+// generate 1 baseband (20Msps) sample delay in dac clk (40MHz) domain
+    always @( posedge dac_clk )
+    begin
+      if ( dac_rst == 1 ) begin
+        dac_data_internal_delay1 <= 0;
+        dac_data_internal_delay2 <= 0;
+      end else begin
+        dac_data_internal_delay1 <= dac_data_internal;
+        dac_data_internal_delay2 <= dac_data_internal_delay1;
+      end
+    end
 
 `ifndef TX_BB_CLK_GEN_FROM_RF
-    assign wren_internal = ((src_sel_in_rf_domain==1'b0)?1'b0:data_valid_from_acc);
+    assign wren_internal = data_valid_from_acc;
 `else // keep reading bb fifo via read_bb_fifo at 20M, keep writing fifo here at 40M (2x interpolation with 0)
 
     assign wren_internal = wren_internal_reg;
@@ -117,11 +123,11 @@
       .SIM_ASSERT_CHK (0), // integer; 0=disable simulation messages, 1=enable simulation messages
       .SRC_INPUT_REG  (1), // integer; 0=do not register input, 1=register input
       .WIDTH          (1)  // integer; range: 1-1024
-    ) xpm_cdc_array_single_inst_src_sel (
+    ) xpm_cdc_array_single_inst_ant_flag (
       .src_clk  (acc_clk),  // optional; required when SRC_INPUT_REG = 1
-      .src_in   (src_sel),
+      .src_in   (ant_flag),
       .dest_clk (dac_clk),
-      .dest_out (src_sel_in_rf_domain)
+      .dest_out (ant_flag_in_rf_domain)
     );
 
     xpm_cdc_array_single #(
@@ -131,11 +137,11 @@
       .SIM_ASSERT_CHK (0), // integer; 0=disable simulation messages, 1=enable simulation messages
       .SRC_INPUT_REG  (1), // integer; 0=do not register input, 1=register input
       .WIDTH          (1)  // integer; range: 1-1024
-    ) xpm_cdc_array_single_inst_ant_flag (
+    ) xpm_cdc_array_single_inst_simple_cdd_flag (
       .src_clk  (acc_clk),  // optional; required when SRC_INPUT_REG = 1
-      .src_in   (ant_flag),
+      .src_in   (simple_cdd_flag),
       .dest_clk (dac_clk),
-      .dest_out (ant_flag_in_rf_domain)
+      .dest_out (simple_cdd_flag_in_rf_domain)
     );
 
    xpm_fifo_async #(
