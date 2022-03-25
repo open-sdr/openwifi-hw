@@ -15,7 +15,7 @@
         input wire rstn,
 
         input wire [7:0] bb_rf_delay_count_top,
-        input wire [3:0] rf_end_ext_count_top,
+        input wire [6:0] rf_end_ext_count_top,
         input wire phy_tx_started,
         input wire phy_tx_done,
 	    input wire tx_iq_fifo_empty,
