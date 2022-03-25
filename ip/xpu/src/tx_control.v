@@ -53,6 +53,7 @@
         input wire backoff_done,
         input wire [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr,
 
+        input wire ampdu_rx_tid_disable,
         input wire [3:0] ampdu_rx_tid,
         input wire ampdu_rx_start,
 
@@ -295,7 +296,7 @@
             bitmap_count <= 0;
 
             // This is the last packet of aggregation and fcs valid
-            if ( rx_ht_aggr_last && fcs_valid && is_qosdata && (self_mac_addr==addr1) && (ampdu_rx_tid == qos_tid) )
+            if ( rx_ht_aggr_last && fcs_valid && is_qosdata && (self_mac_addr==addr1) && (ampdu_rx_tid == qos_tid || ampdu_rx_tid_disable) )
               begin
                 // In case the last packet from A-MPDU makes it through
                 if(rx_ht_aggr_flag == 0) begin
@@ -323,7 +324,7 @@
             else if ( fcs_valid && ((is_data&&(~is_qosdata))||(is_qosdata&&(~^qos_ack_policy))||is_management||is_blockackreq||is_pspoll||(is_rts&&(!cts_torts_disable)))
                            && (self_mac_addr==addr1)) // send ACK will not back to this IDLE until the last IQ sample sent.
               begin
-                  if(rx_ht_aggr && (ampdu_rx_tid == qos_tid)) begin
+                  if(rx_ht_aggr && (ampdu_rx_tid == qos_tid || ampdu_rx_tid_disable)) begin
                       // First packet from aggregated A-MPDU
                       if(rx_ht_aggr_flag == 0) begin
                           rx_ht_aggr_flag <= 1;
@@ -403,7 +404,7 @@
               // recv_ack_timeout_top<=recv_ack_timeout_top;
 
               FC_type_new<=2'b01;
-              if ((rx_ht_aggr_last_flag && (ampdu_rx_tid == qos_tid)) || (is_blockackreq_received && (ampdu_rx_tid == blk_ack_req_tid))) begin
+              if ((rx_ht_aggr_last_flag && (ampdu_rx_tid == qos_tid || ampdu_rx_tid_disable)) || (is_blockackreq_received && (ampdu_rx_tid == blk_ack_req_tid || ampdu_rx_tid_disable))) begin
                 duration_new<= duration_extra+0;
                 FC_subtype_new<=4'b1001;
 
@@ -474,9 +475,9 @@
                 dina<={self_mac_addr,ack_addr[47:32]};
             end else if (bram_addr==4) begin
                 if(rx_ht_aggr_last_flag) begin
-                    dina<={blk_ack_bitmap_lock[31:0], rx_ht_aggr_ssn, ampdu_rx_tid, 4'd0, 7'd0, 4'b0010, 1'd0};
+                    dina<={blk_ack_bitmap_lock[31:0], rx_ht_aggr_ssn, ampdu_rx_tid_disable?qos_tid:ampdu_rx_tid, 4'd0, 7'd0, 4'b0010, 1'd0};
                 end else begin
-                    dina<={blk_ack_bitmap_lock[31:0], blk_ack_req_ssn, ampdu_rx_tid, 4'd0, 7'd0, 4'b0010, 1'd0};
+                    dina<={blk_ack_bitmap_lock[31:0], blk_ack_req_ssn, ampdu_rx_tid_disable?blk_ack_req_tid:ampdu_rx_tid, 4'd0, 7'd0, 4'b0010, 1'd0};
                 end
             end else if (bram_addr==5) begin
                 dina<={32'h0, blk_ack_bitmap_lock[63:32]};

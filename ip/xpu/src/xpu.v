@@ -530,6 +530,7 @@
         .backoff_done(backoff_done),
         .bram_addr(bram_addr),
 
+        .ampdu_rx_tid_disable(~slv_reg12[31]),
         .ampdu_rx_tid(slv_reg12[4:1]),
         .ampdu_rx_start(slv_reg12[0]),
 
