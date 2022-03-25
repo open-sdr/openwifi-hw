@@ -145,7 +145,7 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; // tx bb RF delay in number of clock
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg11; // max number of tx re-transmission
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg12; // 
-    //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg13; // 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg13; // spi control disable
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg14; // 
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg15; //
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg16; // receive ack time count top -- 2.4GHz
@@ -201,7 +201,6 @@
 	wire block_rx_dma_to_ps_internal;
 	wire [3:0] high_tx_allowed_internal;
 
-    
     wire ch_idle;
     wire retrans_trigger;
 
@@ -289,6 +288,10 @@
     wire backoff_done;
     wire increase_cw;
     wire [3:0] cw_exp_log;
+
+    wire tx_core_is_ongoing;
+    wire tx_chain_on;
+
     assign tx_try_complete = tx_try_complete_int;
     assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg19[3:0]);
     assign cw = cw_exp_log; 
