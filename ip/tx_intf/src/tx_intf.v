@@ -3,6 +3,9 @@
 
 `timescale 1 ns / 1 ps
 
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*) 
+`define DEBUG_PREFIX
+
 	module tx_intf #
 	(
 		parameter integer DAC_PACK_DATA_WIDTH	= 64,
@@ -237,7 +240,6 @@
     assign acc_ask_data_from_s_axis = tx_bit_intf_acc_ask_data_from_s_axis;
 
     assign tx_itrpt = (slv_reg14[17]==0?(slv_reg14[8]?tx_itrpt_internal: (tx_itrpt_internal&(~ack_tx_flag)) ):0);
-
 
     // assign slv_reg26[1:0] = tx_queue_idx;
     // assign slv_reg26[13:2] = bd_wr_idx;

@@ -2,6 +2,9 @@
 
 `timescale 1 ns / 1 ps
 
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 	module tx_iq_intf #
 	(
     parameter integer C_S00_AXIS_TDATA_WIDTH	= 64,
@@ -97,17 +100,6 @@
         .iq_out(wifi_iq_pack)
     );
           
-    // fifo32_1clk_dep512 fifo32_1clk_dep512_i (
-    //     .CLK(clk),
-    //     .DATAO(tx_iq_fifo_out),
-    //     .DI(tx_iq_fifo_in),
-    //     .EMPTY(tx_iq_fifo_empty),
-    //     .FULL(tx_iq_fifo_full),
-    //     .RDEN(tx_iq_fifo_rden),
-    //     .RST(~rstn),
-    //     .WREN(tx_iq_fifo_wren),
-    //     .data_count(data_count)
-    // );
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
