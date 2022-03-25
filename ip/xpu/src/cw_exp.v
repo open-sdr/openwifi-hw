@@ -12,17 +12,18 @@ module cw_exp #
     input wire  clk,
 	input wire  rstn,
     input wire tx_try_complete,
+    input wire quit_retrans,
     input wire [31:0] cw_combined,
-    input wire start_retrans,
+    input wire retrans_trigger,
     input wire [1:0] tx_queue_idx,
      `DEBUG_PREFIX output reg [3:0] cw_exp
 );
-(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
+// (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
 reg [3:0] cw_min;
-(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
+// (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
 reg [3:0] cw_max;
 reg [1:0] tx_queue_idx_reg;
-(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
+// (* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
 reg cw_update;
 
 always @(tx_queue_idx,cw_combined) begin
@@ -56,10 +57,10 @@ begin
     begin
         cw_exp <= cw_min;
     end else begin
-        if (cw_update==1 || tx_try_complete) begin
+        if (cw_update==1 || tx_try_complete || quit_retrans) begin
             cw_exp <= cw_min ; 
         end else begin
-            if (start_retrans && (cw_exp < cw_max)) begin
+            if (retrans_trigger && (cw_exp < cw_max)) begin
                 cw_exp <= cw_exp + 1'b1; 
             end else begin
                 cw_exp <= cw_exp ;

@@ -286,9 +286,9 @@
     wire [3:0] cw_exp_dynamic;
     wire tx_try_complete_int;
     wire backoff_done;
-    wire increase_cw;
-    wire [3:0] cw_exp_log;
-
+    // wire increase_cw;
+    `DEBUG_PREFIX wire [3:0] cw_exp_log;
+    
     wire tx_core_is_ongoing;
     wire tx_chain_on;
 
@@ -471,7 +471,7 @@
         .high_tx_allowed2(high_tx_allowed_internal[2]),
         .high_tx_allowed3(high_tx_allowed_internal[3]),
         .num_slot_random_log_dl(num_slot_random),
-        .increase_cw(increase_cw),
+        // .increase_cw(increase_cw),
         .cw_exp_log_dl(cw_exp_log),
         .backoff_done(backoff_done)
     );
@@ -480,10 +480,11 @@
     ) cw_exp_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
-        .tx_try_complete(tx_try_complete_int),
+        .tx_try_complete(tx_try_complete),
+        .quit_retrans(quit_retrans),
         .cw_combined(slv_reg19),
         .tx_queue_idx(tx_queue_idx),
-        .start_retrans(increase_cw),
+        .retrans_trigger(retrans_trigger),
         .cw_exp(cw_exp_dynamic)
     );
 
