@@ -1,4 +1,5 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
+`include "openwifi_hw_git_rev.v"
 
 // `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
 `define DEBUG_PREFIX
@@ -20,7 +21,6 @@
         parameter integer WIFI_TX_BRAM_ADDR_WIDTH = 10
 	)
 	(
-        input  wire [31:0] git_rev,
 	    // ad9361 status and ctrl
 	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
 
@@ -292,7 +292,7 @@
     assign tx_try_complete = tx_try_complete_int;
     assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg19[3:0]);
     assign cw = cw_exp_log; 
-    assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
+    assign slv_reg63 = `OPENWIFI_HW_GIT_REV;
 
     assign erp_short_slot = slv_reg4[24];
     assign band = slv_reg4[19:16];
