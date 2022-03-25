@@ -387,6 +387,11 @@
           end
 
           PREP_ACK: begin // data is calculated by calc_phy_header C program
+            if (tx_core_is_ongoing) begin
+              rx_ht_aggr_flag <= 0;
+              rx_ht_aggr_last_flag <= 0;
+              tx_control_state  <= IDLE;
+            end else begin
               ack_tx_flag<=1;
               // ack_addr <= ack_addr;
               // tx_try_complete<=tx_try_complete;
@@ -436,6 +441,7 @@
               ack_timeout_count <= ( ( ack_timeout_count != send_ack_wait_top_scale )?(ack_timeout_count + 1):ack_timeout_count );
               tx_control_state  <= ( ( ack_timeout_count != send_ack_wait_top_scale )?tx_control_state:((rx_ht_aggr_last_flag||is_blockackreq_received) ? SEND_BLK_ACK : SEND_DFL_ACK) );
               start_tx_ack <= ( ( ack_timeout_count != send_ack_wait_top_scale )? 0:1);
+            end
           end
 
           SEND_DFL_ACK: begin
