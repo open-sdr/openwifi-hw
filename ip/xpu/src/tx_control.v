@@ -100,9 +100,9 @@
   reg signed [15:0] duration_standard;
   reg FC_more_frag_received;
   `DEBUG_PREFIX reg [3:0] tx_control_state;
+  `DEBUG_PREFIX reg [3:0] tx_control_state_old;
   `DEBUG_PREFIX reg [3:0] num_retrans_lock;
   reg [11:0] blk_ack_resp_ssn_lock;
-  // reg [3:0] tx_control_state_priv;
   reg [63:0] blk_ack_bitmap_lock;
   wire is_data;
   wire is_qosdata;
@@ -202,7 +202,7 @@
           send_ack_count <= 0;
           ack_tx_flag<=0;
           tx_control_state  <= IDLE;
-          // tx_control_state_priv <= IDLE;
+          tx_control_state_old <= IDLE;
           tx_try_complete<=0;
           tx_status<=0;
           num_retrans_lock <= 0;
@@ -243,7 +243,7 @@
           recv_ack_timeout_top_adj_scale <= 0;
         end
       else begin
-        // tx_control_state_priv<=tx_control_state;
+        tx_control_state_old<=tx_control_state;
         
         //ackcts_rate <= (cts_torts_rate[4]?signal_rate[3:0]:cts_torts_rate[3:0]); // this is not needed. we should assume the peer always send us ack @ 6Mbps
         ackcts_rate <= 4'b1011; //6Mbps.
