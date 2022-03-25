@@ -49,6 +49,9 @@
         output wire [(2*IQ_DATA_WIDTH-1) : 0] iq1_for_check,
         output wire iq_valid_for_check,
 
+        // from openofdm rx
+        input  wire fcs_in_strobe,
+
 	    // Ports to ACC: PHY_TX
 	    output wire phy_tx_start,
         output wire tx_hold,
@@ -347,7 +350,7 @@
 		.SLV_REG0(slv_reg0),
 		.SLV_REG1(slv_reg1),
 		.SLV_REG2(slv_reg2),
-		.SLV_REG3(slv_reg3),
+		// .SLV_REG3(slv_reg3),
 		.SLV_REG4(slv_reg4),
         .SLV_REG5(slv_reg5),
         .SLV_REG6(slv_reg6),
@@ -455,6 +458,8 @@
     ) tx_bit_intf_i (
         .rstn(s00_axis_aresetn&(~slv_reg0[6])),
         .clk(s00_axis_aclk),
+
+        .fcs_in_strobe(fcs_in_strobe),
         
         // recv bits from s_axis
         .tx_queue_idx(tx_queue_idx),

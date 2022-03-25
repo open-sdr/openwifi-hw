@@ -20,6 +20,9 @@
 	    input wire rstn,
 	    input wire clk,
 	    
+      // from openofdm rx
+      input  wire fcs_in_strobe,
+
 	    input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] data_from_s_axis,
 	    output wire ask_data_from_s_axis,
 	    input wire  emptyn_from_s_axis,
@@ -209,6 +212,10 @@
     reg tx_try_complete_dl1;
     reg tx_try_complete_dl2;
     wire tx_try_complete_dl_pulses;
+
+    reg fcs_in_strobe_dl0;
+    reg fcs_in_strobe_dl1;
+    wire fcs_in_strobe_dl_pulses;
  
     reg s_axis_recv_data_from_high_delay;
 
@@ -220,6 +227,7 @@
 
     reg [13:0] send_cts_toself_wait_sifs_top_scale;
 
+    assign fcs_in_strobe_dl_pulses = (fcs_in_strobe || fcs_in_strobe_dl0 || fcs_in_strobe_dl1);
     assign tx_try_complete_dl_pulses = (tx_try_complete || tx_try_complete_dl0 || tx_try_complete_dl1 || tx_try_complete_dl2) ;
     assign ask_data_from_s_axis = read_from_s_axis_en;
     assign start = ( (auto_start_mode==1'b0)?(1'b0): (start_delay0|start_delay1|start_delay2|start_delay3|start_delay4|start_delay5) );
@@ -336,7 +344,7 @@
             cts_toself_rf_is_ongoing<=0;
 
             read_from_s_axis_en <= 0;
-            if ( (~tx_config_fifo_empty[0] || floating_pkt_flag[0]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            if ( (~tx_config_fifo_empty[0] || floating_pkt_flag[0]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
               if(retrans_in_progress == 1) begin
                 quit_retrans <= 1;
                 high_tx_ctl_state<=WAIT_TX_COMP;
@@ -348,15 +356,15 @@
                 high_tx_ctl_state<=WAIT_CHANCE;
                 high_trigger<=1;
               end            
-            end else if  ( (~tx_config_fifo_empty[1] || floating_pkt_flag[1]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty[1] || floating_pkt_flag[1]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=1; 
               high_trigger<=1;             
-            end else if  ( (~tx_config_fifo_empty[2] || floating_pkt_flag[2]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty[2] || floating_pkt_flag[2]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=2; 
               high_trigger<=1;     
-            end else if  ( (~tx_config_fifo_empty[3] || floating_pkt_flag[3]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses)) begin
+            end else if  ( (~tx_config_fifo_empty[3] || floating_pkt_flag[3]) && (~tx_bb_is_ongoing) && (~ack_tx_flag) && (~retrans_in_progress) && tx_control_state_idle && (~tx_try_complete_dl_pulses) && (~fcs_in_strobe_dl_pulses)) begin
               high_tx_ctl_state  <= WAIT_CHANCE;
               tx_queue_idx_reg<=3; 
               high_trigger<=1;             
@@ -694,6 +702,9 @@
             tx_try_complete_dl0<=0;
             tx_try_complete_dl1<=0;
             tx_try_complete_dl2<=0;
+
+            fcs_in_strobe_dl0<=0;
+            fcs_in_strobe_dl1<=0;
             
             tx_config_fifo_wren <= 4'b0000;
             s_axis_recv_data_from_high_delay <= 0;
@@ -708,6 +719,9 @@
             tx_try_complete_dl0<=tx_try_complete;
             tx_try_complete_dl1<=tx_try_complete_dl0;
             tx_try_complete_dl2<=tx_try_complete_dl1;
+
+            fcs_in_strobe_dl0<=fcs_in_strobe;
+            fcs_in_strobe_dl1<=fcs_in_strobe_dl0;
             
             start_delay0<= ( ack_tx_flag?start_tx_ack:(retrans_in_progress==1?start_retrans:(addra==num_dma_symbol_th && num_dma_symbol_th!=0)) );//controle the width of tx pulse
             start_delay1<=start_delay0;
