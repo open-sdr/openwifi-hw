@@ -42,5 +42,7 @@ set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf
 # set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_ant_flag/syncstages_ff_reg[3][0]/Q}]
 # set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_ant_flag/syncstages_ff_reg[3][0]/R}]
 
+# relax cross domain of spi_module
+set_false_path -from [get_pins i_system_wrapper/system_i/sys_ps8/inst/PS8_i/EMIOSPI0SCLKO] -to [get_pins {i_system_wrapper/system_i/openwifi_ip/xpu_0/inst/spi_module_i/xpm_cdc_array_single_inst_spi0_csn/src_ff_reg[0]/D}]
 
 

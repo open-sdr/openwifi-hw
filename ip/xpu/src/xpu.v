@@ -109,6 +109,15 @@
 		output wire addr3_valid,
         output wire pkt_for_me,
 
+        // to spi module 
+        input wire ps_clk, 
+        input wire spi0_sclk,
+        input wire spi0_mosi,
+        input wire spi0_csn,   
+        output wire spi_sclk, 	
+        output wire spi_csn, 
+        output wire spi_mosi,
+
 		// Ports of Axi Slave Bus Interface S00_AXI
 		input  wire s00_axi_aclk,
 		input  wire s00_axi_aresetn,
@@ -688,6 +697,21 @@
        .tsf_pulse_1M(tsf_pulse_1M)
 	);
 
+    spi_module # (
+    ) spi_module_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .tx_chain_on(tx_chain_on),  
+        .ps_clk(ps_clk), 
+        .spi0_sclk(spi0_sclk),
+        .spi0_mosi(spi0_mosi),
+        .spi0_csn(spi0_csn),   
+        .spi_disable(slv_reg13[0]),
+        .spi_sclk(spi_sclk), 	
+        .spi_csn(spi_csn), 
+        .spi_mosi(spi_mosi)
+    );
+
 // Instantiation of Axi Bus Interface S00_AXI
 	xpu_s_axi # ( 
 		.C_S_AXI_DATA_WIDTH(C_S00_AXI_DATA_WIDTH),
@@ -728,8 +752,8 @@
         .SLV_REG9(slv_reg9),
         .SLV_REG10(slv_reg10),
         .SLV_REG11(slv_reg11),
-        .SLV_REG12(slv_reg12),/*
-        .SLV_REG13(slv_reg13),
+        .SLV_REG12(slv_reg12),
+        .SLV_REG13(slv_reg13),/*
         .SLV_REG14(slv_reg14),
         .SLV_REG15(slv_reg15),*/
 		.SLV_REG16(slv_reg16),
