@@ -245,8 +245,9 @@
       else begin
         tx_control_state_old<=tx_control_state;
         
-        //ackcts_rate <= (cts_torts_rate[4]?signal_rate[3:0]:cts_torts_rate[3:0]); // this is not needed. we should assume the peer always send us ack @ 6Mbps
-        ackcts_rate <= 4'b1011; //6Mbps.
+        // ackcts_rate <= (cts_torts_rate[4]?signal_rate[3:0]:cts_torts_rate[3:0]); // this is not needed. we should assume the peer always send us ack @ 6Mbps
+        // ackcts_rate <= 4'b1011; //6Mbps.
+        ackcts_rate <= cts_torts_rate[3:0];
 
         // ackcts_time <= preamble_sig_time + ofdm_symbol_time*({4'd0,ackcts_n_sym_reg}); 
         ackcts_time       <= preamble_sig_time + ofdm_symbol_time*({4'd0,3'd6}); // ack/cts use 6 ofdm symbols at 6Mbps
