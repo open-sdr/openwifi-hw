@@ -94,6 +94,7 @@
         output wire [3:0] cw,
         input wire high_trigger,
         input wire [1:0] tx_queue_idx,
+
         // to side channel
         output wire [31:0] FC_DI,
     	output wire FC_DI_valid,
@@ -103,6 +104,7 @@
 		output wire addr2_valid,
 		output wire [47:0] addr3,
 		output wire addr3_valid,
+        output wire pkt_for_me,
 
 		// Ports of Axi Slave Bus Interface S00_AXI
 		input  wire s00_axi_aclk,
