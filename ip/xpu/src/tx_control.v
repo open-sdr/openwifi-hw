@@ -154,7 +154,7 @@
 
   assign tx_control_state_idle =((tx_control_state==IDLE) && (~retrans_started));
 
-  assign retrans_limit = (max_num_retrans>0?max_num_retrans:tx_pkt_retrans_limit);
+  assign retrans_limit = (max_num_retrans[3]?max_num_retrans[2:0]:tx_pkt_retrans_limit);
 
   assign is_data =        ((FC_type==2'b10)?1:0);
   assign is_qosdata =     (((FC_type==2'b10) && (FC_subtype[3]==1'b1))?1:0);
