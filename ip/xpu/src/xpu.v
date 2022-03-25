@@ -61,6 +61,7 @@
         output wire demod_is_ongoing_led,
 
         // Ports to phy_tx
+        input  wire phy_tx_start,
         input  wire phy_tx_started,
         input  wire phy_tx_done,
 
@@ -360,6 +361,8 @@
     // assign slv_reg60 = rssi_half_db;
     // assign slv_reg61 = iq_rssi_half_db;
 
+    assign pkt_for_me = (addr1==mac_addr);
+
     edge_to_flip edge_to_flip_demod_is_ongoing_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn),
@@ -373,15 +376,20 @@
         .rstn(s00_axi_aresetn&(~slv_reg0[0])),
 
         .bb_rf_delay_count_top(slv_reg10[7:0]),
-        .rf_end_ext_count_top(slv_reg10[11:8]),
+        .rf_end_ext_count_top(slv_reg10[14:8]),
+        .bb_start_tx_chain_on_delay_count_top(slv_reg10[22:16]),
+        .bb_end_tx_chain_off_delay_count_top(slv_reg10[30:24]),
+        .phy_tx_start(phy_tx_start),
         .phy_tx_started(phy_tx_started),
         .phy_tx_done(phy_tx_done),
 	    .tx_iq_fifo_empty(tx_iq_fifo_empty),
 
         // .tsf_pulse_1M(tsf_pulse_1M),
         
+        .tx_core_is_ongoing(tx_core_is_ongoing),
         .tx_bb_is_ongoing(tx_bb_is_ongoing),
         .tx_rf_is_ongoing(tx_rf_is_ongoing),
+        .tx_chain_on(tx_chain_on),
         .pulse_tx_bb_end(pulse_tx_bb_end)
     );
 
@@ -554,6 +562,8 @@
 
         .filter_cfg(slv_reg27[13:0]),
         .high_priority_discard_mask(slv_reg27[24:16]),
+
+        .max_signal_len_th(slv_reg5[31:16]),
     
         .block_rx_dma_to_ps(block_rx_dma_to_ps_internal),
         .block_rx_dma_to_ps_valid(block_rx_dma_to_ps_valid),
