@@ -83,15 +83,12 @@
 	);
 
   localparam [3:0]    IDLE =                     4'b0000,
-                      RESET_BLK_ACK_BITMAP =     4'b0001,
-                      PREP_ACK=                  4'b0010,
-                      SEND_DFL_ACK=              4'b0011,
-                      SEND_BLK_ACK=              4'b0100,
-                      RECV_ACK_JUDGE =           4'b0101,
-                      RECV_ACK_WAIT_TX_BB_DONE = 4'b0110,
-                      RECV_ACK_WAIT_SIG_VALID  = 4'b0111,
-                      RECV_ACK       =           4'b1000,
-                      RECV_ACK_WAIT_BACKOFF_DONE=4'b1001;
+                      PREP_ACK=                  4'b0001,
+                      SEND_DFL_ACK=              4'b0010,
+                      SEND_BLK_ACK=              4'b0011,
+                      RECV_ACK_WAIT_TX_BB_DONE = 4'b0100,
+                      RECV_ACK_WAIT_SIG_VALID =  4'b0101,
+                      RECV_ACK  =                4'b0110;
 
   `DEBUG_PREFIX wire [3:0] retrans_limit;
   `DEBUG_PREFIX reg [3:0] num_retrans;
@@ -265,8 +262,7 @@
         recv_ack_timeout_top_adj_scale <= (recv_ack_timeout_top_adj*`COUNT_SCALE);
 
         ampdu_rx_start_reg <= ampdu_rx_start;
-        if((ampdu_rx_start ^ ampdu_rx_start_reg) == 1 && ampdu_rx_start_reg == 0)
-            reset_blk_ack_bitmap_mem <= 1;
+        blk_ack_bitmap_mem <= (ampdu_rx_start_reg == 0 && ampdu_rx_start == 1)?0:blk_ack_bitmap_mem;
 
         case (tx_control_state)
           IDLE: begin
@@ -338,8 +334,6 @@
                           rx_ht_aggr_ssn <= SC_seq_num;
                       end
                       blk_ack_bitmap_mem[SC_seq_num[6:0]] <= 1'b1;
-                      tx_control_state <= IDLE;
-
                   end else begin
                       tx_control_state  <= (ack_disable?tx_control_state:PREP_ACK); //we also send cts (if rts is received) in PREP_ACK status
                   end
@@ -348,12 +342,26 @@
             //else if ( phy_tx_done && (core_state_old!=PREP_ACK) )// need to recv ACK! We need to miss this pulse_tx_bb_end intentionally when send ACK, because ACK don't need ACK
             else if ( phy_tx_done && cts_toself_bb_is_ongoing==0 ) // because PREP_ACK won't be back until phy_tx_done. So here phy_tx_done must be from high layer
               begin
-                  tx_control_state  <= RECV_ACK_JUDGE;
+                  retrans_started<=0;
+                  if (tx_pkt_need_ack==1) // continue to actual ACK receiving
+                      begin
+                      tx_control_state<= RECV_ACK_WAIT_TX_BB_DONE;
+                      addra<=2;
+                      tx_try_complete<=0;
+                      retrans_in_progress<=1;
+                      end
+                  else
+                      begin
+                      tx_try_complete<=1;
+                      num_retrans_lock <= num_retrans;
+                      blk_ack_resp_ssn_lock <= 0;
+                      blk_ack_bitmap_lock <= 1;
+                      num_retrans<=0;
+                      retrans_in_progress<=0;
+                      end
               end
             else if ((quit_retrans == 1) && (retrans_in_progress == 1)) 
               begin 
-                  //tx_control_state <= QUIT_RETX;
-                  tx_control_state<= IDLE;
                   tx_try_complete<=1;
                   num_retrans_lock <= num_retrans;
                   blk_ack_resp_ssn_lock <= 0;
@@ -364,22 +372,20 @@
               end 
             else if ((backoff_done==1) && (retrans_in_progress==1) && (retrans_started==0))
               begin
-                  tx_control_state  <= RECV_ACK_WAIT_BACKOFF_DONE;
-              end
-            else if (reset_blk_ack_bitmap_mem == 1)
-              begin
-                  reset_blk_ack_bitmap_mem <= 0;
-                  tx_control_state <= RESET_BLK_ACK_BITMAP;
+                  if(quit_retrans) begin
+                    tx_try_complete<=1;
+                    num_retrans_lock <= num_retrans;
+                    blk_ack_resp_ssn_lock <= 0;
+                    blk_ack_bitmap_lock <= 0;
+                    num_retrans<=0;
+                    retrans_in_progress<=0;
+                    retrans_started<=0;
+                  end else begin
+                    start_retrans <= 1 ;
+                    retrans_started <= 1;
+                  end
               end
           end
-
-          RESET_BLK_ACK_BITMAP: begin
-              blk_ack_bitmap_mem[bitmap_count] <= 1'b0;
-
-              bitmap_count <= bitmap_count + 1;
-              if(bitmap_count == 127)
-                  tx_control_state <= IDLE;
-           end
 
           PREP_ACK: begin // data is calculated by calc_phy_header C program
               ack_tx_flag<=1;
@@ -470,41 +476,6 @@
             end else if (bram_addr==5) begin
                 dina<={32'h0, blk_ack_bitmap_lock[63:32]};
             end
-          end
-
-          RECV_ACK_JUDGE: begin
-            // ack_tx_flag<=ack_tx_flag;
-            // wea<=wea;
-            // dina<=dina;
-            // send_ack_count <= send_ack_count;
-            // ack_addr <= ack_addr;
-            // ack_timeout_count<=ack_timeout_count;
-            // start_retrans<=start_retrans;
-            // tx_dpram_op_counter<=tx_dpram_op_counter;
-            // recv_ack_timeout_top<=recv_ack_timeout_top;
-            retrans_started<=0;
-            if (tx_pkt_need_ack==1) // continue to actual ACK receiving
-                begin
-                tx_control_state<= RECV_ACK_WAIT_TX_BB_DONE;
-                addra<=2;
-                tx_try_complete<=0;
-                // tx_status<=tx_status; //maintain status from state RECV_ACK for ARM reading
-                // num_retrans<=num_retrans;
-                retrans_in_progress<=1;
-                end
-            else
-                begin
-                tx_control_state<= IDLE;
-                // addra<=addra;
-                tx_try_complete<=1;
-                // tx_status<={1'b0,num_retrans}; // because interrupt will be raised, set status
-                num_retrans_lock <= num_retrans;
-                blk_ack_resp_ssn_lock <= 0;
-                blk_ack_bitmap_lock <= 1;
-                num_retrans<=0;
-                retrans_in_progress<=0;
-                end
-
           end
 
           RECV_ACK_WAIT_TX_BB_DONE: begin
@@ -646,23 +617,6 @@
             //     start_retrans<=start_retrans;
             //     retrans_in_progress<=retrans_in_progress;
             // end
-
-          end
-          
-          RECV_ACK_WAIT_BACKOFF_DONE: begin
-            tx_control_state<= IDLE;
-            if(quit_retrans) begin
-              tx_try_complete<=1;
-              num_retrans_lock <= num_retrans;
-              blk_ack_resp_ssn_lock <= 0;
-              blk_ack_bitmap_lock <= 0;
-              num_retrans<=0;
-              retrans_in_progress<=0;
-              retrans_started<=0;
-            end else if (backoff_done) begin
-              start_retrans <= 1 ;
-              retrans_started <= 1;
-            end
 
           end
 
