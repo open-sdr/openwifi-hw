@@ -10,7 +10,7 @@
 
 ## Introduction
 
-This repository includes Hardware/FPGA design. To be used together with [openwifi driver and software repository](https://github.com/open-sdr/openwifi).
+This repository includes Hardware/FPGA design. To be used together with openwifi repository (driver and software tools).
 
 Openwifi code has dual licenses. [AGPLv3](https://github.com/open-sdr/openwifi/blob/master/LICENSE) is the opensource license. For non-opensource and advanced feature license, please contact Filip.Louagie@UGent.be. Openwifi project also leverages some 3rd party modules. It is user's duty to check and follow licenses of those modules according to the purpose/usage. You can find [an example explanation from Analog Devices](https://github.com/analogdevicesinc/hdl/blob/master/LICENSE) for this compound license conditions. [[How to contribute]](https://github.com/open-sdr/openwifi-hw/blob/master/CONTRIBUTING.md).
 
@@ -31,6 +31,7 @@ Environment variable **BOARD_NAME** options:
   * Xilinx Vivado (with SDK and HLS) 2018.3 (Vivado Design Suite - HLx Editions - 2018.3  Full Product Installation)
   * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado.
   * Ubuntu 18/20 LTS release (We test in these OS. Other OS might also work.)
+  * Install [git lfs](https://git-lfs.github.com/) (For Ubuntu: sudo apt install git-lfs)
 
 * Prepare Analgo Devices HDL library (only run once):
 ```
@@ -57,10 +58,10 @@ vivado
 ```
 * In Vivado:
 ```
+source ./ip_repo_gen.tcl
+(Generating ip_repo from ip design. Will take a while.)
 source ./openwifi.tcl
-Open Block Design
-Tools --> Report --> Report IP Status
-Generate Bitstream
+Click "Generate Bitstream" in the Vivado GUI.
 (Will take a while)
 File --> Export --> Export Hardware... --> Include bitstream --> OK
 File --> Launch SDK --> OK, then close SDK
@@ -70,65 +71,25 @@ File --> Launch SDK --> OK, then close SDK
 cd openwifi-hw/boards
 ./sdk_update.sh $BOARD_NAME
 ```
-* Add the FPGA files to git (only if you want):
+* Add the FPGA files to git (only if you want and know the actual repo you want commit to):
 ```
 git add $BOARD_NAME/sdk/*
 git commit -m "new fpga img for openwifi (or comments you want to make)"
 git push
 ```
-"git lfs (Git Large File Storage)" operation is recommended for **system_top.bit** and **system.hdf** before git add (avoid too big repo!)
+[git lfs](https://git-lfs.github.com/) must be installed for **system_top.bit** and **system.hdf** before git add (avoid too big repo!)
 
 ## Modify IP cores
 
-IP core source files are in "ip" directory. After IP is modified, export the IP core into "ip_repo" directory. Then re-run the full FPGA build procedure. For IP project created by **_high.tcl** or **_low.tcl** or **_ultra_scale.tcl**, exporting target directory should be **ip_repo/high/** or **ip_repo/low/** or **ip_repo/ultra_scale/** (for ZynqMP SoC, like zcu102 board). Other IP should be exported to **ip_repo/common/** (except that the side channel module has small/big postfix).
+IP core project files are in "ip/ip_name" directory. "ip_name" example: xpu, tx_intf, etc. Source the .tcl script in ip/ip_name from the Vivado GUI, you can create the IP project and do necessary work (modification, simulation, etc.) on it. After the IP design change, start from "source ./ip_repo_gen.tcl" in the board directory (Build FPGA section) to integrate your modified IP to the board FPGA design.
 
-* ***IP cores designed by HLS (mixer_duc):***
+If your IP modification is complicated and encounter error while running ip_repo_gen.tcl, you should check, understand and modify the ip_repo_gen.tcl accordingly.
 
-```
-Create a project "mixer_duc" with file in ip/mixer_duc/src directory in Vivado HLS.
-During creating, set mixer_duc as top, select zc706 board as "Part" and set Clock Period 5 (means 200MHz).
-Run C synthesis.
-Click solution1, Solution --> Export RTL
-Copy project_directory/solution1/impl/ip to ip_repo/common/mixer_duc
-```
-* ***IP cores designed by block-diagram (duc_bank_core_low, duc_bank_core_high, etc). duc_bank_core_high as example:***
+**Change the baseband clock:**
 
-```
-Open Vivado, then in Vivado Tcl Console:
-cd ip/duc_bank_core_high
-source ./duc_bank_core_high.tcl
-In Vivado:
-Open Block Design
-Tools --> Report --> Report IP Status
-Tools --> Create and Package New IP... --> Next --> Package a block design from ... --> Next --> set "ip_repo/high/duc_bank_core" as target directory --> Next --> OK -- Finish
-In new opened temporary project: Review and Package --> Package IP --> Yes
-```
-* ***IP cores designed by verilog (rx_intf, xpu, etc). xpu as example:***
+![](./bb-clk.jpg)
 
-```
-Open Vivado, then in Vivado Tcl Console:
-cd ip/xpu
-source ./xpu_high.tcl
-In Vivado:
-Tools --> Report --> Report IP Status
-Tools --> Create and Package New IP... --> Next --> Next --> set "ip_repo/high/xpu" as target directory --> Next --> OK -- Finish
-In new opened temporary project: Review and Package --> Package IP --> Yes
-```
-* ***openofdm_rx:***
-You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) and install on your PC firstly.
-
-  * Make sure you already have openofdm files in ip/openofdm_rx. If not, in Linux:
-  
-        ./get_ip_openofdm_rx.sh
-  * Open Vivado, then in Vivado Tcl Console:
-        
-        cd ip/openofdm_rx
-        source ./openofdm_rx.tcl
-  * In Vivado:
-  
-        Tools --> Report --> Report IP Status
-        Tools --> Create and Package New IP... --> Next --> Next --> set "ip_repo/common/openofdm_rx" as target directory --> Next --> OK -- Finish
-        In new opened temporary project: Review and Package --> Package IP --> Yes
+By default, 100MHz baseband clock is used. You can change the baseband clock by changing the NUM_CLK_PER_US at the beginning of openwifi.tcl. Available options:  240/100MHz for zcu102; 100/200MHz for zc706 and adrv9361z7035; 100MHz for the rest. Then re-run openwifi.tcl to create the new FPGA project.
 
 ## Simulate IP cores
 
@@ -138,7 +99,7 @@ You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www
         Sources --> Simulation Sources --> sim_1 --> dot11_tb
 * To run the simulation, click "Run Simulation" --> "Run Behavoiral Simulation" under the "SIMULATION" in the "PROJECT MANAGER" window. It will take quite long time for the 1st time run due to the sub-ip-core compiling. Fortunately the sub-ip-core compiling is a time consuming step that occurs only one time.
 * When the previous step is finished, you should see a simulation window displays many variable names and waveforms. Now click the small triangle, which points to the right and has "Run All (F3)" hints, on top to start the simulation.
-* Please check the ..._tb.v to see how do we use $fopen, $fscanf and $fwrite to read test vectors and save the variables we want to check later. Of course you can also check everything in the waveform window.
+* Please check the ..._tb.v to see how do we use $fopen, $fscanf and $fwrite to read test vectors and save the variables for checking later. Of course you can also check everything in the waveform window.
 * After you modify some design files, just click the small circle with arrow, which has "Relaunch Simulation" hints, on top to re-launch the simulation.
 * You can always drag the signals you need from the "SIMULATION" --> "Scope" window to the waveform window, and relaunch the simulation to check those signals' waveform. An example:
 
@@ -146,4 +107,4 @@ You need to apply the evaluation license of [Xilinx Viterbi Decoder](https://www
 
 ***Note: openwifi adds necessary modules/modifications on top of [Analog Devices HDL reference design](https://github.com/analogdevicesinc/hdl). For general issues, Analog Devices wiki pages would be helpful!***
 
-***Notes: The 802.11 ofdm receiver is based on [openofdm project](https://github.com/jhshi/openofdm). You can find our patch (bug-fix, improvement) [here](https://github.com/open-sdr/openofdm/tree/dot11zynq) which is mapped to ip/openofdm_rx.***
+***Notes: The 802.11 ofdm receiver is based on [openofdm project](https://github.com/jhshi/openofdm). You can find our improvements in our openofdm fork (dot11zynq branch) which is mapped to ip/openofdm_rx.***

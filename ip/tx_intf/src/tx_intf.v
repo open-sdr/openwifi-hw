@@ -207,7 +207,6 @@
     wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] s_axis_fifo_data_count1;
     wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] s_axis_fifo_data_count2;
     wire [(MAX_BIT_NUM_DMA_SYMBOL-1) : 0] s_axis_fifo_data_count3;
-    //(* mark_debug = "true" *) wire [1:0] tx_queue_idx;
     wire [1:0] tx_queue_idx;
     wire [1:0] linux_prio;
     wire [5:0] bd_wr_idx;
