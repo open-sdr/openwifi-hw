@@ -62,6 +62,10 @@
 	    // interrupt to PS
         output wire tx_itrpt,
 
+        // for led
+        output wire tx_itrpt_led,
+        output wire tx_end_led,
+
         // for xpu
         input wire [79:0] tx_status,
         input wire [47:0] mac_addr,
@@ -250,6 +254,20 @@
 
     assign tx_queue_idx_to_xpu = tx_queue_idx ;
     
+    edge_to_flip edge_to_flip_tx_itrpt_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .data_in(tx_itrpt),
+        .flip_output(tx_itrpt_led)
+	);
+
+    edge_to_flip edge_to_flip_tx_end_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .data_in(tx_end_from_acc),
+        .flip_output(tx_end_led)
+	);
+
     dac_intf # (
         .IQ_DATA_WIDTH(IQ_DATA_WIDTH),
         .DAC_PACK_DATA_WIDTH(DAC_PACK_DATA_WIDTH)
