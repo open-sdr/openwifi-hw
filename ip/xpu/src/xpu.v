@@ -284,7 +284,6 @@
 
     wire [3:0] cw_exp_used;
     wire [3:0] cw_exp_dynamic;
-    wire tx_try_complete_int;
     wire backoff_done;
     // wire increase_cw;
     `DEBUG_PREFIX wire [3:0] cw_exp_log;
@@ -292,7 +291,6 @@
     wire tx_core_is_ongoing;
     wire tx_chain_on;
 
-    assign tx_try_complete = tx_try_complete_int;
     assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg19[3:0]);
     assign cw = cw_exp_log; 
     assign slv_reg63 = `OPENWIFI_HW_GIT_REV;
@@ -324,9 +322,6 @@
 	assign high_tx_allowed[3] = ( slv_reg1[28]==0?high_tx_allowed_internal[3]:slv_reg1[24] );
 	assign mac_addr = {slv_reg31[15:0], slv_reg30};
 	
-	// assign slv_reg50 = {high_tx_allowed_internal[1], high_tx_allowed_internal[0], 4'h0,ack_tx_flag,demod_is_ongoing,tx_rf_is_ongoing,tx_bb_is_ongoing}; // we should use ack_tx_flag to disable tx interrupt to linux!
-	// assign slv_reg51[4:0] = tx_status;
-
 	// assign slv_reg34 =  FC_DI;
 	assign FC_version = FC_DI[1:0];
 	assign FC_type =    FC_DI[3:2];

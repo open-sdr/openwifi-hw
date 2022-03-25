@@ -61,7 +61,7 @@
     output wire high_tx_allowed1,
     output wire high_tx_allowed2,
     output wire high_tx_allowed3,
-    `DEBUG_PREFIX output reg [9:0] num_slot_random_log_dl,
+    output reg [9:0] num_slot_random_log_dl,
     // `DEBUG_PREFIX output reg increase_cw,
     `DEBUG_PREFIX output reg [3:0] cw_exp_log_dl,
     `DEBUG_PREFIX output wire backoff_done
@@ -113,10 +113,6 @@
     reg [9:0] num_slot_random_log;
     reg [9:0] num_slot_random_log_dl_int;
     
-    
-    //(* mark_debug = "true", DONT_TOUCH = "TRUE" *) 
-    //wire backoff_done;
-
     assign is_pspoll = (((FC_type==2'b01) && (FC_subtype==4'b1010))?1:0);
     assign is_rts    = (((FC_type==2'b01) && (FC_subtype==4'b1011) && (signal_len==20))?1:0);//20 is the length of rts frame
 
