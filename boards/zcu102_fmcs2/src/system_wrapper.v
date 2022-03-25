@@ -16,6 +16,9 @@ module system_wrapper
     gpio_i,
     gpio_o,
     gpio_t,
+    gpio_pmod1_0, 
+    gpio_pmod1_1, 
+    gpio_pmod1_2,
     rx_clk_in_n,
     rx_clk_in_p,
     rx_data_in_n,
@@ -46,6 +49,9 @@ module system_wrapper
   input [94:0]gpio_i;
   output [94:0]gpio_o;
   output [94:0]gpio_t;
+  output gpio_pmod1_0;
+  output gpio_pmod1_1; 
+  output gpio_pmod1_2;
   input rx_clk_in_n;
   input rx_clk_in_p;
   input [5:0]rx_data_in_n;
@@ -77,6 +83,9 @@ module system_wrapper
   wire [94:0]gpio_i;
   wire [94:0]gpio_o;
   wire [94:0]gpio_t;
+  wire gpio_pmod1_0;
+  wire gpio_pmod1_1; 
+  wire gpio_pmod1_2;
   wire rx_clk_in_n;
   wire rx_clk_in_p;
   wire [5:0]rx_data_in_n;
@@ -109,6 +118,9 @@ module system_wrapper
         .gpio_i(gpio_i),
         .gpio_o(gpio_o),
         .gpio_t(gpio_t),
+        .gpio_pmod1_0(gpio_pmod1_0), 
+        .gpio_pmod1_1(gpio_pmod1_1),
+        .gpio_pmod1_2(gpio_pmod1_2),
         .rx_clk_in_n(rx_clk_in_n),
         .rx_clk_in_p(rx_clk_in_p),
         .rx_data_in_n(rx_data_in_n),

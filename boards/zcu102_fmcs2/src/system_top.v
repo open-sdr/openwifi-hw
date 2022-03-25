@@ -42,6 +42,10 @@ module system_top (
   input   [12:0]  gpio_bd_i,
   output  [ 7:0]  gpio_bd_o,
 
+  output          gpio_pmod1_0, 
+  output          gpio_pmod1_1, 
+  output          gpio_pmod1_2, 
+
   input           rx_clk_in_p,
   input           rx_clk_in_n,
   input           rx_frame_in_p,
@@ -97,6 +101,9 @@ module system_top (
     .gpio_i (gpio_i),
     .gpio_o (gpio_o),
     .gpio_t (),
+    .gpio_pmod1_0(gpio_pmod1_0),
+    .gpio_pmod1_1(gpio_pmod1_1), 
+    .gpio_pmod1_2(gpio_pmod1_2), 
     .rx_clk_in_n (rx_clk_in_n),
     .rx_clk_in_p (rx_clk_in_p),
     .rx_data_in_n (rx_data_in_n),

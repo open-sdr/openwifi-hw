@@ -1,3 +1,7 @@
+set_property -dict {PACKAGE_PIN D20 IOSTANDARD LVCMOS33} [get_ports gpio_pmod1_0]
+set_property -dict {PACKAGE_PIN E20 IOSTANDARD LVCMOS33} [get_ports gpio_pmod1_1]
+set_property -dict {PACKAGE_PIN D22 IOSTANDARD LVCMOS33} [get_ports gpio_pmod1_2]
+
 #set_clock_groups -asynchronous -group [get_clocks [list i_system_wrapper/system_i/util_ad9361_divclk/inst/clk_out]] -group [get_clocks [list i_system_wrapper/system_i/sys_ps8/inst/pl_clk2]]
 #set_false_path -from [get_clocks -of_objects [get_pins i_system_wrapper/system_i/util_ad9361_divclk/inst/clk_divide_sel_0/O]] -to [get_clocks clk_pl_2]
 #set_false_path -from [get_clocks -of_objects [get_pins i_system_wrapper/system_i/util_ad9361_divclk/inst/clk_divide_sel_1/O]] -to [get_clocks clk_pl_2]
