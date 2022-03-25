@@ -9,7 +9,7 @@
 	(
 	  parameter integer RSSI_HALF_DB_WIDTH = 11
 	)
-	(// simple csma/ca, still need lots of improvements
+	(
     input wire clk,
     input wire rstn,
     
@@ -26,7 +26,7 @@
     input wire nav_enable,
     input wire difs_enable,
     input wire eifs_enable,
-    input wire [3:0] cw_min,
+    input wire [3:0] cw_exp_used,
     input wire [6:0] preamble_sig_time,
     input wire [4:0] ofdm_symbol_time,
     input wire [4:0] slot_time,
@@ -63,7 +63,7 @@
     output wire high_tx_allowed3,
     `DEBUG_PREFIX output reg [9:0] num_slot_random_log_dl,
     `DEBUG_PREFIX output reg increase_cw,
-    `DEBUG_PREFIX output reg cw_used_dl,
+    `DEBUG_PREFIX output reg [3:0] cw_exp_log_dl,
     `DEBUG_PREFIX output wire backoff_done
 	);
 
@@ -108,8 +108,8 @@
     `DEBUG_PREFIX reg [31:0] random_number = 32'h0b00a001;
     `DEBUG_PREFIX reg [12:0] backoff_timer;
     `DEBUG_PREFIX reg [11:0] backoff_wait_timer;
-    `DEBUG_PREFIX reg cw_used;
-    `DEBUG_PREFIX reg cw_used_dl_int;
+    `DEBUG_PREFIX reg [3:0] cw_exp_log;
+    `DEBUG_PREFIX reg [3:0] cw_exp_log_dl_int;
     `DEBUG_PREFIX reg [9:0] num_slot_random_log;
     `DEBUG_PREFIX reg [9:0] num_slot_random_log_dl_int;
     
@@ -234,9 +234,9 @@
          random_number[0] <= ~^{random_number[31], random_number[21], random_number[1:0]};
       end
 
-    always @( random_number[9:0], random_seed, cw_min[3:0] )
+    always @( random_number[9:0], random_seed, cw_exp_used[3:0] )
       begin
-        case (cw_min[3:0])
+        case (cw_exp_used[3:0])
           4'd0 : begin 
                 num_slot_random = 0;
                 end
@@ -289,18 +289,18 @@
         num_slot_random_log_dl_int<=0;
         num_slot_random_log_dl<=0;
         increase_cw<=0 ;
-        cw_used<=0;
-        cw_used_dl<=0;
-        cw_used_dl_int<=0;
+        cw_exp_log<=0;
+        cw_exp_log_dl_int<=0;
+        cw_exp_log_dl<=0;
       end else begin
         last_fcs_valid <= (fcs_in_strobe?fcs_valid:last_fcs_valid);
-        cw_used_dl_int <= cw_used ;
-        cw_used_dl <= cw_used_dl_int; // dl cw used flag by two clock pulses, to insure cw is logged correctly if quit_retrans issued
+        cw_exp_log_dl_int <= cw_exp_log;
+        cw_exp_log_dl <= cw_exp_log_dl_int; // dl cw used flag by two clock pulses, to insure cw is logged correctly if quit_retrans issued
         num_slot_random_log_dl_int<=num_slot_random_log;
         num_slot_random_log_dl<=num_slot_random_log_dl_int; 
         case (backoff_state)
           IDLE: begin
-            cw_used<=((high_trigger || quit_retrans)?0:cw_used);
+            cw_exp_log         <=((high_trigger || quit_retrans)?0:cw_exp_log);
             num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
             backoff_timer<=0;
             take_new_random_number<=0;
@@ -335,8 +335,8 @@
             backoff_timer<=0;
             take_new_random_number<=0;
             increase_cw<=0;
-            cw_used<=((high_trigger || quit_retrans)?0:cw_used);
-            num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
+            // cw_exp_log         <=((high_trigger || quit_retrans)?0:cw_exp_log);
+            // num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
             if (!ch_idle_final) begin
               backoff_wait_timer<=0;
               backoff_state<=backoff_state;
@@ -354,7 +354,7 @@
             backoff_wait_timer<=( backoff_wait_timer==0?backoff_wait_timer:(tsf_pulse_1M?(backoff_wait_timer-1):backoff_wait_timer) );
             take_new_random_number<=0;
             backoff_timer<=0;
-            cw_used<=0;
+            cw_exp_log         <=0;
             num_slot_random_log<=0;
             if (ch_idle_final) begin
               if (backoff_wait_timer==0) begin
@@ -369,7 +369,7 @@
 
           BACKOFF_WAIT_2: begin
             backoff_wait_timer<=( backoff_wait_timer==0?backoff_wait_timer:(tsf_pulse_1M?(backoff_wait_timer-1):backoff_wait_timer) );
-            cw_used<=((high_trigger || quit_retrans)?0:1);
+            // cw_exp_log<=((high_trigger || quit_retrans)?0:cw_exp_used);
             if((backoff_wait_timer == 2) && tsf_pulse_1M) begin
               take_new_random_number<=1;
             end else begin
@@ -379,30 +379,31 @@
               increase_cw<=0;
               if(quit_retrans==1) begin
                 backoff_state<=BACKOFF_WAIT_1; // avoid additional back off for a new packet
-                num_slot_random_log<=num_slot_random_log;
+                // num_slot_random_log<=num_slot_random_log;
               end else begin
                 if (backoff_wait_timer==0) begin
                   backoff_state<=BACKOFF_RUN;
                   backoff_timer<=(num_slot_random==0?0:((num_slot_random*slot_time) - backoff_advance));
+                  cw_exp_log          <=cw_exp_used;
                   num_slot_random_log <= num_slot_random;
                 end else begin
                   backoff_state<=backoff_state;
                   backoff_timer<=0;
-                  num_slot_random_log<=num_slot_random_log;
+                  // num_slot_random_log<=num_slot_random_log;
                 end
               end
             end else begin
               backoff_state<=BACKOFF_CH_BUSY;
               increase_cw<=1;
               backoff_timer<=0;
-              num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
+              // num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
             end
           end // end WAIT2
 
           BACKOFF_RUN: begin
             take_new_random_number<=0;
-            cw_used<=((high_trigger || quit_retrans)?0:1);
-            num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
+            // cw_exp_log         <=((high_trigger || quit_retrans)?0:cw_exp_log);
+            // num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
             if (ch_idle_final) begin
               backoff_timer<=( backoff_timer==0?backoff_timer:(tsf_pulse_1M?(backoff_timer-1):backoff_timer) );
               increase_cw<=0;
@@ -437,8 +438,8 @@
           BACKOFF_SUSPEND: begin // data is calculated by calc_phy_header C program
             take_new_random_number<=0;
             backoff_timer<=backoff_timer;
-            num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
-            cw_used<=((high_trigger || quit_retrans)?0:1);
+            // cw_exp_log         <=((high_trigger || quit_retrans)?0:cw_exp_log);
+            // num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
             if (ch_idle_final) begin
               if(quit_retrans==1) begin
                 backoff_state<=BACKOFF_WAIT_1;
@@ -455,6 +456,8 @@
               backoff_wait_timer<=backoff_wait_timer;
               if(quit_retrans==1) begin
                 backoff_state<=BACKOFF_CH_BUSY;
+                cw_exp_log         <=0;
+                num_slot_random_log<=0;
               end else begin
                 backoff_state<=backoff_state;
               end
@@ -462,8 +465,8 @@
           end // end SUSPEND
 
           BACKOFF_WAIT_FOR_OWN: begin
-            cw_used<=((high_trigger || quit_retrans)?0:cw_used);
-            num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
+            // cw_exp_log         <=((high_trigger || quit_retrans)?0:cw_exp_log);
+            // num_slot_random_log<=((high_trigger || quit_retrans)?0:num_slot_random_log);
             if(tx_bb_is_ongoing) begin
                 if (ack_tx_flag) begin
                   backoff_state<=BACKOFF_CH_BUSY;

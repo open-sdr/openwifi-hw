@@ -282,10 +282,10 @@
     wire tx_try_complete_int;
     wire backoff_done;
     wire increase_cw;
-    wire cw_used ;
+    wire [3:0] cw_exp_log;
     assign tx_try_complete = tx_try_complete_int;
     assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg19[3:0]);
-    assign cw = (cw_used?cw_exp_used:0); 
+    assign cw = cw_exp_log; 
     assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
 
     assign erp_short_slot = slv_reg4[24];
@@ -383,7 +383,6 @@
 
         .rx_ht_aggr(rx_ht_aggr),
         .rx_ht_aggr_last(rx_ht_aggr_last),
-
         .demod_is_ongoing(demod_is_ongoing),
         .tx_rf_is_ongoing(tx_rf_is_ongoing),
         .cts_toself_rf_is_ongoing(cts_toself_rf_is_ongoing),
@@ -412,7 +411,7 @@
         .nav_enable(~slv_reg6[31]),
         .difs_enable(~slv_reg6[30]),
         .eifs_enable(~slv_reg6[29]),
-        .cw_min(cw_exp_used),
+        .cw_exp_used(cw_exp_used),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .slot_time(slot_time),
@@ -449,7 +448,7 @@
         .high_tx_allowed3(high_tx_allowed_internal[3]),
         .num_slot_random_log_dl(num_slot_random),
         .increase_cw(increase_cw),
-        .cw_used_dl(cw_used),
+        .cw_exp_log_dl(cw_exp_log),
         .backoff_done(backoff_done)
     );
 
