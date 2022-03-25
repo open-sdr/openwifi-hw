@@ -294,30 +294,29 @@
             // retrans_in_progress<=retrans_in_progress;
             bitmap_count <= 0;
 
-            // This is the last packet of aggregation
-            if ( rx_ht_aggr_last )
+            // This is the last packet of aggregation and fcs valid
+            if ( rx_ht_aggr_last && fcs_valid && is_qosdata && (self_mac_addr==addr1) && (ampdu_rx_tid == qos_tid) )
               begin
-                  if (fcs_valid && is_qosdata && (self_mac_addr==addr1) && (ampdu_rx_tid == qos_tid) ) begin
-                      // In case the last packet from A-MPDU makes it through
-                      if(rx_ht_aggr_flag == 0) begin
-                          rx_ht_aggr_flag <= 1;
-                          rx_ht_aggr_ssn <= SC_seq_num;
-                      // Sometimes, MPDUs come out-of-order (i.e. random seq_no) and in such cases, the starting sequence number should take the smallest value
-                      end else if(SC_seq_num < rx_ht_aggr_ssn) begin
-                          rx_ht_aggr_ssn <= SC_seq_num;
-                      end
-                      blk_ack_bitmap_mem[SC_seq_num[6:0]] <= 1'b1;
-                      rx_ht_aggr_last_flag <= 1;
-                      tx_control_state <= PREP_ACK;
-
-                  end else if ( fcs_in_strobe == 1 && fcs_valid == 0 ) begin
-                      // Since this MPDU is not valid, only send a block ack if there were previously received valid MPDUs
-                      if(rx_ht_aggr_flag == 1) begin
-                          rx_ht_aggr_last_flag <= 1;
-                          tx_control_state <= PREP_ACK;
-                      end
-                  end
-
+                // In case the last packet from A-MPDU makes it through
+                if(rx_ht_aggr_flag == 0) begin
+                    rx_ht_aggr_flag <= 1;
+                    rx_ht_aggr_ssn <= SC_seq_num;
+                // Sometimes, MPDUs come out-of-order (i.e. random seq_no) and in such cases, the starting sequence number should take the smallest value
+                end else if(SC_seq_num < rx_ht_aggr_ssn) begin
+                    rx_ht_aggr_ssn <= SC_seq_num;
+                end
+                blk_ack_bitmap_mem[SC_seq_num[6:0]] <= 1'b1;
+                rx_ht_aggr_last_flag <= 1;
+                tx_control_state <= PREP_ACK;
+              end
+            // This is the last packet of aggregation and fcs NOT valid
+            else if ( rx_ht_aggr_last && fcs_in_strobe == 1 && fcs_valid == 0 ) 
+              begin
+                // Since this MPDU is not valid, only send a block ack if there were previously received valid MPDUs
+                if(rx_ht_aggr_flag == 1) begin
+                    rx_ht_aggr_last_flag <= 1;
+                    tx_control_state <= PREP_ACK;
+                end
               end
             //8.3.1.4 ACK frame format: The RA field of the ACK frame is copied from the Address 2 field of the immediately previous individually
             //addressed data, management, BlockAckReq, BlockAck, or PS-Poll frames.
