@@ -9,6 +9,12 @@ puts $fd "`define FDSAFDASFDA 1"
 close $fd
 # ----end of generate fpga_scale.v---------------
 
+# -----------generate has_side_ch_flag.v---------------
+set  fd  [open  "./src/has_side_ch_flag.v"  w]
+puts $fd "`define HAS_SIDE_CH 1"
+close $fd
+# ----end of generate has_side_ch_flag.v---------------
+
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
 

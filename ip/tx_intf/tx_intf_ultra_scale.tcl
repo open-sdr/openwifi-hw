@@ -20,7 +20,7 @@
 
 # -----------generate clock_speed.v---------------
 set  fd  [open  "./src/clock_speed.v"  w]
-puts $fd "`define NUM_CLK_PER_US 250"
+puts $fd "`define NUM_CLK_PER_US 240"
 close $fd
 file copy -force ../board_def.v ./src/board_def.v
 # ----end of generate clock_speed.v---------------

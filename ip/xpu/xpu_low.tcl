@@ -25,6 +25,14 @@ close $fd
 file copy -force ../board_def.v ./src/board_def.v
 # ----end of generate clock_speed.v---------------
 
+# -----------generate openwifi_hw_git_rev.v---------------
+set  fd  [open  "./src/openwifi_hw_git_rev.v"  w]
+set HASHCODE [exec ../../get_git_rev.sh]
+puts $fd "`define OPENWIFI_HW_GIT_REV (32'h$HASHCODE)"
+close $fd
+# ----end of generate openwifi_hw_git_rev.v---------------
+
+
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
 
