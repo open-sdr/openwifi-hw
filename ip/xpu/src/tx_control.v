@@ -133,8 +133,8 @@
   // reg  [2:0] num_data_ofdm_symbol_reg;
   // `DEBUG_PREFIX wire [2:0] ackcts_n_sym;
   // reg  [2:0] ackcts_n_sym_reg;
-  `DEBUG_PREFIX reg  [7:0] ackcts_time;
-  reg  [6:0] sifs_time_reg;
+  `DEBUG_PREFIX reg signed [8:0] ackcts_time;
+  reg signed [7:0] sifs_time_reg;
 
   reg [14:0] recv_ack_timeout_top;
 
