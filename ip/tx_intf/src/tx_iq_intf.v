@@ -30,6 +30,12 @@
     input wire signed [(IQ_DATA_WIDTH-1) : 0] rf_q,
     input wire rf_iq_valid,
 
+    input wire tx_arbitrary_iq_mode,
+    input wire tx_arbitrary_iq_tx_trigger,
+    input wire [(2*IQ_DATA_WIDTH-1):0] tx_arbitrary_iq_in,
+    input wire slv_reg_wren,
+    input wire [4:0] axi_awaddr_core,
+
     // to lbt
     output wire tx_iq_fifo_empty,
 
@@ -39,30 +45,54 @@
   
     reg signed [(10+IQ_DATA_WIDTH-1) : 0] rf_i_tmp;
     reg signed [(10+IQ_DATA_WIDTH-1) : 0] rf_q_tmp;
-    reg tx_iq_fifo_wren;
+    reg tx_iq_fifo_wren_reg;
+
+    reg  tx_arbitrary_iq_tx_trigger_reg;
+    reg  tx_arbitrary_iq_on;
+    wire tx_arbitrary_iq_wren;
 
     wire [(2*IQ_DATA_WIDTH-1):0] tx_iq_fifo_out_zero_padding;
     wire [(2*IQ_DATA_WIDTH-1):0] tx_iq_fifo_out;
     wire [(2*IQ_DATA_WIDTH-1):0] tx_iq_fifo_in;
     wire tx_iq_fifo_rden;
+    wire tx_iq_fifo_wren;
     wire tx_iq_fifo_full;
     wire [9:0] data_count;
-    
+    wire [9:0] wr_data_count;
+
+    reg  wifi_iq_ready_reg;
+
     assign bw02_iq_pack = 0;
     assign bw02_iq_valid = 1'b1;
+
+    //arbitrary iq from arm
+    assign tx_arbitrary_iq_wren = ( (slv_reg_wren==1) && (axi_awaddr_core==1) ); // slv_reg1
     
     //generate tx_hold signal to hold tx_core if we have enough I/Q in FIFO
     assign tx_hold = (data_count>tx_hold_threshold?1:0);
 
     //output mux
-    assign tx_iq_fifo_out_zero_padding = (tx_iq_fifo_empty==1?0:tx_iq_fifo_out);
+    assign tx_iq_fifo_out_zero_padding = ( tx_arbitrary_iq_mode==1? (tx_arbitrary_iq_on==1?tx_iq_fifo_out:0) : (tx_iq_fifo_empty==1?0:tx_iq_fifo_out) );
     assign wifi_iq_valid = 1;
 
     //fifo rd mux
-    assign tx_iq_fifo_rden = wifi_iq_ready;
+    assign tx_iq_fifo_rden = (tx_arbitrary_iq_mode==1?(tx_arbitrary_iq_on==1?wifi_iq_ready:0):wifi_iq_ready);
 
     //fifo in mux
-    assign tx_iq_fifo_in = {rf_q_tmp[(7+IQ_DATA_WIDTH-1):7], rf_i_tmp[(7+IQ_DATA_WIDTH-1):7]};
+    assign tx_iq_fifo_in =   (tx_arbitrary_iq_mode==1?tx_arbitrary_iq_in:{rf_q_tmp[(7+IQ_DATA_WIDTH-1):7], rf_i_tmp[(7+IQ_DATA_WIDTH-1):7]});
+    assign tx_iq_fifo_wren = (tx_arbitrary_iq_mode==1?tx_arbitrary_iq_wren:tx_iq_fifo_wren_reg);
+
+    //arbitrary iq tx control
+    always @(posedge clk)                                              
+    begin
+      if (!rstn) begin          
+        tx_arbitrary_iq_tx_trigger_reg <= 0;
+        tx_arbitrary_iq_on <= 0;
+      end else begin  
+        tx_arbitrary_iq_tx_trigger_reg <= tx_arbitrary_iq_tx_trigger;
+        tx_arbitrary_iq_on <= ( tx_iq_fifo_empty? 0 : ( ((tx_arbitrary_iq_tx_trigger==1) && (tx_arbitrary_iq_tx_trigger_reg==0))?1:tx_arbitrary_iq_on ) );
+      end
+    end
 
     // gain module
     always @(posedge clk)                                              
@@ -70,11 +100,11 @@
       if (!rstn) begin                                                                    
           rf_i_tmp<=0;
           rf_q_tmp<=0;
-          tx_iq_fifo_wren<=0;
+          tx_iq_fifo_wren_reg<=0;
       end else begin  
           rf_i_tmp<=rf_i*bb_gain;
           rf_q_tmp<=rf_q*bb_gain;
-          tx_iq_fifo_wren <= (~tx_hold&rf_iq_valid);
+          tx_iq_fifo_wren_reg <= (~tx_hold&rf_iq_valid);
       end
     end
 
@@ -132,7 +162,7 @@
       .sbiterr(),
       .underflow(),
       .wr_ack(),
-      .wr_data_count(),
+      .wr_data_count(wr_data_count),
       .wr_rst_busy(),
       .din(tx_iq_fifo_in),
       .injectdbiterr(),

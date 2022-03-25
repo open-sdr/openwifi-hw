@@ -152,14 +152,16 @@
 
     wire slv_reg_rden;
     wire [4:0] axi_araddr_core;
+    wire slv_reg_wren;
+    wire [4:0] axi_awaddr_core;
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg0; 
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg1; // duc config
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg1; // write arbitrary I/Q from this register port
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg2; // phy tx auto_start_mode and num_dma_symbol_th
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg3; // 
+    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg3; // 
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg4; // CTS duration for CTS-TO-SELF CTS-PROTECT TX
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg5; // 
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg6; // 
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg7; // 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg7; // TX arbitrary I/Q control
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg8; 
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg9; // 
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; 
@@ -324,6 +326,9 @@
 	) tx_intf_s_axi_i (
         .slv_reg_rden(slv_reg_rden),
 		.axi_araddr_core(axi_araddr_core),
+
+        .slv_reg_wren_delay(slv_reg_wren),
+        .axi_awaddr_core(axi_awaddr_core),
 
 		.S_AXI_ACLK(s00_axi_aclk),
 		.S_AXI_ARESETN(s00_axi_aresetn),
@@ -541,6 +546,14 @@
         .rf_q(rf_q_from_acc),
         .rf_iq_valid(rf_iq_valid_from_acc),
 
+        // arbitrary I/Q interface
+        .tx_arbitrary_iq_mode(slv_reg7[0]),
+        .tx_arbitrary_iq_tx_trigger(slv_reg7[1]),
+        .tx_arbitrary_iq_in(slv_reg1), // has to be register 1! -- by slv_reg_wren&axi_awaddr_core in tx_iq_intf
+        .slv_reg_wren(slv_reg_wren),
+        .axi_awaddr_core(axi_awaddr_core),
+
+        // some handshake
         .tx_iq_fifo_empty(tx_iq_fifo_empty),
         .tx_hold(tx_hold)
     );
