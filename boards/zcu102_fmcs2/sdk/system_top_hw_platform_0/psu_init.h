@@ -955,8 +955,6 @@
 #define CRL_APB_PL0_REF_CTRL_OFFSET                                                0XFF5E00C0
 #undef CRL_APB_PL1_REF_CTRL_OFFSET 
 #define CRL_APB_PL1_REF_CTRL_OFFSET                                                0XFF5E00C4
-#undef CRL_APB_PL2_REF_CTRL_OFFSET 
-#define CRL_APB_PL2_REF_CTRL_OFFSET                                                0XFF5E00C8
 #undef CRL_APB_AMS_REF_CTRL_OFFSET 
 #define CRL_APB_AMS_REF_CTRL_OFFSET                                                0XFF5E0108
 #undef CRL_APB_DLL_REF_CTRL_OFFSET 
@@ -1876,48 +1874,6 @@
 #define CRL_APB_PL1_REF_CTRL_SRCSEL_DEFVAL                     0x00052000
 #define CRL_APB_PL1_REF_CTRL_SRCSEL_SHIFT                      0
 #define CRL_APB_PL1_REF_CTRL_SRCSEL_MASK                       0x00000007U
-
-/*
-* Clock active signal. Switch to 0 to disable the clock
-*/
-#undef CRL_APB_PL2_REF_CTRL_CLKACT_DEFVAL 
-#undef CRL_APB_PL2_REF_CTRL_CLKACT_SHIFT 
-#undef CRL_APB_PL2_REF_CTRL_CLKACT_MASK 
-#define CRL_APB_PL2_REF_CTRL_CLKACT_DEFVAL                     0x00052000
-#define CRL_APB_PL2_REF_CTRL_CLKACT_SHIFT                      24
-#define CRL_APB_PL2_REF_CTRL_CLKACT_MASK                       0x01000000U
-
-/*
-* 6 bit divider
-*/
-#undef CRL_APB_PL2_REF_CTRL_DIVISOR1_DEFVAL 
-#undef CRL_APB_PL2_REF_CTRL_DIVISOR1_SHIFT 
-#undef CRL_APB_PL2_REF_CTRL_DIVISOR1_MASK 
-#define CRL_APB_PL2_REF_CTRL_DIVISOR1_DEFVAL                   0x00052000
-#define CRL_APB_PL2_REF_CTRL_DIVISOR1_SHIFT                    16
-#define CRL_APB_PL2_REF_CTRL_DIVISOR1_MASK                     0x003F0000U
-
-/*
-* 6 bit divider
-*/
-#undef CRL_APB_PL2_REF_CTRL_DIVISOR0_DEFVAL 
-#undef CRL_APB_PL2_REF_CTRL_DIVISOR0_SHIFT 
-#undef CRL_APB_PL2_REF_CTRL_DIVISOR0_MASK 
-#define CRL_APB_PL2_REF_CTRL_DIVISOR0_DEFVAL                   0x00052000
-#define CRL_APB_PL2_REF_CTRL_DIVISOR0_SHIFT                    8
-#define CRL_APB_PL2_REF_CTRL_DIVISOR0_MASK                     0x00003F00U
-
-/*
-* 000 = IOPLL; 010 = RPLL; 011 = DPLL; (This signal may only be toggled af
-    * ter 4 cycles of the old clock and 4 cycles of the new clock. This is not
-    *  usually an issue, but designers must be aware.)
-*/
-#undef CRL_APB_PL2_REF_CTRL_SRCSEL_DEFVAL 
-#undef CRL_APB_PL2_REF_CTRL_SRCSEL_SHIFT 
-#undef CRL_APB_PL2_REF_CTRL_SRCSEL_MASK 
-#define CRL_APB_PL2_REF_CTRL_SRCSEL_DEFVAL                     0x00052000
-#define CRL_APB_PL2_REF_CTRL_SRCSEL_SHIFT                      0
-#define CRL_APB_PL2_REF_CTRL_SRCSEL_MASK                       0x00000007U
 
 /*
 * 6 bit divider
@@ -38492,18 +38448,10 @@
 #define LPD_SLCR_AFI_FS_OFFSET                                                     0XFF419000
 #undef AFIFM2_AFIFM_RDCTRL_OFFSET 
 #define AFIFM2_AFIFM_RDCTRL_OFFSET                                                 0XFD380000
-#undef AFIFM3_AFIFM_RDCTRL_OFFSET 
-#define AFIFM3_AFIFM_RDCTRL_OFFSET                                                 0XFD390000
-#undef AFIFM4_AFIFM_RDCTRL_OFFSET 
-#define AFIFM4_AFIFM_RDCTRL_OFFSET                                                 0XFD3A0000
 #undef AFIFM5_AFIFM_RDCTRL_OFFSET 
 #define AFIFM5_AFIFM_RDCTRL_OFFSET                                                 0XFD3B0000
 #undef AFIFM2_AFIFM_WRCTRL_OFFSET 
 #define AFIFM2_AFIFM_WRCTRL_OFFSET                                                 0XFD380014
-#undef AFIFM3_AFIFM_WRCTRL_OFFSET 
-#define AFIFM3_AFIFM_WRCTRL_OFFSET                                                 0XFD390014
-#undef AFIFM4_AFIFM_WRCTRL_OFFSET 
-#define AFIFM4_AFIFM_WRCTRL_OFFSET                                                 0XFD3A0014
 #undef AFIFM5_AFIFM_WRCTRL_OFFSET 
 #define AFIFM5_AFIFM_WRCTRL_OFFSET                                                 0XFD3B0014
 
@@ -38616,28 +38564,6 @@
 * Configures the Read Channel Fabric interface width. 2'b11 : Reserved 2'b
     * 10 : 32-bit Fabric 2'b01 : 64-bit enabled 2'b00 : 128-bit enabled
 */
-#undef AFIFM3_AFIFM_RDCTRL_FABRIC_WIDTH_DEFVAL 
-#undef AFIFM3_AFIFM_RDCTRL_FABRIC_WIDTH_SHIFT 
-#undef AFIFM3_AFIFM_RDCTRL_FABRIC_WIDTH_MASK 
-#define AFIFM3_AFIFM_RDCTRL_FABRIC_WIDTH_DEFVAL                0x000003B0
-#define AFIFM3_AFIFM_RDCTRL_FABRIC_WIDTH_SHIFT                 0
-#define AFIFM3_AFIFM_RDCTRL_FABRIC_WIDTH_MASK                  0x00000003U
-
-/*
-* Configures the Read Channel Fabric interface width. 2'b11 : Reserved 2'b
-    * 10 : 32-bit Fabric 2'b01 : 64-bit enabled 2'b00 : 128-bit enabled
-*/
-#undef AFIFM4_AFIFM_RDCTRL_FABRIC_WIDTH_DEFVAL 
-#undef AFIFM4_AFIFM_RDCTRL_FABRIC_WIDTH_SHIFT 
-#undef AFIFM4_AFIFM_RDCTRL_FABRIC_WIDTH_MASK 
-#define AFIFM4_AFIFM_RDCTRL_FABRIC_WIDTH_DEFVAL                0x000003B0
-#define AFIFM4_AFIFM_RDCTRL_FABRIC_WIDTH_SHIFT                 0
-#define AFIFM4_AFIFM_RDCTRL_FABRIC_WIDTH_MASK                  0x00000003U
-
-/*
-* Configures the Read Channel Fabric interface width. 2'b11 : Reserved 2'b
-    * 10 : 32-bit Fabric 2'b01 : 64-bit enabled 2'b00 : 128-bit enabled
-*/
 #undef AFIFM5_AFIFM_RDCTRL_FABRIC_WIDTH_DEFVAL 
 #undef AFIFM5_AFIFM_RDCTRL_FABRIC_WIDTH_SHIFT 
 #undef AFIFM5_AFIFM_RDCTRL_FABRIC_WIDTH_MASK 
@@ -38655,28 +38581,6 @@
 #define AFIFM2_AFIFM_WRCTRL_FABRIC_WIDTH_DEFVAL                0x000003B0
 #define AFIFM2_AFIFM_WRCTRL_FABRIC_WIDTH_SHIFT                 0
 #define AFIFM2_AFIFM_WRCTRL_FABRIC_WIDTH_MASK                  0x00000003U
-
-/*
-* Configures the Write Channel Fabric interface width. 2'b11 : Reserved 2'
-    * b10 : 32-bit Fabric 2'b01 : 64-bit enabled 2'b00 : 128-bit enabled
-*/
-#undef AFIFM3_AFIFM_WRCTRL_FABRIC_WIDTH_DEFVAL 
-#undef AFIFM3_AFIFM_WRCTRL_FABRIC_WIDTH_SHIFT 
-#undef AFIFM3_AFIFM_WRCTRL_FABRIC_WIDTH_MASK 
-#define AFIFM3_AFIFM_WRCTRL_FABRIC_WIDTH_DEFVAL                0x000003B0
-#define AFIFM3_AFIFM_WRCTRL_FABRIC_WIDTH_SHIFT                 0
-#define AFIFM3_AFIFM_WRCTRL_FABRIC_WIDTH_MASK                  0x00000003U
-
-/*
-* Configures the Write Channel Fabric interface width. 2'b11 : Reserved 2'
-    * b10 : 32-bit Fabric 2'b01 : 64-bit enabled 2'b00 : 128-bit enabled
-*/
-#undef AFIFM4_AFIFM_WRCTRL_FABRIC_WIDTH_DEFVAL 
-#undef AFIFM4_AFIFM_WRCTRL_FABRIC_WIDTH_SHIFT 
-#undef AFIFM4_AFIFM_WRCTRL_FABRIC_WIDTH_MASK 
-#define AFIFM4_AFIFM_WRCTRL_FABRIC_WIDTH_DEFVAL                0x000003B0
-#define AFIFM4_AFIFM_WRCTRL_FABRIC_WIDTH_SHIFT                 0
-#define AFIFM4_AFIFM_WRCTRL_FABRIC_WIDTH_MASK                  0x00000003U
 
 /*
 * Configures the Write Channel Fabric interface width. 2'b11 : Reserved 2'
