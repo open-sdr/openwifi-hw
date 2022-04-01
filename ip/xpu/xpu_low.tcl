@@ -25,6 +25,20 @@ close $fd
 file copy -force ../board_def.v ./src/board_def.v
 # ----end of generate clock_speed.v---------------
 
+# -----------generate openwifi_hw_git_rev.v---------------
+set  fd  [open  "./src/openwifi_hw_git_rev.v"  w]
+set HASHCODE [exec ../../get_git_rev.sh]
+puts $fd "`define OPENWIFI_HW_GIT_REV (32'h$HASHCODE)"
+close $fd
+# ----end of generate openwifi_hw_git_rev.v---------------
+
+# ---------generate spi_command.v---------------------------
+set  fd  [open  "./src/spi_command.v"  w]
+puts $fd "`define SPI_HIGH 24'hC22001"
+puts $fd "`define SPI_LOW 24'hC02001"
+close $fd
+# ---------end of generate spi_command.v--------------------
+
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
 
@@ -35,6 +49,7 @@ if { [info exists ::origin_dir_loc] } {
 
 # Set the project name
 set project_name "xpu_low"
+exec rm -rf $project_name
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -147,20 +162,18 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- "[file normalize "$origin_dir/../../ip_repo/low/mv_avg32/src/mv_avg32_fir_compiler_0_0/mv_avg32_fir_compiler_0_0.xci"]"\
- "[file normalize "$origin_dir/../../ip_repo/low/mv_avg128/src/mv_avg128_fir_compiler_0_0/mv_avg128_fir_compiler_0_0.xci"]"\
  "[file normalize "$origin_dir/src/cca.v"]"\
  "[file normalize "$origin_dir/src/csma_ca.v"]"\
  "[file normalize "$origin_dir/src/dc_rm.v"]"\
  "[file normalize "$origin_dir/src/fifo8_delay64.v"]"\
  "[file normalize "$origin_dir/src/iq_abs_avg.v"]"\
  "[file normalize "$origin_dir/src/iq_rssi_to_db.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/low/mv_avg128/src/mv_avg128.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/low/mv_avg32/src/mv_avg32.v"]"\
+ "[file normalize "$origin_dir/src/mv_avg_dual_ch.v"]"\
  "[file normalize "$origin_dir/src/n_sym_len14_pkt.v"]"\
  "[file normalize "$origin_dir/src/phy_rx_parse.v"]"\
  "[file normalize "$origin_dir/src/pkt_filter_ctl.v"]"\
  "[file normalize "$origin_dir/src/rssi.v"]"\
+ "[file normalize "$origin_dir/src/spi.v"]"\
  "[file normalize "$origin_dir/src/time_slice_gen.v"]"\
  "[file normalize "$origin_dir/src/tsf_timer.v"]"\
  "[file normalize "$origin_dir/src/tx_control.v"]"\
@@ -168,31 +181,16 @@ set files [list \
  "[file normalize "$origin_dir/src/xpu_s_axi.v"]"\
  "[file normalize "$origin_dir/src/xpu.v"]"\
  "[file normalize "$origin_dir/src/cw_exp.v"]"\
+ "[file normalize "$origin_dir/src/edge_to_flip.v"]"\
 ]
 add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/../../ip_repo/low/mv_avg32/src/mv_avg32_fir_compiler_0_0/mv_avg32_fir_compiler_0_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-}
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/low/mv_avg128/src/mv_avg128_fir_compiler_0_0/mv_avg128_fir_compiler_0_0.xci"
+set file "$origin_dir/src/mv_avg_dual_ch.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-}
+set_property -name "file_type" -value "Verilog" -objects $file_obj
 set_property -name "is_enabled" -value "1" -objects $file_obj
 set_property -name "is_global_include" -value "0" -objects $file_obj
 set_property -name "library" -value "xil_defaultlib" -objects $file_obj
@@ -280,32 +278,6 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/low/mv_avg128/src/mv_avg128.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog" -objects $file_obj
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
-set file "$origin_dir/../../ip_repo/low/mv_avg32/src/mv_avg32.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog" -objects $file_obj
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
-
 set file "$origin_dir/src/n_sym_len14_pkt.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -346,6 +318,19 @@ set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/rssi.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog" -objects $file_obj
+set_property -name "is_enabled" -value "1" -objects $file_obj
+set_property -name "is_global_include" -value "0" -objects $file_obj
+set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+set_property -name "used_in_implementation" -value "1" -objects $file_obj
+set_property -name "used_in_simulation" -value "1" -objects $file_obj
+set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+
+set file "$origin_dir/src/spi.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
@@ -437,6 +422,19 @@ set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/cw_exp.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog" -objects $file_obj
+set_property -name "is_enabled" -value "1" -objects $file_obj
+set_property -name "is_global_include" -value "0" -objects $file_obj
+set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+set_property -name "used_in_implementation" -value "1" -objects $file_obj
+set_property -name "used_in_simulation" -value "1" -objects $file_obj
+set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+
+set file "$origin_dir/src/edge_to_flip.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj

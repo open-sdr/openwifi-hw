@@ -12,6 +12,7 @@ module ht_stf_rom
 
   always @ *
     case (addr)
+	/*michael code*/
             //   0:   dout = 32'h02D402D4;
             //   1:   dout = 32'hF7DB0025;
             //   2:   dout = 32'hFF2CFB2C;
@@ -29,24 +30,8 @@ module ht_stf_rom
             //  14:   dout = 32'hFB2CFF2C;
             //  15:   dout = 32'h0025F7DB;
 
-            //   0:    dout = 32'h06880688;
-            //   1:    dout = 32'hED310055;
-            //   2:    dout = 32'hFE16F4D9;
-            //   3:    dout = 32'h1446FE34;
-            //   4:    dout = 32'h0D100000;
-            //   5:    dout = 32'h1446FE34;
-            //   6:    dout = 32'hFE16F4D9;
-            //   7:    dout = 32'hED310055;
-            //   8:    dout = 32'h06880688;
-            //   9:    dout = 32'h0055ED31;
-            //  10:   dout = 32'hF4D9FE16;
-            //  11:   dout = 32'hFE341446;
-            //  12:   dout = 32'h00000D10;
-            //  13:   dout = 32'hFE341446;
-            //  14:   dout = 32'hF4D9FE16;
-            //  15:   dout = 32'h0055ED31;
 
-
+/*after scaling*/
             0:    dout = 32'h061C061C;
             1:    dout = 32'hEE680050;
             2:    dout = 32'hFE36F592;

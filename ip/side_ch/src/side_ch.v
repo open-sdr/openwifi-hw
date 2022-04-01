@@ -1,6 +1,7 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 `include "fpga_scale.v"
+`include "has_side_ch_flag.v"
 
 `timescale 1 ns / 1 ps
 
@@ -29,7 +30,9 @@
 `else
 		parameter integer MAX_NUM_DMA_SYMBOL = 8192,
 `endif
-        parameter integer WAIT_COUNT_BITS = 5
+        parameter integer WAIT_COUNT_BITS = 5,
+
+		parameter integer COUNTER_WIDTH = 16
 	)
 	(
 		// from pl
@@ -69,6 +72,7 @@
 		input wire addr2_valid,
 		input wire [47:0] addr3,
 		input wire addr3_valid,
+		input wire pkt_for_me,
 
 		input wire fcs_in_strobe,
 		input wire fcs_ok,
@@ -125,6 +129,8 @@
 		input wire  s00_axi_rready
 	);
 
+`ifdef HAS_SIDE_CH
+
 	function integer clogb2 (input integer bit_depth);                                   
       begin                                                                              
         for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                                      
@@ -156,19 +162,19 @@
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg16; 
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg17;
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg18; 
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg19;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg19;
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg20;
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg21;
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg22;
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg23;
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg24; 
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg25;
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg26; 
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg27;
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg28;
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg29;
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg30;
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg31;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg26; 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg27;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg28;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg29;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg30;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg31;
 
 	wire s_axis_state;
 
@@ -184,7 +190,95 @@
     wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count;
     wire fulln_to_pl;
 
+	wire [1:0] FC_type;
+	wire is_data;
+
+	wire event0;
+	wire event1;
+	wire event2;
+	wire event3;
+	wire event4;
+	wire event5;
+
 	assign slv_reg20 = m_axis_data_count;
+
+	assign FC_type =    FC_DI[3:2];
+	assign is_data = (FC_type==2'b10);
+
+	side_ch_counter_event_cfg # (
+		.GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH),
+        .RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH),
+		.C_S_AXI_DATA_WIDTH(C_S00_AXI_DATA_WIDTH)
+	) side_ch_counter_event_cfg_i	(
+        .clk(m00_axis_aclk),
+        .rstn(m00_axis_aresetn),
+
+		// original event source
+		.gain_th(slv_reg10[(GPIO_STATUS_WIDTH-2):0]),
+		.rssi_half_db_th(slv_reg9[(RSSI_HALF_DB_WIDTH-1):0]),
+	    .gpio_status(gpio_status),
+        .rssi_half_db(rssi_half_db),
+
+		.short_preamble_detected(short_preamble_detected),
+		.long_preamble_detected(long_preamble_detected),
+
+		.pkt_header_valid_strobe(pkt_header_valid_strobe),
+		.pkt_header_valid(pkt_header_valid),
+
+		.addr2_target(slv_reg7),
+		.addr2(addr2),
+		.pkt_for_me(pkt_for_me),
+		.is_data(is_data),
+
+		.fcs_in_strobe(fcs_in_strobe),
+		.fcs_ok(fcs_ok),
+
+		.phy_tx_start(phy_tx_start),
+		.phy_tx_done(phy_tx_done),
+		.tx_pkt_need_ack(tx_pkt_need_ack),
+
+		// from arm. event source select
+	 	.event0_sel(slv_reg19[0]),
+	 	.event1_sel(slv_reg19[4]),
+	 	.event2_sel(slv_reg19[8]),
+	 	.event3_sel(slv_reg19[12]),
+	 	.event4_sel(slv_reg19[16]),
+	 	.event5_sel(slv_reg19[20]),
+
+		// counter++ event output
+		.event0(event0),
+		.event1(event1),
+		.event2(event2),
+		.event3(event3),
+		.event4(event4),
+		.event5(event5)
+	);
+
+	side_ch_counter # (
+		.COUNTER_WIDTH(COUNTER_WIDTH)
+	) side_ch_counter_i	(
+        .clk(m00_axis_aclk),
+        // .rstn(m00_axis_aresetn),
+
+		// from arm. capture reg write to clear the corresponding counter
+		.slv_reg_wren_signal(slv_reg_wren_signal),
+		.axi_awaddr_core(axi_awaddr_core),
+
+		.event0(event0),
+		.event1(event1),
+		.event2(event2),
+		.event3(event3),
+		.event4(event4),
+		.event5(event5),
+
+		// has to be slv_reg26 ~ 31 due to the internal logic
+		.counter0(slv_reg26),
+		.counter1(slv_reg27),
+		.counter2(slv_reg28),
+		.counter3(slv_reg29),
+		.counter4(slv_reg30),
+		.counter5(slv_reg31)
+	);
 
 	side_ch_control # (
 		.TSF_TIMER_WIDTH(TSF_TIMER_WIDTH),
@@ -209,8 +303,8 @@
 		.tx_intf_iq0(tx_intf_iq0),
 		.tx_intf_iq1(tx_intf_iq1),
     	.tx_intf_iq_valid(tx_intf_iq_valid),
-		.iq0(sample0_in),
-		.iq1(sample1_in),
+		.iq0({sample0_in[(IQ_DATA_WIDTH-1):0], sample0_in[(2*IQ_DATA_WIDTH-1):IQ_DATA_WIDTH]}),
+		.iq1({sample1_in[(IQ_DATA_WIDTH-1):0], sample1_in[(2*IQ_DATA_WIDTH-1):IQ_DATA_WIDTH]}),
 		.iq_strobe(sample_in_strobe),
 		.demod_is_ongoing(demod_is_ongoing),
 		.ofdm_symbol_eq_out_pulse(ofdm_symbol_eq_out_pulse),
@@ -389,19 +483,36 @@
 		// .SLV_REG16(slv_reg16),
         // .SLV_REG17(slv_reg17),
         // .SLV_REG18(slv_reg18),
-        // .SLV_REG19(slv_reg19),
+        .SLV_REG19(slv_reg19),
         .SLV_REG20(slv_reg20),
         .SLV_REG21(slv_reg21),
-        .SLV_REG22(slv_reg22)
+        .SLV_REG22(slv_reg22),
         // .SLV_REG23(slv_reg23),
 		// .SLV_REG24(slv_reg24),
         // .SLV_REG25(slv_reg25),
-        // .SLV_REG26(slv_reg26),
-        // .SLV_REG27(slv_reg27),
-        // .SLV_REG28(slv_reg28),
-        // .SLV_REG29(slv_reg29),
-        // .SLV_REG30(slv_reg30),
-        // .SLV_REG31(slv_reg31)
+        .SLV_REG26(slv_reg26),
+        .SLV_REG27(slv_reg27),
+        .SLV_REG28(slv_reg28),
+        .SLV_REG29(slv_reg29),
+        .SLV_REG30(slv_reg30),
+        .SLV_REG31(slv_reg31)
 	);
+`else
+
+		assign m00_axis_tvalid = 0;
+		assign m00_axis_tdata = 0;
+		assign m00_axis_tstrb = 0;
+		assign m00_axis_tlast = 0;
+		assign s00_axis_tready = 0;
+		assign s00_axi_awready = 0;
+		assign s00_axi_wready = 0;
+		assign s00_axi_bresp = 0;
+		assign s00_axi_bvalid = 0;
+		assign s00_axi_arready = 0;
+		assign s00_axi_rdata = 0;
+		assign s00_axi_rresp = 0;
+		assign s00_axi_rvalid = 0;
+
+`endif
 
 	endmodule

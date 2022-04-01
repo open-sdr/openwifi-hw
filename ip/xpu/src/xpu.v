@@ -1,4 +1,5 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
+`include "openwifi_hw_git_rev.v"
 
 // `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
 `define DEBUG_PREFIX
@@ -20,7 +21,6 @@
         parameter integer WIFI_TX_BRAM_ADDR_WIDTH = 10
 	)
 	(
-        input  wire [31:0] git_rev,
 	    // ad9361 status and ctrl
 	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
 
@@ -54,22 +54,27 @@
         input  wire fcs_in_strobe,
 		input  wire fcs_ok,
 
+		input  wire rx_ht_aggr,
+		input  wire rx_ht_aggr_last,
+
+        // led
+        output wire demod_is_ongoing_led,
+
         // Ports to phy_tx
+        input  wire phy_tx_start,
         input  wire phy_tx_started,
         input  wire phy_tx_done,
 
 	    // Ports to tx_intf
-        output wire [4:0] tx_status,
+        output wire [79:0] tx_status,
         output wire [47:0] mac_addr,
         output wire retrans_in_progress,
         `DEBUG_PREFIX output wire start_retrans,
         `DEBUG_PREFIX output wire start_tx_ack,
         output wire tx_try_complete,
 	    input  wire tx_iq_fifo_empty,
-        output wire high_tx_allowed0,
-        output wire high_tx_allowed1,
-        output wire high_tx_allowed2,
-        output wire high_tx_allowed3,
+        output wire [3:0] slice_en,
+        output wire backoff_done,
         output wire tx_bb_is_ongoing,
         output wire tx_rf_is_ongoing,
         output wire ack_tx_flag,
@@ -78,6 +83,7 @@
         output wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina,
         input  wire tx_pkt_need_ack,
         input  wire [3:0] tx_pkt_retrans_limit,
+        input  wire tx_ht_aggr,
         input  wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] douta,//from dpram of tx_intf, for tx_control changing some bits to indicate it is the 1st pkt or retransmitted pkt
         input  wire cts_toself_bb_is_ongoing,//this should rise before the phy tx end valid of phy tx IP core to avoid tx_control waiting ack for this tx
         input  wire cts_toself_rf_is_ongoing,//just need to cover the SIFS gap between cts tx and following packet tx
@@ -85,11 +91,13 @@
         output wire [3:0] band,
         output wire [7:0] channel,
 	    input wire quit_retrans,
+        input wire reset_backoff,
 	    output wire tx_control_state_idle,
         output wire [9:0] num_slot_random,
         output wire [3:0] cw,
         input wire high_trigger,
         input wire [1:0] tx_queue_idx,
+
         // to side channel
         output wire [31:0] FC_DI,
     	output wire FC_DI_valid,
@@ -99,6 +107,16 @@
 		output wire addr2_valid,
 		output wire [47:0] addr3,
 		output wire addr3_valid,
+        output wire pkt_for_me,
+
+        // to spi module 
+        input wire ps_clk, 
+        input wire spi0_sclk,
+        input wire spi0_mosi,
+        input wire spi0_csn,   
+        output wire spi_sclk, 	
+        output wire spi_csn, 
+        output wire spi_mosi,
 
 		// Ports of Axi Slave Bus Interface S00_AXI
 		input  wire s00_axi_aclk,
@@ -137,8 +155,8 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg9; // xIFS and slot time override for debug
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg10; // tx bb RF delay in number of clock
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg11; // max number of tx re-transmission
-    //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg12; // 
-    //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg13; // 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg12; // 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg13; // spi control disable
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg14; // 
     //wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg15; //
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg16; // receive ack time count top -- 2.4GHz
@@ -163,7 +181,7 @@
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg34;//FC_DI
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg35;//addr1
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg36;//addr1
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg37;//addr2
+	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg37;//addr2
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg38;//addr2
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg39;//addr3
 	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg40;//addr3
@@ -192,12 +210,7 @@
 	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg63;//FPGA version info
 	
 	wire block_rx_dma_to_ps_internal;
-	wire high_tx_allowed_internal0;
-	wire high_tx_allowed_internal1;
-	wire high_tx_allowed_internal2;
-	wire high_tx_allowed_internal3;
 
-    
     wire ch_idle;
     wire retrans_trigger;
 
@@ -231,6 +244,23 @@
     
     wire [47:0] addr4;
     wire addr4_valid;
+
+    wire [15:0] blk_ack_req_ctrl;
+    wire blk_ack_req_ctrl_valid;
+
+    wire [15:0] blk_ack_req_ssc;
+    wire blk_ack_req_ssc_valid;
+
+    wire [11:0] blk_ack_resp_ssn;
+    wire blk_ack_resp_ssn_valid;
+
+    wire [63:0] blk_ack_resp_bitmap;
+    wire blk_ack_resp_bitmap_valid;
+
+    wire [3:0] qos_tid;
+    wire [1:0] qos_ack_policy;
+    wire qos_tid_valid;
+    wire qos_ack_policy_valid;
     
     wire pulse_tx_bb_end;
 
@@ -264,14 +294,15 @@
 
     wire [3:0] cw_exp_used;
     wire [3:0] cw_exp_dynamic;
-    wire tx_try_complete_int;
-    wire backoff_done;
-    wire increase_cw;
-    wire cw_used ;
-    assign tx_try_complete = tx_try_complete_int;
-    assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg19[3:0]);
-    assign cw = (cw_used?cw_exp_used:0); 
-    assign slv_reg63 = git_rev; // from git_rev_rom which is initialized from board_name/openwifi_rev.coe
+    // wire increase_cw;
+    `DEBUG_PREFIX wire [3:0] cw_exp_log;
+    
+    wire tx_core_is_ongoing;
+    wire tx_chain_on;
+
+    assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg6[19:16]);
+    assign cw = cw_exp_log; 
+    assign slv_reg63 = `OPENWIFI_HW_GIT_REV;
 
     assign erp_short_slot = slv_reg4[24];
     assign band = slv_reg4[19:16];
@@ -294,15 +325,11 @@
 
 	assign mute_adc_out_to_bb = (slv_reg1[0]?slv_reg1[31]:(tx_rf_is_ongoing|cts_toself_rf_is_ongoing|ack_cts_is_ongoing));
 	assign block_rx_dma_to_ps = (block_rx_dma_to_ps_internal&(~slv_reg1[2]));	
-	assign high_tx_allowed0 = (  slv_reg1[4]==0?high_tx_allowed_internal0:slv_reg1[1] );
-	assign high_tx_allowed1 = ( slv_reg1[12]==0?high_tx_allowed_internal1:slv_reg1[8] );
-	assign high_tx_allowed2 = ( slv_reg1[20]==0?high_tx_allowed_internal2:slv_reg1[16] );
-	assign high_tx_allowed3 = ( slv_reg1[28]==0?high_tx_allowed_internal3:slv_reg1[24] );
+
+    assign slice_en = {slice_en3, slice_en2, slice_en1, slice_en0};
+
 	assign mac_addr = {slv_reg31[15:0], slv_reg30};
 	
-	// assign slv_reg50 = {high_tx_allowed_internal1, high_tx_allowed_internal0, 4'h0,ack_tx_flag,demod_is_ongoing,tx_rf_is_ongoing,tx_bb_is_ongoing}; // we should use ack_tx_flag to disable tx interrupt to linux!
-	// assign slv_reg51[4:0] = tx_status;
-
 	// assign slv_reg34 =  FC_DI;
 	assign FC_version = FC_DI[1:0];
 	assign FC_type =    FC_DI[3:2];
@@ -319,7 +346,8 @@
     
     // assign slv_reg35 = addr1[31:0];
     // assign slv_reg36 = addr1[47:32];
-        
+    
+    assign slv_reg37 = {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]};
     // assign slv_reg37 = addr2[31:0];
     // assign slv_reg38 = addr2[47:32];
 
@@ -339,21 +367,35 @@
     // assign slv_reg60 = rssi_half_db;
     // assign slv_reg61 = iq_rssi_half_db;
 
+    assign pkt_for_me = (addr1==mac_addr);
+
+    edge_to_flip edge_to_flip_demod_is_ongoing_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .data_in(demod_is_ongoing),
+        .flip_output(demod_is_ongoing_led)
+	);
+
     tx_on_detection # (
     ) tx_on_detection_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[0])),
 
         .bb_rf_delay_count_top(slv_reg10[7:0]),
-        .rf_end_ext_count_top(slv_reg10[11:8]),
+        .rf_end_ext_count_top(slv_reg10[14:8]),
+        .bb_start_tx_chain_on_delay_count_top(slv_reg10[22:16]),
+        .bb_end_tx_chain_off_delay_count_top(slv_reg10[30:24]),
+        .phy_tx_start(phy_tx_start),
         .phy_tx_started(phy_tx_started),
         .phy_tx_done(phy_tx_done),
 	    .tx_iq_fifo_empty(tx_iq_fifo_empty),
 
         // .tsf_pulse_1M(tsf_pulse_1M),
         
+        .tx_core_is_ongoing(tx_core_is_ongoing),
         .tx_bb_is_ongoing(tx_bb_is_ongoing),
         .tx_rf_is_ongoing(tx_rf_is_ongoing),
+        .tx_chain_on(tx_chain_on),
         .pulse_tx_bb_end(pulse_tx_bb_end)
     );
 
@@ -366,6 +408,8 @@
         .rssi_half_db(rssi_half_db),
         .rssi_half_db_th(slv_reg8[(RSSI_HALF_DB_WIDTH-1):0]),
 
+        .rx_ht_aggr(rx_ht_aggr),
+        .rx_ht_aggr_last(rx_ht_aggr_last),
         .demod_is_ongoing(demod_is_ongoing),
         .tx_rf_is_ongoing(tx_rf_is_ongoing),
         .cts_toself_rf_is_ongoing(cts_toself_rf_is_ongoing),
@@ -394,7 +438,7 @@
         .nav_enable(~slv_reg6[31]),
         .difs_enable(~slv_reg6[30]),
         .eifs_enable(~slv_reg6[29]),
-        .cw_min(cw_exp_used),
+        .cw_exp_used(cw_exp_used),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .slot_time(slot_time),
@@ -415,23 +459,16 @@
         .random_seed({ddc_q[2],ddc_i[0]}),
         .ch_idle(ch_idle),
 
-        .slice_en0(slice_en0),
-        .slice_en1(slice_en1),
-        .slice_en2(slice_en2),
-        .slice_en3(slice_en3),
         .retrans_trigger(retrans_trigger),
         .quit_retrans(quit_retrans),
+        .reset_backoff(reset_backoff),
         .high_trigger(high_trigger),
         .tx_bb_is_ongoing(tx_bb_is_ongoing),
         .ack_tx_flag(ack_tx_flag),
 
-        .high_tx_allowed0(high_tx_allowed_internal0),
-        .high_tx_allowed1(high_tx_allowed_internal1),
-        .high_tx_allowed2(high_tx_allowed_internal2),
-        .high_tx_allowed3(high_tx_allowed_internal3),
         .num_slot_random_log_dl(num_slot_random),
-        .increase_cw(increase_cw),
-        .cw_used_dl(cw_used),
+        // .increase_cw(increase_cw),
+        .cw_exp_log_dl(cw_exp_log),
         .backoff_done(backoff_done)
     );
 
@@ -439,10 +476,11 @@
     ) cw_exp_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
-        .tx_try_complete(tx_try_complete_int),
+        .tx_try_complete(tx_try_complete),
+        .quit_retrans(quit_retrans),
         .cw_combined(slv_reg19),
         .tx_queue_idx(tx_queue_idx),
-        .start_retrans(increase_cw),
+        .retrans_trigger(retrans_trigger),
         .cw_exp(cw_exp_dynamic)
     );
 
@@ -461,10 +499,12 @@
         .max_num_retrans(slv_reg11[3:0]),
         .tx_pkt_need_ack(tx_pkt_need_ack),
         .tx_pkt_retrans_limit(tx_pkt_retrans_limit),
+        .tx_ht_aggr(tx_ht_aggr),
         .send_ack_wait_top(send_ack_wait_top),
         .recv_ack_timeout_top_adj(recv_ack_timeout_top_adj),
         .recv_ack_sig_valid_timeout_top(recv_ack_sig_valid_timeout_top),
         .recv_ack_fcs_valid_disable(recv_ack_fcs_valid_disable),
+        .tx_core_is_ongoing(tx_core_is_ongoing),
         .pulse_tx_bb_end(pulse_tx_bb_end),
         .phy_tx_done(phy_tx_done),
         .sig_valid(sig_valid),
@@ -485,14 +525,29 @@
         .cts_toself_bb_is_ongoing(cts_toself_bb_is_ongoing),
         .backoff_done(backoff_done),
         .bram_addr(bram_addr),
-        
+
+        .ampdu_rx_tid_disable(~slv_reg12[31]),
+        .ampdu_rx_tid(slv_reg12[4:1]),
+        .ampdu_rx_start(slv_reg12[0]),
+
+        .SC_seq_num(SC_sequence_number),
+        .rx_ht_aggr(rx_ht_aggr),
+        .rx_ht_aggr_last(rx_ht_aggr_last),
+
+        .blk_ack_req_ctrl(blk_ack_req_ctrl),
+        .blk_ack_req_ssc(blk_ack_req_ssc),
+        .blk_ack_resp_ssn(blk_ack_resp_ssn),
+        .blk_ack_resp_bitmap(blk_ack_resp_bitmap),
+        .qos_tid(qos_tid),
+        .qos_ack_policy(qos_ack_policy),
+       
         .tx_control_state_idle(tx_control_state_idle),
         .ack_cts_is_ongoing(ack_cts_is_ongoing),
         .retrans_in_progress(retrans_in_progress),
         .start_retrans(start_retrans),
         .quit_retrans(quit_retrans),
         .start_tx_ack(start_tx_ack),
-        .tx_try_complete(tx_try_complete_int),
+        .tx_try_complete(tx_try_complete),
         .retrans_trigger(retrans_trigger),
         .tx_status(tx_status),
         .ack_tx_flag(ack_tx_flag),
@@ -509,6 +564,8 @@
 
         .filter_cfg(slv_reg27[13:0]),
         .high_priority_discard_mask(slv_reg27[24:16]),
+
+        .max_signal_len_th(slv_reg5[31:16]),
     
         .block_rx_dma_to_ps(block_rx_dma_to_ps_internal),
         .block_rx_dma_to_ps_valid(block_rx_dma_to_ps_valid),
@@ -549,17 +606,34 @@
         .rx_addr(addr1),
         .rx_addr_valid(addr1_valid),
         
-        .dst_addr(addr2),
-        .dst_addr_valid(addr2_valid),
+        .tx_addr(addr2),
+        .tx_addr_valid(addr2_valid),
         
-        .tx_addr(addr3),
-        .tx_addr_valid(addr3_valid),
+        .dst_addr(addr3),
+        .dst_addr_valid(addr3_valid),
         
         .SC(SC),
         .SC_valid(SC_valid),
         
         .src_addr(addr4),
-        .src_addr_valid(addr4_valid)
+        .src_addr_valid(addr4_valid),
+
+        .blk_ack_req_ctrl(blk_ack_req_ctrl),
+        .blk_ack_req_ctrl_valid(blk_ack_req_ctrl_valid),
+
+        .blk_ack_req_ssc(blk_ack_req_ssc),
+        .blk_ack_req_ssc_valid(blk_ack_req_ssc_valid),
+
+        .blk_ack_resp_ssn(blk_ack_resp_ssn),
+        .blk_ack_resp_ssn_valid(blk_ack_resp_ssn_valid),
+
+        .blk_ack_resp_bitmap(blk_ack_resp_bitmap),
+        .blk_ack_resp_bitmap_valid(blk_ack_resp_bitmap_valid),
+
+        .qos_tid(qos_tid),
+        .qos_ack_policy(qos_ack_policy),
+        .qos_tid_valid(qos_tid_valid),
+        .qos_ack_policy_valid(qos_ack_policy_valid)
     );
 
     rssi # (
@@ -623,6 +697,21 @@
        .tsf_pulse_1M(tsf_pulse_1M)
 	);
 
+    spi_module # (
+    ) spi_module_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .tx_chain_on(tx_chain_on),  
+        .ps_clk(ps_clk), 
+        .spi0_sclk(spi0_sclk),
+        .spi0_mosi(spi0_mosi),
+        .spi0_csn(spi0_csn),   
+        .spi_disable(slv_reg13[0]),
+        .spi_sclk(spi_sclk), 	
+        .spi_csn(spi_csn), 
+        .spi_mosi(spi_mosi)
+    );
+
 // Instantiation of Axi Bus Interface S00_AXI
 	xpu_s_axi # ( 
 		.C_S_AXI_DATA_WIDTH(C_S00_AXI_DATA_WIDTH),
@@ -662,9 +751,9 @@
 		.SLV_REG8(slv_reg8),
         .SLV_REG9(slv_reg9),
         .SLV_REG10(slv_reg10),
-        .SLV_REG11(slv_reg11),/*
+        .SLV_REG11(slv_reg11),
         .SLV_REG12(slv_reg12),
-        .SLV_REG13(slv_reg13),
+        .SLV_REG13(slv_reg13),/*
         .SLV_REG14(slv_reg14),
         .SLV_REG15(slv_reg15),*/
 		.SLV_REG16(slv_reg16),
@@ -689,7 +778,7 @@
         //.SLV_REG34(slv_reg34),
         //.SLV_REG35(slv_reg35),
         //.SLV_REG36(slv_reg36),
-        //.SLV_REG37(slv_reg37),
+        .SLV_REG37(slv_reg37),
         //.SLV_REG38(slv_reg38),
         //.SLV_REG39(slv_reg39),
         //.SLV_REG40(slv_reg40),

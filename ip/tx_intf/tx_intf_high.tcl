@@ -35,6 +35,7 @@ if { [info exists ::origin_dir_loc] } {
 
 # Set the project name
 set project_name "tx_intf_high"
+exec rm -rf $project_name
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -144,25 +145,21 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
   create_fileset -srcset sources_1
 }
 
-# Set IP repository paths
-set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../../ip_repo/common/mixer_duc"]" $obj
-
 # Rebuild user ip_repo's index before adding any source files
 update_ip_catalog -rebuild
 
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- "[file normalize "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core_mixer_duc_0_0/duc_bank_core_mixer_duc_0_0.xci"]"\
- "[file normalize "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core_fir_compiler_0_0/duc_bank_core_fir_compiler_0_0.xci"]"\
  "[file normalize "$origin_dir/src/dac_intf.v"]"\
- "[file normalize "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core.v"]"\
+ "[file normalize "$origin_dir/src/div_int.v"]"\
+ "[file normalize "$origin_dir/src/ht_sig_crc_calc.v"]"\
  "[file normalize "$origin_dir/src/tx_bit_intf.v"]"\
  "[file normalize "$origin_dir/src/tx_interrupt_selection.v"]"\
  "[file normalize "$origin_dir/src/tx_intf_s_axi.v"]"\
  "[file normalize "$origin_dir/src/tx_intf_s_axis.v"]"\
  "[file normalize "$origin_dir/src/tx_iq_intf.v"]"\
+ "[file normalize "$origin_dir/src/edge_to_flip.v"]"\
  "[file normalize "$origin_dir/src/csi_fuzzer.v"]"\
  "[file normalize "$origin_dir/src/tx_status_fifo.v"]"\
  "[file normalize "$origin_dir/src/tx_intf.v"]"\
@@ -170,35 +167,35 @@ set files [list \
 add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core_mixer_duc_0_0/duc_bank_core_mixer_duc_0_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-}
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+#set file "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core_mixer_duc_0_0/duc_bank_core_mixer_duc_0_0.xci"
+#set file [file normalize $file]
+#set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+#if { ![get_property "is_locked" $file_obj] } {
+#  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
+#}
+#set_property -name "is_enabled" -value "1" -objects $file_obj
+#set_property -name "is_global_include" -value "0" -objects $file_obj
+#set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+#set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+#set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+#set_property -name "used_in_implementation" -value "1" -objects $file_obj
+#set_property -name "used_in_simulation" -value "1" -objects $file_obj
+#set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core_fir_compiler_0_0/duc_bank_core_fir_compiler_0_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-}
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+#set file "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core_fir_compiler_0_0/duc_bank_core_fir_compiler_0_0.xci"
+#set file [file normalize $file]
+#set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+#if { ![get_property "is_locked" $file_obj] } {
+#  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
+#}
+#set_property -name "is_enabled" -value "1" -objects $file_obj
+#set_property -name "is_global_include" -value "0" -objects $file_obj
+#set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+#set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+#set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+#set_property -name "used_in_implementation" -value "1" -objects $file_obj
+#set_property -name "used_in_simulation" -value "1" -objects $file_obj
+#set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/dac_intf.v"
 set file [file normalize $file]
@@ -213,7 +210,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core.v"
+set file "$origin_dir/src/div_int.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
@@ -225,6 +222,32 @@ set_property -name "used_in" -value "synthesis implementation simulation" -objec
 set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+
+set file "$origin_dir/src/ht_sig_crc_calc.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog" -objects $file_obj
+set_property -name "is_enabled" -value "1" -objects $file_obj
+set_property -name "is_global_include" -value "0" -objects $file_obj
+set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+set_property -name "used_in_implementation" -value "1" -objects $file_obj
+set_property -name "used_in_simulation" -value "1" -objects $file_obj
+set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+
+#set file "$origin_dir/../../ip_repo/high/duc_bank_core/src/duc_bank_core.v"
+#set file [file normalize $file]
+#set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+#set_property -name "file_type" -value "Verilog" -objects $file_obj
+#set_property -name "is_enabled" -value "1" -objects $file_obj
+#set_property -name "is_global_include" -value "0" -objects $file_obj
+#set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+#set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+#set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+#set_property -name "used_in_implementation" -value "1" -objects $file_obj
+#set_property -name "used_in_simulation" -value "1" -objects $file_obj
+#set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/tx_bit_intf.v"
 set file [file normalize $file]
@@ -279,6 +302,19 @@ set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/tx_iq_intf.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog" -objects $file_obj
+set_property -name "is_enabled" -value "1" -objects $file_obj
+set_property -name "is_global_include" -value "0" -objects $file_obj
+set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+set_property -name "used_in_implementation" -value "1" -objects $file_obj
+set_property -name "used_in_simulation" -value "1" -objects $file_obj
+set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+
+set file "$origin_dir/src/edge_to_flip.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj

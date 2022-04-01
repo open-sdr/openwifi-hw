@@ -15,15 +15,20 @@
         input wire rstn,
 
         input wire [7:0] bb_rf_delay_count_top,
-        input wire [3:0] rf_end_ext_count_top,
+        input wire [6:0] rf_end_ext_count_top,
+        input wire [6:0] bb_start_tx_chain_on_delay_count_top,
+        input wire [6:0] bb_end_tx_chain_off_delay_count_top,
+        input wire phy_tx_start,
         input wire phy_tx_started,
         input wire phy_tx_done,
 	    input wire tx_iq_fifo_empty,
 
         // input wire tsf_pulse_1M, // for debug
 
+        output wire tx_core_is_ongoing,
         output wire tx_bb_is_ongoing,
         output reg  tx_rf_is_ongoing,
+        output reg  tx_chain_on,
         `DEBUG_PREFIX output wire pulse_tx_bb_end
 	);
 
@@ -42,6 +47,13 @@
     `DEBUG_PREFIX reg [13:0] bb_rf_delay_count_top_scale;
     `DEBUG_PREFIX reg [13:0] bb_rf_delay_count_top_scale_ext;
     `DEBUG_PREFIX reg [13:0] bb_rf_delay_count_top_scale_ext_plus1;
+
+    `DEBUG_PREFIX reg [13:0] bb_start_tx_chain_on_delay_count_top_scale;
+    `DEBUG_PREFIX reg [13:0] bb_end_tx_chain_off_delay_count_top_scale;
+
+    reg tx_core_is_ongoing_reg;
+
+    assign tx_core_is_ongoing = (tx_core_is_ongoing_reg|phy_tx_start);
 
     // make sure tx_control.v state machine can make decision before the end of tx
     assign tx_bb_is_ongoing = (tx_bb_is_ongoing_internal|tx_bb_is_ongoing_internal0|tx_bb_is_ongoing_internal1|tx_bb_is_ongoing_internal2|tx_bb_is_ongoing_internal3);//extended version to make sure pulse_tx_bb_end is inside tx_bb_is_ongoing
@@ -64,6 +76,9 @@
         bb_rf_delay_count_top_scale_ext <= 0;
         bb_rf_delay_count_top_scale_ext_plus1 <= 0;
 
+        bb_start_tx_chain_on_delay_count_top_scale <= 0;
+        bb_end_tx_chain_off_delay_count_top_scale <= 0;
+
         tx_bb_is_ongoing_internal <= 0;
         tx_bb_is_ongoing_internal0<=0;
         tx_bb_is_ongoing_internal1<=0;
@@ -73,10 +88,15 @@
         search_indication<=0;
 
         tx_iq_running<=0;
+
+        tx_core_is_ongoing_reg <= 0;
     end else begin
         bb_rf_delay_count_top_scale     <= (bb_rf_delay_count_top*`COUNT_SCALE);
         bb_rf_delay_count_top_scale_ext <= (bb_rf_delay_count_top_scale + (rf_end_ext_count_top*`COUNT_SCALE));
         bb_rf_delay_count_top_scale_ext_plus1 <= bb_rf_delay_count_top_scale_ext + 1;
+
+        bb_start_tx_chain_on_delay_count_top_scale <= (bb_start_tx_chain_on_delay_count_top*`COUNT_SCALE);
+        bb_end_tx_chain_off_delay_count_top_scale <= (bb_end_tx_chain_off_delay_count_top*`COUNT_SCALE);
 
         tx_bb_is_ongoing_internal0<=tx_bb_is_ongoing_internal;
         tx_bb_is_ongoing_internal1<=tx_bb_is_ongoing_internal0;
@@ -84,6 +104,11 @@
         tx_bb_is_ongoing_internal3<=tx_bb_is_ongoing_internal2;
 
         tx_iq_fifo_empty_reg <= tx_iq_fifo_empty;
+
+        if (phy_tx_start)
+            tx_core_is_ongoing_reg <= 1;
+        else if (phy_tx_done)
+            tx_core_is_ongoing_reg <= 0;
         
         if (phy_tx_started)
             search_indication <= 1; // should search fifo from empty to un-empty
@@ -101,19 +126,31 @@
             tx_iq_running<=0;
     end
 
+    // generate tx_rf_is_ongoing based on delay and extension on top of tx_bb_is_ongoing
     always @(posedge clk) begin                                                                     
       if ( rstn == 0 ) begin 
         bb_rf_delay_count    <= 0;
         tx_rf_is_ongoing     <= 0;
+        tx_chain_on                <= 0;
       end else if ( pulse_tx_bb_start || pulse_tx_bb_end ) begin
         bb_rf_delay_count    <= 0;
         tx_rf_is_ongoing     <= tx_rf_is_ongoing;
+        tx_chain_on                <= tx_chain_on;
       end else begin
         bb_rf_delay_count <= (bb_rf_delay_count!=bb_rf_delay_count_top_scale_ext_plus1?(bb_rf_delay_count+1):bb_rf_delay_count);
+        
+        // tx_rf_is_ongoing
         if (tx_iq_running==1 && bb_rf_delay_count==bb_rf_delay_count_top_scale)
             tx_rf_is_ongoing <= 1;
         else if (tx_iq_running==0 && bb_rf_delay_count==bb_rf_delay_count_top_scale_ext)
             tx_rf_is_ongoing <= 0;
+        
+        // tx_chain_on
+        if (tx_iq_running==1 && bb_rf_delay_count==bb_start_tx_chain_on_delay_count_top_scale)
+            tx_chain_on <= 1;
+        else if (tx_iq_running==0 && bb_rf_delay_count==bb_end_tx_chain_off_delay_count_top_scale)
+            tx_chain_on <= 0;
+
       end
     end
 

@@ -17,6 +17,9 @@
         input wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
         input wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_th,
 
+        input wire rx_ht_aggr,
+        input wire rx_ht_aggr_last,
+
         input wire demod_is_ongoing,
         input wire tx_rf_is_ongoing,
         input wire cts_toself_rf_is_ongoing,
@@ -39,7 +42,7 @@
       is_counting<=0;
     end else begin
       wait_after_decode_top_scale<=wait_after_decode_top*`COUNT_SCALE;
-      if(fcs_in_strobe && (wait_after_decode_top_scale > 0)) begin
+      if( ( (fcs_in_strobe&&(~rx_ht_aggr)) || (fcs_in_strobe&&rx_ht_aggr_last) ) && (wait_after_decode_top_scale > 0)) begin
         is_counting<=1;
         wait_after_decode_count<=0;
       end else begin

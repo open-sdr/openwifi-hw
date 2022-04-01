@@ -29,9 +29,9 @@
         output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG8,
         output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG9,
         output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG10,
-        output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG11,/*
+        output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG11,
         output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG12,
-        output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG13,
+        output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG13,/*
         output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG14,
         output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG15,*/
         output wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG16,
@@ -55,7 +55,7 @@
         // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG34,
         // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG35,
         // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG36,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG37,
+        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG37,
         // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG38,
         // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG39,
         // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG40,
@@ -182,8 +182,8 @@
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg9;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg10;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg11;
-	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg12;
-	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg13;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg12;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg13;
 	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg14;
 	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg15;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg16;
@@ -207,7 +207,7 @@
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg34;
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg35;
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg36;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg37;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg37;
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg38;
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg39;
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg40;
@@ -263,8 +263,8 @@
     assign SLV_REG9 = slv_reg9;
     assign SLV_REG10 = slv_reg10;
     assign SLV_REG11 = slv_reg11;
-    //assign SLV_REG12 = slv_reg12;
-    //assign SLV_REG13 = slv_reg13;
+    assign SLV_REG12 = slv_reg12;
+    assign SLV_REG13 = slv_reg13;
     //assign SLV_REG14 = slv_reg14;
     //assign SLV_REG15 = slv_reg15;
     assign SLV_REG16 = slv_reg16;
@@ -392,8 +392,8 @@
 	      slv_reg9 <= 32'h0;
 	      slv_reg10 <= 32'h0;
 	      slv_reg11 <= 32'h0;
-	      //slv_reg12 <= 32'h0;
-	      //slv_reg13 <= 32'h0;
+	      slv_reg12 <= 32'h0;
+	      slv_reg13 <= 32'h0;
 	      //slv_reg14 <= 32'h0;
 	      //slv_reg15 <= 32'h0;
 	      slv_reg16 <= 32'h0;
@@ -501,7 +501,7 @@
 	                // Respective byte enables are asserted as per write strobes 
 	                // Slave register 11
 	                slv_reg11[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-	              end  /*
+	              end  
 	          6'h0C:
 	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
 	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
@@ -515,7 +515,7 @@
 	                // Respective byte enables are asserted as per write strobes 
 	                // Slave register 13
 	                slv_reg13[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-	              end  
+	              end  /*
 	          6'h0E:
 	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
 	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
@@ -655,8 +655,8 @@
 	                      slv_reg9 <= slv_reg9;
 	                      slv_reg10 <= slv_reg10;
 	                      slv_reg11 <= slv_reg11;
-	                      //slv_reg12 <= slv_reg12;
-	                      //slv_reg13 <= slv_reg13;
+	                      slv_reg12 <= slv_reg12;
+	                      slv_reg13 <= slv_reg13;
 	                      //slv_reg14 <= slv_reg14;
 	                      //slv_reg15 <= slv_reg15;
 	                      slv_reg16 <= slv_reg16;
@@ -794,9 +794,9 @@
 	        6'h08   : reg_data_out <= slv_reg8;
 	        6'h09   : reg_data_out <= slv_reg9;
 	        6'h0A   : reg_data_out <= slv_reg10;
-	        6'h0B   : reg_data_out <= slv_reg11;/*
+	        6'h0B   : reg_data_out <= slv_reg11;
 	        6'h0C   : reg_data_out <= slv_reg12;
-	        6'h0D   : reg_data_out <= slv_reg13;
+	        6'h0D   : reg_data_out <= slv_reg13;/*
 	        6'h0E   : reg_data_out <= slv_reg14;
 	        6'h0F   : reg_data_out <= slv_reg15;*/
 	        6'h10   : reg_data_out <= slv_reg16;
@@ -820,7 +820,7 @@
 	        // 6'h22   : reg_data_out <= slv_reg34;
 	        // 6'h23   : reg_data_out <= slv_reg35;
 	        // 6'h24   : reg_data_out <= slv_reg36;
-	        // 6'h25   : reg_data_out <= slv_reg37;
+	        6'h25   : reg_data_out <= slv_reg37;
 	        // 6'h26   : reg_data_out <= slv_reg38;
 	        // 6'h27   : reg_data_out <= slv_reg39;
 	        // 6'h28   : reg_data_out <= slv_reg40;
@@ -893,7 +893,7 @@
         //   slv_reg34 <= 32'h0;
         //   slv_reg35 <= 32'h0;
         //   slv_reg36 <= 32'h0;
-        //   slv_reg37 <= 32'h0;
+          slv_reg37 <= 32'h0;
         //   slv_reg38 <= 32'h0;
         //   slv_reg39 <= 32'h0;
         //   slv_reg40 <= 32'h0;
@@ -941,7 +941,7 @@
         //   slv_reg34 <= SLV_REG34;
         //   slv_reg35 <= SLV_REG35;
         //   slv_reg36 <= SLV_REG36;
-        //   slv_reg37 <= SLV_REG37;
+          slv_reg37 <= SLV_REG37;
         //   slv_reg38 <= SLV_REG38;
         //   slv_reg39 <= SLV_REG39;
         //   slv_reg40 <= SLV_REG40;

@@ -7,6 +7,8 @@
 
 `define COUNT_TOP_20M  ((`NUM_CLK_PER_SAMPLE)-1)
 
+`define RX_IQ_RATE_ADAPTATION_BYPASS 1
+
 	module rx_iq_intf #
 	(
 	    parameter integer C_S00_AXIS_TDATA_WIDTH	= 64,
@@ -43,7 +45,40 @@
     
     output wire wifi_rx_iq_fifo_emptyn
 	);
-    
+
+`ifdef RX_IQ_RATE_ADAPTATION_BYPASS
+
+    assign rf_i0 = bw20_i0;
+    assign rf_q0 = bw20_q0;
+    assign rf_i1 = bw20_i1;
+    assign rf_q1 = bw20_q1;
+    assign rf_iq_valid = bw20_iq_valid;
+
+    assign rf_iq = 0;
+
+    assign wifi_rx_iq_fifo_emptyn = 0;
+
+// // for debug purpose -- debug is done. everything is ok. we have uniformed 20M valid signal (every 12 clock for zcu102)
+//     reg [4:0] counter;
+//     reg [4:0] num_clk;
+//     always @( posedge clk )
+//     begin
+//       if ( rstn == 0 ) begin
+//         counter <= 0;
+//         num_clk <= 0;
+//       end else begin
+//         if (bw20_iq_valid) begin
+//           counter <= 0;
+//           num_clk <= counter;
+//         end else begin
+//           counter <= counter + 1;
+//           num_clk <= num_clk;
+//         end
+//       end
+//     end
+
+`else
+
     wire empty;
     wire full;
     wire rden;
@@ -155,7 +190,7 @@
         counter <= 0;
       else
         if (counter == counter_top)
-          counter <= 4'd0;
+          counter <= 0;
         else
           counter <= counter + 1'b1;
     end
@@ -232,5 +267,7 @@
       .wr_clk(clk),
       .wr_en(wren)
     );
+
+`endif
 
 	endmodule

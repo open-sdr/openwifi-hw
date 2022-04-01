@@ -5,6 +5,9 @@
 
 `timescale 1 ns / 1 ps
 
+//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 	module rx_intf_pl_to_m_axis #
 	(
     parameter integer GPIO_STATUS_WIDTH = 8,
@@ -51,12 +54,15 @@
 	    input wire [14:0] count_top,
 //	    input wire pad_test,
 	    
+      input wire [15:0] max_signal_len_th,
 	    // from wifi rx
 	    input wire [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_from_acc,
 	    input wire data_ready_from_acc,
       input wire [7:0] pkt_rate,
 		  input wire [15:0] pkt_len,
       input wire sig_valid,
+      input wire ht_aggr,
+      input wire ht_aggr_last,
       input wire ht_sgi,
       input wire ht_unsupport,
 	    input wire fcs_valid,
@@ -78,7 +84,7 @@
                        WAIT_DMA_TLAST =                    3'b100,
                        WAIT_RST_DONE =                     3'b101;
 
-    reg [2:0] rx_state;
+    `DEBUG_PREFIX reg [2:0] rx_state;
     reg [2:0] old_rx_state;
     reg start_m_axis;
     reg [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_to_m_axis;
@@ -177,7 +183,7 @@
             start_m_axis <= 0;
             m_axis_rst<=0;
             m_axis_tlast_auto_recover<=0;
-            if (sig_valid && (ht_unsupport==0)) begin
+            if ( sig_valid && (ht_unsupport==0) && (pkt_len>=14 && pkt_len<=max_signal_len_th) ) begin
               monitor_num_dma_symbol_to_ps<=( pkt_len[15:3] + (pkt_len[2:0]!=0) ) + 2; // 2 for tsf, rf_info and rate/len insertion at the beginnig;
               rx_state <= DMA_HEADER0_INSERT;
             end
@@ -200,7 +206,7 @@
             // timeout_timer_1M<=timeout_timer_1M;
             // rst_count <= rst_count;
             //data_to_m_axis <= (pad_test==1?64'hfedcba9876543210:{11'd0, pkt_rate[7],pkt_rate[3:0],pkt_len, 8'd0, gpio_status_lock_by_sig_valid, 5'd0, rssi_half_db_lock_by_sig_valid});
-            data_to_m_axis <= {10'd0, ht_sgi, pkt_rate[7],pkt_rate[3:0],pkt_len, 8'd0, gpio_status_lock_by_sig_valid, 5'd0, rssi_half_db_lock_by_sig_valid};
+            data_to_m_axis <= {8'd0, ht_aggr_last, ht_aggr, ht_sgi, pkt_rate[7],pkt_rate[3:0],pkt_len, 8'd1, gpio_status_lock_by_sig_valid, 5'd0, rssi_half_db_lock_by_sig_valid};//8'd1 next to gpio_status_lock_by_sig_valid is for pkt exist flag in rx dma buffer
             // data_ready_to_m_axis <= data_ready_to_m_axis;
             // start_m_axis <= start_m_axis;
             // monitor_num_dma_symbol_to_ps<=monitor_num_dma_symbol_to_ps;
