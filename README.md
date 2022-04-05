@@ -31,7 +31,6 @@ Environment variable **BOARD_NAME** options:
   * Xilinx Vivado (with SDK and HLS) 2018.3 (Vivado Design Suite - HLx Editions - 2018.3  Full Product Installation)
   * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado.
   * Ubuntu 18/20 LTS release (We test in these OS. Other OS might also work.)
-  * Install [git lfs](https://git-lfs.github.com/) (For Ubuntu: sudo apt install git-lfs)
 
 * Prepare Analgo Devices HDL library (only run once):
 ```
@@ -71,13 +70,7 @@ File --> Launch SDK --> OK, then close SDK
 cd openwifi-hw/boards
 ./sdk_update.sh $BOARD_NAME
 ```
-* Add the FPGA files to git (only if you want and know the actual repo you want commit to):
-```
-git add $BOARD_NAME/sdk/*
-git commit -m "new fpga img for openwifi (or comments you want to make)"
-git push
-```
-[git lfs](https://git-lfs.github.com/) must be installed for **system_top.bit** and **system.hdf** before git add (avoid too big repo!)
+* Above script generates $BOARD_NAME/sdk/ waiting for script (in openwifi repository) "Pick the FPGA bitstream" via $OPENWIFI_HW_DIR in the README of openwifi repository.
 
 ## Modify IP cores
 
