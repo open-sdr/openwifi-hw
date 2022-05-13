@@ -1,0 +1,46 @@
+openwifi-hw-git-branch
+  master
+* pre-release
+ 
+openwifi-hw-git-commit
+commit f60a9124a79b7b84ea30382dbfdc23af46f0c475
+Author: Xianjun Jiao <xianjun.jiao@ugent.be>
+Date:   Fri May 13 17:07:23 2022 +0200
+
+    FPGA is ok: antsdr
+
+commit 88cb04914fcce1347f8d599994468889918a4c51
+Author: Xianjun Jiao <xianjun.jiao@ugent.be>
+Date:   Fri May 13 15:32:42 2022 +0200
+
+    Track the latest openofdm_rx
+
+commit 7dbc311097700aad2a7796845c1457f8355f1849
+Author: Xianjun Jiao <xianjun.jiao@ugent.be>
+Date:   Fri May 13 15:29:19 2022 +0200
+
+    Improved IP/top project flow to support conditional compiling
+ 
+openofdm_rx-git-branch
+* dot11zynq
+  master
+ 
+openofdm_rx-git-commit
+commit 1659c01ac7f6604493097693fce2319b41d2ce05
+Author: Xianjun Jiao <xianjun.jiao@ugent.be>
+Date:   Fri May 13 13:24:41 2022 +0200
+
+    Add conditional compiling framework
+
+commit a7b95b492c7b2a6e57835be81559e62adf922a37
+Author: Xianjun Jiao <xianjun.jiao@ugent.be>
+Date:   Fri May 13 13:21:19 2022 +0200
+
+    Workaround to supress the error message when the 1st time run simulation
+
+commit ac1a75e55a0a472764d435760cb03b2bc4dafa9e
+Author: Jiao Xianjun <xianjun.jiao@ugent.be>
+Date:   Wed May 11 10:30:18 2022 +0200
+
+    Change the device/board to 7020 for low-end device friendly (Avoid the license issue in the default case)
+ 
