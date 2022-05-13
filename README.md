@@ -7,6 +7,7 @@
 [[Build FPGA](#Build-FPGA)]
 [[Modify IP cores](#Modify-IP-cores)]
 [[Simulate IP cores](#Simulate-IP-cores)]
+[[GPIO/LED definitions](gpio_led.md)]
 
 ## Introduction
 
