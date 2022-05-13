@@ -19,10 +19,12 @@
         input wire [1:0]  count_end_slice_idx,
         input wire [19:0] count_end,
 
-        output reg slice_en0,
-        output reg slice_en1,
-        output reg slice_en2,
-        output reg slice_en3
+    output wire cycle_start0,
+
+    output reg slice_en0,
+    output reg slice_en1,
+    output reg slice_en2,
+    output reg slice_en3
 	);
 
   reg [19:0] count_total0;
@@ -45,6 +47,8 @@
   reg [19:0] counter2;
   reg [19:0] counter3;
 
+  assign cycle_start0 = (counter0==count_total0);
+  
   always @( posedge clk ) begin
     if ( rstn == 0 ) begin
           count_total0 <= count_total0;

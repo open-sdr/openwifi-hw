@@ -262,7 +262,8 @@
     assign slv_reg26[30:24] = tx_config_fifo_data_count3;
 
     assign tx_queue_idx_to_xpu = tx_queue_idx ;
-    
+
+`ifndef TX_INTF_DISCONNECT_LED
     edge_to_flip edge_to_flip_tx_itrpt_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn),
@@ -276,6 +277,7 @@
         .data_in(tx_end_from_acc),
         .flip_output(tx_end_led)
 	);
+`endif
 
     dac_intf # (
         .IQ_DATA_WIDTH(IQ_DATA_WIDTH),

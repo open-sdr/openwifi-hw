@@ -57,8 +57,11 @@
 		input  wire rx_ht_aggr,
 		input  wire rx_ht_aggr_last,
 
-        // led
+        // led (flip per event) & gpio (raw)
         output wire demod_is_ongoing_led,
+        output wire cycle_start0_led,
+        output wire phy_tx_started_led,
+        output wire sig_valid_led,
 
         // Ports to phy_tx
         input  wire phy_tx_start,
@@ -270,6 +273,7 @@
 
     // wire [4:0] tx_status;
 
+    wire cycle_start0;
     wire slice_en0;
     wire slice_en1;
     wire slice_en2;
@@ -369,12 +373,35 @@
 
     assign pkt_for_me = (addr1==mac_addr);
 
+`ifndef XPU_DISCONNECT_LED
+    edge_to_flip cycle_start_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .data_in(cycle_start0),
+        .flip_output(cycle_start0_led)
+	);
+
+    edge_to_flip phy_tx_started_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .data_in(phy_tx_started),
+        .flip_output(phy_tx_started_led)
+	);
+
+    edge_to_flip sig_valid_i (
+        .clk(s00_axi_aclk),
+        .rstn(s00_axi_aresetn),
+        .data_in(sig_valid),
+        .flip_output(sig_valid_led)
+	);
+
     edge_to_flip edge_to_flip_demod_is_ongoing_i (
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn),
         .data_in(demod_is_ongoing),
         .flip_output(demod_is_ongoing_led)
 	);
+`endif
 
     tx_on_detection # (
     ) tx_on_detection_i (
@@ -679,6 +706,8 @@
         .count_start          (slv_reg21[19:0]),
         .count_end_slice_idx  (slv_reg22[21:20]),
         .count_end            (slv_reg22[19:0]),
+
+        .cycle_start0(cycle_start0),
 
         .slice_en0(slice_en0),
         .slice_en1(slice_en1),

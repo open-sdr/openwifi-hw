@@ -280,12 +280,14 @@
       .dest_out (ant_flag_in_rf_domain)
     );
 
+`ifndef RX_INTF_DISCONNECT_LED
     edge_to_flip edge_to_flip_fcs_ok_i (
         .clk(m00_axis_aclk),
         .rstn(m00_axis_aresetn),
         .data_in(fcs_ok),
         .flip_output(fcs_ok_led)
 	);
+`endif
 
     gpio_status_rf_to_bb # (
         .GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH)        
