@@ -39,6 +39,11 @@
         output reg rssi_half_db_valid
 	);
 
+    reg fifo_delay_rstn_delay1;
+    reg fifo_delay_rstn_delay2;
+    reg fifo_delay_rstn_delay3;
+    reg fifo_delay_rstn_delay4;
+
     wire signed [(IQ_DATA_WIDTH-1):0] iq_rssi;
     wire iq_rssi_valid;
    `DEBUG_PREFIX wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_delay;
@@ -68,12 +73,9 @@
         .iq_rssi_half_db_valid(iq_rssi_half_db_valid)
     );
 
-    fifo8_delay64 # (
-        .DATA_WIDTH(GPIO_STATUS_WIDTH),
-        .DELAY_CTL_WIDTH(DELAY_CTL_WIDTH)
-    ) fifo8_delay64_i (
+    fifo_sample_delay # (.DATA_WIDTH(GPIO_STATUS_WIDTH), .LOG2_FIFO_DEPTH(DELAY_CTL_WIDTH)) fifo_sample_delay_i (
         .clk(clk),
-        .rstn(fifo_delay_rstn),
+        .rst(~(fifo_delay_rstn&fifo_delay_rstn_delay1&fifo_delay_rstn_delay2&fifo_delay_rstn_delay3&fifo_delay_rstn_delay4)),
         .delay_ctl(delay_ctl),
         .data_in(gpio_status),
         .data_in_valid(iq_rssi_half_db_valid),
@@ -99,11 +101,21 @@
     always @( posedge clk )
     if ( rstn == 1'b0 )
     begin
+        fifo_delay_rstn_delay1 <= fifo_delay_rstn;
+        fifo_delay_rstn_delay2 <= fifo_delay_rstn;
+        fifo_delay_rstn_delay3 <= fifo_delay_rstn;
+        fifo_delay_rstn_delay4 <= fifo_delay_rstn;
+
         rssi_half_db_lock_by_sig_valid <= 0;
         gpio_status_lock_by_sig_valid <= 0;
     end
     else
     begin
+        fifo_delay_rstn_delay1 <= fifo_delay_rstn;
+        fifo_delay_rstn_delay2 <= fifo_delay_rstn_delay1;
+        fifo_delay_rstn_delay3 <= fifo_delay_rstn_delay2;
+        fifo_delay_rstn_delay4 <= fifo_delay_rstn_delay3;
+
         if (pkt_header_valid_strobe)
         begin
             rssi_half_db_lock_by_sig_valid <= rssi_half_db;
