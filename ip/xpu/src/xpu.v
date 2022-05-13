@@ -1,5 +1,6 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 `include "openwifi_hw_git_rev.v"
+`include "xpu_pre_def.v"
 
 // `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
 `define DEBUG_PREFIX

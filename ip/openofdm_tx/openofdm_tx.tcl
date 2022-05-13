@@ -16,6 +16,76 @@
 #
 #*****************************************************************************************
 
+#-----------process arguments (if exist)-------
+# set argv [] before source this .tcl to not having any arguments
+# set argv [list ARGUMENT1 ARGUMENT2 ...] to before source this .tcl to have arguments
+# argument 1: BOARD_NAME
+# argument 2: NUM_CLK_PER_US (for example: input 100 for 100MHz)
+# argument 3~7 (if exist): for `define OPENOFDM_TX_ARGUMENT in openofdm_tx_pre_def.v to enable some compiling time conditions
+
+set ARGUMENT1 [lindex $argv 0]
+set ARGUMENT2 [lindex $argv 1]
+set ARGUMENT3 [lindex $argv 2]
+set ARGUMENT4 [lindex $argv 3]
+set ARGUMENT5 [lindex $argv 4]
+set ARGUMENT6 [lindex $argv 5]
+set ARGUMENT7 [lindex $argv 6]
+
+if {$ARGUMENT1 eq ""} {
+  set BOARD_NAME zed_fmcs2
+} else {
+  set BOARD_NAME $ARGUMENT1
+}
+
+if {$ARGUMENT2 eq ""} {
+  set NUM_CLK_PER_US 100
+} else {
+  set NUM_CLK_PER_US $ARGUMENT2
+}
+
+source ../parse_board_name.tcl
+
+set MODULE_NAME OPENOFDM_TX
+set  fd  [open  "./src/openofdm_tx_pre_def.v"  w]
+if {$ARGUMENT3 eq ""} {
+  puts $fd " "
+} else {
+  puts $fd "`define $MODULE_NAME\_$ARGUMENT3"
+}
+if {$ARGUMENT4 eq ""} {
+  puts $fd " "
+} else {
+  puts $fd "`define $MODULE_NAME\_$ARGUMENT4"
+}
+if {$ARGUMENT5 eq ""} {
+  puts $fd " "
+} else {
+  puts $fd "`define $MODULE_NAME\_$ARGUMENT5"
+}
+if {$ARGUMENT6 eq ""} {
+  puts $fd " "
+} else {
+  puts $fd "`define $MODULE_NAME\_$ARGUMENT6"
+}
+if {$ARGUMENT7 eq ""} {
+  puts $fd " "
+} else {
+  puts $fd "`define $MODULE_NAME\_$ARGUMENT7"
+}
+close $fd
+#-----end of process arguments (if exist)-------
+
+puts "BOARD_NAME $BOARD_NAME"
+puts "NUM_CLK_PER_US $NUM_CLK_PER_US"
+puts "ultra_scale_flag $ultra_scale_flag"
+puts "part_string $part_string"
+puts "fpga_size_flag $fpga_size_flag"
+puts "ARGUMENT3 $MODULE_NAME\_$ARGUMENT3"
+puts "ARGUMENT4 $MODULE_NAME\_$ARGUMENT4"
+puts "ARGUMENT5 $MODULE_NAME\_$ARGUMENT5"
+puts "ARGUMENT6 $MODULE_NAME\_$ARGUMENT6"
+puts "ARGUMENT7 $MODULE_NAME\_$ARGUMENT7"
+
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
 
@@ -85,7 +155,7 @@ if { $::argc > 0 } {
 set orig_proj_dir "[file normalize "$origin_dir/openofdm_tx"]"
 
 # Create project
-create_project ${project_name} ./${project_name} -part xc7z045ffg900-2
+create_project ${project_name} ./${project_name} -part $part_string
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
@@ -96,7 +166,7 @@ set proj_dir [get_property directory [current_project]]
 # Set project properties
 set obj [current_project]
 set_property -name "board_connections" -value "" -objects $obj
-set_property -name "board_part" -value "xilinx.com:zc706:part0:1.4" -objects $obj
+# set_property -name "board_part" -value "xilinx.com:zc706:part0:1.4" -objects $obj
 set_property -name "compxlib.activehdl_compiled_library_dir" -value "$proj_dir/${project_name}.cache/compile_simlib/activehdl" -objects $obj
 set_property -name "compxlib.funcsim" -value "1" -objects $obj
 set_property -name "compxlib.ies_compiled_library_dir" -value "$proj_dir/${project_name}.cache/compile_simlib/ies" -objects $obj
@@ -634,7 +704,7 @@ set_property -name "xsim.simulate.xsim.more_options" -value "" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part xc7z045ffg900-2 -flow {Vivado Synthesis 2018} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part $part_string -flow {Vivado Synthesis 2018} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
 } else {
   set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
   set_property flow "Vivado Synthesis 2018" [get_runs synth_1]
@@ -699,7 +769,7 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part xc7z045ffg900-2 -flow {Vivado Implementation 2018} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part $part_string -flow {Vivado Implementation 2018} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Vivado Implementation Defaults" [get_runs impl_1]
   set_property flow "Vivado Implementation 2018" [get_runs impl_1]

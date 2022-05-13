@@ -7,6 +7,7 @@
 [[Build FPGA](#Build-FPGA)]
 [[Modify IP cores](#Modify-IP-cores)]
 [[Simulate IP cores](#Simulate-IP-cores)]
+[[Conditional compile by verilog macro](#Conditional-compile-by-verilog-macro)]
 [[GPIO/LED definitions](gpio_led.md)]
 
 ## Introduction
@@ -50,16 +51,13 @@ export BOARD_NAME=your_board_name
 ```
 ./get_ip_openofdm_rx.sh
 ```
-* Launch Vivado:
+* Generate ip_repo for the top level FPGA project (will take a while):
 ```
 cd openwifi-hw/boards/$BOARD_NAME/
-source $XILINX_DIR/Vivado/2018.3/settings64.sh
-vivado
+../create_ip_repo.sh $XILINX_DIR
 ```
-* In Vivado:
+* In the Vivado
 ```
-source ./ip_repo_gen.tcl
-(Generating ip_repo from ip design. Will take a while.)
 source ./openwifi.tcl
 Click "Generate Bitstream" in the Vivado GUI.
 (Will take a while)
@@ -71,13 +69,22 @@ File --> Launch SDK --> OK, then close SDK
 cd openwifi-hw/boards
 ./sdk_update.sh $BOARD_NAME
 ```
-* Above script generates $BOARD_NAME/sdk/ waiting for script (in openwifi repository) "Pick the FPGA bitstream" via $OPENWIFI_HW_DIR in the README of openwifi repository.
+* Add the FPGA files to git (only if you want and know the actual repo you want commit to):
+```
+git add $BOARD_NAME/sdk/*
+git commit -m "new fpga img for openwifi (or comments you want to make)"
+git push
+```
 
 ## Modify IP cores
 
-IP core project files are in "ip/ip_name" directory. "ip_name" example: xpu, tx_intf, etc. Source the .tcl script in ip/ip_name from the Vivado GUI, you can create the IP project and do necessary work (modification, simulation, etc.) on it. After the IP design change, start from "source ./ip_repo_gen.tcl" in the board directory (Build FPGA section) to integrate your modified IP to the board FPGA design.
+IP core project files are in "ip/ip_name" directory. "ip_name" example: xpu, tx_intf, etc. To create the IP project and do necessary work (modification, simulation, etc.), go to the ip/ip_name directory, then:
+```
+../create_vivado_proj.sh $XILINX_DIR ip_name.tcl
+```
+To apply your new/modified IP to the top level FPGA project, start from "../create_ip_repo.sh $XILINX_DIR" in the board directory (Build FPGA section) to integrate your modified IP to the board FPGA design.
 
-If your IP modification is complicated and encounter error while running ip_repo_gen.tcl, you should check, understand and modify the ip_repo_gen.tcl accordingly.
+If your IP modification is complicated and encounter error while running create_ip_repo.sh, you should check create_ip_repo.sh/ip_repo_gen.tcl/etc, understand and modify them accordingly (for example to include your new added files).
 
 **Change the baseband clock:**
 
@@ -87,17 +94,44 @@ By default, 100MHz baseband clock is used. You can change the baseband clock by 
 
 ## Simulate IP cores
 
-* Create the ip core project in Vivado. To achieve this, you need to follow the previous section till you execute "source ./ip_name.tcl" in Vivado
+* Create the ip core project in Vivado. To achieve this, you need to follow the "Modify IP cores" section to create the IP's Vivado project.
 * Normally you should see the top level testbench (..._tb.v) of that ip core in the Vivado "Sources" window (take openofdm_rx as example):
 
+        Go to the openofdm_rx IP directory, then run:
+        ./create_vivado_proj.sh ~/Xilinx/ openofdm_rx.tcl 
+        Then in Vivado
         Sources --> Simulation Sources --> sim_1 --> dot11_tb
 * To run the simulation, click "Run Simulation" --> "Run Behavoiral Simulation" under the "SIMULATION" in the "PROJECT MANAGER" window. It will take quite long time for the 1st time run due to the sub-ip-core compiling. Fortunately the sub-ip-core compiling is a time consuming step that occurs only one time.
 * When the previous step is finished, you should see a simulation window displays many variable names and waveforms. Now click the small triangle, which points to the right and has "Run All (F3)" hints, on top to start the simulation.
-* Please check the ..._tb.v to see how do we use $fopen, $fscanf and $fwrite to read test vectors and save the variables for checking later. Of course you can also check everything in the waveform window.
+* Please check the ..._tb.v to see how do we use $fopen, $fscanf and $fwrite to read test vectors and save the variables for checking later. Of course you can also check everything in the waveform window. 
+* The openofdm_rx_pre_def.v also includes important definitions for the simulation.
 * After you modify some design files, just click the small circle with arrow, which has "Relaunch Simulation" hints, on top to re-launch the simulation.
 * You can always drag the signals you need from the "SIMULATION" --> "Scope" window to the waveform window, and relaunch the simulation to check those signals' waveform. An example:
-
+        
         SIMULATION --> Scope --> Name --> dot11_tb --> dot11_inst --> ofdm_decoder_inst --> viterbi_inst
+
+## Conditional compile by verilog macro
+
+While working on a stand alone IP, the create_vivado_proj.sh could accept more arguments. Some arguments will be converted to verilog macro pre-defines into ip_name_pre_def.v, which can be included by IP source files to enable/disable some code blocks. Check more info by running create_vivado_proj.sh:
+```
+usage:
+Need at least 2 arguments: $XILINX_DIR $TCL_FILENAME
+More arguments (max 7) will be passed as arguments to the .tcl script to create ip_name_pre_def.v
+Among these max 7 arguments:
+- the 1st:     BOARD_NAME (antsdr zc706_fmcs2 zed_fmcs2 zc702_fmcs2 adrv9361z7035 adrv9364z7020 zcu102_fmcs2)
+- the 2nd:     NUM_CLK_PER_US (for example: input 100 for 100MHz)
+- the 3rd-7th: User pre defines (assume it is ABC) for conditional compiling. Will be `define IP_NAME_ABC in ip_name_pre_def.v
+  - the 3rd exception: in the case of openofdm_rx, it indicates SAMPLE_FILE for simulation. Can be changed later in openofdm_rx_pre_def.v
+```
+While working on the top level FPGA project, the same verilog macro pre-defines should also be specified when running create_ip_repo.sh if you want the IP to be conditional compiled in the same way when you working on it in stand alone mode (when the IP project is created by create_vivado_proj.sh). Check more info by running create_ip_repo.sh:
+```
+usage:
+create_ip_repo.sh $XILINX_DIR
+or
+create_ip_repo.sh $XILINX_DIR $IP1_NAME $DEF1 $DEF2 ... $IP2_NAME $DEF1 ...
+ -IP_NAME: only xpu/tx_intf/rx_intf/openofdm_tx/openofdm_rx/side_ch are allowed
+ -   DEFx: will be "`define IP_NAME_DEFx" in ip_name_pre_def.v for $IP_NAME
+```
 
 ***Note: openwifi adds necessary modules/modifications on top of [Analog Devices HDL reference design](https://github.com/analogdevicesinc/hdl). For general issues, Analog Devices wiki pages would be helpful!***
 

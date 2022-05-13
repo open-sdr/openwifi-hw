@@ -1,6 +1,8 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
+`include "rx_intf_pre_def.v"
+
 `timescale 1 ns / 1 ps
 
 	module rx_intf #

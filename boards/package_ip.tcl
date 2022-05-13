@@ -1,3 +1,7 @@
+# // Author: Xianjun Jiao
+# // SPDX-FileCopyrightText: 2022 UGent
+# // SPDX-License-Identifier: AGPL-3.0-or-later
+
 set part_string [lindex $argv 0]
 set src_dir [lindex $argv 1]
 set ip_dir [lindex $argv 2]

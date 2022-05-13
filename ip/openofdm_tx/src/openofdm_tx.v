@@ -5,6 +5,8 @@
  * Michael Tetemke Mehari mehari.michael@gmail.com
  */
 
+`include "openofdm_tx_pre_def.v"
+
 module openofdm_tx #
 (
     parameter integer C_S00_AXI_DATA_WIDTH = 32,

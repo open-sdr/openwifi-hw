@@ -2,7 +2,9 @@
  * Legacy long_preamble_rom - TODO
  *
  * Michael Tetemke Mehari michael.mehari@ugent.be
+ * Xianjun Jiao xianjun.jiao@imec.be putaoshu@msn.com
  */
+`include "openofdm_tx_pre_def.v"
 
 module l_ltf_rom
 (

@@ -1,5 +1,6 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 `include "clock_speed.v"
+`include "tx_intf_pre_def.v"
 
 `timescale 1 ns / 1 ps
 

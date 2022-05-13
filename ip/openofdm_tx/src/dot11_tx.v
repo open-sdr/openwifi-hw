@@ -2,7 +2,10 @@
  * dot11_tx - TODO
  *
  * Michael Tetemke Mehari mehari.michael@gmail.com
+ * Xianjun Jiao xianjun.jiao@ugent.be
  */
+
+`include "openofdm_tx_pre_def.v"
 
 module dot11_tx
 (

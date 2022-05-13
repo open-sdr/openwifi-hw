@@ -62,55 +62,74 @@ close $fd
 
 # ------------------end of setup ip_repo directory and board files--------------
 
+# -------------------get BOARD_NAME (for openofdm_rx) via the current dir-------
+set BOARD_NAME [lindex [split [exec pwd] /] end]
+puts $BOARD_NAME
+# ------------end of get BOARD_NAME (for openofdm_rx) via the current dir-------
+
 # --------------------------------generate ip repo------------------------------
 set ultra_scale_flag 0
 set part_string xc7z020clg484-1
-set argc 3
+set argc 4
 
 set ip_name openofdm_rx
+if {[file exists ./ip_config/$ip_name\_pre_def.v]==0} {file mkdir ip_config; exec echo "" > ./ip_config/$ip_name\_pre_def.v}
 exec rm -rf project_1
 set current_dir [pwd]
-set argv [list $ultra_scale_flag $current_dir/../../ip/$ip_name $current_dir/ip_repo/$ip_name]
+set argv [list $ultra_scale_flag $current_dir/../../ip/$ip_name $current_dir/ip_repo/$ip_name $BOARD_NAME]
 source ../package_ip_openofdm_rx.tcl
+exec cat ./ip_config/$ip_name\_pre_def.v >> ./ip_repo/$ip_name/src/$ip_name\_pre_def.v
 exec rm -rf ./ip_repo/$ip_name/xgui
 
 set ip_name openofdm_tx
+if {[file exists ./ip_config/$ip_name\_pre_def.v]==0} {file mkdir ip_config; exec echo "" > ./ip_config/$ip_name\_pre_def.v}
 exec rm -rf project_1
-set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name]
+exec cp ./ip_config/$ip_name\_pre_def.v ../../ip/$ip_name/src/ -f
+set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name $BOARD_NAME]
 source ../package_ip.tcl
 exec rm -rf ./ip_repo/$ip_name/xgui
 
 set ip_name rx_intf
+if {[file exists ./ip_config/$ip_name\_pre_def.v]==0} {file mkdir ip_config; exec echo "" > ./ip_config/$ip_name\_pre_def.v}
 exec rm -rf project_1
 exec cp ./ip_repo/board_def.v ../../ip/$ip_name/src/ -f
 exec cp ./ip_repo/clock_speed.v ../../ip/$ip_name/src/ -f
-set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name]
+exec cp ./ip_config/$ip_name\_pre_def.v ../../ip/$ip_name/src/ -f
+set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name $BOARD_NAME]
 source ../package_ip.tcl
 exec rm -rf ./ip_repo/$ip_name/xgui
 
 set ip_name tx_intf
+if {[file exists ./ip_config/$ip_name\_pre_def.v]==0} {file mkdir ip_config; exec echo "" > ./ip_config/$ip_name\_pre_def.v}
 exec rm -rf project_1
 exec cp ./ip_repo/board_def.v ../../ip/$ip_name/src/ -f
 exec cp ./ip_repo/clock_speed.v ../../ip/$ip_name/src/ -f
-set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name]
+exec cp ./ip_config/$ip_name\_pre_def.v ../../ip/$ip_name/src/ -f
+set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name $BOARD_NAME]
 source ../package_ip.tcl
 exec rm -rf ./ip_repo/$ip_name/xgui
 
 set ip_name xpu
+if {[file exists ./ip_config/$ip_name\_pre_def.v]==0} {file mkdir ip_config; exec echo "" > ./ip_config/$ip_name\_pre_def.v}
 exec rm -rf project_1
 exec cp ./ip_repo/openwifi_hw_git_rev.v ../../ip/$ip_name/src/ -f
 exec cp ./ip_repo/board_def.v ../../ip/$ip_name/src/ -f
 exec cp ./ip_repo/clock_speed.v ../../ip/$ip_name/src/ -f
 exec cp ./ip_repo/spi_command.v ../../ip/$ip_name/src/ -f
-set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name]
+exec cp ./ip_config/$ip_name\_pre_def.v ../../ip/$ip_name/src/ -f
+set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name $BOARD_NAME]
 source ../package_ip.tcl
 exec rm -rf ./ip_repo/$ip_name/xgui
 
 set ip_name side_ch
+if {[file exists ./ip_config/$ip_name\_pre_def.v]==0} {file mkdir ip_config; exec echo "" > ./ip_config/$ip_name\_pre_def.v}
 exec rm -rf project_1
 exec cp ./ip_repo/fpga_scale.v ../../ip/$ip_name/src/ -f
 exec cp ./ip_repo/has_side_ch_flag.v ../../ip/$ip_name/src/ -f
-set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name]
+exec cp ./ip_config/$ip_name\_pre_def.v ../../ip/$ip_name/src/ -f
+set argv [list $part_string ../../ip/$ip_name/src/ ./ip_repo/$ip_name $BOARD_NAME]
 source ../package_ip.tcl
 exec rm -rf ./ip_repo/$ip_name/xgui
 # ---------------------------------end of generate ip repo-----------------------
+
+# exit

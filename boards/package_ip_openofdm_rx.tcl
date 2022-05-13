@@ -1,19 +1,21 @@
+# // Author: Xianjun Jiao
+# // SPDX-FileCopyrightText: 2022 UGent
+# // SPDX-License-Identifier: AGPL-3.0-or-later
+
 set ultra_scale_flag [lindex $argv 0]
 set src_dir [lindex $argv 1]
 set ip_dir [lindex $argv 2]
+set BOARD_NAME [lindex $argv 3]
 
 exec rm -rf project_1
 exec rm -rf $ip_dir
 
 set current_dir [pwd]
 cd $src_dir/
-if {$ultra_scale_flag > 0} {
-    exec rm -rf openofdm_rx_ultra_scale
-    source ./openofdm_rx_ultra_scale.tcl
-} else {
-    exec rm -rf openofdm_rx
-    source ./openofdm_rx.tcl
-}
+
+set argc 1
+set argv [list $BOARD_NAME]
+source ./openofdm_rx.tcl
 
 update_compile_order -fileset sources_1
 update_compile_order -fileset sources_1
