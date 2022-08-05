@@ -6,7 +6,7 @@ set -x
 cd ip/
 #git submodule init openofdm_rx
 #git submodule update openofdm_rx
-gti clone https://github.com/HexSDR/openofdm_rxs
+gti clone https://github.com/HexSDR/openofdm_rx
 cd openofdm_rx
 git checkout dot11zynq
 git pull origin dot11zynq
