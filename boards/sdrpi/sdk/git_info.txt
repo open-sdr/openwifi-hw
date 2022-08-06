@@ -1,0 +1,48 @@
+openwifi-hw-git-branch
+  master
+* sdrpi
+ 
+openwifi-hw-git-commit
+commit d97956dbbdff9302928341f1165c829804c7334e
+Author: HexSDR <96402566+HexSDR@users.noreply.github.com>
+Date:   Sat Aug 6 01:24:20 2022 +0800
+
+    Update get_ip_openofdm_rx.sh
+
+commit 2bc3ac1d03e0dfa1a814f5f57c686387ff22d902
+Author: HexSDR <96402566+HexSDR@users.noreply.github.com>
+Date:   Sat Aug 6 00:54:57 2022 +0800
+
+    Update get_ip_openofdm_rx.sh
+
+commit cda52487c5571403dadf95269a28b77eb053e7b2
+Author: HexSDR <715713994@qq.com>
+Date:   Sat Aug 6 00:46:51 2022 +0800
+
+    add sdrpi
+ 
+openofdm_rx-git-branch
+* dot11zynq
+  master
+ 
+openofdm_rx-git-commit
+commit 23646decd66f464f778bf76d19b2e0c706860b5e
+Author: HexSDR <96402566+HexSDR@users.noreply.github.com>
+Date:   Fri Aug 5 23:49:49 2022 +0800
+
+    Update parse_board_name.tcl
+
+commit 99bc2201ce865e63e99e2c89d1617d042b53d3b6
+Author: HexSDR <96402566+HexSDR@users.noreply.github.com>
+Date:   Fri Aug 5 23:49:05 2022 +0800
+
+    Update create_vivado_proj.sh
+    
+    add sdrpi
+
+commit 707cb99a909386167e2d6a91c1d0d8b599954b1e
+Author: Xianjun Jiao <xianjun.jiao@ugent.be>
+Date:   Fri Jul 15 12:10:03 2022 +0200
+
+    Remove the huge logging thing in dot11_tb.v
+ 
