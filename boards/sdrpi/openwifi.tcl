@@ -47,7 +47,7 @@ if { [info exists ::origin_dir_loc] } {
 # Set the project name
 set _xil_proj_name_ "openwifi_sdrpi"
 exec rm -rf $_xil_proj_name_
-#exec git clean -dxf ./src/
+exec git clean -dxf ./src/
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
