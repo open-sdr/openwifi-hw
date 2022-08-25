@@ -99,7 +99,7 @@ By default, 100MHz baseband clock is used. You can change the baseband clock by 
 * Normally you should see the top level testbench (..._tb.v) of that ip core in the Vivado "Sources" window (take openofdm_rx as example):
 
         Go to the openofdm_rx IP directory, then run:
-        ./create_vivado_proj.sh ~/Xilinx/ openofdm_rx.tcl 
+        ./create_vivado_proj.sh $XILINX_DIR openofdm_rx.tcl 
         Then in Vivado
         Sources --> Simulation Sources --> sim_1 --> dot11_tb
 * To run the simulation, click "Run Simulation" --> "Run Behavoiral Simulation" under the "SIMULATION" in the "PROJECT MANAGER" window. It will take quite long time for the 1st time run due to the sub-ip-core compiling. Fortunately the sub-ip-core compiling is a time consuming step that occurs only one time.
