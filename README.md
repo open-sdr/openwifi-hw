@@ -25,7 +25,7 @@ Environment variable **BOARD_NAME** options:
 - **adrv9361z7035** ([ADRV9361-Z7035 + ADRV1CRR-BOB/FMC](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/ADRV9361-Z7035.html))
 - **zc702_fmcs2** ([Xilinx ZC702 board](https://www.xilinx.com/products/boards-and-kits/ek-z7-zc702-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html)) -- Vivado license **NOT** needed
 - **antsdr** ([MicroPhase](https://github.com/MicroPhase/) enhanced ADALM-PLUTO SDR. [Notes](boards/antsdr/notes.md)) -- Vivado license **NOT** needed
-- **antsdr** ([HexSDR](https://github.com/hexsdr/) Smart SDR with 7z020+AD961+GPSTCXO+AP .-- Vivado license **NOT** needed
+- **sdrpi** ([HexSDR](https://github.com/hexsdr/) Smart SDR with 7z020+AD961+GPSTCXO+AP .-- Vivado license **NOT** needed
 - **zcu102_fmcs2** ([Xilinx ZCU102 board](https://www.xilinx.com/products/boards-and-kits/ek-u1-zcu102-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html))
 
 ## Build FPGA
