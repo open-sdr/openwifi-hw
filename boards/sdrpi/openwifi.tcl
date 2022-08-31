@@ -45,7 +45,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 # Set the project name
-set _xil_proj_name_ "openwifi_antsdr"
+set _xil_proj_name_ "openwifi_sdrpi"
 exec rm -rf $_xil_proj_name_
 exec git clean -dxf ./src/
 
@@ -280,9 +280,9 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
-set file "[file normalize "${origin_dir}/src/antsdr_constr.xdc"]"
+set file "[file normalize "${origin_dir}/src/sdrpi_constr.xdc"]"
 set file_added [add_files -norecurse -fileset $obj [list $file]]
-set file "${origin_dir}/src/antsdr_constr.xdc"
+set file "${origin_dir}/src/sdrpi_constr.xdc"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
 set_property -name "file_type" -value "XDC" -objects $file_obj
@@ -298,9 +298,9 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 # Add/Import constrs file and set constrs file properties
-set file "[file normalize "${origin_dir}/src/antsdr_constr_lvds.xdc"]"
+set file "[file normalize "${origin_dir}/src/sdrpi_constr_lvds.xdc"]"
 set file_added [add_files -norecurse -fileset $obj [list $file]]
-set file "${origin_dir}/src/antsdr_constr_lvds.xdc"
+set file "${origin_dir}/src/sdrpi_constr_lvds.xdc"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
 set_property -name "file_type" -value "XDC" -objects $file_obj
