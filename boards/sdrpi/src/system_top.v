@@ -65,7 +65,7 @@ module system_top (
   inout           iic_scl,
   inout           iic_sda,
 
-  inout   [10:0]  gpio_bd,
+  inout   [25:0]  gpio_bd,
 
   input           rx_clk_in_p,
   input           rx_clk_in_n,
@@ -81,11 +81,7 @@ module system_top (
   output  [ 5:0]  tx_data_out_n,
 
   output          enable,
-  output          txnrx,
-  input           clkout_in,
-  output          clkout_out,
-
-  inout           gpio_clksel,
+  output          txnrx, 
   inout           gpio_resetb,
   inout           gpio_sync,
   inout           gpio_en_agc,
@@ -95,19 +91,15 @@ module system_top (
   output          spi_csn,
   output          spi_clk,
   output          spi_mosi,
-  input           spi_miso,
+  input           spi_miso, 
+   
+  output tx1_en,tx2_en ,sel_clk_src
   
-  output          rx1_band_sel_h,
-  output          rx1_band_sel_l,
-  output          tx1_band_sel_h,
-  output          tx1_band_sel_l,
-  output          rx2_band_sel_h,
-  output          rx2_band_sel_l,
-  output          tx2_band_sel_h,
-  output          tx2_band_sel_l
-
   );
-
+  
+  assign {tx1_en,tx2_en  }=2'b00;
+  assign sel_clk_src = 1'b1 ; 
+   
 
 	// internal signals
 
@@ -129,40 +121,32 @@ module system_top (
 	wire            tx2_band_sel_h;
 
 	// assignments
-	assign clkout_out = clkout_in;
 	assign gp_out[27:0] = gp_out_s[27:0];
 	assign gp_in_s[31:28] = gp_out_s[31:28];
 	assign gp_in_s[27: 0] = gp_in[27:0];
 
-	// the RF switch is fixed at the higher frequency range,
-	// which means the RF switch pass only frequency at 3G~6G,
-	// this could be improved by add RF swicth control in the 
-	// devicetree, so that, the RF switch can chage with the 
-	// lo frequency;
-    assign rx1_band_sel_h = 1'b1;
-    assign rx1_band_sel_l = 1'b0;
-    assign tx1_band_sel_h = 1'b1;
-    assign tx1_band_sel_l = 1'b0;
-    assign rx2_band_sel_h = 1'b1;
-    assign rx2_band_sel_l = 1'b0;
-    assign tx2_band_sel_h = 1'b1;
-    assign tx2_band_sel_l = 1'b0;
 
   // board gpio - 31-0
-
-  assign gpio_i[31:11] = gpio_o[31:11];
-
   ad_iobuf #(.DATA_WIDTH(11)) i_iobuf_bd (
-    .dio_t (gpio_t[10:0]),
-    .dio_i (gpio_o[10:0]),
-    .dio_o (gpio_i[10:0]),
-    .dio_p (gpio_bd));
+    .dio_t (gpio_t[25:0]),
+    .dio_i (gpio_o[25:0]),
+    .dio_o (gpio_i[25:0]),
+    .dio_p (gpio_bd)
+    ); 
+      
+   // gpio_bd[0]  -> P1.gpio1
+   // gpio_bd[1]  -> P1.gpio2
+   // gpio_bd[2]  -> P1.gpio3
+   // ......
+   // gpio_bd[24] -> P1.gpio25
+   // gpio_bd[25] -> P1.gpio26
+    
+   // ad9361 gpio - 63-32
 
-  // ad9361 gpio - 63-32
-
+  assign gpio_i[31:26] = gpio_o[31:26];
   assign gpio_i[63:52] = gpio_o[63:52];
   assign gpio_i[50:47] = gpio_o[50:47];
-
+  wire gpio_clksel;
   ad_iobuf #(.DATA_WIDTH(16)) i_iobuf (
     .dio_t ({gpio_t[51], gpio_t[46:32]}),
     .dio_i ({gpio_o[51], gpio_o[46:32]}),
