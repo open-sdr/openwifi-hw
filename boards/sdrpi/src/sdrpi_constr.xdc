@@ -1,32 +1,94 @@
 
-# constraints (pzsdr1.b)
-# ad9361
+set_property -dict {PACKAGE_PIN T11 IOSTANDARD LVCMOS25} [get_ports {gpio_status[0]}]
+set_property -dict {PACKAGE_PIN T14 IOSTANDARD LVCMOS25} [get_ports {gpio_status[1]}]
+set_property -dict {PACKAGE_PIN T15 IOSTANDARD LVCMOS25} [get_ports {gpio_status[2]}]
+set_property -dict {PACKAGE_PIN T17 IOSTANDARD LVCMOS25} [get_ports {gpio_status[3]}]
+set_property -dict {PACKAGE_PIN T19 IOSTANDARD LVCMOS25} [get_ports {gpio_status[4]}]
+set_property -dict {PACKAGE_PIN T20 IOSTANDARD LVCMOS25} [get_ports {gpio_status[5]}]
+set_property -dict {PACKAGE_PIN U13 IOSTANDARD LVCMOS25} [get_ports {gpio_status[6]}]
+set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS25} [get_ports {gpio_status[7]}]
 
-set_property  -dict {PACKAGE_PIN  T11  IOSTANDARD LVCMOS25} [get_ports gpio_status[0]]                   ; ## G21  FMC_LPC_LA20_P
-set_property  -dict {PACKAGE_PIN  T14  IOSTANDARD LVCMOS25} [get_ports gpio_status[1]]                   ; ## G22  FMC_LPC_LA20_N
-set_property  -dict {PACKAGE_PIN  T15  IOSTANDARD LVCMOS25} [get_ports gpio_status[2]]                   ; ## H25  FMC_LPC_LA21_P
-set_property  -dict {PACKAGE_PIN  T17  IOSTANDARD LVCMOS25} [get_ports gpio_status[3]]                   ; ## H26  FMC_LPC_LA21_N
-set_property  -dict {PACKAGE_PIN  T19  IOSTANDARD LVCMOS25} [get_ports gpio_status[4]]                   ; ## G24  FMC_LPC_LA22_P
-set_property  -dict {PACKAGE_PIN  T20  IOSTANDARD LVCMOS25} [get_ports gpio_status[5]]                   ; ## G25  FMC_LPC_LA22_N
-set_property  -dict {PACKAGE_PIN  U13  IOSTANDARD LVCMOS25} [get_ports gpio_status[6]]                   ; ## D23  FMC_LPC_LA23_P
-set_property  -dict {PACKAGE_PIN  V13  IOSTANDARD LVCMOS25} [get_ports gpio_status[7]]                   ; ## D24  FMC_LPC_LA23_N
-set_property  -dict {PACKAGE_PIN  T10  IOSTANDARD LVCMOS25} [get_ports gpio_ctl[0]]                      ; ## H28  FMC_LPC_LA24_P
-set_property  -dict {PACKAGE_PIN  Y12  IOSTANDARD LVCMOS33} [get_ports gpio_ctl[1]]                      ; ## H29  FMC_LPC_LA24_N
-set_property  -dict {PACKAGE_PIN  Y13  IOSTANDARD LVCMOS33} [get_ports gpio_ctl[2]]                      ; ## G27  FMC_LPC_LA25_P
-set_property  -dict {PACKAGE_PIN  V11  IOSTANDARD LVCMOS33} [get_ports gpio_ctl[3]]                      ; ## G28  FMC_LPC_LA25_N
-set_property  -dict {PACKAGE_PIN  P16  IOSTANDARD LVCMOS25} [get_ports gpio_en_agc]                      ; ## H22  FMC_LPC_LA19_P
-set_property  -dict {PACKAGE_PIN  U20  IOSTANDARD LVCMOS25} [get_ports gpio_sync]                        ; ## H23  FMC_LPC_LA19_N
-set_property  -dict {PACKAGE_PIN  N17  IOSTANDARD LVCMOS25} [get_ports gpio_resetb]                      ; ## H31  FMC_LPC_LA28_P
-set_property  -dict {PACKAGE_PIN  R18  IOSTANDARD LVCMOS25} [get_ports enable]                           ; ## G18  FMC_LPC_LA16_P
-set_property  -dict {PACKAGE_PIN  P14  IOSTANDARD LVCMOS25} [get_ports txnrx]                            ; ## G19  FMC_LPC_LA16_N
+set_property -dict {PACKAGE_PIN T10 IOSTANDARD LVCMOS25} [get_ports {gpio_ctl[0]}]
+set_property -dict {PACKAGE_PIN J14 IOSTANDARD LVCMOS25} [get_ports {gpio_ctl[1]}]
+set_property -dict {PACKAGE_PIN N15 IOSTANDARD LVCMOS25} [get_ports {gpio_ctl[2]}]
+set_property -dict {PACKAGE_PIN N16 IOSTANDARD LVCMOS25} [get_ports {gpio_ctl[3]}]
 
-set_property  -dict {PACKAGE_PIN  P18  IOSTANDARD LVCMOS25  PULLTYPE PULLUP} [get_ports spi_csn]         ; ## D26  FMC_LPC_LA26_P
-set_property  -dict {PACKAGE_PIN  R14  IOSTANDARD LVCMOS25} [get_ports spi_clk]                          ; ## D27  FMC_LPC_LA26_N
-set_property  -dict {PACKAGE_PIN  P15  IOSTANDARD LVCMOS25} [get_ports spi_mosi]                         ; ## C26  FMC_LPC_LA27_P
-set_property  -dict {PACKAGE_PIN  R19  IOSTANDARD LVCMOS25} [get_ports spi_miso]                         ; ## C27  FMC_LPC_LA27_N
 
-# iic
-set_property  -dict {PACKAGE_PIN  G18   IOSTANDARD LVCMOS33} [get_ports gpio_clksel] 
-set_property  -dict {PACKAGE_PIN  G15   IOSTANDARD LVCMOS33} [get_ports clkout_in]           
-set_property  -dict {PACKAGE_PIN  H18   IOSTANDARD LVCMOS33 PULLTYPE PULLUP} [get_ports iic_scl]          
-set_property  -dict {PACKAGE_PIN  G17   IOSTANDARD LVCMOS33 PULLTYPE PULLUP} [get_ports iic_sda]          
+
+set_property -dict {PACKAGE_PIN P16 IOSTANDARD LVCMOS25} [get_ports gpio_en_agc]
+set_property -dict {PACKAGE_PIN U20 IOSTANDARD LVCMOS25} [get_ports gpio_sync]
+set_property -dict {PACKAGE_PIN N17 IOSTANDARD LVCMOS25} [get_ports gpio_resetb]
+set_property -dict {PACKAGE_PIN R18 IOSTANDARD LVCMOS25} [get_ports enable]
+set_property -dict {PACKAGE_PIN P14 IOSTANDARD LVCMOS25} [get_ports txnrx]
+
+
+
+
+
+set_property PACKAGE_PIN P18 [get_ports spi_csn]
+set_property IOSTANDARD LVCMOS25 [get_ports spi_csn]
+set_property PULLUP true [get_ports spi_csn]
+set_property -dict {PACKAGE_PIN R14 IOSTANDARD LVCMOS25} [get_ports spi_clk]
+set_property -dict {PACKAGE_PIN P15 IOSTANDARD LVCMOS25} [get_ports spi_mosi]
+set_property -dict {PACKAGE_PIN R19 IOSTANDARD LVCMOS25} [get_ports spi_miso]
+
+set_property -dict {PACKAGE_PIN B20 IOSTANDARD LVCMOS25} [get_ports tx1_en]
+set_property -dict {PACKAGE_PIN C20 IOSTANDARD LVCMOS25} [get_ports tx2_en]
+set_property -dict {PACKAGE_PIN E19 IOSTANDARD LVCMOS25} [get_ports sel_clk_src]
+
+# iic      
+set_property  -dict {PACKAGE_PIN  M14   IOSTANDARD LVCMOS25 PULLTYPE PULLUP} [get_ports iic_scl]          
+set_property  -dict {PACKAGE_PIN  M15   IOSTANDARD LVCMOS25 PULLTYPE PULLUP} [get_ports iic_sda]        
+
+
+
+
+#####################################################################################################
+
+
+#set_property -dict {PACKAGE_PIN E17 IOSTANDARD LVCMOS25} [get_ports pps_in]
+#set_property -dict {PACKAGE_PIN H16 IOSTANDARD LVCMOS25} [get_ports clk_40m]
+#create_clock -period 25.000 -name clk_40m [get_ports clk_40m]
+
+
+#set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS25} [get_ports dac_nsyc]
+#set_property -dict {PACKAGE_PIN K16 IOSTANDARD LVCMOS25} [get_ports dac_din]
+#set_property -dict {PACKAGE_PIN J16 IOSTANDARD LVCMOS25} [get_ports dac_clk]
+#set_property -dict {PACKAGE_PIN K18 IOSTANDARD LVCMOS25} [get_ports gps_pl_led]
+#set_property -dict {PACKAGE_PIN E19 IOSTANDARD LVCMOS25} [get_ports sel_clk_src]
+
+
+
+
+#set_property -dict {PACKAGE_PIN D20 IOSTANDARD LVCMOS25} [get_ports phy_tx_en]
+#set_property -dict {PACKAGE_PIN E18 IOSTANDARD LVCMOS25} [get_ports phy_tx_err]
+#set_property -dict {PACKAGE_PIN F17 IOSTANDARD LVCMOS25} [get_ports phy_reset_n]
+#set_property -dict {PACKAGE_PIN M19 IOSTANDARD LVCMOS25} [get_ports {phy_tx_dout[0]}]
+#set_property -dict {PACKAGE_PIN M20 IOSTANDARD LVCMOS25} [get_ports {phy_tx_dout[1]}]
+#set_property -dict {PACKAGE_PIN M17 IOSTANDARD LVCMOS25} [get_ports {phy_tx_dout[2]}]
+#set_property -dict {PACKAGE_PIN M18 IOSTANDARD LVCMOS25} [get_ports {phy_tx_dout[3]}]
+#set_property -dict {PACKAGE_PIN L19 IOSTANDARD LVCMOS25} [get_ports {phy_tx_dout[4]}]
+#set_property -dict {PACKAGE_PIN L20 IOSTANDARD LVCMOS25} [get_ports {phy_tx_dout[5]}]
+#set_property -dict {PACKAGE_PIN K19 IOSTANDARD LVCMOS25} [get_ports {phy_tx_dout[6]}]
+#set_property -dict {PACKAGE_PIN J19 IOSTANDARD LVCMOS25} [get_ports {phy_tx_dout[7]}]
+#set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS25} [get_ports phy_tx_clk]
+
+#set_property -dict {PACKAGE_PIN L17 IOSTANDARD LVCMOS25} [get_ports phy_rx_err]
+#set_property -dict {PACKAGE_PIN K17 IOSTANDARD LVCMOS25} [get_ports phy_rx_clk]
+
+
+#create_clock -period 8.000 -name phy_rx_clk [get_ports phy_rx_clk]
+
+#set_property -dict {PACKAGE_PIN H17 IOSTANDARD LVCMOS25} [get_ports {phy_rx_din[0]}]
+#set_property -dict {PACKAGE_PIN G15 IOSTANDARD LVCMOS25} [get_ports {phy_rx_din[1]}]
+#set_property -dict {PACKAGE_PIN H18 IOSTANDARD LVCMOS25} [get_ports {phy_rx_din[2]}]
+#set_property -dict {PACKAGE_PIN F19 IOSTANDARD LVCMOS25} [get_ports {phy_rx_din[3]}]
+#set_property -dict {PACKAGE_PIN F20 IOSTANDARD LVCMOS25} [get_ports {phy_rx_din[4]}]
+#set_property -dict {PACKAGE_PIN G17 IOSTANDARD LVCMOS25} [get_ports {phy_rx_din[5]}]
+#set_property -dict {PACKAGE_PIN G18 IOSTANDARD LVCMOS25} [get_ports {phy_rx_din[6]}]
+#set_property -dict {PACKAGE_PIN J20 IOSTANDARD LVCMOS25} [get_ports {phy_rx_din[7]}]
+
+
+#set_property -dict {PACKAGE_PIN H20 IOSTANDARD LVCMOS25} [get_ports phy_rx_dv]
+#set_property -dict {PACKAGE_PIN H15 IOSTANDARD LVCMOS25} [get_ports phy_gtx_clk]
+ 
