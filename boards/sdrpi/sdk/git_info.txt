@@ -3,23 +3,23 @@ openwifi-hw-git-branch
 * sdrpi
  
 openwifi-hw-git-commit
+commit cdc7ea4aa4959d7b89455aea80920ff5b3960196
+Author: HexSDR <715713994@qq.com>
+Date:   Tue Sep 6 10:27:38 2022 +0800
+
+    change console uart as MIO48..49
+
+commit 4b9de23623306103b8d6953b6e57e9f766f075b5
+Author: HexSDR <715713994@qq.com>
+Date:   Fri Sep 2 11:42:16 2022 +0800
+
+    add fpga image of  sdrpi
+
 commit 1d9a2d6f33c8d823666d199a2d17ca6c7d598481
 Author: Wei.Li <96402566+HexSDR@users.noreply.github.com>
 Date:   Thu Sep 1 02:14:59 2022 +0800
 
     Update system_top.v
-
-commit acdd1f2a0268fe487fe8bcbc25881d15e75f2ab8
-Author: Wei.Li <96402566+HexSDR@users.noreply.github.com>
-Date:   Thu Sep 1 02:14:15 2022 +0800
-
-    Update sdrpi_constr_lvds.xdc
-
-commit 01c8a8acbf6f33a48e011fba8d1b9911f06c133e
-Author: Wei.Li <96402566+HexSDR@users.noreply.github.com>
-Date:   Thu Sep 1 02:13:47 2022 +0800
-
-    Update sdrpi_constr.xdc
  
 openofdm_rx-git-branch
 * dot11zynq
