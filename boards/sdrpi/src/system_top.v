@@ -97,7 +97,7 @@ module system_top (
   
   );
   
-  assign {tx1_en,tx2_en  }=2'b00;
+  assign {tx1_en,tx2_en  }=2'b11;
   assign sel_clk_src = 1'b1 ; 
    
 
