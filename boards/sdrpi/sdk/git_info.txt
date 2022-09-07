@@ -1,0 +1,55 @@
+openwifi-hw-git-branch
+  csiobfuscation
+  master
+  pre-release
+* sdrpi
+ 
+openwifi-hw-git-commit
+commit 5c43471bbf339e6a42a706366f61192bb603725a
+Author: Wei.Li <96402566+HexSDR@users.noreply.github.com>
+Date:   Fri Sep 2 22:37:09 2022 +0800
+
+    Sdrpi (#65)
+    
+    Add sdrpi support.
+
+commit 04f805019b82403f57405aeea6ed96ba142a17fa
+Merge: 73c2e18 dc6fc84
+Author: Jiao Xianjun <xianjun.jiao@ugent.be>
+Date:   Tue Aug 2 10:58:14 2022 +0200
+
+    Merge pull request #61 from open-sdr/master
+    
+    Update gpio_led.md
+
+commit dc6fc84bd8b1816460b143f70c435cf2b9ca4fda
+Author: Jiao Xianjun <xianjun.jiao@ugent.be>
+Date:   Tue May 31 12:36:03 2022 +0200
+
+    Update gpio_led.md
+ 
+openofdm_rx-git-branch
+* dot11zynq
+  master
+ 
+openofdm_rx-git-commit
+commit 76986e99d316d5973b2c57afce4506ab891f9cac
+Author: HexSDR <96402566+HexSDR@users.noreply.github.com>
+Date:   Fri Aug 5 23:49:49 2022 +0800
+
+    Update parse_board_name.tcl
+
+commit 8a74580ad1b4dada27a290f8ab7c8df0dabd7f66
+Author: HexSDR <96402566+HexSDR@users.noreply.github.com>
+Date:   Fri Aug 5 23:49:05 2022 +0800
+
+    Update create_vivado_proj.sh
+    
+    add sdrpi
+
+commit 707cb99a909386167e2d6a91c1d0d8b599954b1e
+Author: Xianjun Jiao <xianjun.jiao@ugent.be>
+Date:   Fri Jul 15 12:10:03 2022 +0200
+
+    Remove the huge logging thing in dot11_tb.v
+ 
