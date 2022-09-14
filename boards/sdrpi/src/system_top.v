@@ -93,7 +93,23 @@ module system_top (
   output          spi_mosi,
   input           spi_miso, 
    
-  output tx1_en,tx2_en ,sel_clk_src
+  output tx1_en,tx2_en ,sel_clk_src,
+  
+  
+//mdio interface
+output mdio1_mdc,
+inout mdio1_io,
+//phy interface
+output   [7:0] phy_tx_dout ,
+output phy_tx_err,
+input phy_tx_clk,
+output   phy_tx_en,  
+
+output  phy_gtx_clk ,
+output  phy_reset_n,
+input [7:0] phy_rx_din,
+input phy_rx_dv ,phy_rx_clk,phy_rx_err
+
   
   );
   
@@ -158,9 +174,56 @@ module system_top (
               gpio_ctl,           // 43:40
               gpio_status_dummy}));     // 39:32
 
+
+
+  wire GMII_ETHERNET_1_0_col = 1'b0 ;
+  wire GMII_ETHERNET_1_0_crs =  1'b1 ;
+  wire GMII_ETHERNET_1_0_rx_dv=phy_rx_dv;
+  wire GMII_ETHERNET_1_0_rx_er=phy_rx_err;
+  wire [7:0]GMII_ETHERNET_1_0_rxd = phy_rx_din ;
+  wire [0:0]GMII_ETHERNET_1_0_tx_en;
+  wire [0:0]GMII_ETHERNET_1_0_tx_er;
+  wire [7:0]GMII_ETHERNET_1_0_txd;
+  wire MDIO_ETHERNET_1_0_mdc;
+  wire MDIO_ETHERNET_1_0_mdio_i = mdio1_io ;
+  wire MDIO_ETHERNET_1_0_mdio_io;
+  wire MDIO_ETHERNET_1_0_mdio_o;
+  wire MDIO_ETHERNET_1_0_mdio_t;
+  
+  
+  
+  wire CLK125M_OUT ;
+  reg [24:0]c ;  always @ (posedge CLK125M_OUT) if (c[24]==0) c<=c+1; 
+    
+//mdio interface
+assign  mdio1_mdc = MDIO_ETHERNET_1_0_mdc ;
+assign mdio1_io=(MDIO_ETHERNET_1_0_mdio_t)?1'bz:MDIO_ETHERNET_1_0_mdio_o;
+ 
+//phy interface
+assign    phy_tx_dout  = GMII_ETHERNET_1_0_txd ;
+assign  phy_tx_err = GMII_ETHERNET_1_0_tx_er ; 
+///assign  phy_tx_clk, // of no use for now 
+assign    phy_tx_en = GMII_ETHERNET_1_0_tx_en ;
+assign  phy_gtx_clk =    phy_tx_clk   ;///CLK125M_OUT  ;
+assign  phy_reset_n = c[24] ;
+
   // instantiations
 
   system_wrapper i_system_wrapper (
+  .CLK125M_OUT(CLK125M_OUT),
+  .GMII_ETHERNET_1_0_CLKIN(phy_tx_clk ),
+  .GMII_ETHERNET_1_0_col(GMII_ETHERNET_1_0_col),
+        .GMII_ETHERNET_1_0_crs(GMII_ETHERNET_1_0_crs),
+        .GMII_ETHERNET_1_0_rx_dv(GMII_ETHERNET_1_0_rx_dv),
+        .GMII_ETHERNET_1_0_rx_er(GMII_ETHERNET_1_0_rx_er),
+        .GMII_ETHERNET_1_0_rxd(GMII_ETHERNET_1_0_rxd),
+        .GMII_ETHERNET_1_0_tx_en(GMII_ETHERNET_1_0_tx_en),
+        .GMII_ETHERNET_1_0_tx_er(GMII_ETHERNET_1_0_tx_er),
+        .GMII_ETHERNET_1_0_txd(GMII_ETHERNET_1_0_txd),
+        .MDIO_ETHERNET_1_0_mdc(MDIO_ETHERNET_1_0_mdc),
+        .MDIO_ETHERNET_1_0_mdio_i(MDIO_ETHERNET_1_0_mdio_i),
+        .MDIO_ETHERNET_1_0_mdio_o(MDIO_ETHERNET_1_0_mdio_o),
+        .MDIO_ETHERNET_1_0_mdio_t(MDIO_ETHERNET_1_0_mdio_t),
     .ddr_addr (ddr_addr),
     .ddr_ba (ddr_ba),
     .ddr_cas_n (ddr_cas_n),

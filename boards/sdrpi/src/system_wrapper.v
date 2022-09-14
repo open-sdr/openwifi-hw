@@ -12,7 +12,10 @@
 `timescale 1 ps / 1 ps
 
 module system_wrapper
-   (ddr_addr,
+   (
+ 
+   CLK125M_OUT,
+   ddr_addr,
     ddr_ba,
     ddr_cas_n,
     ddr_ck_n,
@@ -79,7 +82,39 @@ module system_wrapper
     tx_frame_out_p,
     txnrx,
     up_enable,
-    up_txnrx);
+    up_txnrx,
+    GMII_ETHERNET_1_0_CLKIN,
+    GMII_ETHERNET_1_0_col,
+    GMII_ETHERNET_1_0_crs,
+    GMII_ETHERNET_1_0_rx_dv,
+    GMII_ETHERNET_1_0_rx_er,
+    GMII_ETHERNET_1_0_rxd,
+    GMII_ETHERNET_1_0_tx_en,
+    GMII_ETHERNET_1_0_tx_er,
+    GMII_ETHERNET_1_0_txd,
+    MDIO_ETHERNET_1_0_mdc,
+       MDIO_ETHERNET_1_0_mdio_i,
+       MDIO_ETHERNET_1_0_mdio_o,
+       MDIO_ETHERNET_1_0_mdio_t
+    );
+    output CLK125M_OUT ;
+   input GMII_ETHERNET_1_0_CLKIN ;
+      input GMII_ETHERNET_1_0_col;
+  input GMII_ETHERNET_1_0_crs;
+  input GMII_ETHERNET_1_0_rx_dv;
+  input GMII_ETHERNET_1_0_rx_er;
+  input [7:0]GMII_ETHERNET_1_0_rxd;
+  output [0:0]GMII_ETHERNET_1_0_tx_en;
+  output [0:0]GMII_ETHERNET_1_0_tx_er;
+  output [7:0]GMII_ETHERNET_1_0_txd;
+  output MDIO_ETHERNET_1_0_mdc;
+  
+  
+ input       MDIO_ETHERNET_1_0_mdio_i;
+ output      MDIO_ETHERNET_1_0_mdio_o;
+ output      MDIO_ETHERNET_1_0_mdio_t;
+  
+  
   inout [14:0]ddr_addr;
   inout [2:0]ddr_ba;
   inout ddr_cas_n;
@@ -234,7 +269,22 @@ module system_wrapper
         .O(iic_main_sda_i),
         .T(iic_main_sda_t));
   system system_i
-       (.ddr_addr(ddr_addr),
+       (
+       .GMII_ETHERNET_1_0_CLKIN(GMII_ETHERNET_1_0_CLKIN),
+       .CLK125M_OUT(CLK125M_OUT),
+       .GMII_ETHERNET_1_0_col(GMII_ETHERNET_1_0_col),
+        .GMII_ETHERNET_1_0_crs(GMII_ETHERNET_1_0_crs),
+        .GMII_ETHERNET_1_0_rx_dv(GMII_ETHERNET_1_0_rx_dv),
+        .GMII_ETHERNET_1_0_rx_er(GMII_ETHERNET_1_0_rx_er),
+        .GMII_ETHERNET_1_0_rxd(GMII_ETHERNET_1_0_rxd),
+        .GMII_ETHERNET_1_0_tx_en(GMII_ETHERNET_1_0_tx_en),
+        .GMII_ETHERNET_1_0_tx_er(GMII_ETHERNET_1_0_tx_er),
+        .GMII_ETHERNET_1_0_txd(GMII_ETHERNET_1_0_txd),
+        .MDIO_ETHERNET_1_0_mdc(MDIO_ETHERNET_1_0_mdc),
+        .MDIO_ETHERNET_1_0_mdio_i(MDIO_ETHERNET_1_0_mdio_i),
+        .MDIO_ETHERNET_1_0_mdio_o(MDIO_ETHERNET_1_0_mdio_o),
+        .MDIO_ETHERNET_1_0_mdio_t(MDIO_ETHERNET_1_0_mdio_t),
+       .ddr_addr(ddr_addr),
         .ddr_ba(ddr_ba),
         .ddr_cas_n(ddr_cas_n),
         .ddr_ck_n(ddr_ck_n),
