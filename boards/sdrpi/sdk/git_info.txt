@@ -5,6 +5,18 @@ openwifi-hw-git-branch
 * sdrpi
  
 openwifi-hw-git-commit
+commit 161e03ff0f9231fe5632f2cba6b37b36b5afbeac
+Author: Wei.Li <96402566+HexSDR@users.noreply.github.com>
+Date:   Wed Sep 7 17:44:07 2022 +0800
+
+    Update system_top.v
+
+commit f2de4519decf60fd4f5af5995c357d3e360143a0
+Author: HexSDR <715713994@qq.com>
+Date:   Wed Sep 7 16:30:24 2022 +0800
+
+    change console uart to mio48..49
+
 commit 5c43471bbf339e6a42a706366f61192bb603725a
 Author: Wei.Li <96402566+HexSDR@users.noreply.github.com>
 Date:   Fri Sep 2 22:37:09 2022 +0800
@@ -12,21 +24,6 @@ Date:   Fri Sep 2 22:37:09 2022 +0800
     Sdrpi (#65)
     
     Add sdrpi support.
-
-commit 04f805019b82403f57405aeea6ed96ba142a17fa
-Merge: 73c2e18 dc6fc84
-Author: Jiao Xianjun <xianjun.jiao@ugent.be>
-Date:   Tue Aug 2 10:58:14 2022 +0200
-
-    Merge pull request #61 from open-sdr/master
-    
-    Update gpio_led.md
-
-commit dc6fc84bd8b1816460b143f70c435cf2b9ca4fda
-Author: Jiao Xianjun <xianjun.jiao@ugent.be>
-Date:   Tue May 31 12:36:03 2022 +0200
-
-    Update gpio_led.md
  
 openofdm_rx-git-branch
 * dot11zynq
