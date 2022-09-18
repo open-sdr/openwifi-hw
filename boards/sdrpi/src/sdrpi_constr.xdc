@@ -80,6 +80,8 @@ set_property -dict {PACKAGE_PIN G19 IOSTANDARD LVCMOS25 PULLUP true  } [get_port
 set_property -dict {PACKAGE_PIN G20  IOSTANDARD LVCMOS25 PULLUP true  } [get_ports mdio1_io]
   
 
+set_property -dict {PACKAGE_PIN A20 IOSTANDARD LVCMOS25} [get_ports rx1_led ]
+set_property -dict {PACKAGE_PIN B19 IOSTANDARD LVCMOS25} [get_ports rx2_led ]
 
  
  
