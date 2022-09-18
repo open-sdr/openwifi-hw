@@ -94,8 +94,7 @@ module system_top (
   input           spi_miso, 
    
   output tx1_en,tx2_en ,sel_clk_src,
-  
-  
+  output rx1_led ,rx2_led ,
 //mdio interface
 output mdio1_mdc,
 inout mdio1_io,
@@ -113,8 +112,9 @@ input phy_rx_dv ,phy_rx_clk,phy_rx_err
   
   );
   
-  assign {tx1_en,tx2_en  }=2'b11;
-  assign sel_clk_src = 1'b1 ; 
+	assign {tx1_en,tx2_en  }=2'b11;  // now always enabe RF AP
+	assign {rx1_en,rx2_en  }=2'b11;  // turn on LED of rx1_led and rx2_led,only 
+ 	assign sel_clk_src = 1'b1 ;      // select on board 40M tcxo oscillator 。
    
 
 	// internal signals
@@ -149,7 +149,8 @@ input phy_rx_dv ,phy_rx_clk,phy_rx_err
     .dio_o (gpio_i[25:0]),
     .dio_p (gpio_bd)
     ); 
-      
+	
+ //     net     ->   sdrpi external connect P1   
    // gpio_bd[0]  -> P1.gpio1
    // gpio_bd[1]  -> P1.gpio2
    // gpio_bd[2]  -> P1.gpio3
@@ -192,20 +193,19 @@ input phy_rx_dv ,phy_rx_clk,phy_rx_err
   
   
   
-  wire CLK125M_OUT ;
-  reg [24:0]c ;  always @ (posedge CLK125M_OUT) if (c[24]==0) c<=c+1; 
+wire CLK125M_OUT ; // 125M clock from zynq PS
+reg [24:0]c ;  always @ (posedge CLK125M_OUT) if (c[24]==0) c<=c+1; // a reset count  
     
 //mdio interface
 assign  mdio1_mdc = MDIO_ETHERNET_1_0_mdc ;
 assign mdio1_io=(MDIO_ETHERNET_1_0_mdio_t)?1'bz:MDIO_ETHERNET_1_0_mdio_o;
  
 //phy interface
-assign    phy_tx_dout  = GMII_ETHERNET_1_0_txd ;
+assign  phy_tx_dout  = GMII_ETHERNET_1_0_txd ;
 assign  phy_tx_err = GMII_ETHERNET_1_0_tx_er ; 
-///assign  phy_tx_clk, // of no use for now 
-assign    phy_tx_en = GMII_ETHERNET_1_0_tx_en ;
-assign  phy_gtx_clk =    phy_tx_clk   ;///CLK125M_OUT  ;
-assign  phy_reset_n = c[24] ;
+assign  phy_tx_en = GMII_ETHERNET_1_0_tx_en ;
+assign  phy_gtx_clk =    phy_tx_clk   ; 
+assign  phy_reset_n = c[24] ;// simple reset counter 
 
   // instantiations
 
