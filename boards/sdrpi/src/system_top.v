@@ -93,16 +93,31 @@ module system_top (
   output          spi_mosi,
   input           spi_miso, 
    
-  output tx1_en,tx2_en ,sel_clk_src
+  output tx1_en,tx2_en ,sel_clk_src,
+  output rx1_led ,rx2_led ,
+//mdio interface
+output mdio1_mdc,
+inout mdio1_io,
+//phy interface
+output   [7:0] phy_tx_dout ,
+output phy_tx_err,
+input phy_tx_clk,
+output   phy_tx_en,  
+
+output  phy_gtx_clk ,
+output  phy_reset_n,
+input [7:0] phy_rx_din,
+input phy_rx_dv ,phy_rx_clk,phy_rx_err
+
   
   );
   
-  assign {tx1_en,tx2_en  }=2'b11;
-  assign sel_clk_src = 1'b1 ; 
+	assign {tx1_en,tx2_en  }=2'b11;  
+	assign {rx1_led,rx2_led}=2'b11;   
+ 	assign sel_clk_src = 1'b1 ;      // select on board 40M tcxo oscillator ¡£
    
 
 	// internal signals
-
 	wire    [31:0]  gp_out_s;
 	wire    [31:0]  gp_in_s;
 	wire    [63:0]  gpio_i;
@@ -133,7 +148,8 @@ module system_top (
     .dio_o (gpio_i[25:0]),
     .dio_p (gpio_bd)
     ); 
-      
+	
+ //     net     ->   sdrpi external connect P1   
    // gpio_bd[0]  -> P1.gpio1
    // gpio_bd[1]  -> P1.gpio2
    // gpio_bd[2]  -> P1.gpio3
@@ -158,9 +174,30 @@ module system_top (
               gpio_ctl,           // 43:40
               gpio_status_dummy}));     // 39:32
 
-  // instantiations
-
+ 
+  
+wire CLK125M_OUT ; // 125M clock from zynq PS
+reg [24:0]c ;  always @ (posedge CLK125M_OUT) if (c[24]==0) c<=c+1; // a reset count  
+    
+//phy interface
+assign  phy_gtx_clk =  CLK125M_OUT ; 
+assign  phy_reset_n = c[24] ;// simple reset counter 
+ 
   system_wrapper i_system_wrapper (
+    .CLK125M_OUT(CLK125M_OUT),
+    .ENET1_GMII_RX_CLK_0( phy_rx_clk ),
+    .ENET1_GMII_TX_CLK_0( phy_rx_clk ),   // 1000M     ethernet mode ONLY OK
+//  .ENET1_GMII_TX_CLK_0( phy_tx_clk ),   // 100M/10M  ethernet mode ONLY OK
+    .GMII_ETHERNET_1_0_col(  phy_rx_dv  &  phy_tx_en   ),
+    .GMII_ETHERNET_1_0_crs(  phy_rx_dv  |  phy_tx_en   ),
+    .GMII_ETHERNET_1_0_rx_dv(phy_rx_dv),
+    .GMII_ETHERNET_1_0_rx_er(phy_rx_err),
+    .GMII_ETHERNET_1_0_rxd(phy_rx_din),
+    .GMII_ETHERNET_1_0_tx_en(phy_tx_en),
+    .GMII_ETHERNET_1_0_tx_er(phy_tx_err),
+    .GMII_ETHERNET_1_0_txd(phy_tx_dout),        
+    .MDIO_ETHERNET_1_0_mdc(mdio1_mdc),
+    .MDIO_ETHERNET_1_0_mdio_io(mdio1_io),
     .ddr_addr (ddr_addr),
     .ddr_ba (ddr_ba),
     .ddr_cas_n (ddr_cas_n),
