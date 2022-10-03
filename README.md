@@ -25,7 +25,7 @@ Environment variable **BOARD_NAME** options:
 - **adrv9361z7035** ([ADRV9361-Z7035 + ADRV1CRR-BOB/FMC](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/ADRV9361-Z7035.html))
 - **zc702_fmcs2** ([Xilinx ZC702 board](https://www.xilinx.com/products/boards-and-kits/ek-z7-zc702-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html)) -- Vivado license **NOT** needed
 - **antsdr** ([MicroPhase](https://github.com/MicroPhase/) enhanced ADALM-PLUTO SDR. [Notes](boards/antsdr/notes.md)) -- Vivado license **NOT** needed
-- **sdrpi** ([HexSDR](https://github.com/hexsdr/) Smart SDR with 7z020+AD961+GPSTCXO+AP )-- Vivado license **NOT** needed
+- **sdrpi** ([HexSDR](https://github.com/hexsdr/) Powerful SDR in Raspberry Pi size [Notes](boards/sdrpi/notes.md))-- Vivado license **NOT** needed
 - **zcu102_fmcs2** ([Xilinx ZCU102 board](https://www.xilinx.com/products/boards-and-kits/ek-u1-zcu102-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html))
 
 ## Build FPGA
@@ -99,7 +99,7 @@ By default, 100MHz baseband clock is used. You can change the baseband clock by 
 * Normally you should see the top level testbench (..._tb.v) of that ip core in the Vivado "Sources" window (take openofdm_rx as example):
 
         Go to the openofdm_rx IP directory, then run:
-        ./create_vivado_proj.sh ~/Xilinx/ openofdm_rx.tcl 
+        ./create_vivado_proj.sh $XILINX_DIR openofdm_rx.tcl 
         Then in Vivado
         Sources --> Simulation Sources --> sim_1 --> dot11_tb
 * To run the simulation, click "Run Simulation" --> "Run Behavoiral Simulation" under the "SIMULATION" in the "PROJECT MANAGER" window. It will take quite long time for the 1st time run due to the sub-ip-core compiling. Fortunately the sub-ip-core compiling is a time consuming step that occurs only one time.
