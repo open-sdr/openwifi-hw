@@ -12,7 +12,20 @@
 `timescale 1 ps / 1 ps
 
 module system_wrapper
-   (ddr_addr,
+   (CLK125M_OUT,
+    ENET1_GMII_RX_CLK_0,
+    ENET1_GMII_TX_CLK_0,
+    GMII_ETHERNET_1_0_col,
+    GMII_ETHERNET_1_0_crs,
+    GMII_ETHERNET_1_0_rx_dv,
+    GMII_ETHERNET_1_0_rx_er,
+    GMII_ETHERNET_1_0_rxd,
+    GMII_ETHERNET_1_0_tx_en,
+    GMII_ETHERNET_1_0_tx_er,
+    GMII_ETHERNET_1_0_txd,
+    MDIO_ETHERNET_1_0_mdc,
+    MDIO_ETHERNET_1_0_mdio_io,
+    ddr_addr,
     ddr_ba,
     ddr_cas_n,
     ddr_ck_n,
@@ -80,6 +93,19 @@ module system_wrapper
     txnrx,
     up_enable,
     up_txnrx);
+  output CLK125M_OUT;
+  input ENET1_GMII_RX_CLK_0;
+  input ENET1_GMII_TX_CLK_0;
+  input GMII_ETHERNET_1_0_col;
+  input GMII_ETHERNET_1_0_crs;
+  input GMII_ETHERNET_1_0_rx_dv;
+  input GMII_ETHERNET_1_0_rx_er;
+  input [7:0]GMII_ETHERNET_1_0_rxd;
+  output [0:0]GMII_ETHERNET_1_0_tx_en;
+  output [0:0]GMII_ETHERNET_1_0_tx_er;
+  output [7:0]GMII_ETHERNET_1_0_txd;
+  output MDIO_ETHERNET_1_0_mdc;
+  inout MDIO_ETHERNET_1_0_mdio_io;
   inout [14:0]ddr_addr;
   inout [2:0]ddr_ba;
   inout ddr_cas_n;
@@ -106,7 +132,7 @@ module system_wrapper
   output [31:0]gp_out_0;
   input [63:0]gpio_i;
   output [63:0]gpio_o;
-  input [7:0] gpio_status;
+  input [7:0]gpio_status;
   output [63:0]gpio_t;
   input gps_pps;
   inout iic_main_scl_io;
@@ -149,6 +175,22 @@ module system_wrapper
   input up_enable;
   input up_txnrx;
 
+  wire CLK125M_OUT;
+  wire ENET1_GMII_RX_CLK_0;
+  wire ENET1_GMII_TX_CLK_0;
+  wire GMII_ETHERNET_1_0_col;
+  wire GMII_ETHERNET_1_0_crs;
+  wire GMII_ETHERNET_1_0_rx_dv;
+  wire GMII_ETHERNET_1_0_rx_er;
+  wire [7:0]GMII_ETHERNET_1_0_rxd;
+  wire [0:0]GMII_ETHERNET_1_0_tx_en;
+  wire [0:0]GMII_ETHERNET_1_0_tx_er;
+  wire [7:0]GMII_ETHERNET_1_0_txd;
+  wire MDIO_ETHERNET_1_0_mdc;
+  wire MDIO_ETHERNET_1_0_mdio_i;
+  wire MDIO_ETHERNET_1_0_mdio_io;
+  wire MDIO_ETHERNET_1_0_mdio_o;
+  wire MDIO_ETHERNET_1_0_mdio_t;
   wire [14:0]ddr_addr;
   wire [2:0]ddr_ba;
   wire ddr_cas_n;
@@ -175,6 +217,7 @@ module system_wrapper
   wire [31:0]gp_out_0;
   wire [63:0]gpio_i;
   wire [63:0]gpio_o;
+  wire [7:0]gpio_status;
   wire [63:0]gpio_t;
   wire gps_pps;
   wire iic_main_scl_i;
@@ -223,6 +266,11 @@ module system_wrapper
   wire up_enable;
   wire up_txnrx;
 
+  IOBUF MDIO_ETHERNET_1_0_mdio_iobuf
+       (.I(MDIO_ETHERNET_1_0_mdio_o),
+        .IO(MDIO_ETHERNET_1_0_mdio_io),
+        .O(MDIO_ETHERNET_1_0_mdio_i),
+        .T(MDIO_ETHERNET_1_0_mdio_t));
   IOBUF iic_main_scl_iobuf
        (.I(iic_main_scl_o),
         .IO(iic_main_scl_io),
@@ -234,7 +282,22 @@ module system_wrapper
         .O(iic_main_sda_i),
         .T(iic_main_sda_t));
   system system_i
-       (.ddr_addr(ddr_addr),
+       (.CLK125M_OUT(CLK125M_OUT),
+        .ENET1_GMII_RX_CLK_0(ENET1_GMII_RX_CLK_0),
+        .ENET1_GMII_TX_CLK_0(ENET1_GMII_TX_CLK_0),
+        .GMII_ETHERNET_1_0_col(GMII_ETHERNET_1_0_col),
+        .GMII_ETHERNET_1_0_crs(GMII_ETHERNET_1_0_crs),
+        .GMII_ETHERNET_1_0_rx_dv(GMII_ETHERNET_1_0_rx_dv),
+        .GMII_ETHERNET_1_0_rx_er(GMII_ETHERNET_1_0_rx_er),
+        .GMII_ETHERNET_1_0_rxd(GMII_ETHERNET_1_0_rxd),
+        .GMII_ETHERNET_1_0_tx_en(GMII_ETHERNET_1_0_tx_en),
+        .GMII_ETHERNET_1_0_tx_er(GMII_ETHERNET_1_0_tx_er),
+        .GMII_ETHERNET_1_0_txd(GMII_ETHERNET_1_0_txd),
+        .MDIO_ETHERNET_1_0_mdc(MDIO_ETHERNET_1_0_mdc),
+        .MDIO_ETHERNET_1_0_mdio_i(MDIO_ETHERNET_1_0_mdio_i),
+        .MDIO_ETHERNET_1_0_mdio_o(MDIO_ETHERNET_1_0_mdio_o),
+        .MDIO_ETHERNET_1_0_mdio_t(MDIO_ETHERNET_1_0_mdio_t),
+        .ddr_addr(ddr_addr),
         .ddr_ba(ddr_ba),
         .ddr_cas_n(ddr_cas_n),
         .ddr_ck_n(ddr_ck_n),
