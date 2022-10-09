@@ -114,7 +114,7 @@ input phy_rx_dv ,phy_rx_clk,phy_rx_err
   
 	assign {tx1_en,tx2_en  }=2'b11;  
 	assign {rx1_led,rx2_led}=2'b11;   
- 	assign sel_clk_src = 1'b1 ;      // select on board 40M tcxo oscillator ¡£
+ 	assign sel_clk_src = 1'b1 ;      // select on board 40M tcxo oscillator
    
 
 	// internal signals
