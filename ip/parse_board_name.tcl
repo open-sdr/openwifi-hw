@@ -24,6 +24,10 @@ if {$BOARD_NAME=="zed_fmcs2"} {
    set ultra_scale_flag 0
    set part_string xc7z020clg400-1
    set fpga_size_flag 0
+} elseif {$BOARD_NAME=="antsdr_e200"} {
+   set ultra_scale_flag 0
+   set part_string xc7z020clg400-1
+   set fpga_size_flag 0
 } elseif {$BOARD_NAME=="sdrpi"} {
    set ultra_scale_flag 0
    set part_string xc7z020clg400-1
