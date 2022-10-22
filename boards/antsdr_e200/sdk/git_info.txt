@@ -1,60 +1,46 @@
 openwifi-hw-git-branch
-  antsdr
-* antsdr_e200
+* antsdr
   master
  
 openwifi-hw-git-commit
-commit f111e009858d1a08333433f86598f776f91eb001
-Author: Jiao Xianjun <xianjun.jiao@ugent.be>
-Date:   Sun Oct 9 08:58:39 2022 +0200
+commit 83f2599244bdac135c7d4d43f177961ea8e7fbc5
+Author: black-pigeon <1530604142@qq.com>
+Date:   Wed Oct 12 16:02:01 2022 +0800
 
-    Sdrpi update (#74)
-    
-    * change console uart to mio48..49
-    
-    * Update system_top.v
-    
-    * update sdrpi
-    
-    * Add files via upload
-    
-    Co-authored-by: HexSDR <715713994@qq.com>
-    Co-authored-by: Wei.Li <96402566+HexSDR@users.noreply.github.com>
+    fix Sentence error
 
-commit 8cdaf54519a0ee5c257f51ab406ec1515060c793
-Author: Xianjun Jiao <xianjun.jiao@ugent.be>
-Date:   Wed Sep 14 14:02:40 2022 +0200
+commit 3162ccf33e38863b8d1eeb558749558cb4af7523
+Author: black-pigeon <1530604142@qq.com>
+Date:   Wed Oct 12 10:39:30 2022 +0800
 
-    sdrpi FPGA timing is ok
+    fix typo error
 
-commit 504060eddea26f059c697902ff672d6fbca9f40c
-Author: Wei.Li <96402566+HexSDR@users.noreply.github.com>
-Date:   Wed Sep 7 17:44:07 2022 +0800
+commit 59ce0930826fde13b4c589003ca283459710cc72
+Author: black-pigeon <1530604142@qq.com>
+Date:   Wed Oct 12 10:28:06 2022 +0800
 
-    Update system_top.v
+    add ANTSDR-E200 README
  
 openofdm_rx-git-branch
 * dot11zynq
   master
  
 openofdm_rx-git-commit
+commit f3bf82a05bf50a44a47ee8e2b6a677610e5a5719
+Author: black_pigeon <1530604142@qq.com>
+Date:   Sat Oct 22 00:58:18 2022 +0800
+
+    add support for antsdr e200
+
+commit 3d0a40958cb34fea2818d36c6cd44ccb06a5dc27
+Author: Xianjun Jiao <xianjun.jiao@ugent.be>
+Date:   Sun Oct 16 22:09:17 2022 +0200
+
+    Add neptunesdr
+
 commit 76986e99d316d5973b2c57afce4506ab891f9cac
 Author: HexSDR <96402566+HexSDR@users.noreply.github.com>
 Date:   Fri Aug 5 23:49:49 2022 +0800
 
     Update parse_board_name.tcl
-
-commit 8a74580ad1b4dada27a290f8ab7c8df0dabd7f66
-Author: HexSDR <96402566+HexSDR@users.noreply.github.com>
-Date:   Fri Aug 5 23:49:05 2022 +0800
-
-    Update create_vivado_proj.sh
-    
-    add sdrpi
-
-commit 707cb99a909386167e2d6a91c1d0d8b599954b1e
-Author: Xianjun Jiao <xianjun.jiao@ugent.be>
-Date:   Fri Jul 15 12:10:03 2022 +0200
-
-    Remove the huge logging thing in dot11_tb.v
  

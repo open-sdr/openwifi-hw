@@ -45,10 +45,12 @@ set_property  -dict {PACKAGE_PIN  L20   IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [ge
 set_property  -dict {PACKAGE_PIN  L19   IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports iic_sda]           ; 
 
 
-set_property  -dict {PACKAGE_PIN  M20   IOSTANDARD  LVCMOS18} [get_ports  dac_sync] ;
-set_property  -dict {PACKAGE_PIN  M19   IOSTANDARD  LVCMOS18} [get_ports  dac_sclk] ;
-set_property  -dict {PACKAGE_PIN  M17   IOSTANDARD  LVCMOS18} [get_ports  dac_din]  ;
-set_property  -dict {PACKAGE_PIN  J18   IOSTANDARD  LVCMOS18} [get_ports  gps_pps]  ;
+set_property  -dict {PACKAGE_PIN  V6   IOSTANDARD  LVCMOS33} [get_ports  dac_sync] ;
+set_property  -dict {PACKAGE_PIN  W6   IOSTANDARD  LVCMOS33} [get_ports  dac_sclk] ;
+set_property  -dict {PACKAGE_PIN  V10  IOSTANDARD  LVCMOS33} [get_ports  dac_din]  ;
+set_property  -dict {PACKAGE_PIN  V11  IOSTANDARD  LVCMOS33} [get_ports  pps_in]  ;
+set_property  -dict {PACKAGE_PIN  M20  IOSTANDARD  LVCMOS33} [get_ports  clkin_10m_req]  ;
+set_property  -dict {PACKAGE_PIN  J18  IOSTANDARD  LVCMOS33} [get_ports  clkin_10m]  ;
 
 set_property  -dict {PACKAGE_PIN  N16   IOSTANDARD  LVCMOS18} [get_ports  gpio_clksel]  ;
 
