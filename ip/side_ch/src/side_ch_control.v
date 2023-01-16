@@ -250,6 +250,9 @@
 	reg tx_rf_is_ongoing_posedge;
 	reg tx_rf_is_ongoing_negedge;
 
+	reg  [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq0_reg;
+	wire tx_intf_iq0_non_zero;
+
 	reg [63:0] subcarrier_mask;
 
 	assign MAX_NUM_DMA_SYMBOL_UDP_debug = MAX_NUM_DMA_SYMBOL_UDP;
@@ -284,6 +287,8 @@
 
 	assign rssi_th = rssi_or_iq_th[(RSSI_HALF_DB_WIDTH-1):0];
 	assign iq1_i_abs = (iq1[(IQ_DATA_WIDTH-1)]?(~iq1+1):iq1);
+
+	assign tx_intf_iq0_non_zero = (tx_intf_iq0 != 0 && tx_intf_iq0_reg == 0);
 
 	always @( ht_flag, rate_mcs )
 	begin
@@ -411,6 +416,8 @@
 			tx_rf_is_ongoing_posedge <= 0;
 			tx_rf_is_ongoing_negedge <= 0;
 			
+			tx_intf_iq0_reg <= tx_intf_iq0;
+
 			iq_trigger <= 0;
 
 			tsf_val_lock_by_iq_trigger <= 0;
@@ -418,6 +425,8 @@
 
 			iq_state <= IQ_WAIT_FOR_CONDITION;
 		end else begin
+			tx_intf_iq0_reg <= tx_intf_iq0;
+
 			if (iq_capture) begin
 				// keep writing dpram with incoming iq
 				iq_waddr <= (iq_strobe_inner?(iq_waddr+1):iq_waddr);
@@ -443,7 +452,7 @@
 					5'd0:  begin  iq_trigger <= (fcs_in_strobe|iq_trigger_free_run_flag);  end
 					5'd1:  begin  iq_trigger <= (fcs_in_strobe&&(fcs_ok==1));  end
 					5'd2:  begin  iq_trigger <= (fcs_in_strobe&&(fcs_ok==0));  end
-					5'd3:  begin  iq_trigger <=  pkt_header_valid_strobe;  end
+					5'd3:  begin  iq_trigger <=  tx_intf_iq0_non_zero;  end
 					5'd4:  begin  iq_trigger <= (pkt_header_valid_strobe&&(pkt_header_valid==1));  end
 					5'd5:  begin  iq_trigger <= (pkt_header_valid_strobe&&(pkt_header_valid==0));  end
 					5'd6:  begin  iq_trigger <= (pkt_header_valid_strobe&& ht_flag);  end
