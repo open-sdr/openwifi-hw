@@ -85,11 +85,11 @@
                        WAIT_RST_DONE =                     3'b101;
 
     `DEBUG_PREFIX reg [2:0] rx_state;
-    reg [2:0] old_rx_state;
-    reg start_m_axis;
-    reg [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_to_m_axis;
-    reg data_ready_to_m_axis;
-    reg [2:0] rst_count;
+    `DEBUG_PREFIX reg [2:0] old_rx_state;
+    `DEBUG_PREFIX reg start_m_axis;
+    `DEBUG_PREFIX reg [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_to_m_axis;
+    `DEBUG_PREFIX reg data_ready_to_m_axis;
+    `DEBUG_PREFIX reg [2:0] rst_count;
     reg [(TSF_TIMER_WIDTH-1):0] tsf_val_lock_by_sig;
 
     reg [14:0] count;

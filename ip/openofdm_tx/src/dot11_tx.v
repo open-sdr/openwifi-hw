@@ -7,37 +7,40 @@
 
 `include "openofdm_tx_pre_def.v"
 
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`define DEBUG_PREFIX
+
 module dot11_tx
 (
   input  wire        clk,
   input  wire        phy_tx_arest,
 
-  input  wire        phy_tx_start,
-  output reg         phy_tx_done,
-  output reg         phy_tx_started,
+  `DEBUG_PREFIX input  wire        phy_tx_start,
+  `DEBUG_PREFIX output reg         phy_tx_done,
+  `DEBUG_PREFIX output reg         phy_tx_started,
 
   input  wire [6:0]  init_pilot_scram_state,
   input  wire [6:0]  init_data_scram_state,
 
-  input  wire [63:0] bram_din,
-  output reg  [9:0]  bram_addr,
+  `DEBUG_PREFIX input  wire [63:0] bram_din,
+  `DEBUG_PREFIX output reg  [9:0]  bram_addr,
 
-  input  wire        result_iq_ready,
-  output wire        result_iq_valid,
-  output wire [15:0] result_i,
-  output wire [15:0] result_q
+  `DEBUG_PREFIX input  wire        result_iq_ready,
+  `DEBUG_PREFIX output wire        result_iq_valid,
+  `DEBUG_PREFIX output wire [15:0] result_i,
+  `DEBUG_PREFIX output wire [15:0] result_q
 );
 
-reg  FSM3_reset;        // Reset after transmiting a whole packet
+`DEBUG_PREFIX reg  FSM3_reset;        // Reset after transmiting a whole packet
 wire reset_int = phy_tx_arest | FSM3_reset;
 
 // Data collection states
-reg [1:0] state1;
+`DEBUG_PREFIX reg [1:0] state1;
 localparam S1_WAIT_PKT = 0;
 localparam S1_L_SIG    = 1;
 localparam S1_HT_SIG   = 2;
 localparam S1_DATA     = 3;
-reg [2:0] state11;
+`DEBUG_PREFIX reg [2:0] state11;
 localparam S11_SERVICE   = 0;
 localparam S11_PSDU_DATA = 1;
 localparam S11_PSDU_CRC  = 2;
@@ -46,14 +49,14 @@ localparam S11_PAD       = 4;
 localparam S11_RESET     = 5;
 
 // IQ sample generation states
-reg [1:0] state2;
+`DEBUG_PREFIX reg [1:0] state2;
 localparam S2_PUNC_INTERLV   = 0;
 localparam S2_PILOT_DC_SB    = 1;
 localparam S2_MOD_IFFT_INPUT = 2;
 localparam S2_RESET          = 3;
 
 // IQ sample forwarding states
-reg [2:0] state3;
+`DEBUG_PREFIX reg [2:0] state3;
 localparam S3_WAIT_PKT = 0;
 localparam S3_L_STF    = 1;
 localparam S3_L_LTF    = 2;

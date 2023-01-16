@@ -3,6 +3,9 @@
 
 `include "rx_intf_pre_def.v"
 
+// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*) 
+`define DEBUG_PREFIX
+
 `timescale 1 ns / 1 ps
 
 	module rx_intf #
@@ -31,8 +34,8 @@
         // -------------debug purpose----------------
 
         // ad9361 status and ctrl
-	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_rf,
-        output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb,
+	    `DEBUG_PREFIX input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_rf,
+        `DEBUG_PREFIX output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb,
 
 	    // from ad9361_adc_pack
         input wire adc_clk,
@@ -47,31 +50,31 @@
         input wire iq_valid_from_tx_intf,
 
 	    // Ports to openofdm rx
-        output wire [(2*IQ_DATA_WIDTH-1) : 0] sample0,
+        `DEBUG_PREFIX output wire [(2*IQ_DATA_WIDTH-1) : 0] sample0,
         output wire [(2*IQ_DATA_WIDTH-1) : 0] sample1,
-	    output wire sample_strobe,
-        input  wire pkt_header_valid,
-        input  wire pkt_header_valid_strobe,
-        input  wire ht_unsupport,
-        input  wire [7:0] pkt_rate,
-		input  wire [15:0] pkt_len,
-		input  wire ht_aggr,
-		input  wire ht_aggr_last,
-		input  wire ht_sgi,
-		input  wire byte_in_strobe,
-		input  wire [7:0] byte_in,
-		input  wire [15:0] byte_count,
-        input  wire fcs_in_strobe,
-		input  wire fcs_ok,
+	    `DEBUG_PREFIX output wire sample_strobe,
+        `DEBUG_PREFIX input  wire pkt_header_valid,
+        `DEBUG_PREFIX input  wire pkt_header_valid_strobe,
+        `DEBUG_PREFIX input  wire ht_unsupport,
+        `DEBUG_PREFIX input  wire [7:0] pkt_rate,
+		`DEBUG_PREFIX input  wire [15:0] pkt_len,
+		`DEBUG_PREFIX input  wire ht_aggr,
+		`DEBUG_PREFIX input  wire ht_aggr_last,
+		`DEBUG_PREFIX input  wire ht_sgi,
+		`DEBUG_PREFIX input  wire byte_in_strobe,
+		`DEBUG_PREFIX input  wire [7:0] byte_in,
+		`DEBUG_PREFIX input  wire [15:0] byte_count,
+        `DEBUG_PREFIX input  wire fcs_in_strobe,
+		`DEBUG_PREFIX input  wire fcs_ok,
 
         // led
         output wire fcs_ok_led,
 
 	    // interrupt to PS
-        output wire rx_pkt_intr,
+        `DEBUG_PREFIX output wire rx_pkt_intr,
         
         // interrupt from xilixn axi dma
-        input wire s2mm_intr,
+        `DEBUG_PREFIX input wire s2mm_intr,
         
         // for xpu
         input  wire mute_adc_out_to_bb, // in acc clock domain
