@@ -305,8 +305,19 @@ module xpu #
   wire tx_core_is_ongoing;
   wire tx_chain_on;
 
-  assign cw_exp_used = ((~slv_reg6[28])?cw_exp_dynamic:slv_reg6[19:16]);
-  assign cw = cw_exp_log; 
+  wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_th;
+  wire nav_enable;
+  wire difs_enable;
+  wire eifs_enable;
+  wire [1:0] aifs;
+  wire cw_en;
+  wire [31:0] cw_combined;
+  wire [3:0]  max_num_retrans;
+  wire ack_tx_disable;
+  wire ack_rx_disable;
+
+  assign cw_exp_used = (cw_en?cw_exp_dynamic:slv_reg6[19:16]);
+  assign cw = cw_exp_log;
   assign slv_reg63 = `OPENWIFI_HW_GIT_REV;
 
   assign erp_short_slot = slv_reg4[24];
@@ -337,7 +348,6 @@ module xpu #
 
   assign mac_addr = {slv_reg31[15:0], slv_reg30};
 
-  // assign slv_reg34 =  FC_DI;
   assign FC_version = FC_DI[1:0];
   assign FC_type =    FC_DI[3:2];
   assign FC_subtype = FC_DI[7:4];
@@ -362,6 +372,17 @@ module xpu #
   assign slv_reg59 = tsf_runtime_val[(TSF_TIMER_WIDTH-1):C_S00_AXI_DATA_WIDTH];
 
   assign pkt_for_me = (addr1==mac_addr);
+
+  assign rssi_half_db_th = slv_reg8[(RSSI_HALF_DB_WIDTH-1):0];
+  assign nav_enable = (~slv_reg6[31]);
+  assign difs_enable = (~slv_reg6[30]);
+  assign eifs_enable = (~slv_reg6[29]);
+  assign aifs = 0;
+  assign cw_en = (~slv_reg6[28]);
+  assign cw_combined = slv_reg19;
+  assign max_num_retrans = slv_reg11[3:0];
+  assign ack_tx_disable = slv_reg11[4];
+  assign ack_rx_disable = slv_reg11[5];
 
   `ifndef XPU_DISCONNECT_LED
   edge_to_flip cycle_start_i (
@@ -421,7 +442,7 @@ module xpu #
     .rstn(s00_axi_aresetn&(~slv_reg0[6])),
 
     .rssi_half_db(rssi_half_db),
-    .rssi_half_db_th(slv_reg8[(RSSI_HALF_DB_WIDTH-1):0]),
+    .rssi_half_db_th(rssi_half_db_th),
 
     .rx_ht_aggr(rx_ht_aggr),
     .rx_ht_aggr_last(rx_ht_aggr_last),
@@ -450,9 +471,9 @@ module xpu #
     .fcs_in_strobe(fcs_in_strobe),
     .fcs_valid(fcs_valid),
 
-    .nav_enable(~slv_reg6[31]),
-    .difs_enable(~slv_reg6[30]),
-    .eifs_enable(~slv_reg6[29]),
+    .nav_enable(nav_enable),
+    .difs_enable(difs_enable),
+    .eifs_enable(eifs_enable),
     .cw_exp_used(cw_exp_used),
     .preamble_sig_time(preamble_sig_time),
     .ofdm_symbol_time(ofdm_symbol_time),
@@ -494,7 +515,7 @@ module xpu #
     .rstn(s00_axi_aresetn&(~slv_reg0[5])),
     .tx_try_complete(tx_try_complete),
     .quit_retrans(quit_retrans),
-    .cw_combined(slv_reg19),
+    .cw_combined(cw_combined),
     .tx_queue_idx(tx_queue_idx),
     .retrans_trigger(retrans_trigger),
     .cw_exp(cw_exp_dynamic)
@@ -508,11 +529,11 @@ module xpu #
     .clk(s00_axi_aclk),
     .rstn(s00_axi_aresetn&(~slv_reg0[5])),
 
-    .ack_tx_disable(slv_reg11[4]),
+    .ack_tx_disable(ack_tx_disable),
     .preamble_sig_time(preamble_sig_time),
     .ofdm_symbol_time(ofdm_symbol_time),
     .sifs_time(sifs_time),
-    .max_num_retrans(slv_reg11[3:0]),
+    .max_num_retrans(max_num_retrans),
     .tx_pkt_need_ack(tx_pkt_need_ack),
     .tx_pkt_retrans_limit(tx_pkt_retrans_limit),
     .tx_ht_aggr(tx_ht_aggr),
