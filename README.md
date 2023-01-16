@@ -8,6 +8,7 @@
 [[Modify IP cores](#Modify-IP-cores)]
 [[Simulate IP cores](#Simulate-IP-cores)]
 [[Conditional compile by verilog macro](#Conditional-compile-by-verilog-macro)]
+[[Migrate openwifi to new ADI release and Vivado](#Migrate-openwifi-to-new-ADI-release-and-Vivado)]
 [[GPIO/LED definitions](gpio_led.md)]
 
 ## Introduction
@@ -31,9 +32,10 @@ Environment variable **BOARD_NAME** options:
 ## Build FPGA
 
 * Pre-conditions: 
-  * Xilinx Vivado (with SDK and HLS) 2018.3 (Vivado Design Suite - HLx Editions - 2018.3  Full Product Installation)
+  * Vivado 2021.1 with Vitis. You should have: your_Xilinx_install_directory/Vitis (NOT Vitis_HLS!)
+    * You can add Vitis by running "Xilinx Design Tools --> Add Design Tools for Devices 2021.1" from Xilinx program group/menu in your OS start menu, or Help menu of Vivado.
   * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado.
-  * Ubuntu 18/20 LTS release (We test in these OS. Other OS might also work.)
+  * Ubuntu 18/20/22 LTS release (We test in these OS. Other OS might also work.)
 
 * Prepare Analgo Devices HDL library (only run once):
 ```
@@ -62,8 +64,7 @@ cd openwifi-hw/boards/$BOARD_NAME/
 source ./openwifi.tcl
 Click "Generate Bitstream" in the Vivado GUI.
 (Will take a while)
-File --> Export --> Export Hardware... --> Include bitstream --> OK
-File --> Launch SDK --> OK, then close SDK
+File --> Export --> Export Hardware --> Next --> Include bitstream --> Next --> Next --> Finish
 ```
 * In Linux, store the FPGA files to a specific directory:
 ```
@@ -132,6 +133,44 @@ or
 create_ip_repo.sh $XILINX_DIR $IP1_NAME $DEF1 $DEF2 ... $IP2_NAME $DEF1 ...
  -IP_NAME: only xpu/tx_intf/rx_intf/openofdm_tx/openofdm_rx/side_ch are allowed
  -   DEFx: will be "`define IP_NAME_DEFx" in ip_name_pre_def.v for $IP_NAME
+```
+Example of enabling all ILA/DEBUG macros in all IPs:
+```
+./create_ip_repo.sh $XILINX_DIR xpu ENABLE_DBG tx_intf ENABLE_DBG rx_intf ENABLE_DBG openofdm_tx ENABLE_DBG openofdm_rx ENABLE_DBG side_ch ENABLE_DBG
+```
+
+## Migrate openwifi to new ADI release and Vivado
+
+There are two possible ways to upgrade openwifi design to new ADI release and Vivado.
+
+Method 1: Vivado auto upgrading
+- Create the openwifi design in the old/current Vivado version
+- Open the openwifi project in the new/target Vivado version
+  - Let Vivado do the upgrading
+- After upgrading, the system.bd is the new bd file for the new/target Vivado version
+- Export the openwifi project in the new/target Vivado as .tcl file
+  - Compare this new .tcl file with the original openwifi.tcl to find out what need to be changed
+  - You can check our commit on openwifi.tcl to find out what we have changed by the comparison
+
+Method 2: Start from new Vivado and ADI HDL reference design, then add openwifi IP
+- Create the openwifi design in the old/current Vivado version
+- Open the openwifi design with the new/target Vivado version
+- Use write_bd_tcl to write openwifi_ip Hierarchy to a .tcl
+  ```
+  write_bd_tcl -hier_blks [get_bd_cells /hier_mig] ./mig_hierarchy.tcl
+  ```
+- Create/open the new (or your own) ADI HDL reference design with the new/target Vivado version, then:
+  ```
+  source ./mig_hierarchy.tcl
+  create_hier_cell_hier_mig / my_new_hierarchy
+  ```
+- The openwifi_ip sub-block (Hierarchy) should appear in your new design with new Vivado version.
+
+Main reference: Vivado Design Suite User Guide: Designing IP Subsystems Using IP Integrator (UG994). Main command in that UG:
+```
+write_bd_tcl -hier_blks [get_bd_cells /hier_mig] ./mig_hierarchy.tcl
+source ./mig_hierarchy.tcl
+create_hier_cell_hier_mig / my_new_hierarchy
 ```
 
 ***Note: openwifi adds necessary modules/modifications on top of [Analog Devices HDL reference design](https://github.com/analogdevicesinc/hdl). For general issues, Analog Devices wiki pages would be helpful!***
