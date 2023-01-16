@@ -534,7 +534,7 @@ module xpu #
     .ofdm_symbol_time(ofdm_symbol_time),
     .sifs_time(sifs_time),
     .max_num_retrans(max_num_retrans),
-    .tx_pkt_need_ack(tx_pkt_need_ack),
+    .tx_pkt_need_ack(tx_pkt_need_ack&(~ack_rx_disable)),
     .tx_pkt_retrans_limit(tx_pkt_retrans_limit),
     .tx_ht_aggr(tx_ht_aggr),
     .relative_decoding_latency(relative_decoding_latency),
