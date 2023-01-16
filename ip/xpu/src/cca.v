@@ -14,8 +14,8 @@
         input wire clk,
         input wire rstn,
         
-        input wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
-        input wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_th,
+        input wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
+        input wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_th,
 
         input wire rx_ht_aggr,
         input wire rx_ht_aggr_last,
