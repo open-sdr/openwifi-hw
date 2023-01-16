@@ -6,7 +6,7 @@
 
 if [ "$#" -ne 1 ]; then
     echo "You must enter the BOARD_NAME as argument"
-    echo "Like: antsdr antsdr_e200 sdrpi adrv9364z7020 adrv9361z7035 zc706_fmcs2 zed_fmcs2 zc702_fmcs2 zcu102_fmcs2 zcu102_9371"
+    echo "Like: antsdr antsdr_e200 sdrpi adrv9364z7020 adrv9361z7035 zc706_fmcs2 zed_fmcs2 zc702_fmcs2 zcu102_fmcs2 zcu102_9371 neptunesdr"
     exit 1
 fi
 
