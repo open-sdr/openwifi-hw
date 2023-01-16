@@ -25,26 +25,32 @@
     parameter integer TSF_TIMER_WIDTH = 64 // according to 802.11 standard
 	)
 	(
-        // -------------debug purpose----------------
-        output wire trigger_out,
-        output wire trigger_out1,
-        // -------------debug purpose----------------
+    // -------------debug purpose----------------
+    output wire trigger_out0,
+    output wire trigger_out1,
+    output wire trigger_out2,
+    output wire trigger_out3,
+    output wire trigger_out4,
+    output wire trigger_out5,
+    output wire trigger_out6,
+    output wire trigger_out7,
+    // -------------debug purpose----------------
 
-        // ad9361 status and ctrl
-	     input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_rf,
-         output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb,
+    // ad9361 status and ctrl
+    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_rf,
+    output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb,
 
-	    // from ad9361_adc_pack
-        input wire adc_clk,
-        input wire adc_rst,
-        input wire [(ADC_PACK_DATA_WIDTH-1) : 0] adc_data,
-        //(* mark_debug = "true" *) input wire adc_sync,
-        input wire adc_valid,
+    // from ad9361_adc_pack
+    input wire adc_clk,
+    input wire adc_rst,
+    input wire [(ADC_PACK_DATA_WIDTH-1) : 0] adc_data,
+    //(* mark_debug = "true" *) input wire adc_sync,
+    input wire adc_valid,
 
-        // I/Q ports from tx_intf for loop back
-        input wire [(2*IQ_DATA_WIDTH-1) : 0] iq0_from_tx_intf,
-        input wire [(2*IQ_DATA_WIDTH-1) : 0] iq1_from_tx_intf,
-        input wire iq_valid_from_tx_intf,
+    // I/Q ports from tx_intf for loop back
+    input wire [(2*IQ_DATA_WIDTH-1) : 0] iq0_from_tx_intf,
+    input wire [(2*IQ_DATA_WIDTH-1) : 0] iq1_from_tx_intf,
+    input wire iq_valid_from_tx_intf,
 
     // Ports to openofdm rx
     output wire [(2*IQ_DATA_WIDTH-1) : 0] sample0,
@@ -216,9 +222,14 @@
     wire rx_pkt_sn_plus_one;
 
     // -------------debug purpose----------------
-    wire trigger_out_internal = 1;
-    assign trigger_out1 = slv_reg1[4];
-    assign trigger_out = (slv_reg1[0]&trigger_out_internal);
+    assign trigger_out0 = slv_reg1[0];
+    assign trigger_out1 = slv_reg1[1];
+    assign trigger_out2 = slv_reg1[2];
+    assign trigger_out3 = slv_reg1[3];
+    assign trigger_out4 = slv_reg1[4];
+    assign trigger_out5 = slv_reg1[5];
+    assign trigger_out6 = slv_reg1[6];
+    assign trigger_out7 = slv_reg1[7];
     // -------------debug purpose----------------
 
     assign sample0 = {rf_i0_to_acc,rf_q0_to_acc};
