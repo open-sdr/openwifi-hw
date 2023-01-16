@@ -27,7 +27,7 @@ TCL_FILENAME=$2
 echo XILINX_DIR $XILINX_DIR
 echo TCL_FILENAME $TCL_FILENAME
 
-if [ -d "$XILINX_DIR/SDK" ]; then
+if [ -d "$XILINX_DIR/Vivado" ]; then
     echo "\$XILINX_DIR is found!"
 else
     echo "\$XILINX_DIR is not correct. Please check!"
@@ -41,7 +41,7 @@ else
     exit 1
 fi
 
-source $XILINX_DIR/SDK/2018.3/settings64.sh
+source $XILINX_DIR/Vivado/2021.1/settings64.sh
 
 ARG1=""
 ARG2=""

@@ -60,7 +60,7 @@ do
     fi
 done
 
-source $XILINX_DIR/SDK/2018.3/settings64.sh
+source $XILINX_DIR/Vivado/2021.1/settings64.sh
 
 set -x
 vivado -source ./ip_repo_gen.tcl

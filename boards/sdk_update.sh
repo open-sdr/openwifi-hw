@@ -22,18 +22,26 @@ else
     mkdir $BOARD_NAME/sdk
 fi
 
-cp $BOARD_NAME/openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.sdk/system_top_hw_platform_0 $BOARD_NAME/sdk/ -rf
-# git add $BOARD_NAME/sdk/*
+# cp $BOARD_NAME/openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.sdk/system_top_hw_platform_0 $BOARD_NAME/sdk/ -rf
+# # git add $BOARD_NAME/sdk/*
+# if [ -f "$BOARD_NAME/openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.runs/impl_1/system_top.ltx" ]; then
+#     cp $BOARD_NAME/openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.runs/impl_1/system_top.ltx $BOARD_NAME/sdk/
+# else
+#     echo "No debug probe file found."
+# fi
+
+# tar -zcvf $BOARD_NAME/sdk/system_top_hw_platform_0/hdf_and_bit.tar.gz $BOARD_NAME/sdk/system_top_hw_platform_0/system.hdf $BOARD_NAME/sdk/system_top_hw_platform_0/system_top.bit
+# rm $BOARD_NAME/sdk/system_top_hw_platform_0/system.hdf $BOARD_NAME/sdk/system_top_hw_platform_0/system_top.bit
+
+# rm -rf $BOARD_NAME/sdk/git_info.txt
+rm -rf $BOARD_NAME/sdk/*
+cp $BOARD_NAME/openwifi_$BOARD_NAME/system_top.xsa $BOARD_NAME/sdk/ -rf
 if [ -f "$BOARD_NAME/openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.runs/impl_1/system_top.ltx" ]; then
-    cp $BOARD_NAME/openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.runs/impl_1/system_top.ltx $BOARD_NAME/sdk/
+    cp $BOARD_NAME/openwifi_$BOARD_NAME/openwifi_$BOARD_NAME.runs/impl_1/system_top.ltx $BOARD_NAME/sdk/ -rf
 else
     echo "No debug probe file found."
 fi
 
-tar -zcvf $BOARD_NAME/sdk/system_top_hw_platform_0/hdf_and_bit.tar.gz $BOARD_NAME/sdk/system_top_hw_platform_0/system.hdf $BOARD_NAME/sdk/system_top_hw_platform_0/system_top.bit
-rm $BOARD_NAME/sdk/system_top_hw_platform_0/system.hdf $BOARD_NAME/sdk/system_top_hw_platform_0/system_top.bit
-
-rm -rf $BOARD_NAME/sdk/git_info.txt
 echo "openwifi-hw-git-branch" >> $BOARD_NAME/sdk/git_info.txt
 git branch >> $BOARD_NAME/sdk/git_info.txt
 echo " " >> $BOARD_NAME/sdk/git_info.txt
