@@ -7,7 +7,8 @@
       "name": "system",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2021.1"
+      "tool_version": "2021.1",
+      "validated": "true"
     },
     "design_tree": {
       "sys_ps8": "",
@@ -96,7 +97,13 @@
       "spi0_csn": {
         "direction": "O",
         "left": "2",
-        "right": "0"
+        "right": "0",
+        "parameters": {
+          "PortWidth": {
+            "value": "3",
+            "value_src": "ip_prop"
+          }
+        }
       },
       "spi0_sclk": {
         "direction": "O"
@@ -110,7 +117,13 @@
       "spi1_csn": {
         "direction": "O",
         "left": "2",
-        "right": "0"
+        "right": "0",
+        "parameters": {
+          "PortWidth": {
+            "value": "3",
+            "value_src": "ip_prop"
+          }
+        }
       },
       "spi1_sclk": {
         "direction": "O"
@@ -129,7 +142,13 @@
       "gpio_o": {
         "direction": "O",
         "left": "92",
-        "right": "0"
+        "right": "0",
+        "parameters": {
+          "PortWidth": {
+            "value": "93",
+            "value_src": "ip_prop"
+          }
+        }
       },
       "gpio_t": {
         "direction": "O",
@@ -1837,9 +1856,6 @@
           "adc_valid": {
             "direction": "I"
           },
-          "channel_switch": {
-            "direction": "O"
-          },
           "dac_data": {
             "direction": "O",
             "left": "63",
@@ -1854,11 +1870,6 @@
           "ext_reset_in": {
             "type": "rst",
             "direction": "I"
-          },
-          "gpio_ctl": {
-            "direction": "O",
-            "left": "3",
-            "right": "0"
           },
           "gpio_pmod1_0": {
             "direction": "O"
@@ -4970,12 +4981,6 @@
               "xpu_0/bram_addr"
             ]
           },
-          "tx_intf_0_channel_switch": {
-            "ports": [
-              "tx_intf_0/channel_switch",
-              "channel_switch"
-            ]
-          },
           "tx_intf_0_cts_toself_bb_is_ongoing": {
             "ports": [
               "tx_intf_0/cts_toself_bb_is_ongoing",
@@ -5010,12 +5015,6 @@
             "ports": [
               "tx_intf_0/douta",
               "xpu_0/douta"
-            ]
-          },
-          "tx_intf_0_gpio_ctl": {
-            "ports": [
-              "tx_intf_0/gpio_ctl",
-              "gpio_ctl"
             ]
           },
           "tx_intf_0_high_trigger": {
@@ -5916,12 +5915,6 @@
           "xlslice_0/Din"
         ]
       },
-      "openwifi_ip_channel_switch": {
-        "ports": [
-          "openwifi_ip/channel_switch",
-          "gpio_pmod1_3"
-        ]
-      },
       "openwifi_ip_dac_data": {
         "ports": [
           "openwifi_ip/dac_data",
@@ -5932,12 +5925,6 @@
         "ports": [
           "openwifi_ip/dac_valid",
           "util_ad9361_dac_upack/s_axis_valid"
-        ]
-      },
-      "openwifi_ip_gpio_ctl": {
-        "ports": [
-          "openwifi_ip/gpio_ctl",
-          "xlconcat_0/In10"
         ]
       },
       "openwifi_ip_gpio_pmod1_0": {
