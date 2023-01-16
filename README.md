@@ -69,14 +69,9 @@ File --> Export --> Export Hardware --> Next --> Include bitstream --> Next --> 
 * In Linux, store the FPGA files to a specific directory:
 ```
 cd openwifi-hw/boards
-./sdk_update.sh $BOARD_NAME
+./sdk_update.sh $BOARD_NAME $OPENWIFI_HW_IMG_DIR
 ```
-* Add the FPGA files to git (only if you want and know the actual repo you want commit to):
-```
-git add $BOARD_NAME/sdk/*
-git commit -m "new fpga img for openwifi (or comments you want to make)"
-git push
-```
+Above command will store the FPGA img (.xsa .ltx) and the related git info into another directory $OPENWIFI_HW_IMG_DIR that can be picked up by openwifi software building environment later on. Please check README of the openwifi repository.
 
 ## Modify IP cores
 
