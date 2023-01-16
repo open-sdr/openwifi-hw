@@ -54,6 +54,10 @@
 		input  wire [15:0] byte_count,
         input  wire fcs_in_strobe,
 		input  wire fcs_ok,
+        // phy len info
+		input [14:0] n_ofdm_sym,//max 20166 = (22+65535*8)/26 (max ht len 65535 in sig, min ndbps 26 for mcs0)
+		input [9:0]  n_bit_in_last_sym,//max ht ndbps 260 (ht mcs7)
+		input        phy_len_valid,
 
 		input  wire rx_ht_aggr,
 		input  wire rx_ht_aggr_last,
@@ -285,6 +289,8 @@
 
     wire ack_cts_is_ongoing;
 
+    wire [14:0] n_bit_in_last_sym_tmp;
+    wire [6:0]  relative_decoding_latency; //(0.1us resolution. same as send_ack_wait_top)
     wire [14:0] send_ack_wait_top;
     wire [14:0] recv_ack_timeout_top_adj;
     wire [14:0] recv_ack_sig_valid_timeout_top;
@@ -319,6 +325,8 @@
     assign sifs_time =               (slv_reg9[31]?slv_reg9[13:7] :(band==1?10:16));
     assign phy_rx_start_delay_time = (slv_reg9[31]?slv_reg9[6:0]  :(band==1?24:25));//802.11-2012. Table 19-8—ERP characteristics
 
+    assign n_bit_in_last_sym_tmp = n_bit_in_last_sym*25;
+    assign relative_decoding_latency = n_bit_in_last_sym_tmp[14:8];
     assign send_ack_wait_top = (band==1?slv_reg18[14:0]:slv_reg18[30:16]); //band==1: 2.4GHz
 
     assign recv_ack_timeout_top_adj = (band==1?slv_reg16[14:0]:slv_reg17[14:0]);
@@ -528,6 +536,7 @@
         .tx_pkt_need_ack(tx_pkt_need_ack),
         .tx_pkt_retrans_limit(tx_pkt_retrans_limit),
         .tx_ht_aggr(tx_ht_aggr),
+        .relative_decoding_latency(relative_decoding_latency),
         .send_ack_wait_top(send_ack_wait_top),
         .recv_ack_timeout_top_adj(recv_ack_timeout_top_adj),
         .recv_ack_sig_valid_timeout_top(recv_ack_sig_valid_timeout_top),

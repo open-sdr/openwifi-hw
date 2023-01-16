@@ -26,7 +26,8 @@
         input wire tx_pkt_need_ack,
         input wire [3:0] tx_pkt_retrans_limit,
         input wire tx_ht_aggr,
-        input wire [14:0] send_ack_wait_top,//0 means 2.4GHz, non-zeros means 5GHz
+        input wire [6:0]  relative_decoding_latency,
+        input wire [14:0] send_ack_wait_top,
         input wire [14:0] recv_ack_timeout_top_adj,
         input wire [14:0] recv_ack_sig_valid_timeout_top,
         input wire recv_ack_fcs_valid_disable,
@@ -108,7 +109,7 @@
   wire is_qosdata;
   wire is_management;
   wire is_blockackreq;
-  wire  is_blockackresp;
+  wire is_blockackresp;
   wire is_pspoll;
   wire is_rts;
   wire is_ack;
@@ -148,9 +149,10 @@
   reg is_rts_received;
 
   reg [14:0] send_ack_wait_top_scale;
+  reg [14:0] send_ack_wait_top_scale_lock;
   reg [14:0] recv_ack_sig_valid_timeout_top_scale;
   reg [14:0] recv_ack_timeout_top_adj_scale;
-  `DEBUG_PREFIX reg retrans_started ;
+  `DEBUG_PREFIX reg retrans_started;
 
   assign tx_control_state_idle =((tx_control_state==IDLE) && (~retrans_started));
 
@@ -239,6 +241,7 @@
           reset_blk_ack_bitmap_mem <=0;
 
           send_ack_wait_top_scale <=0;
+          send_ack_wait_top_scale_lock <=0;
           recv_ack_sig_valid_timeout_top_scale <= 0;
           recv_ack_timeout_top_adj_scale <= 0;
         end
@@ -259,7 +262,7 @@
         // num_data_ofdm_symbol_reg <= num_data_ofdm_symbol;
         // ackcts_n_sym_reg <= ackcts_n_sym;
 
-        send_ack_wait_top_scale <= (send_ack_wait_top*`COUNT_SCALE);
+        send_ack_wait_top_scale <= ((send_ack_wait_top-relative_decoding_latency)*`COUNT_SCALE);
         recv_ack_sig_valid_timeout_top_scale <= (recv_ack_sig_valid_timeout_top*`COUNT_SCALE);
         recv_ack_timeout_top_adj_scale <= (recv_ack_timeout_top_adj*`COUNT_SCALE);
 
@@ -309,6 +312,7 @@
                 end
                 blk_ack_bitmap_mem[SC_seq_num[6:0]] <= 1'b1;
                 rx_ht_aggr_last_flag <= 1;
+                send_ack_wait_top_scale_lock <= send_ack_wait_top_scale;
                 tx_control_state <= PREP_ACK;
               end
             // This is the last packet of aggregation and fcs NOT valid
@@ -317,6 +321,7 @@
                 // Since this MPDU is not valid, only send a block ack if there were previously received valid MPDUs
                 if(rx_ht_aggr_flag == 1) begin
                     rx_ht_aggr_last_flag <= 1;
+                    send_ack_wait_top_scale_lock <= send_ack_wait_top_scale;
                     tx_control_state <= PREP_ACK;
                 end
               end
@@ -336,6 +341,7 @@
                       end
                       blk_ack_bitmap_mem[SC_seq_num[6:0]] <= 1'b1;
                   end else begin
+                      send_ack_wait_top_scale_lock <= send_ack_wait_top_scale;
                       tx_control_state  <= (ack_disable?tx_control_state:PREP_ACK); //we also send cts (if rts is received) in PREP_ACK status
                   end
               end
@@ -440,9 +446,9 @@
                 end
               end
 
-              ack_timeout_count <= ( ( ack_timeout_count != send_ack_wait_top_scale )?(ack_timeout_count + 1):ack_timeout_count );
-              tx_control_state  <= ( ( ack_timeout_count != send_ack_wait_top_scale )?tx_control_state:((rx_ht_aggr_last_flag||is_blockackreq_received) ? SEND_BLK_ACK : SEND_DFL_ACK) );
-              start_tx_ack <= ( ( ack_timeout_count != send_ack_wait_top_scale )? 0:1);
+              ack_timeout_count <= ( ( ack_timeout_count != send_ack_wait_top_scale_lock )?(ack_timeout_count + 1):ack_timeout_count );
+              tx_control_state  <= ( ( ack_timeout_count != send_ack_wait_top_scale_lock )?tx_control_state:((rx_ht_aggr_last_flag||is_blockackreq_received) ? SEND_BLK_ACK : SEND_DFL_ACK) );
+              start_tx_ack <= ( ( ack_timeout_count != send_ack_wait_top_scale_lock )? 0:1);
             end
           end
 
