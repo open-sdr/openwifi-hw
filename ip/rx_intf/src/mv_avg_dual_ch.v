@@ -14,9 +14,9 @@ module mv_avg_dual_ch
     input signed [DATA_WIDTH1-1:0] data_in1,
     input data_in_valid,
 
-    output reg signed [DATA_WIDTH0-1:0] data_out0,
-    output reg signed [DATA_WIDTH1-1:0] data_out1,
-    output reg data_out_valid
+    output signed [DATA_WIDTH0-1:0] data_out0,
+    output signed [DATA_WIDTH1-1:0] data_out1,
+    output data_out_valid
 );
 
 localparam FIFO_SIZE = 1<<LOG2_AVG_LEN;
@@ -26,24 +26,33 @@ localparam TOTAL_WIDTH1 = DATA_WIDTH1 + LOG2_AVG_LEN;
 reg signed [(TOTAL_WIDTH0-1):0] running_total0;
 reg signed [(TOTAL_WIDTH1-1):0] running_total1;
 
+reg  signed [DATA_WIDTH0-1:0] data_in0_reg; // to lock data_in by data_in_valid in case it changes in between two valid strobes
+reg  signed [DATA_WIDTH0-1:0] data_in1_reg; // to lock data_in by data_in_valid in case it changes in between two valid strobes
 wire signed [DATA_WIDTH0-1:0] data_in_old0;
 wire signed [DATA_WIDTH1-1:0] data_in_old1;
 
 wire signed [TOTAL_WIDTH0-1:0] ext_data_in_old0 = {{LOG2_AVG_LEN{data_in_old0[DATA_WIDTH0-1]}}, data_in_old0};
-wire signed [TOTAL_WIDTH0-1:0] ext_data_in0     = {{LOG2_AVG_LEN{data_in0[DATA_WIDTH0-1]}},     data_in0    };
+wire signed [TOTAL_WIDTH0-1:0] ext_data_in0     = {{LOG2_AVG_LEN{data_in0_reg[DATA_WIDTH0-1]}}, data_in0_reg};
 wire signed [TOTAL_WIDTH1-1:0] ext_data_in_old1 = {{LOG2_AVG_LEN{data_in_old1[DATA_WIDTH1-1]}}, data_in_old1};
-wire signed [TOTAL_WIDTH1-1:0] ext_data_in1     = {{LOG2_AVG_LEN{data_in1[DATA_WIDTH1-1]}},     data_in1    };
+wire signed [TOTAL_WIDTH1-1:0] ext_data_in1     = {{LOG2_AVG_LEN{data_in1_reg[DATA_WIDTH1-1]}}, data_in1_reg};
 
-reg data_in_valid_reg;
 reg rd_en, rd_en_start;
 wire [LOG2_AVG_LEN:0] wr_data_count;
+reg [LOG2_AVG_LEN:0]  wr_data_count_reg;
+wire wr_complete_pulse;
+reg  wr_complete_pulse_reg;
+
+assign wr_complete_pulse = (wr_data_count > wr_data_count_reg);
+assign data_out_valid = wr_complete_pulse_reg;
+assign data_out0 = running_total0[TOTAL_WIDTH0-1:LOG2_AVG_LEN];
+assign data_out1 = running_total1[TOTAL_WIDTH1-1:LOG2_AVG_LEN];
 
 xpm_fifo_sync #(
     .DOUT_RESET_VALUE("0"),    // String
     .ECC_MODE("no_ecc"),       // String
     .FIFO_MEMORY_TYPE("auto"), // String
     .FIFO_READ_LATENCY(0),     // DECIMAL
-    .FIFO_WRITE_DEPTH(FIFO_SIZE),   // DECIMAL
+    .FIFO_WRITE_DEPTH(FIFO_SIZE),   // DECIMAL minimum 16!
     .FULL_RESET_VALUE(0),      // DECIMAL
     .PROG_EMPTY_THRESH(10),    // DECIMAL
     .PROG_FULL_THRESH(10),     // DECIMAL
@@ -84,22 +93,22 @@ xpm_fifo_sync #(
 
 always @(posedge clk) begin
     if (~rstn) begin
-        data_in_valid_reg <= 0;
+        data_in0_reg <= 0;
+        data_in1_reg <= 0;
+        wr_complete_pulse_reg <= 0;
+        wr_data_count_reg <= 0;
         running_total0 <= 0;
         running_total1 <= 0;
-        data_out0 <= 0;
-        data_out1 <= 0;
-        data_out_valid <= 0;
         rd_en <= 0;
         rd_en_start <= 0;
     end else begin
-        data_in_valid_reg <= data_in_valid;
-        data_out_valid <= data_in_valid_reg;
-        rd_en_start <= ((wr_data_count == FIFO_SIZE)?1:rd_en_start);
-        rd_en <= (rd_en_start?data_in_valid:rd_en);
-        data_out0 <= running_total0[TOTAL_WIDTH0-1:LOG2_AVG_LEN];
-        data_out1 <= running_total1[TOTAL_WIDTH1-1:LOG2_AVG_LEN];
-        if (data_in_valid) begin
+        data_in0_reg <= (data_in_valid?data_in0:data_in0_reg);
+        data_in1_reg <= (data_in_valid?data_in1:data_in1_reg);
+        wr_complete_pulse_reg <= wr_complete_pulse;
+        wr_data_count_reg <= wr_data_count;
+        rd_en_start <= ((wr_data_count == (FIFO_SIZE))?1:rd_en_start);
+        rd_en <= (rd_en_start?wr_complete_pulse:rd_en);
+        if (wr_complete_pulse) begin
             running_total0 <= running_total0 + ext_data_in0 - (rd_en_start?ext_data_in_old0:0);
             running_total1 <= running_total1 + ext_data_in1 - (rd_en_start?ext_data_in_old1:0);
         end
