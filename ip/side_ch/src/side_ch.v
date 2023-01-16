@@ -6,15 +6,18 @@
 
 `timescale 1 ns / 1 ps
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`ifdef SIDE_CH_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 	module side_ch #
 	(
 		parameter integer TSF_TIMER_WIDTH = 64, // according to 802.11 standard
 
-        parameter integer GPIO_STATUS_WIDTH = 8,
-        parameter integer RSSI_HALF_DB_WIDTH = 11,
+    parameter integer GPIO_STATUS_WIDTH = 8,
+    parameter integer RSSI_HALF_DB_WIDTH = 11,
 
 		parameter integer ADC_PACK_DATA_WIDTH	= 64,
 		parameter integer IQ_DATA_WIDTH	=     16,
@@ -31,24 +34,24 @@
 `else
 		parameter integer MAX_NUM_DMA_SYMBOL = 8192,
 `endif
-        parameter integer WAIT_COUNT_BITS = 5,
+    parameter integer WAIT_COUNT_BITS = 5,
 
 		parameter integer COUNTER_WIDTH = 16
 	)
 	(
 		// from pl
-	    input wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
-        input wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
+	  input wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
+    input wire signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
 		input wire [(TSF_TIMER_WIDTH-1):0]  tsf_runtime_val,
 		input wire [(2*IQ_DATA_WIDTH-1):0] openofdm_tx_iq0,
 		input wire [(2*IQ_DATA_WIDTH-1):0] openofdm_tx_iq1,
-    	input wire openofdm_tx_iq_valid,
+    input wire openofdm_tx_iq_valid,
 		input wire [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq0,
 		input wire [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq1,
-    	input wire tx_intf_iq_valid,
+    input wire tx_intf_iq_valid,
 		input wire [(2*IQ_DATA_WIDTH-1):0] sample0_in,
 		input wire [(2*IQ_DATA_WIDTH-1):0] sample1_in,
-    	input wire sample_in_strobe,
+    input wire sample_in_strobe,
 
 		input wire demod_is_ongoing,
 		input wire ofdm_symbol_eq_out_pulse,
@@ -78,7 +81,7 @@
 		input wire fcs_in_strobe,
 		input wire fcs_ok,
 		input wire block_rx_dma_to_ps,
-        input wire block_rx_dma_to_ps_valid,
+    input wire block_rx_dma_to_ps_valid,
 
 		// from tx
 		input wire phy_tx_start,
@@ -133,13 +136,13 @@
 `ifdef HAS_SIDE_CH
 
 	function integer clogb2 (input integer bit_depth);                                   
-      begin                                                                              
-        for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                                      
-          bit_depth = bit_depth >> 1;                                                    
-      end                                                                                
-    endfunction   
-    
-    localparam integer MAX_BIT_NUM_DMA_SYMBOL  = clogb2(MAX_NUM_DMA_SYMBOL);
+		begin                                                                              
+			for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                                      
+				bit_depth = bit_depth >> 1;                                                    
+		end                                                                                
+	endfunction   
+	
+	localparam integer MAX_BIT_NUM_DMA_SYMBOL  = clogb2(MAX_NUM_DMA_SYMBOL);
     
 	wire       slv_reg_wren_signal;
 	wire [4:0] axi_awaddr_core;
@@ -179,17 +182,17 @@
 
 	wire s_axis_state;
 
-    wire  [C_S00_AXIS_TDATA_WIDTH-1 : 0] data_to_pl;
+	wire  [C_S00_AXIS_TDATA_WIDTH-1 : 0] data_to_pl;
 	wire pl_ask_data;
-    wire  [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] s_axis_data_count;
-    wire  emptyn_to_pl;
+	wire  [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] s_axis_data_count;
+	wire  emptyn_to_pl;
 
 	wire m_axis_start_1trans;
 
-    wire [C_M00_AXIS_TDATA_WIDTH-1 : 0] data_to_ps;
-    wire data_to_ps_valid;
-    wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count;
-    wire fulln_to_pl;
+	wire [C_M00_AXIS_TDATA_WIDTH-1 : 0] data_to_ps;
+	wire data_to_ps_valid;
+	wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count;
+	wire fulln_to_pl;
 
 	wire [1:0] FC_type;
 	wire is_data;
@@ -208,17 +211,17 @@
 
 	side_ch_counter_event_cfg # (
 		.GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH),
-        .RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH),
+		.RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH),
 		.C_S_AXI_DATA_WIDTH(C_S00_AXI_DATA_WIDTH)
 	) side_ch_counter_event_cfg_i	(
-        .clk(m00_axis_aclk),
-        .rstn(m00_axis_aresetn),
+		.clk(m00_axis_aclk),
+		.rstn(m00_axis_aresetn),
 
 		// original event source
 		.gain_th(slv_reg10[(GPIO_STATUS_WIDTH-2):0]),
 		.rssi_half_db_th(slv_reg9[(RSSI_HALF_DB_WIDTH-1):0]),
-	    .gpio_status(gpio_status),
-        .rssi_half_db(rssi_half_db),
+		.gpio_status(gpio_status),
+		.rssi_half_db(rssi_half_db),
 
 		.short_preamble_detected(short_preamble_detected),
 		.long_preamble_detected(long_preamble_detected),
@@ -258,8 +261,8 @@
 	side_ch_counter # (
 		.COUNTER_WIDTH(COUNTER_WIDTH)
 	) side_ch_counter_i	(
-        .clk(m00_axis_aclk),
-        // .rstn(m00_axis_aresetn),
+		.clk(m00_axis_aclk),
+		// .rstn(m00_axis_aresetn),
 
 		// from arm. capture reg write to clear the corresponding counter
 		.slv_reg_wren_signal(slv_reg_wren_signal),
@@ -273,26 +276,26 @@
 		.event5(event5),
 
 		// has to be slv_reg26 ~ 31 due to the internal logic
-		.counter0(slv_reg26),
-		.counter1(slv_reg27),
-		.counter2(slv_reg28),
-		.counter3(slv_reg29),
-		.counter4(slv_reg30),
-		.counter5(slv_reg31)
+		.counter0(slv_reg26[(COUNTER_WIDTH-1):0]),
+		.counter1(slv_reg27[(COUNTER_WIDTH-1):0]),
+		.counter2(slv_reg28[(COUNTER_WIDTH-1):0]),
+		.counter3(slv_reg29[(COUNTER_WIDTH-1):0]),
+		.counter4(slv_reg30[(COUNTER_WIDTH-1):0]),
+		.counter5(slv_reg31[(COUNTER_WIDTH-1):0])
 	);
 
 	side_ch_control # (
 		.TSF_TIMER_WIDTH(TSF_TIMER_WIDTH),
-        .GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH),
-        .RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH),
+		.GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH),
+		.RSSI_HALF_DB_WIDTH(RSSI_HALF_DB_WIDTH),
 		.C_S_AXI_DATA_WIDTH(C_S00_AXI_DATA_WIDTH),
 		.IQ_DATA_WIDTH(IQ_DATA_WIDTH),
-	    .C_S_AXIS_TDATA_WIDTH(C_S00_AXIS_TDATA_WIDTH),
+		.C_S_AXIS_TDATA_WIDTH(C_S00_AXIS_TDATA_WIDTH),
 		.MAX_NUM_DMA_SYMBOL(MAX_NUM_DMA_SYMBOL),
-        .MAX_BIT_NUM_DMA_SYMBOL(MAX_BIT_NUM_DMA_SYMBOL)
+		.MAX_BIT_NUM_DMA_SYMBOL(MAX_BIT_NUM_DMA_SYMBOL)
 	) side_ch_control_i	(
-        .clk(m00_axis_aclk),
-        .rstn(m00_axis_aresetn&(~slv_reg0[2])),
+		.clk(m00_axis_aclk),
+		.rstn(m00_axis_aresetn&(~slv_reg0[2])),
 
 		// from pl
 		.gpio_status(gpio_status),
@@ -300,10 +303,10 @@
 		.tsf_runtime_val(tsf_runtime_val),
 		.openofdm_tx_iq0(openofdm_tx_iq0),
 		.openofdm_tx_iq1(openofdm_tx_iq1),
-    	.openofdm_tx_iq_valid(openofdm_tx_iq_valid),
+		.openofdm_tx_iq_valid(openofdm_tx_iq_valid),
 		.tx_intf_iq0(tx_intf_iq0),
 		.tx_intf_iq1(tx_intf_iq1),
-    	.tx_intf_iq_valid(tx_intf_iq_valid),
+		.tx_intf_iq_valid(tx_intf_iq_valid),
 		.iq0({sample0_in[(IQ_DATA_WIDTH-1):0], sample0_in[(2*IQ_DATA_WIDTH-1):IQ_DATA_WIDTH]}),
 		.iq1({sample1_in[(IQ_DATA_WIDTH-1):0], sample1_in[(2*IQ_DATA_WIDTH-1):IQ_DATA_WIDTH]}),
 		.iq_strobe(sample_in_strobe),
@@ -311,8 +314,8 @@
 		.ofdm_symbol_eq_out_pulse(ofdm_symbol_eq_out_pulse),
 		.long_preamble_detected(long_preamble_detected),
 		.short_preamble_detected(short_preamble_detected),
-        .ht_unsupport(ht_unsupport),
-        .pkt_rate(pkt_rate),
+		.ht_unsupport(ht_unsupport),
+		.pkt_rate(pkt_rate),
 		.pkt_len(pkt_len),
 		.csi(csi),
 		.csi_valid(csi_valid),
@@ -321,9 +324,9 @@
 		.equalizer_valid(equalizer_valid),
 
 		.pkt_header_valid(pkt_header_valid),
-        .pkt_header_valid_strobe(pkt_header_valid_strobe),
+		.pkt_header_valid_strobe(pkt_header_valid_strobe),
 		.FC_DI(FC_DI),
-    	.FC_DI_valid(FC_DI_valid),
+		.FC_DI_valid(FC_DI_valid),
 		.addr1(addr1),
 		.addr1_valid(addr1_valid),
 		.addr2(addr2),
@@ -334,7 +337,7 @@
 		.fcs_in_strobe(fcs_in_strobe),
 		.fcs_ok(fcs_ok),
 		.block_rx_dma_to_ps(block_rx_dma_to_ps),
-        .block_rx_dma_to_ps_valid(block_rx_dma_to_ps_valid),
+		.block_rx_dma_to_ps_valid(block_rx_dma_to_ps_valid),
 
 		.phy_tx_start(phy_tx_start),
 		.tx_pkt_need_ack(tx_pkt_need_ack),
@@ -366,9 +369,9 @@
 
 		// s_axis
 		.data_to_pl(data_to_pl),
-        .pl_ask_data(pl_ask_data),
-        .s_axis_data_count(s_axis_data_count),
-        .emptyn_to_pl(emptyn_to_pl),
+		.pl_ask_data(pl_ask_data),
+		.s_axis_data_count(s_axis_data_count),
+		.emptyn_to_pl(emptyn_to_pl),
 
 		.S_AXIS_TVALID(s00_axis_tvalid),
 		.S_AXIS_TLAST(s00_axis_tlast),
@@ -376,10 +379,10 @@
 		// m_axis
 		.m_axis_start_1trans(m_axis_start_1trans),
 
-        .data_to_ps(data_to_ps),
-        .data_to_ps_valid(data_to_ps_valid),
-        .m_axis_data_count(m_axis_data_count),
-        .fulln_to_pl(fulln_to_pl),
+		.data_to_ps(data_to_ps),
+		.data_to_ps_valid(data_to_ps_valid),
+		.m_axis_data_count(m_axis_data_count),
+		.fulln_to_pl(fulln_to_pl),
         
 		.MAX_NUM_DMA_SYMBOL_UDP_debug(slv_reg21),
 		.MAX_NUM_DMA_SYMBOL_debug(slv_reg22),
@@ -394,15 +397,15 @@
 		.MAX_BIT_NUM_DMA_SYMBOL(MAX_BIT_NUM_DMA_SYMBOL),
 		.C_M_AXIS_TDATA_WIDTH(C_M00_AXIS_TDATA_WIDTH)
 	) side_ch_m_axis_i (
-        .m_axis_endless_mode(slv_reg1[4]),
+		.m_axis_endless_mode(slv_reg1[4]),
 		.M_AXIS_NUM_DMA_SYMBOL(slv_reg2[    MAX_BIT_NUM_DMA_SYMBOL-1  :  0]-1'b1),
 
 		.m_axis_start_1trans(m_axis_start_1trans),
 
-        .data_to_ps(data_to_ps),
-        .data_to_ps_valid(data_to_ps_valid),
-        .m_axis_data_count(m_axis_data_count),
-        .fulln_to_pl(fulln_to_pl),
+		.data_to_ps(data_to_ps),
+		.data_to_ps_valid(data_to_ps_valid),
+		.m_axis_data_count(m_axis_data_count),
+		.fulln_to_pl(fulln_to_pl),
 
 		.M_AXIS_ACLK(m00_axis_aclk),
 		.M_AXIS_ARESETN( m00_axis_aresetn&(~slv_reg0[0]) ),

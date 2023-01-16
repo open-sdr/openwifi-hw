@@ -1,8 +1,14 @@
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
 `timescale 1 ns / 1 ps
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+
+`include "xpu_pre_def.v"
+
+`ifdef XPU_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 	module rssi #
 	(
@@ -32,11 +38,13 @@
 
         // result outputs
         `DEBUG_PREFIX output wire signed [(IQ_RSSI_HALF_DB_WIDTH-1):0] iq_rssi_half_db,
-        output wire iq_rssi_half_db_valid,
-        output reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_lock_by_sig_valid,
-        output reg [(GPIO_STATUS_WIDTH-1):0] gpio_status_lock_by_sig_valid,
+        `DEBUG_PREFIX output wire iq_rssi_half_db_valid,
+        `DEBUG_PREFIX output reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_lock_by_sig_valid,
+        `DEBUG_PREFIX output reg [(GPIO_STATUS_WIDTH-1):0] gpio_status_lock_by_sig_valid,
         `DEBUG_PREFIX output reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db,
-        output reg rssi_half_db_valid
+        `DEBUG_PREFIX output reg rssi_half_db_valid,
+        `DEBUG_PREFIX output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_delay,
+        `DEBUG_PREFIX output wire gpio_status_delay_valid
 	);
 
     reg fifo_delay_rstn_delay1;
@@ -46,8 +54,6 @@
 
     wire signed [(IQ_DATA_WIDTH-1):0] iq_rssi;
     wire iq_rssi_valid;
-   `DEBUG_PREFIX wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_delay;
-    wire gpio_status_delay_valid;
 
     iq_abs_avg # (
         .IQ_DATA_WIDTH(IQ_DATA_WIDTH)

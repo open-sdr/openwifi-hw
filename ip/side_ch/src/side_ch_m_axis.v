@@ -18,10 +18,10 @@
 
 		input wire m_axis_start_1trans,
 
-        input wire [C_M_AXIS_TDATA_WIDTH-1 : 0] data_to_ps,
-        input wire data_to_ps_valid,
-        output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count,
-        output wire fulln_to_pl,
+    input wire [C_M_AXIS_TDATA_WIDTH-1 : 0] data_to_ps,
+    input wire data_to_ps_valid,
+    output wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count,
+    output wire fulln_to_pl,
         
 		input wire  M_AXIS_ACLK,
 		input wire  M_AXIS_ARESETN,
@@ -50,15 +50,15 @@
 	// reg [WAIT_COUNT_BITS-1 : 0] 	count;
 	wire  	axis_tvalid;
 	wire  	axis_tlast;
-    reg     axis_tlast_delay;
+  reg     axis_tlast_delay;
 	wire  	tx_en;
 	reg     tx_done;
 	wire    EMPTY;
-    reg       init_txn_ff;
-    wire      init_txn_pulse;
-    wire      FULL;
-    
-    assign fulln_to_pl     = (~FULL);
+  reg       init_txn_ff;
+  wire      init_txn_pulse;
+  wire      FULL;
+  
+  assign fulln_to_pl     = (~FULL);
 	assign M_AXIS_TVALID	= axis_tvalid;
 	assign M_AXIS_TLAST	    = axis_tlast&&(!axis_tlast_delay);
 	assign M_AXIS_TSTRB	    = {(C_M_AXIS_TDATA_WIDTH/8){1'b1}};
@@ -67,22 +67,22 @@
 	assign axis_tlast = ( (read_pointer == M_AXIS_NUM_DMA_SYMBOL) && tx_en ) && (m_axis_endless_mode==0);                                
 	assign tx_en = ( M_AXIS_TREADY && axis_tvalid );   
 
-    assign init_txn_pulse    = (!init_txn_ff) && m_axis_start_1trans;
-    
-    //Generate a pulse to initiate AXI transaction.
-    always @(posedge M_AXIS_ACLK)                                              
-      begin                                                                        
-        // Initiates AXI transaction delay    
-        if (!M_AXIS_ARESETN)                                                   
-          begin                                                                    
-            init_txn_ff <= 1'b0;                                                   
-            //init_txn_ff2 <= 1'b0;                                                   
-          end                                                                               
-        else                                                                       
-          begin  
-            init_txn_ff <= m_axis_start_1trans;
-          end                                                                      
-      end     
+  assign init_txn_pulse    = (!init_txn_ff) && m_axis_start_1trans;
+  
+  //Generate a pulse to initiate AXI transaction.
+  always @(posedge M_AXIS_ACLK)                                              
+    begin                                                                        
+      // Initiates AXI transaction delay    
+      if (!M_AXIS_ARESETN)                                                   
+        begin                                                                    
+          init_txn_ff <= 1'b0;                                                   
+          //init_txn_ff2 <= 1'b0;                                                   
+        end                                                                               
+      else                                                                       
+        begin  
+          init_txn_ff <= m_axis_start_1trans;
+        end                                                                      
+    end     
       
 	// Control state machine implementation                             
 	always @(posedge M_AXIS_ACLK)                                             
@@ -131,18 +131,18 @@
 	end                                                                       
 
 	// Delay the axis_tvalid and axis_tlast signal by one clock cycle                              
-    // to match the latency of M_AXIS_TDATA                                                        
-    always @(posedge M_AXIS_ACLK)                                                                  
-    begin                                                                                          
-      if (!M_AXIS_ARESETN || init_txn_pulse)                                                                         
-        begin                                                                                      
-          axis_tlast_delay <= 1'b0;                                                     
-        end                                                                                        
-      else                                                                                         
-        begin                                                                                      
-          axis_tlast_delay <= axis_tlast;
-        end                                                                                        
-    end   
+  // to match the latency of M_AXIS_TDATA                                                        
+  always @(posedge M_AXIS_ACLK)                                                                  
+  begin                                                                                          
+    if (!M_AXIS_ARESETN || init_txn_pulse)                                                                         
+      begin                                                                                      
+        axis_tlast_delay <= 1'b0;                                                     
+      end                                                                                        
+    else                                                                                         
+      begin                                                                                      
+        axis_tlast_delay <= axis_tlast;
+      end                                                                                        
+  end   
 
 	always@(posedge M_AXIS_ACLK)                                               
 	begin                                                                            

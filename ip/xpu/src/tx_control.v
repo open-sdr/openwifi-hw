@@ -2,9 +2,13 @@
 `include "clock_speed.v"
 `include "board_def.v"
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
-`define DEBUG_PREFIX
+`include "xpu_pre_def.v"
 
+`ifdef XPU_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
+`define DEBUG_PREFIX
+`endif
 
 `timescale 1 ns / 1 ps
 
@@ -18,7 +22,7 @@
         input wire clk,
         input wire rstn,
         
-        input wire ack_disable,
+        input wire ack_tx_disable,
         input wire [6:0] preamble_sig_time,
         input wire [4:0] ofdm_symbol_time,
         input wire [6:0] sifs_time,
@@ -26,21 +30,21 @@
         input wire tx_pkt_need_ack,
         input wire [3:0] tx_pkt_retrans_limit,
         input wire tx_ht_aggr,
-        input wire [6:0]  relative_decoding_latency,
-        input wire [14:0] send_ack_wait_top,
-        input wire [14:0] recv_ack_timeout_top_adj,
-        input wire [14:0] recv_ack_sig_valid_timeout_top,
+        `DEBUG_PREFIX input wire [6:0]  relative_decoding_latency,
+        `DEBUG_PREFIX input wire [14:0] send_ack_wait_top,
+        `DEBUG_PREFIX input wire [14:0] recv_ack_timeout_top_adj,
+        `DEBUG_PREFIX input wire [14:0] recv_ack_sig_valid_timeout_top,
         input wire recv_ack_fcs_valid_disable,
-	      input wire tx_core_is_ongoing,
-        input wire pulse_tx_bb_end,
-        input wire phy_tx_done,
-        input wire sig_valid,
-        input wire [7:0] signal_rate,
-        input wire [15:0] signal_len,
-        input wire fcs_valid,
-        input wire fcs_in_strobe,
-        input wire [1:0] FC_type,
-        input wire [3:0] FC_subtype,
+	      `DEBUG_PREFIX input wire tx_core_is_ongoing,
+        `DEBUG_PREFIX input wire pulse_tx_bb_end,
+        `DEBUG_PREFIX input wire phy_tx_done,
+        `DEBUG_PREFIX input wire sig_valid,
+        `DEBUG_PREFIX input wire [7:0] signal_rate,
+        `DEBUG_PREFIX input wire [15:0] signal_len,
+        `DEBUG_PREFIX input wire fcs_valid,
+        `DEBUG_PREFIX input wire fcs_in_strobe,
+        `DEBUG_PREFIX input wire [1:0] FC_type,
+        `DEBUG_PREFIX input wire [3:0] FC_subtype,
         input wire       FC_more_frag,
         input wire cts_torts_disable,
         input wire [4:0]  cts_torts_rate,
@@ -51,7 +55,7 @@
         input wire [47:0] addr1,
         input wire [63:0] douta,
         input wire cts_toself_bb_is_ongoing,//this should rise before the phy tx end valid of phy tx IP core.
-        input wire backoff_done,
+        `DEBUG_PREFIX input wire backoff_done,
         input wire [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr,
 
         input wire ampdu_rx_tid_disable,
@@ -71,16 +75,16 @@
 
         output wire tx_control_state_idle,
         output wire ack_cts_is_ongoing,
-        output reg retrans_in_progress,
-        output reg start_retrans,
-        input wire quit_retrans,
+        `DEBUG_PREFIX output reg retrans_in_progress,
+        `DEBUG_PREFIX output reg start_retrans,
+        `DEBUG_PREFIX input wire quit_retrans,
         `DEBUG_PREFIX output reg start_tx_ack,
-        output reg retrans_trigger,
-        output reg tx_try_complete,
-        output reg [79:0] tx_status,
-        output reg ack_tx_flag,
-        output reg wea,
-        output reg [9:0] addra,
+        `DEBUG_PREFIX output reg retrans_trigger,
+        `DEBUG_PREFIX output reg tx_try_complete,
+        `DEBUG_PREFIX output reg [79:0] tx_status,
+        `DEBUG_PREFIX output reg ack_tx_flag,
+        `DEBUG_PREFIX output reg wea,
+        `DEBUG_PREFIX output reg [9:0] addra,
         output reg [(C_S00_AXIS_TDATA_WIDTH-1):0] dina
 	);
 
@@ -99,20 +103,20 @@
   reg [47:0] ack_addr;
   reg signed [15:0] duration_received;
   reg signed [15:0] duration_standard;
-  reg FC_more_frag_received;
+  `DEBUG_PREFIX reg FC_more_frag_received;
   `DEBUG_PREFIX reg [3:0] tx_control_state;
   `DEBUG_PREFIX reg [3:0] tx_control_state_old;
   `DEBUG_PREFIX reg [3:0] num_retrans_lock;
   reg [11:0] blk_ack_resp_ssn_lock;
   reg [63:0] blk_ack_bitmap_lock;
-  wire is_data;
-  wire is_qosdata;
-  wire is_management;
-  wire is_blockackreq;
-  wire is_blockackresp;
-  wire is_pspoll;
-  wire is_rts;
-  wire is_ack;
+  `DEBUG_PREFIX wire is_data;
+  `DEBUG_PREFIX wire is_qosdata;
+  `DEBUG_PREFIX wire is_management;
+  `DEBUG_PREFIX wire is_blockackreq;
+  `DEBUG_PREFIX wire is_blockackresp;
+  `DEBUG_PREFIX wire is_pspoll;
+  `DEBUG_PREFIX wire is_rts;
+  `DEBUG_PREFIX wire is_ack;
   reg  [3:0] ackcts_rate;
   wire ackcts_signal_parity;
   wire [11:0] ackcts_signal_len;
@@ -120,13 +124,13 @@
   wire [3:0] blk_ack_req_tid;
   wire [11:0] blk_ack_req_ssn;
   reg [11:0] rx_ht_aggr_ssn;
-  reg rx_ht_aggr_flag;
-  reg rx_ht_aggr_last_flag;
+  `DEBUG_PREFIX reg rx_ht_aggr_flag;
+  `DEBUG_PREFIX reg rx_ht_aggr_last_flag;
 
   reg [6:0] bitmap_count;
   reg [127:0] blk_ack_bitmap_mem;
-  reg ampdu_rx_start_reg;
-  reg reset_blk_ack_bitmap_mem;
+  `DEBUG_PREFIX reg ampdu_rx_start_reg;
+  `DEBUG_PREFIX reg reset_blk_ack_bitmap_mem;
 
   `DEBUG_PREFIX reg [1:0] tx_dpram_op_counter;
 
@@ -137,16 +141,16 @@
   `DEBUG_PREFIX reg signed [8:0] ackcts_time;
   reg signed [7:0] sifs_time_reg;
 
-  reg [14:0] recv_ack_timeout_top;
+  `DEBUG_PREFIX reg [14:0] recv_ack_timeout_top;
 
   `DEBUG_PREFIX reg [15:0] duration_new;
   `DEBUG_PREFIX reg [1:0]  FC_type_new;
   `DEBUG_PREFIX reg [3:0]  FC_subtype_new;
-  reg is_data_received;
-  reg is_management_received;
-  reg is_blockackreq_received;
-  reg is_pspoll_received;
-  reg is_rts_received;
+  `DEBUG_PREFIX reg is_data_received;
+  `DEBUG_PREFIX reg is_management_received;
+  `DEBUG_PREFIX reg is_blockackreq_received;
+  `DEBUG_PREFIX reg is_pspoll_received;
+  `DEBUG_PREFIX reg is_rts_received;
 
   reg [14:0] send_ack_wait_top_scale;
   reg [14:0] send_ack_wait_top_scale_lock;
@@ -342,7 +346,7 @@
                       blk_ack_bitmap_mem[SC_seq_num[6:0]] <= 1'b1;
                   end else begin
                       send_ack_wait_top_scale_lock <= send_ack_wait_top_scale;
-                      tx_control_state  <= (ack_disable?tx_control_state:PREP_ACK); //we also send cts (if rts is received) in PREP_ACK status
+                      tx_control_state  <= (ack_tx_disable?tx_control_state:PREP_ACK); //we also send cts (if rts is received) in PREP_ACK status
                   end
               end
             //else if ( pulse_tx_bb_end && tx_pkt_type[0]==1 && (core_state_old!=PREP_ACK) )// need to recv ACK! We need to miss this pulse_tx_bb_end intentionally when send ACK, because ACK don't need ACK

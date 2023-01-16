@@ -4,8 +4,13 @@
 
 `timescale 1 ns / 1 ps
 
-//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`include "tx_intf_pre_def.v"
+
+`ifdef TX_INTF_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 `define WAIT_FOR_TX_IQ_FILL_COUNT_TOP (20*`NUM_CLK_PER_US)
 
@@ -21,29 +26,29 @@
 	    input wire clk,
 	    
       // from openofdm rx
-      input  wire fcs_in_strobe,
+      `DEBUG_PREFIX input  wire fcs_in_strobe,
 
 	    input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] data_from_s_axis,
-	    output wire ask_data_from_s_axis,
-	    input wire  emptyn_from_s_axis,
-	    output wire [1:0] tx_queue_idx,
-	    output reg  [1:0] linux_prio,
-	    output reg  [5:0] pkt_cnt,
+	    `DEBUG_PREFIX output wire ask_data_from_s_axis,
+	    `DEBUG_PREFIX input wire  emptyn_from_s_axis,
+	    `DEBUG_PREFIX output wire [2:0] tx_queue_idx,
+	    `DEBUG_PREFIX output reg  [2:0] linux_prio,
+	    `DEBUG_PREFIX output reg  [5:0] pkt_cnt,
 	    
 	    //input wire src_indication,//0-s_axis-->phy_tx-->iq-->duc; 1-s_axis-->iq-->duc
 	    input wire auto_start_mode,
 	    input wire [9:0] num_dma_symbol_th,
-	    input wire [31:0] tx_config,
-	    input wire [1:0] tx_queue_idx_indication_from_ps,
-	    input wire [31:0] phy_hdr_config,
+	    `DEBUG_PREFIX input wire [31:0] tx_config,
+	    `DEBUG_PREFIX input wire [2:0] tx_queue_idx_indication_from_ps,
+	    `DEBUG_PREFIX input wire [31:0] phy_hdr_config,
 	    input wire [31:0] ampdu_action_config,
-	    input wire s_axis_recv_data_from_high,
-	    output wire start,
+	    `DEBUG_PREFIX input wire s_axis_recv_data_from_high,
+	    `DEBUG_PREFIX output wire start,
 
-      output wire [6:0] tx_config_fifo_data_count0,
-      output wire [6:0] tx_config_fifo_data_count1,
-      output wire [6:0] tx_config_fifo_data_count2,
-      output wire [6:0] tx_config_fifo_data_count3,
+      `DEBUG_PREFIX output wire [6:0] tx_config_fifo_data_count0,
+      `DEBUG_PREFIX output wire [6:0] tx_config_fifo_data_count1,
+      `DEBUG_PREFIX output wire [6:0] tx_config_fifo_data_count2,
+      `DEBUG_PREFIX output wire [6:0] tx_config_fifo_data_count3,
 
       `DEBUG_PREFIX input wire tx_iq_fifo_empty,
       input wire [31:0] cts_toself_config,
@@ -53,28 +58,28 @@
       `DEBUG_PREFIX input wire retrans_in_progress,
       `DEBUG_PREFIX input wire start_retrans,
       `DEBUG_PREFIX input wire start_tx_ack,
-      input wire tx_control_state_idle,
+      `DEBUG_PREFIX input wire tx_control_state_idle,
 	    `DEBUG_PREFIX input wire [3:0] slice_en,
       `DEBUG_PREFIX input wire backoff_done,
-	    input wire tx_bb_is_ongoing,
-	    input wire ack_tx_flag,
-	    input wire wea_from_xpu,
+	    `DEBUG_PREFIX input wire tx_bb_is_ongoing,
+	    `DEBUG_PREFIX input wire ack_tx_flag,
+	    `DEBUG_PREFIX input wire wea_from_xpu,
       input wire [9:0] addra_from_xpu,
       input wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina_from_xpu,
-      output wire tx_pkt_need_ack,
-      output wire [3:0] tx_pkt_retrans_limit,
-      output wire use_ht_aggr,
+      `DEBUG_PREFIX output wire tx_pkt_need_ack,
+      `DEBUG_PREFIX output wire [3:0] tx_pkt_retrans_limit,
+      `DEBUG_PREFIX output wire use_ht_aggr,
       `DEBUG_PREFIX output reg quit_retrans,
       `DEBUG_PREFIX output reg reset_backoff,
-      output reg high_trigger,
-      output reg [5:0] bd_wr_idx,
+      `DEBUG_PREFIX output reg high_trigger,
+      `DEBUG_PREFIX output reg [5:0] bd_wr_idx,
       // output reg [15:0] tx_pkt_num_dma_byte,
       output wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] douta,
       output reg cts_toself_bb_is_ongoing,
       output reg cts_toself_rf_is_ongoing,
 	    
 	    // port to phy_tx
-	    input wire tx_end_from_acc,
+	    `DEBUG_PREFIX input wire tx_end_from_acc,
 	    output wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] bram_data_to_acc,
       input wire  [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr,
 
@@ -97,8 +102,8 @@
     `DEBUG_PREFIX reg [3:0] high_tx_ctl_state_old;
     
     reg  [13:0] send_cts_toself_wait_count;
-    reg  [12:0] wr_counter;
-    reg read_from_s_axis_en;
+    `DEBUG_PREFIX reg  [12:0] wr_counter;
+    `DEBUG_PREFIX reg read_from_s_axis_en;
     
     `DEBUG_PREFIX wire wea_high;
     `DEBUG_PREFIX wire wea;
@@ -106,27 +111,26 @@
     `DEBUG_PREFIX wire [(C_S00_AXIS_TDATA_WIDTH-1):0] dina;
     wire [(WIFI_TX_BRAM_DATA_WIDTH-1):0] bram_data_to_acc_int;
 
-    reg wea_internal;
+    `DEBUG_PREFIX reg wea_internal;
     reg [12:0] addra_internal;
     reg [(C_S00_AXIS_TDATA_WIDTH-1):0] dina_internal;
 
-    reg [3:0] floating_pkt_flag;
+    `DEBUG_PREFIX reg [3:0] floating_pkt_flag;
     
-    reg [1:0] tx_queue_idx_reg;
-    wire [63:0] tx_config_fifo_rd_data0;
-    wire [63:0] tx_config_fifo_rd_data1;
-    wire [63:0] tx_config_fifo_rd_data2;
-    wire [63:0] tx_config_fifo_rd_data3;
+    `DEBUG_PREFIX reg [1:0] tx_queue_idx_reg;
+    `DEBUG_PREFIX wire [63:0] tx_config_fifo_rd_data0;
+    `DEBUG_PREFIX wire [63:0] tx_config_fifo_rd_data1;
+    `DEBUG_PREFIX wire [63:0] tx_config_fifo_rd_data2;
+    `DEBUG_PREFIX wire [63:0] tx_config_fifo_rd_data3;
     reg [63:0] tx_config_current, tx_config_current_prev;
     reg [63:0] tx_config_current_next [3:0];
 
-    // wire [12:0] len_mpdu_plus_crc;
     wire [3:0] rate_signal_value;
     wire [3:0] cts_rate_signal_value;
     wire [15:0] cts_duration;
     wire use_cts_traffice_rate;
     wire use_cts_protect;
-    // assign len_mpdu_plus_crc = tx_config_current[12:0];
+
     assign tx_pkt_need_ack = tx_config_current[13];
     assign tx_pkt_retrans_limit = tx_config_current[17:14];
     assign rate_signal_value = tx_config_current[35:32];
@@ -135,17 +139,17 @@
     assign use_cts_traffice_rate = tx_config_current[62];
     assign use_cts_protect = tx_config_current[63];
 
-    wire [31:0] phy_hdr_config_fifo_rd_data0;
-    wire [31:0] phy_hdr_config_fifo_rd_data1;
-    wire [31:0] phy_hdr_config_fifo_rd_data2;
-    wire [31:0] phy_hdr_config_fifo_rd_data3;
+    `DEBUG_PREFIX wire [31:0] phy_hdr_config_fifo_rd_data0;
+    `DEBUG_PREFIX wire [31:0] phy_hdr_config_fifo_rd_data1;
+    `DEBUG_PREFIX wire [31:0] phy_hdr_config_fifo_rd_data2;
+    `DEBUG_PREFIX wire [31:0] phy_hdr_config_fifo_rd_data3;
 
     reg [31:0] phy_hdr_config_current, phy_hdr_config_current_prev;
     reg [31:0] phy_hdr_config_current_next [3:0];
-    wire [12:0] len_psdu;
+    `DEBUG_PREFIX wire [12:0] len_psdu;
     wire use_short_gi;
     wire use_ht_rate;
-    wire [3:0] rate_hw_value;
+    `DEBUG_PREFIX wire [3:0] rate_hw_value;
     wire ht_aggr_start;
     assign len_psdu = phy_hdr_config_current[12:0];
     assign use_ht_aggr = phy_hdr_config_current[13];
@@ -176,31 +180,31 @@
       15: begin rate_legacy = 4'd0;  dbps_ht = 9'd26; end
     endcase
 
-    reg num_data_sym_ready;
-    reg len_legacy_ready;
-    reg [11:0] len_legacy;
-    reg [15:0] len_ht;
-    reg [12:0] len_pkt_sym;
-    wire [16:0] l_sig_data;
-    wire l_sig_parity;
+    `DEBUG_PREFIX reg num_data_sym_ready;
+    `DEBUG_PREFIX reg len_legacy_ready;
+    `DEBUG_PREFIX reg [11:0] len_legacy;
+    `DEBUG_PREFIX reg [15:0] len_ht;
+    `DEBUG_PREFIX reg [12:0] len_pkt_sym;
+    `DEBUG_PREFIX wire [16:0] l_sig_data;
+    `DEBUG_PREFIX wire l_sig_parity;
     assign l_sig_data = {len_legacy, 1'b0, (use_ht_rate == 0 ? rate_legacy : 4'd11)};
     assign l_sig_parity = ^l_sig_data;
 
-    reg [3:0] tx_config_fifo_rden;
-    reg [3:0] tx_config_fifo_wren;
-    wire [3:0] tx_config_fifo_empty;
-    wire [3:0] tx_config_fifo_full;
+    `DEBUG_PREFIX reg [3:0] tx_config_fifo_rden;
+    `DEBUG_PREFIX reg [3:0] tx_config_fifo_wren;
+    `DEBUG_PREFIX wire [3:0] tx_config_fifo_empty;
+    `DEBUG_PREFIX wire [3:0] tx_config_fifo_full;
 
-    wire high_prio_pkt_waiting;
+    `DEBUG_PREFIX wire high_prio_pkt_waiting;
     assign high_prio_pkt_waiting = ((((1<<tx_queue_idx_reg)-1)&tx_config_fifo_empty) != ((1<<tx_queue_idx_reg)-1));
 
-    wire s_axis_recv_data_from_high_valid;
+    `DEBUG_PREFIX wire s_axis_recv_data_from_high_valid;
 
-    wire [15:0] max_tx_bytes;
-    wire [5:0] buf_size;
-    wire [2:0] ampdu_density;
-    assign max_tx_bytes = ampdu_action_config[15:0];
-    assign buf_size = ampdu_action_config[21:16];
+    `DEBUG_PREFIX wire [15:0] max_tx_bytes;
+    `DEBUG_PREFIX wire [5:0] buf_size;
+    `DEBUG_PREFIX wire [2:0] ampdu_density;
+    assign max_tx_bytes  = ampdu_action_config[15:0];
+    assign buf_size      = ampdu_action_config[21:16];
     assign ampdu_density = ampdu_action_config[24:22];
     
     reg start_delay0;
@@ -210,16 +214,16 @@
     reg start_delay4;
     reg start_delay5;
 
-    reg tx_try_complete_dl0;
-    reg tx_try_complete_dl1;
-    reg tx_try_complete_dl2;
-    wire tx_try_complete_dl_pulses;
+    `DEBUG_PREFIX reg tx_try_complete_dl0;
+    `DEBUG_PREFIX reg tx_try_complete_dl1;
+    `DEBUG_PREFIX reg tx_try_complete_dl2;
+    `DEBUG_PREFIX wire tx_try_complete_dl_pulses;
 
-    reg fcs_in_strobe_dl0;
-    reg fcs_in_strobe_dl1;
-    wire fcs_in_strobe_dl_pulses;
+    `DEBUG_PREFIX reg fcs_in_strobe_dl0;
+    `DEBUG_PREFIX reg fcs_in_strobe_dl1;
+    `DEBUG_PREFIX wire fcs_in_strobe_dl_pulses;
  
-    reg s_axis_recv_data_from_high_delay;
+    `DEBUG_PREFIX reg s_axis_recv_data_from_high_delay;
 
     reg [3:0] cts_toself_rate;
     wire cts_toself_signal_parity;
@@ -294,7 +298,6 @@
 	  always @(posedge clk)                                             
     begin
       if (!rstn)
-      // Synchronous reset (active low)                                       
         begin
           wea_internal<=0;
           addra_internal<=0;
@@ -377,9 +380,7 @@
             wr_counter <= 13'b0;
             send_cts_toself_wait_count<=0;
           end
-          
-          
-          
+
           WAIT_CHANCE: begin
             wea_internal<=0;
             addra_internal<=0;
@@ -446,7 +447,6 @@
           end
 
           PREPARE_TX_FETCH: begin
-
             if(~floating_pkt_flag[tx_queue_idx_reg]) begin
               tx_config_current <= ( tx_queue_idx_reg[1]?(tx_queue_idx_reg[0]?tx_config_fifo_rd_data3:tx_config_fifo_rd_data2):(tx_queue_idx_reg[0]?tx_config_fifo_rd_data1:tx_config_fifo_rd_data0) );
               phy_hdr_config_current <= ( tx_queue_idx_reg[1]?(tx_queue_idx_reg[0]?phy_hdr_config_fifo_rd_data3:phy_hdr_config_fifo_rd_data2):(tx_queue_idx_reg[0]?phy_hdr_config_fifo_rd_data1:phy_hdr_config_fifo_rd_data0) );
@@ -475,7 +475,6 @@
           end
 
           DO_CTS_TOSELF: begin
-
             send_cts_toself_wait_count <= ( ( send_cts_toself_wait_count != (`WAIT_FOR_TX_IQ_FILL_COUNT_TOP) )?(send_cts_toself_wait_count + 1): (tx_iq_fifo_empty?0:send_cts_toself_wait_count) );
             wea_internal <= (send_cts_toself_wait_count<4?1:0);
             //addra_internal <= (send_cts_toself_wait_count<4?send_cts_toself_wait_count:0);
@@ -495,7 +494,6 @@
           end
 
           WAIT_SIFS: begin
-
             send_cts_toself_wait_count <= send_cts_toself_wait_count+1;
             if (send_cts_toself_wait_count == send_cts_toself_wait_sifs_top_scale ) begin
               read_from_s_axis_en <= 1;
@@ -667,7 +665,6 @@
           end
           
           DO_TX: begin
-
             wea_internal<= wea_high;
             addra_internal<=wr_counter;
             dina_internal<=data_from_s_axis;
@@ -759,19 +756,7 @@
             tx_config_fifo_wren<= (s_axis_recv_data_from_high_valid << tx_queue_idx_indication_from_ps);//assure DMA is done
         end
     end
-    
-    //fifio to store tx configuration each time s_axis_recv_data_from_high becomes high
-    // fifo64_1clk_dep64 fifo64_1clk_dep64_i0 (// only store num_dma_symbol from high layer, not aware ack pkt
-    //     .CLK(clk),
-    //     .DATAO(tx_config_fifo_rd_data0),
-    //     .DI({cts_toself_config,tx_config}),
-    //     .EMPTY(tx_config_fifo_empty[0]),
-    //     .FULL(tx_config_fifo_full[0]),
-    //     .RDEN(tx_config_fifo_rden[0]),
-    //     .RST(!rstn),
-    //     .WREN(tx_config_fifo_wren[0]),
-    //     .data_count(tx_config_fifo_data_count0)
-    // );
+
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -816,17 +801,6 @@
       .wr_en(tx_config_fifo_wren[0])
     );
 
-    //fifo32_1clk_dep64 fifo32_1clk_dep64_i0 (
-    //    .CLK(clk),
-    //    .DATAO(phy_hdr_config_fifo_rd_data0),
-    //    .DI(phy_hdr_config),
-    //    .EMPTY(),
-    //    .FULL(),
-    //    .RDEN(tx_config_fifo_rden[0]),
-    //    .RST(!rstn),
-    //    .WREN(tx_config_fifo_wren[0]),
-    //    .data_count()
-    //);
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -871,18 +845,6 @@
       .wr_en(tx_config_fifo_wren[0])
     );
 
-    //fifio to store tx configuration each time s_axis_recv_data_from_high becomes high
-    // fifo64_1clk_dep64 fifo64_1clk_dep64_i1 (// only store num_dma_symbol from high layer, not aware ack pkt
-    //     .CLK(clk),
-    //     .DATAO(tx_config_fifo_rd_data1),
-    //     .DI({cts_toself_config,tx_config}),
-    //     .EMPTY(tx_config_fifo_empty[1]),
-    //     .FULL(tx_config_fifo_full[1]),
-    //     .RDEN(tx_config_fifo_rden[1]),
-    //     .RST(!rstn),
-    //     .WREN(tx_config_fifo_wren[1]),
-    //     .data_count(tx_config_fifo_data_count1)
-    // );
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -927,17 +889,6 @@
       .wr_en(tx_config_fifo_wren[1])
     );
 
-    //fifo32_1clk_dep64 fifo32_1clk_dep64_i1 (
-    //    .CLK(clk),
-    //    .DATAO(phy_hdr_config_fifo_rd_data1),
-    //    .DI(phy_hdr_config),
-    //    .EMPTY(),
-    //    .FULL(),
-    //    .RDEN(tx_config_fifo_rden[1]),
-    //    .RST(!rstn),
-    //    .WREN(tx_config_fifo_wren[1]),
-    //    .data_count()
-    //);
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -982,18 +933,6 @@
       .wr_en(tx_config_fifo_wren[1])
     );
 
-    //fifio to store tx configuration each time s_axis_recv_data_from_high becomes high
-    // fifo64_1clk_dep64 fifo64_1clk_dep64_i2 (// only store num_dma_symbol from high layer, not aware ack pkt
-    //     .CLK(clk),
-    //     .DATAO(tx_config_fifo_rd_data2),
-    //     .DI({cts_toself_config,tx_config}),
-    //     .EMPTY(tx_config_fifo_empty[2]),
-    //     .FULL(tx_config_fifo_full[2]),
-    //     .RDEN(tx_config_fifo_rden[2]),
-    //     .RST(!rstn),
-    //     .WREN(tx_config_fifo_wren[2]),
-    //     .data_count(tx_config_fifo_data_count2)
-    // );
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -1038,17 +977,6 @@
       .wr_en(tx_config_fifo_wren[2])
     );
 
-    //fifo32_1clk_dep64 fifo32_1clk_dep64_i2 (
-    //    .CLK(clk),
-    //    .DATAO(phy_hdr_config_fifo_rd_data2),
-    //    .DI(phy_hdr_config),
-    //    .EMPTY(),
-    //    .FULL(),
-    //    .RDEN(tx_config_fifo_rden[2]),
-    //    .RST(!rstn),
-    //    .WREN(tx_config_fifo_wren[2]),
-    //    .data_count()
-    //);
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -1093,18 +1021,6 @@
       .wr_en(tx_config_fifo_wren[2])
     );
 
-    //fifio to store tx configuration each time s_axis_recv_data_from_high becomes high
-    // fifo64_1clk_dep64 fifo64_1clk_dep64_i3 (// only store num_dma_symbol from high layer, not aware ack pkt
-    //     .CLK(clk),
-    //     .DATAO(tx_config_fifo_rd_data3),
-    //     .DI({cts_toself_config,tx_config}),
-    //     .EMPTY(tx_config_fifo_empty[3]),
-    //     .FULL(tx_config_fifo_full[3]),
-    //     .RDEN(tx_config_fifo_rden[3]),
-    //     .RST(!rstn),
-    //     .WREN(tx_config_fifo_wren[3]),
-    //     .data_count(tx_config_fifo_data_count3)
-    // );
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -1149,17 +1065,6 @@
       .wr_en(tx_config_fifo_wren[3])
     );
 
-    //fifo32_1clk_dep64 fifo32_1clk_dep64_i3 (
-    //    .CLK(clk),
-    //    .DATAO(phy_hdr_config_fifo_rd_data3),
-    //    .DI(phy_hdr_config),
-    //    .EMPTY(),
-    //    .FULL(),
-    //    .RDEN(tx_config_fifo_rden[3]),
-    //    .RST(!rstn),
-    //    .WREN(tx_config_fifo_wren[3]),
-    //    .data_count()
-    //);
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String

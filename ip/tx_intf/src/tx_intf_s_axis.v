@@ -3,6 +3,14 @@
 
 `timescale 1 ns / 1 ps
 
+`include "tx_intf_pre_def.v"
+
+`ifdef TX_INTF_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
+`define DEBUG_PREFIX
+`endif
+
 	module tx_intf_s_axis #
 	(
         parameter integer MAX_NUM_DMA_SYMBOL = 8192,
@@ -144,17 +152,6 @@
 	      end  
 	end
 
-    // fifo64_1clk_dep4k fifo64_1clk_dep4k_i0 ( //queue0
-    //     .CLK(S_AXIS_ACLK),
-    //     .DATAO(DATA_TO_ACC0),
-    //     .DI(S_AXIS_TDATA),
-    //     .EMPTY(EMPTY0),
-    //     .FULL(FULL0),
-    //     .RDEN(ACC_ASK_DATA0),
-    //     .RST(!S_AXIS_ARESETN),
-    //     .WREN(fifo_wren0),
-    //     .data_count(data_count0)
-    // );
 	xpm_fifo_sync #(
 		.DOUT_RESET_VALUE("0"),    // String
 		.ECC_MODE("no_ecc"),       // String
@@ -199,17 +196,6 @@
 		.wr_en(fifo_wren0)
 	);
 
-    // fifo64_1clk_dep4k fifo64_1clk_dep4k_i1 ( //queue1
-    //     .CLK(S_AXIS_ACLK),
-    //     .DATAO(DATA_TO_ACC1),
-    //     .DI(S_AXIS_TDATA),
-    //     .EMPTY(EMPTY1),
-    //     .FULL(FULL1),
-    //     .RDEN(ACC_ASK_DATA1),
-    //     .RST(!S_AXIS_ARESETN),
-    //     .WREN(fifo_wren1),
-    //     .data_count(data_count1)
-    // );
 	xpm_fifo_sync #(
 		.DOUT_RESET_VALUE("0"),    // String
 		.ECC_MODE("no_ecc"),       // String
@@ -254,17 +240,6 @@
 		.wr_en(fifo_wren1)
 	);
 
-    // fifo64_1clk fifo64_1clk_dep4k_i2 ( //queue2
-    //     .CLK(S_AXIS_ACLK),
-    //     .DATAO(DATA_TO_ACC2),
-    //     .DI(S_AXIS_TDATA),
-    //     .EMPTY(EMPTY2),
-    //     .FULL(FULL2),
-    //     .RDEN(ACC_ASK_DATA2),
-    //     .RST(!S_AXIS_ARESETN),
-    //     .WREN(fifo_wren2),
-    //     .data_count(data_count2)
-    // );
 	xpm_fifo_sync #(
 		.DOUT_RESET_VALUE("0"),    // String
 		.ECC_MODE("no_ecc"),       // String
@@ -309,17 +284,6 @@
 		.wr_en(fifo_wren2)
 	);
 
-    // fifo64_1clk fifo64_1clk_dep4k_i3 ( //queue3
-    //     .CLK(S_AXIS_ACLK),
-    //     .DATAO(DATA_TO_ACC3),
-    //     .DI(S_AXIS_TDATA),
-    //     .EMPTY(EMPTY3),
-    //     .FULL(FULL3),
-    //     .RDEN(ACC_ASK_DATA3),
-    //     .RST(!S_AXIS_ARESETN),
-    //     .WREN(fifo_wren3),
-    //     .data_count(data_count3)
-    // );
 	xpm_fifo_sync #(
 		.DOUT_RESET_VALUE("0"),    // String
 		.ECC_MODE("no_ecc"),       // String

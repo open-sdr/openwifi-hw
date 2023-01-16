@@ -2,8 +2,13 @@
 
 `timescale 1 ns / 1 ps
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`include "xpu_pre_def.v"
+
+`ifdef XPU_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 	module csma_ca #
 	(
@@ -15,18 +20,18 @@
     
     input wire tsf_pulse_1M,
 
-    input  wire pkt_header_valid,
-    input  wire pkt_header_valid_strobe,
-    input  wire [7:0] signal_rate,
-    input  wire [15:0] signal_len,
+    `DEBUG_PREFIX input  wire pkt_header_valid,
+    `DEBUG_PREFIX input  wire pkt_header_valid_strobe,
+    `DEBUG_PREFIX input  wire [7:0] signal_rate,
+    `DEBUG_PREFIX input  wire [15:0] signal_len,
 
-    input  wire fcs_in_strobe,
-    input  wire fcs_valid,
+    `DEBUG_PREFIX input  wire fcs_in_strobe,
+    `DEBUG_PREFIX input  wire fcs_valid,
 
     input wire nav_enable,
     input wire difs_enable,
     input wire eifs_enable,
-    input wire [3:0] cw_exp_used,
+    `DEBUG_PREFIX input wire [3:0] cw_exp_used,
     input wire [6:0] preamble_sig_time,
     input wire [4:0] ofdm_symbol_time,
     input wire [4:0] slot_time,
@@ -35,26 +40,26 @@
     input wire [7:0] difs_advance,
     input wire [7:0] backoff_advance,
 
-    input wire addr1_valid,
+    `DEBUG_PREFIX input wire addr1_valid,
     input wire [47:0] addr1,
     input wire [47:0] self_mac_addr,
 
-    input wire FC_DI_valid,
+    `DEBUG_PREFIX input wire FC_DI_valid,
     input wire [1:0] FC_type,
     input wire [3:0] FC_subtype,
     input wire [15:0] duration,
 
-    input wire [1:0] random_seed,
-    input wire ch_idle,
+    `DEBUG_PREFIX input wire [1:0] random_seed,
+    `DEBUG_PREFIX input wire ch_idle,
 
-    input wire retrans_trigger,
-    input wire quit_retrans,
-    input wire reset_backoff,
-    input wire high_trigger,
-    input wire tx_bb_is_ongoing,
-    input wire ack_tx_flag,
+    `DEBUG_PREFIX input wire retrans_trigger,
+    `DEBUG_PREFIX input wire quit_retrans,
+    `DEBUG_PREFIX input wire reset_backoff,
+    `DEBUG_PREFIX input wire high_trigger,
+    `DEBUG_PREFIX input wire tx_bb_is_ongoing,
+    `DEBUG_PREFIX input wire ack_tx_flag,
 
-    output reg [9:0] num_slot_random_log_dl,
+    `DEBUG_PREFIX output reg [9:0] num_slot_random_log_dl,
     // `DEBUG_PREFIX output reg increase_cw,
     `DEBUG_PREFIX output reg [3:0] cw_exp_log_dl,
     `DEBUG_PREFIX output wire backoff_done
@@ -75,36 +80,36 @@
     `DEBUG_PREFIX reg [2:0]  backoff_state;
 
     `DEBUG_PREFIX reg [1:0]  nav_state;
-    reg [1:0]  nav_state_old;
-    wire ch_idle_final;
+    `DEBUG_PREFIX reg [1:0]  nav_state_old;
+    `DEBUG_PREFIX wire ch_idle_final;
 
-    reg [14:0] nav;
-    reg [14:0] nav_new;
+    `DEBUG_PREFIX reg [14:0] nav;
+    `DEBUG_PREFIX reg [14:0] nav_new;
     `DEBUG_PREFIX reg nav_reset;
     `DEBUG_PREFIX reg nav_set;
     `DEBUG_PREFIX wire [14:0] nav_for_mac;
 
     wire [7:0] ackcts_n_sym;
     wire [7:0] ackcts_time;
-    reg  is_rts_received;
-    reg  [14:0] nav_reset_timeout_count;
-    reg  [14:0] nav_reset_timeout_top_after_rts;
-    wire is_pspoll;
-    wire is_rts;
+    `DEBUG_PREFIX reg  is_rts_received;
+    `DEBUG_PREFIX reg  [14:0] nav_reset_timeout_count;
+    `DEBUG_PREFIX reg  [14:0] nav_reset_timeout_top_after_rts;
+    `DEBUG_PREFIX wire is_pspoll;
+    `DEBUG_PREFIX wire is_rts;
 
     wire [11:0] longest_ack_time;
     wire [11:0] difs_time;
     wire [11:0] eifs_time;
     `DEBUG_PREFIX reg last_fcs_valid;
     `DEBUG_PREFIX reg take_new_random_number;
-    reg [9:0]  num_slot_random;
+    `DEBUG_PREFIX reg [9:0]  num_slot_random;
     reg [31:0] random_number = 32'h0b00a001;
     `DEBUG_PREFIX reg [12:0] backoff_timer;
     `DEBUG_PREFIX reg [11:0] backoff_wait_timer;
-    reg [3:0] cw_exp_log;
-    reg [3:0] cw_exp_log_dl_int;
-    reg [9:0] num_slot_random_log;
-    reg [9:0] num_slot_random_log_dl_int;
+    `DEBUG_PREFIX reg [3:0] cw_exp_log;
+    `DEBUG_PREFIX reg [3:0] cw_exp_log_dl_int;
+    `DEBUG_PREFIX reg [9:0] num_slot_random_log;
+    `DEBUG_PREFIX reg [9:0] num_slot_random_log_dl_int;
     
     assign is_pspoll = (((FC_type==2'b01) && (FC_subtype==4'b1010))?1:0);
     assign is_rts    = (((FC_type==2'b01) && (FC_subtype==4'b1011) && (signal_len==20))?1:0);//20 is the length of rts frame

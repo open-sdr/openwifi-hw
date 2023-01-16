@@ -2,8 +2,11 @@
 `include "openwifi_hw_git_rev.v"
 `include "xpu_pre_def.v"
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`ifdef XPU_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 `timescale 1 ns / 1 ps
 
@@ -506,7 +509,7 @@
         .clk(s00_axi_aclk),
         .rstn(s00_axi_aresetn&(~slv_reg0[5])),
 
-        .ack_disable(slv_reg11[4]),
+        .ack_tx_disable(slv_reg11[4]),
         .preamble_sig_time(preamble_sig_time),
         .ofdm_symbol_time(ofdm_symbol_time),
         .sifs_time(sifs_time),

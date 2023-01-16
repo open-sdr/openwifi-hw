@@ -2,8 +2,13 @@
 
 `timescale 1 ns / 1 ps
 
-//`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`include "tx_intf_pre_def.v"
+
+`ifdef TX_INTF_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 	module tx_status_fifo
 	(
@@ -11,7 +16,7 @@
 	  input wire clk,
 	    
 	  input wire slv_reg_rden,
-      input wire [4:0] axi_araddr_core,
+    input wire [4:0] axi_araddr_core,
 
       input wire tx_try_complete,
       input wire [9:0] num_slot_random,
@@ -86,18 +91,6 @@
         cw_delay1 <= cw_delay + num_slot_random[9];
     end 
 
-    // fifo32_1clk_dep64 fifo32_1clk_dep64_i1 (
-    //     .CLK(clk),
-    //     .DATAO(datao1),
-    //     .DI({cw_delay1,num_slot_random[8:0],linux_prio,tx_queue_idx,4'd0,bd_wr_idx,1'd0,num_retrans}), // highest MSB logs cw exponent + MSB of num_slot_random
-    //     .EMPTY(empty1),
-    //     .FULL(full1),
-    //     .RDEN(slv_reg_rden && (axi_araddr_core == 5'h16)),
-    //     .RST(~rstn),
-    //     .WREN(tx_try_complete_reg),
-    //     .data_count(data_count1)
-    // );
-
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -141,18 +134,6 @@
       .wr_clk(clk),
       .wr_en(tx_try_complete_reg)
     );
-
-    // fifo32_1clk_dep64 fifo32_1clk_dep64_i2 (
-    //     .CLK(clk),
-    //     .DATAO(datao2),
-    //     .DI({14'd0,blk_ack_resp_ssn,pkt_cnt}),
-    //     .EMPTY(empty2),
-    //     .FULL(full2),
-    //     .RDEN(slv_reg_rden && (axi_araddr_core == 5'h17)),
-    //     .RST(~rstn),
-    //     .WREN(tx_try_complete_reg),
-    //     .data_count(data_count2)
-    // );
 
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
@@ -198,18 +179,6 @@
       .wr_en(tx_try_complete_reg)
     );
 
-    // fifo32_1clk_dep64 fifo32_1clk_dep64_i3 (
-    //     .CLK(clk),
-    //     .DATAO(datao3),
-    //     .DI(blk_ack_bitmap_low),
-    //     .EMPTY(empty3),
-    //     .FULL(full3),
-    //     .RDEN(slv_reg_rden && (axi_araddr_core == 5'h18)),
-    //     .RST(~rstn),
-    //     .WREN(tx_try_complete_reg),
-    //     .data_count(data_count3)
-    // );
-
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
       .ECC_MODE("no_ecc"),       // String
@@ -253,18 +222,6 @@
       .wr_clk(clk),
       .wr_en(tx_try_complete_reg)
     );
-
-    // fifo32_1clk_dep64 fifo32_1clk_dep64_i4 (
-    //     .CLK(clk),
-    //     .DATAO(datao4),
-    //     .DI(blk_ack_bitmap_high),
-    //     .EMPTY(empty4),
-    //     .FULL(full4),
-    //     .RDEN(slv_reg_rden && (axi_araddr_core == 5'h19)),
-    //     .RST(~rstn),
-    //     .WREN(tx_try_complete_reg),
-    //     .data_count(data_count4)
-    // );
 
     xpm_fifo_sync #(
       .DOUT_RESET_VALUE("0"),    // String
