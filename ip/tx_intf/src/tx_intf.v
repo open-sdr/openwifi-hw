@@ -203,7 +203,11 @@ module tx_intf #
     wire [(2*IQ_DATA_WIDTH-1) : 0] wifi_iq_pack;
     wire wifi_iq_valid;
     wire wifi_iq_ready;
-    
+  //While wifi_iq_ready-->iq_valid_for_check has "bad luck" phase to iq0_for_check (valid/strobe == 1 at the end of the sample stable period), 
+  //the FPGA internal loopback in rx_intf (slv_reg3[8] controlled) will not work.
+  //So, we delay the wifi_iq_ready on purpose by 1 clk to wifi_iq_ready_delay. (Need to dig further why the openofdm_rx does not work)
+  wire wifi_iq_ready_delay;
+
     wire [(C_S00_AXIS_TDATA_WIDTH-1):0] s_axis_data_to_acc;
     wire tx_bit_intf_acc_ask_data_from_s_axis;
     wire acc_ask_data_from_s_axis;
@@ -241,8 +245,7 @@ module tx_intf #
 
     assign iq0_for_check = wifi_iq_pack;
     assign iq1_for_check = 0; //wifi_iq1_pack;
-    // assign iq_valid_for_check = wifi_iq_valid; // always 1, it is controled by ready actually
-    assign iq_valid_for_check = wifi_iq_ready;
+  assign iq_valid_for_check = wifi_iq_ready_delay;
 
     assign bram_addr_to_xpu = bram_addr;
     assign send_cts_toself_wait_sifs_top = (band==1?slv_reg6[13:0]:slv_reg6[29:16]);
@@ -308,8 +311,9 @@ module tx_intf #
     .data_from_acc(ant_data),
     .fulln_to_acc(fulln_from_dac_to_duc)
 `else
-        .data_from_acc(wifi_iq_pack),
-        .read_bb_fifo(wifi_iq_ready)
+    .data_from_acc(wifi_iq_pack),
+    .read_bb_fifo(wifi_iq_ready),
+    .read_bb_fifo_delay(wifi_iq_ready_delay)
 `endif
   );
 

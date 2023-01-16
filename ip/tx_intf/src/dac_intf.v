@@ -41,7 +41,8 @@
 `ifndef TX_BB_CLK_GEN_FROM_RF
     `DEBUG_PREFIX output wire fulln_to_acc
 `else
-    output reg read_bb_fifo
+    output reg read_bb_fifo,
+    output reg read_bb_fifo_delay
 `endif
 
 	);
@@ -110,11 +111,13 @@
         counter <= 0;
         wren_internal_reg <= 0;
         read_bb_fifo <= 0;
+        read_bb_fifo_delay <= 0;
         dac_intf_fifo_in <= 0;
       end else begin
         counter <= ( counter==`COUNT_TOP_20M?0:(counter+1'b1) );
         wren_internal_reg <= (counter==0 || counter==1); // 0 for IQ from bb fifo, 1 for zero insertion
         read_bb_fifo <= (counter==0);
+        read_bb_fifo_delay <= read_bb_fifo;
         dac_intf_fifo_in <= (counter==0?data_from_acc:0);
       end
     end
