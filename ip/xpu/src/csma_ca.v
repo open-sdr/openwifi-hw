@@ -62,6 +62,7 @@
     `DEBUG_PREFIX output reg [9:0] num_slot_random_log_dl,
     // `DEBUG_PREFIX output reg increase_cw,
     `DEBUG_PREFIX output reg [3:0] cw_exp_log_dl,
+    output wire       ch_idle_final_for_trace,
     `DEBUG_PREFIX output wire backoff_done
 	);
 
@@ -124,6 +125,8 @@
     assign ch_idle_final = (ch_idle&&(nav_for_mac==0));
     assign backoff_done =   (backoff_state==BACKOFF_WAIT_FOR_OWN);
 
+    assign ch_idle_final_for_trace = ch_idle_final;
+    
     n_sym_len14_pkt # (
     ) n_sym_ackcts_pkt_i (
       .ht_flag(signal_rate[7]),

@@ -75,7 +75,7 @@
         //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG54,
         //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG55,
         //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG56,
-        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG57,
+		input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG57,
         input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG58,
         input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG59,
         //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG60,
@@ -227,7 +227,7 @@
 	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg54;
 	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg55;
 	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg56;
-	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg57;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg57;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg58;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg59;
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg60;
@@ -1000,7 +1000,7 @@
 	        //6'h36   : reg_data_out <= slv_reg54;
 	        //6'h37   : reg_data_out <= slv_reg55;
 	        //6'h38   : reg_data_out <= slv_reg56;
-	        //6'h39   : reg_data_out <= slv_reg57;
+	        6'h39   : reg_data_out <= slv_reg57;
 	        6'h3A   : reg_data_out <= slv_reg58;
 	        6'h3B   : reg_data_out <= slv_reg59;
 	        //6'h3C   : reg_data_out <= slv_reg60;
@@ -1044,7 +1044,7 @@
           //slv_reg54 <= 32'h0;
           //slv_reg55 <= 32'h0;
           //slv_reg56 <= 32'h0;
-          //slv_reg57 <= 32'h0;
+          slv_reg57 <= 32'h0;
           slv_reg58 <= 32'h0;
           slv_reg59 <= 32'h0;
           //slv_reg60 <= 32'h0;
@@ -1063,7 +1063,7 @@
           //slv_reg54 <= SLV_REG54;
           //slv_reg55 <= SLV_REG55;
           //slv_reg56 <= SLV_REG56;
-          //slv_reg57 <= SLV_REG57;
+          slv_reg57 <= SLV_REG57;
           slv_reg58 <= SLV_REG58;
           slv_reg59 <= SLV_REG59;
           //slv_reg60 <= SLV_REG60;

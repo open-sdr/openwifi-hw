@@ -119,6 +119,7 @@ module xpu #
   output wire [47:0] addr3,
   output wire addr3_valid,
   output wire pkt_for_me,
+  output wire ch_idle_final,
 
   // to spi module 
   input wire ps_clk, 
@@ -212,7 +213,7 @@ module xpu #
   //wire [(C_S00_AXI_DATA_WIDTH-1):0]	slv_reg54;
   //wire [(C_S00_AXI_DATA_WIDTH-1):0]	slv_reg55;
   //wire [(C_S00_AXI_DATA_WIDTH-1):0]	slv_reg56;
-  //wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg57;
+  wire [(C_S00_AXI_DATA_WIDTH-1):0]	slv_reg57;//temp reg for rssi readback during idle. in the future we should use sdpram to read back multiple info (selected by addr writing signal) via single register
   wire [(C_S00_AXI_DATA_WIDTH-1):0]	slv_reg58;//tsf timer low
   wire [(C_S00_AXI_DATA_WIDTH-1):0]	slv_reg59;//tsf timer high
   //wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg60;
@@ -220,7 +221,10 @@ module xpu #
   wire [(C_S00_AXI_DATA_WIDTH-1):0]	slv_reg62;//mac addr read back to decide how to set addr field correctly (big or little endian, etc.)
   wire [(C_S00_AXI_DATA_WIDTH-1):0]	slv_reg63;//FPGA version info
 
-wire block_rx_dma_to_ps_internal;
+  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_delay;
+  wire gpio_status_delay_valid;
+
+  wire block_rx_dma_to_ps_internal;
 
   wire ch_idle;
   wire retrans_trigger;
@@ -348,6 +352,8 @@ wire block_rx_dma_to_ps_internal;
   assign duration  =          FC_DI[31:16];
   
   assign slv_reg62 = {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]};
+
+  assign slv_reg57 = {gpio_status_delay[6:0],iq_rssi_half_db,1'b0,(~ch_idle_final),(tx_core_is_ongoing|tx_bb_is_ongoing|tx_rf_is_ongoing|cts_toself_rf_is_ongoing|ack_cts_is_ongoing), demod_is_ongoing,(~gpio_status_delay[7]),rssi_half_db};//rssi_half_db 11bit, iq_rssi_half_db 9bit
 
   assign SC_fragment_number = SC[3:0];
   assign SC_sequence_number = SC[15:4];
@@ -478,6 +484,7 @@ wire block_rx_dma_to_ps_internal;
     .num_slot_random_log_dl(num_slot_random),
     // .increase_cw(increase_cw),
     .cw_exp_log_dl(cw_exp_log),
+    .ch_idle_final_for_trace(ch_idle_final),
     .backoff_done(backoff_done)
   );
 
@@ -673,7 +680,9 @@ wire block_rx_dma_to_ps_internal;
     .rssi_half_db_lock_by_sig_valid(rssi_half_db_lock_by_sig_valid),
     .gpio_status_lock_by_sig_valid(gpio_status_lock_by_sig_valid),
     .rssi_half_db(rssi_half_db),
-    .rssi_half_db_valid(rssi_half_db_valid)
+    .rssi_half_db_valid(rssi_half_db_valid),
+    .gpio_status_delay(gpio_status_delay),
+    .gpio_status_delay_valid(gpio_status_delay_valid)
   );
 
 time_slice_gen #(
@@ -810,8 +819,8 @@ xpu_s_axi # (
   .SLV_REG53(slv_reg53),
   .SLV_REG54(slv_reg54),
   .SLV_REG55(slv_reg55),
-  .SLV_REG56(slv_reg56),
-  .SLV_REG57(slv_reg57),*/
+  .SLV_REG56(slv_reg56),*/
+  .SLV_REG57(slv_reg57),
   .SLV_REG58(slv_reg58),
   .SLV_REG59(slv_reg59),
   //.SLV_REG60(slv_reg60),
