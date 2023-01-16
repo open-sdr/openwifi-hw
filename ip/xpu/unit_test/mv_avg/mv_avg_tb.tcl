@@ -28,6 +28,7 @@ if { [info exists ::origin_dir_loc] } {
 
 # Set the project name
 set _xil_proj_name_ "mv_avg_tb"
+exec rm -rf $_xil_proj_name_
 
 # Use project name variable, if specified in the tcl shell
 if { [info exists ::user_project_name] } {
@@ -164,9 +165,8 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- [file normalize "${origin_dir}/../../../../ip_repo/ultra_scale/mv_avg32/src/mv_avg32.v"] \
- [file normalize "${origin_dir}/../../../../ip_repo/ultra_scale/mv_avg128/src/mv_avg128.v"] \
  [file normalize "${origin_dir}/../../src/mv_avg.v"] \
+ [file normalize "${origin_dir}/../../src/mv_avg_dual_ch.v"] \
  [file normalize "${origin_dir}/mv_avg_tb.v"] \
 ]
 add_files -norecurse -fileset $obj $files
@@ -185,7 +185,7 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../../../ip_repo/ultra_scale/mv_avg32/src/mv_avg32.v"
+set file "$origin_dir/../../src/mv_avg_dual_ch.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
@@ -198,18 +198,31 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../../../ip_repo/ultra_scale/mv_avg128/src/mv_avg128.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog" -objects $file_obj
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+# set file "$origin_dir/../../../../ip_repo/ultra_scale/mv_avg32/src/mv_avg32.v"
+# set file [file normalize $file]
+# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+# set_property -name "file_type" -value "Verilog" -objects $file_obj
+# set_property -name "is_enabled" -value "1" -objects $file_obj
+# set_property -name "is_global_include" -value "0" -objects $file_obj
+# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+# set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+# set_property -name "used_in_implementation" -value "1" -objects $file_obj
+# set_property -name "used_in_simulation" -value "1" -objects $file_obj
+# set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+
+# set file "$origin_dir/../../../../ip_repo/ultra_scale/mv_avg128/src/mv_avg128.v"
+# set file [file normalize $file]
+# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+# set_property -name "file_type" -value "Verilog" -objects $file_obj
+# set_property -name "is_enabled" -value "1" -objects $file_obj
+# set_property -name "is_global_include" -value "0" -objects $file_obj
+# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+# set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+# set_property -name "used_in_implementation" -value "1" -objects $file_obj
+# set_property -name "used_in_simulation" -value "1" -objects $file_obj
+# set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 set file "$origin_dir/mv_avg_tb.v"
 set file [file normalize $file]
@@ -246,54 +259,54 @@ set_property -name "verilog_uppercase" -value "0" -objects $obj
 set_property -name "verilog_version" -value "verilog_2001" -objects $obj
 set_property -name "vhdl_version" -value "vhdl_2k" -objects $obj
 
-# Set 'sources_1' fileset object
-set obj [get_filesets sources_1]
-set files [list \
- [file normalize "${origin_dir}/../../../../ip_repo/ultra_scale/mv_avg32/src/mv_avg32_fir_compiler_0_0/mv_avg32_fir_compiler_0_0.xci"] \
- [file normalize "${origin_dir}/../../../../ip_repo/ultra_scale/mv_avg128/src/mv_avg128_fir_compiler_0_0/mv_avg128_fir_compiler_0_0.xci"] \
-]
-add_files -norecurse -fileset $obj $files
+# # Set 'sources_1' fileset object
+# set obj [get_filesets sources_1]
+# set files [list \
+#  [file normalize "${origin_dir}/../../../../ip_repo/ultra_scale/mv_avg32/src/mv_avg32_fir_compiler_0_0/mv_avg32_fir_compiler_0_0.xci"] \
+#  [file normalize "${origin_dir}/../../../../ip_repo/ultra_scale/mv_avg128/src/mv_avg128_fir_compiler_0_0/mv_avg128_fir_compiler_0_0.xci"] \
+# ]
+# add_files -norecurse -fileset $obj $files
 
-# Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/../../../../ip_repo/ultra_scale/mv_avg32/src/mv_avg32_fir_compiler_0_0/mv_avg32_fir_compiler_0_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-}
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
-}
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+# # Set 'sources_1' fileset file properties for remote files
+# set file "$origin_dir/../../../../ip_repo/ultra_scale/mv_avg32/src/mv_avg32_fir_compiler_0_0/mv_avg32_fir_compiler_0_0.xci"
+# set file [file normalize $file]
+# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+# set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+# if { ![get_property "is_locked" $file_obj] } {
+#   set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
+# }
+# set_property -name "is_enabled" -value "1" -objects $file_obj
+# set_property -name "is_global_include" -value "0" -objects $file_obj
+# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+# set_property -name "registered_with_manager" -value "1" -objects $file_obj
+# if { ![get_property "is_locked" $file_obj] } {
+#   set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+# }
+# set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+# set_property -name "used_in_implementation" -value "1" -objects $file_obj
+# set_property -name "used_in_simulation" -value "1" -objects $file_obj
+# set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/../../../../ip_repo/ultra_scale/mv_avg128/src/mv_avg128_fir_compiler_0_0/mv_avg128_fir_compiler_0_0.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
-}
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
-}
-set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
-set_property -name "used_in_implementation" -value "1" -objects $file_obj
-set_property -name "used_in_simulation" -value "1" -objects $file_obj
-set_property -name "used_in_synthesis" -value "1" -objects $file_obj
+# set file "$origin_dir/../../../../ip_repo/ultra_scale/mv_avg128/src/mv_avg128_fir_compiler_0_0/mv_avg128_fir_compiler_0_0.xci"
+# set file [file normalize $file]
+# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+# set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+# if { ![get_property "is_locked" $file_obj] } {
+#   set_property -name "generate_synth_checkpoint" -value "1" -objects $file_obj
+# }
+# set_property -name "is_enabled" -value "1" -objects $file_obj
+# set_property -name "is_global_include" -value "0" -objects $file_obj
+# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+# set_property -name "registered_with_manager" -value "1" -objects $file_obj
+# if { ![get_property "is_locked" $file_obj] } {
+#   set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+# }
+# set_property -name "used_in" -value "synthesis implementation simulation" -objects $file_obj
+# set_property -name "used_in_implementation" -value "1" -objects $file_obj
+# set_property -name "used_in_simulation" -value "1" -objects $file_obj
+# set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
 # Set 'sources_1' fileset file properties for local files
 # None
