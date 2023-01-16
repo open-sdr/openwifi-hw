@@ -50,37 +50,37 @@
         output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG29,
         output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG30,
         output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG31,
-        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG32,
-        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG33,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG34,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG35,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG36,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG37,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG38,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG39,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG40,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG41,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG42,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG43,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG44,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG45,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG46,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG47,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG48,
-        // input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG49,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG32,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG33,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG34,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG35,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG36,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG37,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG38,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG39,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG40,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG41,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG42,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG43,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG44,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG45,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG46,
+        //output  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG47,
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG48,
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG49,
         //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG50,
-        /*input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG51,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG52,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG53,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG54,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG55,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG56,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG57,*/
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG51,
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG52,
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG53,
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG54,
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG55,
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG56,
+        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG57,
         input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG58,
         input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG59,
         //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG60,
         //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG61,
-        //input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG62,
+        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG62,
         input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG63,
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -204,35 +204,35 @@
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg31;
 	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg32;
 	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg33;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg34;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg35;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg36;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg37;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg38;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg39;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg40;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg41;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg42;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg43;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg44;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg45;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg46;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg47;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg48;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg49;
-	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg50;
-	/*reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg51;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg52;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg53;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg54;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg55;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg56;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg57;*/
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg34;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg35;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg36;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg37;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg38;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg39;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg40;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg41;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg42;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg43;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg44;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg45;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg46;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg47;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg48;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg49;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg50;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg51;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg52;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg53;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg54;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg55;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg56;
+	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg57;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg58;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg59;
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg60;
 	// reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg61;
-	//reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg62;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg62;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg63;
 	wire	 slv_reg_rden;
 	wire	 slv_reg_wren;
@@ -283,6 +283,22 @@
     assign SLV_REG29 = slv_reg29;
     assign SLV_REG30 = slv_reg30;
     assign SLV_REG31 = slv_reg31;
+	// assign SLV_REG32 = slv_reg32;
+	// assign SLV_REG33 = slv_reg33;
+	// assign SLV_REG34 = slv_reg34;
+	// assign SLV_REG35 = slv_reg35;
+	// assign SLV_REG36 = slv_reg36;
+	// assign SLV_REG37 = slv_reg37;
+	// assign SLV_REG38 = slv_reg38;
+	// assign SLV_REG39 = slv_reg39;
+	// assign SLV_REG40 = slv_reg40;
+	// assign SLV_REG41 = slv_reg41;
+	// assign SLV_REG42 = slv_reg42;
+	// assign SLV_REG43 = slv_reg43;
+	// assign SLV_REG44 = slv_reg44;
+	// assign SLV_REG45 = slv_reg45;
+	// assign SLV_REG46 = slv_reg46;
+	// assign SLV_REG47 = slv_reg47;
 	// Implement axi_awready generation
 	// axi_awready is asserted for one S_AXI_ACLK clock cycle when both
 	// S_AXI_AWVALID and S_AXI_WVALID are asserted. axi_awready is
@@ -412,6 +428,22 @@
 	      slv_reg29 <= 32'h0;
 	      slv_reg30 <= 32'h0;
 	      slv_reg31 <= 32'h0;
+		//   slv_reg32 <= 32'h0;
+		//   slv_reg33 <= 32'h0;
+		//   slv_reg34 <= 32'h0;
+		//   slv_reg35 <= 32'h0;
+		//   slv_reg36 <= 32'h0;
+		//   slv_reg37 <= 32'h0;
+		//   slv_reg38 <= 32'h0;
+		//   slv_reg39 <= 32'h0;
+		//   slv_reg40 <= 32'h0;
+		//   slv_reg41 <= 32'h0;
+		//   slv_reg42 <= 32'h0;
+		//   slv_reg43 <= 32'h0;
+		//   slv_reg44 <= 32'h0;
+		//   slv_reg45 <= 32'h0;
+		//   slv_reg46 <= 32'h0;
+		//   slv_reg47 <= 32'h0;
 	    end 
 	  else begin
 	  	slv_reg_wren_signal <= slv_reg_wren;
@@ -641,7 +673,119 @@
 	                // Respective byte enables are asserted as per write strobes 
 	                // Slave register 19
 	                slv_reg31[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-	              end  
+	              end
+			//   6'h20:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg32[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h21:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg33[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h22:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg34[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h23:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg35[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h24:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg36[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h25:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg37[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h26:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg38[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h27:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg39[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h28:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg40[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h29:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg41[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h2A:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg42[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h2B:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg43[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h2C:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg44[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h2D:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg45[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h2E:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg46[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
+			//   6'h2F:
+	        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	        //         // Respective byte enables are asserted as per write strobes 
+	        //         // Slave register 19
+	        //         slv_reg47[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	        //       end
 	          default : begin
 	                      slv_reg0 <= slv_reg0;
 	                      slv_reg1 <= slv_reg1;
@@ -675,6 +819,22 @@
 	                      slv_reg29 <= slv_reg29;
 	                      slv_reg30 <= slv_reg30;
 	                      slv_reg31 <= slv_reg31;
+						//   slv_reg32 <= slv_reg32;
+						//   slv_reg33 <= slv_reg33;
+						//   slv_reg34 <= slv_reg34;
+						//   slv_reg35 <= slv_reg35;
+						//   slv_reg36 <= slv_reg36;
+						//   slv_reg37 <= slv_reg37;
+						//   slv_reg38 <= slv_reg38;
+						//   slv_reg39 <= slv_reg39;
+						//   slv_reg40 <= slv_reg40;
+						//   slv_reg41 <= slv_reg41;
+						//   slv_reg42 <= slv_reg42;
+						//   slv_reg43 <= slv_reg43;
+						//   slv_reg44 <= slv_reg44;
+						//   slv_reg45 <= slv_reg45;
+						//   slv_reg46 <= slv_reg46;
+						//   slv_reg47 <= slv_reg47;
 	                    end
 	        endcase
 	      end
@@ -817,35 +977,35 @@
 	        6'h1F   : reg_data_out <= slv_reg31;
 	        //6'h20   : reg_data_out <= slv_reg32;
 	        //6'h21   : reg_data_out <= slv_reg33;
-	        // 6'h22   : reg_data_out <= slv_reg34;
-	        // 6'h23   : reg_data_out <= slv_reg35;
-	        // 6'h24   : reg_data_out <= slv_reg36;
-	        6'h25   : reg_data_out <= slv_reg37;
-	        // 6'h26   : reg_data_out <= slv_reg38;
-	        // 6'h27   : reg_data_out <= slv_reg39;
-	        // 6'h28   : reg_data_out <= slv_reg40;
-	        // 6'h29   : reg_data_out <= slv_reg41;
-	        // 6'h2A   : reg_data_out <= slv_reg42;
-	        // 6'h2B   : reg_data_out <= slv_reg43;
-	        // 6'h2C   : reg_data_out <= slv_reg44;
-	        // 6'h2D   : reg_data_out <= slv_reg45;
-	        // 6'h2E   : reg_data_out <= slv_reg46;
-	        // 6'h2F   : reg_data_out <= slv_reg47;
-	        // 6'h30   : reg_data_out <= slv_reg48;
-	        // 6'h31   : reg_data_out <= slv_reg49;
+	        //6'h22   : reg_data_out <= slv_reg34;
+	        //6'h23   : reg_data_out <= slv_reg35;
+	        //6'h24   : reg_data_out <= slv_reg36;
+	        //6'h25   : reg_data_out <= slv_reg37;
+	        //6'h26   : reg_data_out <= slv_reg38;
+	        //6'h27   : reg_data_out <= slv_reg39;
+	        //6'h28   : reg_data_out <= slv_reg40;
+	        //6'h29   : reg_data_out <= slv_reg41;
+	        //6'h2A   : reg_data_out <= slv_reg42;
+	        //6'h2B   : reg_data_out <= slv_reg43;
+	        //6'h2C   : reg_data_out <= slv_reg44;
+	        //6'h2D   : reg_data_out <= slv_reg45;
+	        //6'h2E   : reg_data_out <= slv_reg46;
+	        //6'h2F   : reg_data_out <= slv_reg47;
+	        //6'h30   : reg_data_out <= slv_reg48;
+	        //6'h31   : reg_data_out <= slv_reg49;
 	        //6'h32   : reg_data_out <= slv_reg50;
-	        /*6'h33   : reg_data_out <= slv_reg51;
-	        6'h34   : reg_data_out <= slv_reg52;
-	        6'h35   : reg_data_out <= slv_reg53;
-	        6'h36   : reg_data_out <= slv_reg54;
-	        6'h37   : reg_data_out <= slv_reg55;
-	        6'h38   : reg_data_out <= slv_reg56;
-	        6'h39   : reg_data_out <= slv_reg57;*/
+	        //6'h33   : reg_data_out <= slv_reg51;
+	        //6'h34   : reg_data_out <= slv_reg52;
+	        //6'h35   : reg_data_out <= slv_reg53;
+	        //6'h36   : reg_data_out <= slv_reg54;
+	        //6'h37   : reg_data_out <= slv_reg55;
+	        //6'h38   : reg_data_out <= slv_reg56;
+	        //6'h39   : reg_data_out <= slv_reg57;
 	        6'h3A   : reg_data_out <= slv_reg58;
 	        6'h3B   : reg_data_out <= slv_reg59;
 	        //6'h3C   : reg_data_out <= slv_reg60;
 	        //6'h3D   : reg_data_out <= slv_reg61;
-	        //6'h3E   : reg_data_out <= slv_reg62;
+	        6'h3E   : reg_data_out <= slv_reg62;
 	        6'h3F   : reg_data_out <= slv_reg63;
 	        default : reg_data_out <= 0;
 	      endcase
@@ -875,101 +1035,44 @@
     begin
       if ( S_AXI_ARESETN == 1'b0 )
         begin
-          // slv_reg20 <= 32'h0;
-          // slv_reg21 <= 32'h0;
-          // slv_reg22 <= 32'h0;
-          // slv_reg23 <= 32'h0;
-          // slv_reg24 <= 32'h0;
-          // slv_reg25 <= 32'h0;
-          // slv_reg26 <= 32'h0;
-          // slv_reg27 <= 32'h0;
-          // slv_reg28 <= 32'h0;
-          // slv_reg29 <= 32'h0;
-          // slv_reg30 <= 32'h0;
-          // slv_reg31 <= 32'h0;
-
-          //slv_reg32 <= 32'h0;
-          //slv_reg33 <= 32'h0;
-        //   slv_reg34 <= 32'h0;
-        //   slv_reg35 <= 32'h0;
-        //   slv_reg36 <= 32'h0;
-          slv_reg37 <= 32'h0;
-        //   slv_reg38 <= 32'h0;
-        //   slv_reg39 <= 32'h0;
-        //   slv_reg40 <= 32'h0;
-        //   slv_reg41 <= 32'h0;
-        //   slv_reg42 <= 32'h0;
-        //   slv_reg43 <= 32'h0;
-        //   slv_reg44 <= 32'h0;
-        //   slv_reg45 <= 32'h0;
-        //   slv_reg46 <= 32'h0;
-        //   slv_reg47 <= 32'h0;
-        //   slv_reg48 <= 32'h0;
-        //   slv_reg49 <= 32'h0;
+          //slv_reg48 <= 32'h0;
+          //slv_reg49 <= 32'h0;
           //slv_reg50 <= 32'h0;
-          /*slv_reg51 <= 32'h0;
-          slv_reg52 <= 32'h0;
-          slv_reg53 <= 32'h0;
-          slv_reg54 <= 32'h0;
-          slv_reg55 <= 32'h0;
-          slv_reg56 <= 32'h0;
-          slv_reg57 <= 32'h0;*/
+          //slv_reg51 <= 32'h0;
+          //slv_reg52 <= 32'h0;
+          //slv_reg53 <= 32'h0;
+          //slv_reg54 <= 32'h0;
+          //slv_reg55 <= 32'h0;
+          //slv_reg56 <= 32'h0;
+          //slv_reg57 <= 32'h0;
           slv_reg58 <= 32'h0;
           slv_reg59 <= 32'h0;
           //slv_reg60 <= 32'h0;
           //slv_reg61 <= 32'h0;
-          //slv_reg62 <= 32'h0;
+          slv_reg62 <= 32'h0;
           slv_reg63 <= 32'h0;
         end 
       else
         begin    
-          // slv_reg20 <= SLV_REG20;
-          // slv_reg21 <= SLV_REG21;
-          // slv_reg22 <= SLV_REG22;
-          // slv_reg23 <= SLV_REG23;
-          // slv_reg24 <= SLV_REG24;
-          // slv_reg25 <= SLV_REG25;
-          // slv_reg26 <= SLV_REG26;
-          // slv_reg27 <= SLV_REG27;
-          // slv_reg28 <= SLV_REG28;
-          // slv_reg29 <= SLV_REG29;
-          // slv_reg30 <= SLV_REG30;
-          // slv_reg31 <= SLV_REG31;
-
-          //slv_reg32 <= SLV_REG32;
-          //slv_reg33 <= SLV_REG33;
-        //   slv_reg34 <= SLV_REG34;
-        //   slv_reg35 <= SLV_REG35;
-        //   slv_reg36 <= SLV_REG36;
-          slv_reg37 <= SLV_REG37;
-        //   slv_reg38 <= SLV_REG38;
-        //   slv_reg39 <= SLV_REG39;
-        //   slv_reg40 <= SLV_REG40;
-        //   slv_reg41 <= SLV_REG41;
-        //   slv_reg42 <= SLV_REG42;
-        //   slv_reg43 <= SLV_REG43;
-        //   slv_reg44 <= SLV_REG44;
-        //   slv_reg45 <= SLV_REG45;
-        //   slv_reg46 <= SLV_REG46;
-        //   slv_reg47 <= SLV_REG47;
-        //   slv_reg48 <= SLV_REG48;
-        //   slv_reg49 <= SLV_REG49;
+          //slv_reg48 <= SLV_REG48;
+          //slv_reg49 <= SLV_REG49;
           //slv_reg50 <= SLV_REG50;
-          /*slv_reg51 <= SLV_REG51;
-          slv_reg52 <= SLV_REG52;
-          slv_reg53 <= SLV_REG53;
-          slv_reg54 <= SLV_REG54;
-          slv_reg55 <= SLV_REG55;
-          slv_reg56 <= SLV_REG56;
-          slv_reg57 <= SLV_REG57;*/
+          //slv_reg51 <= SLV_REG51;
+          //slv_reg52 <= SLV_REG52;
+          //slv_reg53 <= SLV_REG53;
+          //slv_reg54 <= SLV_REG54;
+          //slv_reg55 <= SLV_REG55;
+          //slv_reg56 <= SLV_REG56;
+          //slv_reg57 <= SLV_REG57;
           slv_reg58 <= SLV_REG58;
           slv_reg59 <= SLV_REG59;
           //slv_reg60 <= SLV_REG60;
           //slv_reg61 <= SLV_REG61;
-          //slv_reg62 <= SLV_REG62;
+          slv_reg62 <= SLV_REG62;
           slv_reg63 <= SLV_REG63;
         end 
     end       
 	// User logic ends
 
 	endmodule
+

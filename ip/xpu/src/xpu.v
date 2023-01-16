@@ -170,7 +170,7 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg16; // receive ack time count top -- 2.4GHz
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg17; // receive ack time count top -- 5GHz
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg18; // before actual ack sending, wait until counter reach this value -- related to SIFS in different band. low 16bit 2.4GHz, high 16bit 5GHz
-    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg19;
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg19; // cw combined 
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg20; // slice count_total in bit [19:0]; slice selection in bit [21:20]
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg21; // slice count_start in bit [19:0]; slice selection in bit [21:20]
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg22; // slice count_end   in bit [19:0]; slice selection in bit [21:20]
@@ -183,27 +183,27 @@
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg29; // self bssid and filter enable
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg30; // mac addr and filter enable
     wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg31; // mac addr and filter enable
-
-	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg32;//
-	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg33;//
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg34;//FC_DI
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg35;//addr1
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg36;//addr1
-	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg37;//addr2
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg38;//addr2
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg39;//addr3
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg40;//addr3
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg41;//SC
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg42;//addr4
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg43;//addr4
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg32;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg33;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg34;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg35;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg36;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg37;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg38;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg39;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg40;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg41;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg42;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg43;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg44;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg45;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg46;
-	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg47;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg47;//from reg0 to 47 for writing, from reg48 for reading only
+
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg48;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg49;
-	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg50;// trx status
-	// wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg51;// tx status, not goes to tx_intf
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg50;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg51;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg52;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg53;
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg54;
@@ -212,9 +212,9 @@
 	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg57;
 	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg58;//tsf timer low
 	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg59;//tsf timer high
-	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg60;//RSSI. step size half dB
-	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg61;//IQ RSSI. step size half dB
-	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg62;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg60;
+	//wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg61;
+	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg62;//mac addre read back to decide how to set addr field correctly (big or little endian, etc.)
 	wire [C_S00_AXI_DATA_WIDTH-1:0]	slv_reg63;//FPGA version info
 	
 	wire block_rx_dma_to_ps_internal;
@@ -222,9 +222,6 @@
     wire ch_idle;
     wire retrans_trigger;
 
-    // wire [31:0] FC_DI;
-    // wire FC_DI_valid;
-    
     wire [1:0] FC_version;
     wire [1:0] FC_type;
     wire [3:0] FC_subtype;
@@ -237,14 +234,7 @@
     wire       FC_protected_frame;
     wire       FC_order;
     wire [15:0] duration;
-        
-    // wire [47:0] addr1;
-    // wire addr1_valid;
-    // wire [47:0] addr2;
-    // wire addr2_valid;
-    // wire [47:0] addr3;
-    // wire addr3_valid;
-    
+
     wire [15:0] SC;
     wire SC_valid;
     wire [3:0] SC_fragment_number;
@@ -276,8 +266,6 @@
     wire iq_rssi_half_db_valid;
     wire rssi_half_db_valid;
 
-    // wire [4:0] tx_status;
-
     wire cycle_start0;
     wire slice_en0;
     wire slice_en1;
@@ -305,7 +293,6 @@
 
     wire [3:0] cw_exp_used;
     wire [3:0] cw_exp_dynamic;
-    // wire increase_cw;
     `DEBUG_PREFIX wire [3:0] cw_exp_log;
     
     wire tx_core_is_ongoing;
@@ -357,17 +344,8 @@
     assign FC_order =           FC_DI[15];
     assign duration  =          FC_DI[31:16];
     
-    // assign slv_reg35 = addr1[31:0];
-    // assign slv_reg36 = addr1[47:32];
-    
-    assign slv_reg37 = {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]};
-    // assign slv_reg37 = addr2[31:0];
-    // assign slv_reg38 = addr2[47:32];
+    assign slv_reg62 = {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]};
 
-    // assign slv_reg39 = addr3[31:0];
-    // assign slv_reg40 = addr3[47:32];
-    
-    // assign slv_reg41 = SC;
     assign SC_fragment_number = SC[3:0];
     assign SC_sequence_number = SC[15:4];
     
@@ -817,7 +795,7 @@
         //.SLV_REG34(slv_reg34),
         //.SLV_REG35(slv_reg35),
         //.SLV_REG36(slv_reg36),
-        .SLV_REG37(slv_reg37),
+        //.SLV_REG37(slv_reg37),
         //.SLV_REG38(slv_reg38),
         //.SLV_REG39(slv_reg39),
         //.SLV_REG40(slv_reg40),
@@ -843,8 +821,9 @@
         .SLV_REG59(slv_reg59),
         //.SLV_REG60(slv_reg60),
         //.SLV_REG61(slv_reg61),
-        //.SLV_REG62(slv_reg62)//,
+        .SLV_REG62(slv_reg62),
         .SLV_REG63(slv_reg63)
 	);
 
 	endmodule
+
