@@ -491,7 +491,7 @@ module tx_intf #
     .auto_start_mode(phy_tx_auto_start_mode),
     .num_dma_symbol_th(phy_tx_auto_start_num_dma_symbol_th),
     .tx_config(slv_reg8),
-    .tx_queue_idx_indication_from_ps(slv_reg8[20:18]),
+    .tx_queue_idx_indication_from_ps(slv_reg8[19:18]),
     .phy_hdr_config(slv_reg17),
     .ampdu_action_config(slv_reg15),
     .s_axis_recv_data_from_high(s_axis_recv_data_from_high),
