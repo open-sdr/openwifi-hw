@@ -36,6 +36,7 @@ Environment variable **BOARD_NAME** options:
     * You can add Vitis by running "Xilinx Design Tools --> Add Design Tools for Devices 2021.1" from Xilinx program group/menu in your OS start menu, or Help menu of Vivado.
   * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado.
   * Ubuntu 18/20/22 LTS release (We test in these OS. Other OS might also work.)
+  * Install required packages, such as `sudo apt install libtinfo5`
 
 * Prepare Analgo Devices HDL library (only run once):
 ```
