@@ -1,8 +1,13 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`include "side_ch_pre_def.v"
+
+`ifdef SIDE_CH_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 `timescale 1 ns / 1 ps
 
@@ -14,13 +19,13 @@
 		parameter integer RSSI_HALF_DB_WIDTH = 11,
 		parameter integer C_S_AXI_DATA_WIDTH = 32,
 		parameter integer IQ_DATA_WIDTH = 16,
-	    parameter integer C_S_AXIS_TDATA_WIDTH	= 64,
-        parameter integer MAX_NUM_DMA_SYMBOL = 8192,
-        parameter integer MAX_BIT_NUM_DMA_SYMBOL = 14
+	  parameter integer C_S_AXIS_TDATA_WIDTH	= 64,
+    parameter integer MAX_NUM_DMA_SYMBOL = 8192,
+    parameter integer MAX_BIT_NUM_DMA_SYMBOL = 14
 	)
 	(
-        input wire clk,
-        input wire rstn,
+    input wire clk,
+    input wire rstn,
 
 		// from pl
 		input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status,
@@ -30,47 +35,47 @@
 
 		input wire [(2*IQ_DATA_WIDTH-1):0] openofdm_tx_iq0,
 		input wire [(2*IQ_DATA_WIDTH-1):0] openofdm_tx_iq1,
-    	input wire openofdm_tx_iq_valid,
+    `DEBUG_PREFIX input wire openofdm_tx_iq_valid,
 		input wire [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq0,
 		input wire [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq1,
-    	input wire tx_intf_iq_valid,
+    `DEBUG_PREFIX input wire tx_intf_iq_valid,
 		input wire [(2*IQ_DATA_WIDTH-1):0] iq0,
 		input wire [(2*IQ_DATA_WIDTH-1):0] iq1,
-		input wire iq_strobe,
+		`DEBUG_PREFIX input wire iq_strobe,
 		input wire demod_is_ongoing,
-		input wire ofdm_symbol_eq_out_pulse,
-		input wire long_preamble_detected,
-		input wire short_preamble_detected,
-        input wire ht_unsupport,
-        input wire [7:0] pkt_rate,
+		`DEBUG_PREFIX input wire ofdm_symbol_eq_out_pulse,
+		`DEBUG_PREFIX input wire long_preamble_detected,
+		`DEBUG_PREFIX input wire short_preamble_detected,
+    input wire ht_unsupport,
+    input wire [7:0] pkt_rate,
 		input wire [15:0] pkt_len,
 		input wire [(2*IQ_DATA_WIDTH-1):0] csi,
-		input wire csi_valid,
+		`DEBUG_PREFIX input wire csi_valid,
 		input wire signed [31:0] phase_offset_taken,
 		input wire [(2*IQ_DATA_WIDTH-1):0] equalizer,
-		input wire equalizer_valid,
+		`DEBUG_PREFIX input wire equalizer_valid,
 
-		input wire pkt_header_valid,
-        input wire pkt_header_valid_strobe,
+		`DEBUG_PREFIX input wire pkt_header_valid,
+    `DEBUG_PREFIX input wire pkt_header_valid_strobe,
 		input wire [31:0] FC_DI,
-    	input wire FC_DI_valid,
+    `DEBUG_PREFIX input wire FC_DI_valid,
 		input wire [47:0] addr1,
-		input wire addr1_valid,
+		`DEBUG_PREFIX input wire addr1_valid,
 		input wire [47:0] addr2,
-		input wire addr2_valid,
+		`DEBUG_PREFIX input wire addr2_valid,
 		input wire [47:0] addr3,
-		input wire addr3_valid,
+		`DEBUG_PREFIX input wire addr3_valid,
 
-		input wire fcs_in_strobe,
-		input wire fcs_ok,
-		input wire block_rx_dma_to_ps,
-        input wire block_rx_dma_to_ps_valid,
+		`DEBUG_PREFIX input wire fcs_in_strobe,
+		`DEBUG_PREFIX input wire fcs_ok,
+		`DEBUG_PREFIX input wire block_rx_dma_to_ps,
+    `DEBUG_PREFIX input wire block_rx_dma_to_ps_valid,
 
 		// from tx
-		input wire phy_tx_start,
-		input wire tx_pkt_need_ack,
-		input wire phy_tx_started,
-		input wire phy_tx_done,
+		`DEBUG_PREFIX input wire phy_tx_start,
+		`DEBUG_PREFIX input wire tx_pkt_need_ack,
+		`DEBUG_PREFIX input wire phy_tx_started,
+		`DEBUG_PREFIX input wire phy_tx_done,
 		input wire tx_bb_is_ongoing,
 		input wire tx_rf_is_ongoing,
 
@@ -84,32 +89,32 @@
 		`DEBUG_PREFIX input wire [1:0] iq_source_select,
 		input wire [(IQ_DATA_WIDTH-1):0] rssi_or_iq_th,
 		input wire [(GPIO_STATUS_WIDTH-2):0] gain_th,
-		input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] pre_trigger_len,
-		input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] iq_len_target,
+		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] pre_trigger_len,
+		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] iq_len_target,
 		input wire [15 : 0] FC_target,
 		input wire [C_S_AXI_DATA_WIDTH-1 : 0] addr1_target,
 		input wire [C_S_AXI_DATA_WIDTH-1 : 0] addr2_target,
-		input wire [3:0] match_cfg,
-		input wire [3:0] num_eq,
-		input wire [1:0] m_axis_start_mode,
-		input wire m_axis_start_ext_trigger,
+		`DEBUG_PREFIX input wire [3:0] match_cfg,
+		`DEBUG_PREFIX input wire [3:0] num_eq,
+		`DEBUG_PREFIX input wire [1:0] m_axis_start_mode,
+		`DEBUG_PREFIX input wire m_axis_start_ext_trigger,
 
 		// s_axis
-        input wire  [C_S_AXIS_TDATA_WIDTH-1 : 0] data_to_pl,
-        output wire pl_ask_data,
-        input wire  [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] s_axis_data_count,
-        input wire  emptyn_to_pl,
+    input wire  [C_S_AXIS_TDATA_WIDTH-1 : 0] data_to_pl,
+    output wire pl_ask_data,
+    input wire  [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] s_axis_data_count,
+    input wire  emptyn_to_pl,
 
 		input wire  S_AXIS_TVALID,
 		input wire  S_AXIS_TLAST,
 
 		// m_axis
-	 	output wire m_axis_start_1trans,
+	 	`DEBUG_PREFIX output wire m_axis_start_1trans,
 
-        output wire [C_S_AXIS_TDATA_WIDTH-1 : 0] data_to_ps,
-        output wire data_to_ps_valid,
-        `DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count,
-        `DEBUG_PREFIX input wire fulln_to_pl,
+    `DEBUG_PREFIX output wire [C_S_AXIS_TDATA_WIDTH-1 : 0] data_to_ps,
+    `DEBUG_PREFIX output wire data_to_ps_valid,
+    `DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] m_axis_data_count,
+    `DEBUG_PREFIX input wire fulln_to_pl,
         
 		output wire [31:0] MAX_NUM_DMA_SYMBOL_UDP_debug,
 		output wire [31:0] MAX_NUM_DMA_SYMBOL_debug,
@@ -119,16 +124,16 @@
 	);
 
 	function integer clogb2 (input integer bit_depth);                                   
-      begin                                                                              
-        for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                                      
-          bit_depth = bit_depth >> 1;                                                    
-      end                                                                                
-    endfunction   
+    begin                                                                              
+      for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                                      
+        bit_depth = bit_depth >> 1;                                                    
+    end                                                                                
+  endfunction   
     
 	//Max UDP 65507 bytes; (65507/8) = 8188
 	localparam integer MAX_NUM_DMA_SYMBOL_UDP = (MAX_NUM_DMA_SYMBOL>8188?8188:MAX_NUM_DMA_SYMBOL);
 
-    localparam integer bit_num  = clogb2(MAX_NUM_DMA_SYMBOL)-1;
+  localparam integer bit_num  = clogb2(MAX_NUM_DMA_SYMBOL)-1;
 
 	// mask[0] is DC, mask[1:26] -> 1,..., 26
 	// mask[38:63] -> -26,..., -1
@@ -168,28 +173,28 @@
 					   EQ_INFO_TO_M_AXIS    =      4'b1000;
 
 	wire ht_flag;
-	reg  ht_flag_capture;
-	wire [3:0] rate_mcs;
-	reg  [8:0] N_DBPS;
-	reg  ht_rst;
-	reg  last_ofdm_symbol_flag;
-	reg  [19:0] num_bit_decoded;
-	wire [19:0] num_bit_target;
-	reg  [1:0] ofdm_rx_state;
+	`DEBUG_PREFIX reg  ht_flag_capture;
+	`DEBUG_PREFIX wire [3:0] rate_mcs;
+	`DEBUG_PREFIX reg  [8:0] N_DBPS;
+	`DEBUG_PREFIX reg  ht_rst;
+	`DEBUG_PREFIX reg  last_ofdm_symbol_flag;
+	`DEBUG_PREFIX reg  [19:0] num_bit_decoded;
+	`DEBUG_PREFIX wire [19:0] num_bit_target;
+	`DEBUG_PREFIX reg  [1:0] ofdm_rx_state;
 
-	reg csi_valid_reg;
-	reg  capture_src_flag;
+	`DEBUG_PREFIX reg csi_valid_reg;
+	`DEBUG_PREFIX reg capture_src_flag;
 
-	reg [8:0] side_info_count;
-	reg [3:0] num_eq_count;
-	reg [3:0] side_ch_state;
-	reg [3:0] side_ch_state_old;
-	wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] num_dma_symbol_per_trans;
+	`DEBUG_PREFIX reg [8:0] side_info_count;
+	`DEBUG_PREFIX reg [3:0] num_eq_count;
+	`DEBUG_PREFIX reg [3:0] side_ch_state;
+	`DEBUG_PREFIX reg [3:0] side_ch_state_old;
+	`DEBUG_PREFIX wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] num_dma_symbol_per_trans;
 
-	wire num_dma_symbol_reg_wr_is_onging;
+	`DEBUG_PREFIX wire num_dma_symbol_reg_wr_is_onging;
 	reg num_dma_symbol_reg_wr_is_onging_reg;
 	reg num_dma_symbol_reg_wr_is_onging_reg1;
-	wire m_axis_start_auto_trigger;
+	`DEBUG_PREFIX wire m_axis_start_auto_trigger;
 
 	reg [(TSF_TIMER_WIDTH-1):0] tsf_val_lock_by_sig;
 	reg demod_is_ongoing_reg;
@@ -201,19 +206,19 @@
 	`DEBUG_PREFIX reg [C_S_AXIS_TDATA_WIDTH-1 : 0] data_to_ps_reg;
 	`DEBUG_PREFIX reg data_to_ps_valid_reg;
 
-	wire pkt_begin_rst;
-	wire side_info_fifo_rst;
+	`DEBUG_PREFIX wire pkt_begin_rst;
+	`DEBUG_PREFIX wire side_info_fifo_rst;
 	wire [(2*IQ_DATA_WIDTH-1):0] side_info_fifo_dout;
 	wire [(2*IQ_DATA_WIDTH-1):0] side_info_fifo_din;
-	wire side_info_fifo_empty;
-	wire side_info_fifo_full;
-	reg  side_info_fifo_rd_en;
-	wire side_info_fifo_wr_en;
-	wire [9:0] side_info_fifo_rd_data_count;
-	wire [9:0] side_info_fifo_wr_data_count;
+	`DEBUG_PREFIX wire side_info_fifo_empty;
+	`DEBUG_PREFIX wire side_info_fifo_full;
+	`DEBUG_PREFIX reg  side_info_fifo_rd_en;
+	`DEBUG_PREFIX wire side_info_fifo_wr_en;
+	`DEBUG_PREFIX wire [9:0] side_info_fifo_rd_data_count;
+	`DEBUG_PREFIX wire [9:0] side_info_fifo_wr_data_count;
 
-	reg  [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info_csi;
-	reg  side_info_csi_valid;
+	`DEBUG_PREFIX reg  [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info_csi;
+	`DEBUG_PREFIX reg  side_info_csi_valid;
 	`DEBUG_PREFIX wire [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info_iq_dpram_in;
 	`DEBUG_PREFIX wire [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info_iq_dpram;
 	`DEBUG_PREFIX reg  [C_S_AXIS_TDATA_WIDTH-1 : 0] side_info_iq;
@@ -241,7 +246,7 @@
 	`DEBUG_PREFIX reg [(bit_num-1):0] iq_count;
 	`DEBUG_PREFIX reg [1:0] iq_state;
 	reg [(GPIO_STATUS_WIDTH-1):0] gpio_status_reg;
-    reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_reg;
+  reg signed [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_reg;
 
 	reg tx_bb_is_ongoing_reg;
 	reg tx_rf_is_ongoing_reg;
@@ -249,6 +254,9 @@
 	reg tx_bb_is_ongoing_negedge;
 	reg tx_rf_is_ongoing_posedge;
 	reg tx_rf_is_ongoing_negedge;
+
+	reg  [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq0_reg;
+	wire tx_intf_iq0_non_zero;
 
 	reg [63:0] subcarrier_mask;
 
@@ -285,17 +293,19 @@
 	assign rssi_th = rssi_or_iq_th[(RSSI_HALF_DB_WIDTH-1):0];
 	assign iq1_i_abs = (iq1[(IQ_DATA_WIDTH-1)]?(~iq1+1):iq1);
 
+	assign tx_intf_iq0_non_zero = (tx_intf_iq0 != 0 && tx_intf_iq0_reg == 0);
+
 	always @( ht_flag, rate_mcs )
 	begin
       case ({ht_flag,rate_mcs})
         5'b01011: begin  N_DBPS <= 24;  end  //  6 Mbps
-		5'b01111: begin  N_DBPS <= 36;  end  //  9 Mbps
-		5'b01010: begin  N_DBPS <= 48;  end  // 12 Mbps
-		5'b01110: begin  N_DBPS <= 72;  end  // 18 Mbps
-		5'b01001: begin  N_DBPS <= 96;  end  // 24 Mbps
-		5'b01101: begin  N_DBPS <= 144; end  // 36 Mbps
-		5'b01000: begin  N_DBPS <= 192; end  // 48 Mbps
-		5'b01100: begin  N_DBPS <= 216; end  // 54 Mbps
+        5'b01111: begin  N_DBPS <= 36;  end  //  9 Mbps
+        5'b01010: begin  N_DBPS <= 48;  end  // 12 Mbps
+        5'b01110: begin  N_DBPS <= 72;  end  // 18 Mbps
+        5'b01001: begin  N_DBPS <= 96;  end  // 24 Mbps
+        5'b01101: begin  N_DBPS <= 144; end  // 36 Mbps
+        5'b01000: begin  N_DBPS <= 192; end  // 48 Mbps
+        5'b01100: begin  N_DBPS <= 216; end  // 54 Mbps
         5'b10000: begin  N_DBPS <= 26;  end  //  6.5 Mbps
         5'b10001: begin  N_DBPS <= 52;  end  // 13.0 Mbps
         5'b10010: begin  N_DBPS <= 78;  end  // 19.5 Mbps
@@ -310,7 +320,7 @@
 
 	// state machine tracking the rx procedure and give the last ofdm symbol indicator
 	// 1. decode end; 2 header invalid; 3 ht unsupport
-	always @(posedge clk) begin
+  always @(posedge clk) begin
 		if (pkt_begin_rst) begin
 			ht_rst <= 0;
 			num_bit_decoded <= 0;
@@ -352,10 +362,10 @@
 				endcase
 			end
 		end
-    end
+  end
 
 	// generate multiplexing control signal to write csi/equalizer to fifo
-    always @(posedge clk) begin
+  always @(posedge clk) begin
 		if (pkt_begin_rst|ht_rst) begin
 			capture_src_flag <= 0;
 			csi_valid_reg <= 0;
@@ -366,7 +376,7 @@
 					capture_src_flag <= 1;
 			end
 		end
-    end
+  end
 
 	// dpram to buffer the iq, gpio_status, rssi_half_db before trigger
 	ram_2port  #(.DWIDTH(C_S_AXIS_TDATA_WIDTH), .AWIDTH(bit_num)) iq_buf (
@@ -411,6 +421,8 @@
 			tx_rf_is_ongoing_posedge <= 0;
 			tx_rf_is_ongoing_negedge <= 0;
 			
+			tx_intf_iq0_reg <= tx_intf_iq0;
+
 			iq_trigger <= 0;
 
 			tsf_val_lock_by_iq_trigger <= 0;
@@ -418,6 +430,8 @@
 
 			iq_state <= IQ_WAIT_FOR_CONDITION;
 		end else begin
+			tx_intf_iq0_reg <= tx_intf_iq0;
+
 			if (iq_capture) begin
 				// keep writing dpram with incoming iq
 				iq_waddr <= (iq_strobe_inner?(iq_waddr+1):iq_waddr);
@@ -443,7 +457,7 @@
 					5'd0:  begin  iq_trigger <= (fcs_in_strobe|iq_trigger_free_run_flag);  end
 					5'd1:  begin  iq_trigger <= (fcs_in_strobe&&(fcs_ok==1));  end
 					5'd2:  begin  iq_trigger <= (fcs_in_strobe&&(fcs_ok==0));  end
-					5'd3:  begin  iq_trigger <=  pkt_header_valid_strobe;  end
+					5'd3:  begin  iq_trigger <=  tx_intf_iq0_non_zero;  end
 					5'd4:  begin  iq_trigger <= (pkt_header_valid_strobe&&(pkt_header_valid==1));  end
 					5'd5:  begin  iq_trigger <= (pkt_header_valid_strobe&&(pkt_header_valid==0));  end
 					5'd6:  begin  iq_trigger <= (pkt_header_valid_strobe&& ht_flag);  end
@@ -712,31 +726,31 @@
        case (m_axis_start_mode)
           2'b00 : begin // loop back from s_axis
                     m_axis_start_1trans_reg = S_AXIS_TLAST;
-					data_to_ps_reg = data_to_pl;
-					data_to_ps_valid_reg = emptyn_to_pl;
-					pl_ask_data_reg = 1;
+                    data_to_ps_reg = data_to_pl;
+                    data_to_ps_valid_reg = emptyn_to_pl;
+                    pl_ask_data_reg = 1;
                   end
           2'b01 : begin
                     m_axis_start_1trans_reg = m_axis_start_auto_trigger;
-					data_to_ps_reg = side_info;
-					data_to_ps_valid_reg = side_info_valid;
-					pl_ask_data_reg = 0;
+                    data_to_ps_reg = side_info;
+                    data_to_ps_valid_reg = side_info_valid;
+                    pl_ask_data_reg = 0;
                   end
           2'b10 : begin
                     m_axis_start_1trans_reg = m_axis_start_ext_trigger;
-					data_to_ps_reg = side_info;
-					data_to_ps_valid_reg = side_info_valid;
-					pl_ask_data_reg = 0;
+                    data_to_ps_reg = side_info;
+                    data_to_ps_valid_reg = side_info_valid;
+                    pl_ask_data_reg = 0;
                   end
           2'b11 : begin
                     // m_axis_start_1trans_reg = m_axis_start_ext_trigger;
-					// data_to_ps_reg = data_to_pl;
-					// data_to_ps_valid_reg = (pl_ask_data&emptyn_to_pl);
-					// pl_ask_data_reg = data_transfer_control;
-					m_axis_start_1trans_reg = 0;
-					data_to_ps_reg = 0;
-					data_to_ps_valid_reg = 0;
-					pl_ask_data_reg = 0;
+                    // data_to_ps_reg = data_to_pl;
+                    // data_to_ps_valid_reg = (pl_ask_data&emptyn_to_pl);
+                    // pl_ask_data_reg = data_transfer_control;
+                    m_axis_start_1trans_reg = 0;
+                    data_to_ps_reg = 0;
+                    data_to_ps_valid_reg = 0;
+                    pl_ask_data_reg = 0;
                   end
        endcase
     end

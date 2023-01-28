@@ -20,14 +20,13 @@
 	);
 
 //let's use FSM to do calculation.
-//remember, after a iq_rssi_valid, you have 8 clock to do the job
-    localparam [2:0]   WAIT_FOR_VALID =  3'b000,
-                       PREPARE_P1P2P3 =  3'b001,
-                       MULT_P1P2      =  3'b010,
-                       ADD_P1P2       =  3'b011,
-                       ADD_P3         =  3'b100,
-                       GEN_FINAL      =  3'b101;
-    reg [2:0] calc_state;
+//Remember, after a iq_rssi_valid, you have 8 clock to do the job
+//In the case of 100MHz, we do not have 8 clock. Need to shrink the number of state
+    localparam [1:0]   WAIT_FOR_VALID  =  2'b00,
+                       PREPARE_P1P2P3  =  2'b01,
+                       MULT_ADD_P1P2   =  2'b10,
+                       ADD_P3_GEN_FINAL=  2'b11;
+    reg [1:0] calc_state;
 
     reg signed [(IQ_DATA_WIDTH-1):0] iq_rssi_reg;
     reg signed [(2*IQ_DATA_WIDTH-1):0] iq_rssi2;
@@ -37,10 +36,7 @@
     reg signed [16:0] p2;
     reg signed [2:0] p1;
 
-    reg signed [(3+2*IQ_DATA_WIDTH-1):0] mult_p1;
-    reg signed [(17+IQ_DATA_WIDTH-1):0] mult_p2;
     reg signed [(4+2*IQ_DATA_WIDTH-1):0] sum_p1p2;
-    reg signed [(4+2*IQ_DATA_WIDTH-1):0] sum_p1p2p3;
 
     reg signed [(IQ_DATA_WIDTH-1):0] iq_rssi_half_db_reg;
     reg signed iq_rssi_half_db_valid_reg;
@@ -60,10 +56,7 @@
           p3<=0;
           p2<=0;
           p1<=0;
-          mult_p1<=0;
-          mult_p2<=0;
           sum_p1p2<=0;
-          sum_p1p2p3<=0;
           iq_rssi_half_db_reg<=0;
           iq_rssi_half_db_valid_reg<=0;
         end                                                                   
@@ -85,17 +78,14 @@
             p3<=p3;
             p2<=p2;
             p1<=p1;
-            mult_p1<=mult_p1;
-            mult_p2<=mult_p2;
             sum_p1p2<=sum_p1p2;
-            sum_p1p2p3<=sum_p1p2p3;
             iq_rssi_half_db_reg<=iq_rssi_half_db_reg;
             iq_rssi_half_db_valid_reg<=0;
 
           end
 
           PREPARE_P1P2P3: begin // data is calculated by calc_phy_header C program
-            calc_state <= MULT_P1P2;
+            calc_state <= MULT_ADD_P1P2;
             if (iq_rssi_reg<=155) begin
                 num_shfit_bit <= 10;
                 p3 <= 62968;
@@ -129,58 +119,16 @@
             
             iq_rssi_reg <= iq_rssi_reg;
             iq_rssi2 <= iq_rssi2;
-            mult_p1<=mult_p1;
-            mult_p2<=mult_p2;
             sum_p1p2<=sum_p1p2;
-            sum_p1p2p3<=sum_p1p2p3;
             iq_rssi_half_db_reg<=iq_rssi_half_db_reg;
             iq_rssi_half_db_valid_reg<=iq_rssi_half_db_valid_reg;
 
           end
           
-          MULT_P1P2: begin
-            calc_state <= ADD_P1P2;
-            mult_p1 <= p1*iq_rssi2;
-            mult_p2 <= p2*iq_rssi_reg;
+          MULT_ADD_P1P2: begin
+            calc_state <= ADD_P3_GEN_FINAL;
+            sum_p1p2 <= p1*iq_rssi2 + p2*iq_rssi_reg;
 
-            num_shfit_bit <= num_shfit_bit;
-            p3 <= p3;
-            p2 <= p2;
-            p1 <= p1;
-            iq_rssi_reg <= iq_rssi_reg;
-            iq_rssi2 <= iq_rssi2;
-            sum_p1p2<=sum_p1p2;
-            sum_p1p2p3<=sum_p1p2p3;
-            iq_rssi_half_db_reg<=iq_rssi_half_db_reg;
-            iq_rssi_half_db_valid_reg<=iq_rssi_half_db_valid_reg;
-
-          end
-
-          ADD_P1P2: begin
-            calc_state <= ADD_P3;
-            sum_p1p2 <= mult_p1 + mult_p2;
-
-            mult_p1 <= mult_p1;
-            mult_p2 <= mult_p2;
-            num_shfit_bit <= num_shfit_bit;
-            p3 <= p3;
-            p2 <= p2;
-            p1 <= p1;
-            iq_rssi_reg <= iq_rssi_reg;
-            iq_rssi2 <= iq_rssi2;
-            sum_p1p2p3<=sum_p1p2p3;
-            iq_rssi_half_db_reg<=iq_rssi_half_db_reg;
-            iq_rssi_half_db_valid_reg<=iq_rssi_half_db_valid_reg;
-
-          end
-
-          ADD_P3: begin
-            calc_state <= GEN_FINAL;
-            sum_p1p2p3 <= sum_p1p2 + p3;
-
-            sum_p1p2 <= sum_p1p2;
-            mult_p1 <= mult_p1;
-            mult_p2 <= mult_p2;
             num_shfit_bit <= num_shfit_bit;
             p3 <= p3;
             p2 <= p2;
@@ -192,15 +140,12 @@
 
           end
 
-          GEN_FINAL: begin
+          ADD_P3_GEN_FINAL: begin
             calc_state <= WAIT_FOR_VALID;
-            iq_rssi_half_db_reg <= (sum_p1p2p3>>num_shfit_bit);
+            iq_rssi_half_db_reg <= ((sum_p1p2 + p3)>>num_shfit_bit);
             iq_rssi_half_db_valid_reg <= 1;
 
-            sum_p1p2p3 <= sum_p1p2p3;
             sum_p1p2 <= sum_p1p2;
-            mult_p1 <= mult_p1;
-            mult_p2 <= mult_p2;
             num_shfit_bit <= num_shfit_bit;
             p3 <= p3;
             p2 <= p2;

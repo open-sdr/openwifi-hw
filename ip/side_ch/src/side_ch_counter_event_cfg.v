@@ -1,8 +1,13 @@
 
 // Xianjun jiao. putaoshu@msn.com; xianjun.jiao@imec.be;
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`include "side_ch_pre_def.v"
+
+`ifdef SIDE_CH_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 `timescale 1 ns / 1 ps
 

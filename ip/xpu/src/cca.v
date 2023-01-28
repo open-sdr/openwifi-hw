@@ -3,8 +3,13 @@
 `include "clock_speed.v"
 `timescale 1 ns / 1 ps
 
-// `define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`include "xpu_pre_def.v"
+
+`ifdef XPU_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
 `define DEBUG_PREFIX
+`endif
 
 	module cca #
 	(

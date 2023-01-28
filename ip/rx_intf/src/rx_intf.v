@@ -7,8 +7,8 @@
 
 	module rx_intf #
 	(
-        parameter integer GPIO_STATUS_WIDTH = 8,
-        parameter integer RSSI_HALF_DB_WIDTH = 11,
+    parameter integer GPIO_STATUS_WIDTH = 8,
+    parameter integer RSSI_HALF_DB_WIDTH = 11,
 
 		parameter integer ADC_PACK_DATA_WIDTH	= 64,
 		parameter integer IQ_DATA_WIDTH	=     16,
@@ -20,40 +20,46 @@
 		parameter integer C_S00_AXIS_TDATA_WIDTH	= 64,
 		parameter integer C_M00_AXIS_TDATA_WIDTH	= 64,
 		
-        parameter integer WAIT_COUNT_BITS = 5,
+    parameter integer WAIT_COUNT_BITS = 5,
 		parameter integer MAX_NUM_DMA_SYMBOL = 8192,
-        parameter integer TSF_TIMER_WIDTH = 64 // according to 802.11 standard
+    parameter integer TSF_TIMER_WIDTH = 64 // according to 802.11 standard
 	)
 	(
-        // -------------debug purpose----------------
-        output wire trigger_out,
-        output wire trigger_out1,
-        // -------------debug purpose----------------
+    // -------------debug purpose----------------
+    output wire trigger_out0,
+    output wire trigger_out1,
+    output wire trigger_out2,
+    output wire trigger_out3,
+    output wire trigger_out4,
+    output wire trigger_out5,
+    output wire trigger_out6,
+    output wire trigger_out7,
+    // -------------debug purpose----------------
 
-        // ad9361 status and ctrl
-	    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_rf,
-        output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb,
+    // ad9361 status and ctrl
+    input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_rf,
+    output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb,
 
-	    // from ad9361_adc_pack
-        input wire adc_clk,
-        input wire adc_rst,
-        input wire [(ADC_PACK_DATA_WIDTH-1) : 0] adc_data,
-        //(* mark_debug = "true" *) input wire adc_sync,
-        input wire adc_valid,
+    // from ad9361_adc_pack
+    input wire adc_clk,
+    input wire adc_rst,
+    input wire [(ADC_PACK_DATA_WIDTH-1) : 0] adc_data,
+    //(* mark_debug = "true" *) input wire adc_sync,
+    input wire adc_valid,
 
-        // I/Q ports from tx_intf for loop back
-        input wire [(2*IQ_DATA_WIDTH-1) : 0] iq0_from_tx_intf,
-        input wire [(2*IQ_DATA_WIDTH-1) : 0] iq1_from_tx_intf,
-        input wire iq_valid_from_tx_intf,
+    // I/Q ports from tx_intf for loop back
+    input wire [(2*IQ_DATA_WIDTH-1) : 0] iq0_from_tx_intf,
+    input wire [(2*IQ_DATA_WIDTH-1) : 0] iq1_from_tx_intf,
+    input wire iq_valid_from_tx_intf,
 
-	    // Ports to openofdm rx
-        output wire [(2*IQ_DATA_WIDTH-1) : 0] sample0,
-        output wire [(2*IQ_DATA_WIDTH-1) : 0] sample1,
-	    output wire sample_strobe,
-        input  wire pkt_header_valid,
-        input  wire pkt_header_valid_strobe,
-        input  wire ht_unsupport,
-        input  wire [7:0] pkt_rate,
+    // Ports to openofdm rx
+    output wire [(2*IQ_DATA_WIDTH-1) : 0] sample0,
+    output wire [(2*IQ_DATA_WIDTH-1) : 0] sample1,
+    output wire sample_strobe,
+    input  wire pkt_header_valid,
+    input  wire pkt_header_valid_strobe,
+    input  wire ht_unsupport,
+    input  wire [7:0] pkt_rate,
 		input  wire [15:0] pkt_len,
 		input  wire ht_aggr,
 		input  wire ht_aggr_last,
@@ -61,26 +67,26 @@
 		input  wire byte_in_strobe,
 		input  wire [7:0] byte_in,
 		input  wire [15:0] byte_count,
-        input  wire fcs_in_strobe,
+    input  wire fcs_in_strobe,
 		input  wire fcs_ok,
 
-        // led
-        output wire fcs_ok_led,
+    // led
+    output wire fcs_ok_led,
 
-	    // interrupt to PS
-        output wire rx_pkt_intr,
-        
-        // interrupt from xilixn axi dma
-        input wire s2mm_intr,
-        
-        // for xpu
-        input  wire mute_adc_out_to_bb, // in acc clock domain
-        input  wire block_rx_dma_to_ps, // if addr filter is on in xpu
-        input  wire block_rx_dma_to_ps_valid, // if addr filter is on in xpu
- 	    input wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_lock_by_sig_valid,
-        input wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_lock_by_sig_valid,
-        input wire [(TSF_TIMER_WIDTH-1):0]  tsf_runtime_val,
-        input wire tsf_pulse_1M,
+  // interrupt to PS
+    output wire rx_pkt_intr,
+    
+    // interrupt from xilixn axi dma
+    input wire s2mm_intr,
+    
+    // for xpu
+    input  wire mute_adc_out_to_bb, // in acc clock domain
+    input  wire block_rx_dma_to_ps, // if addr filter is on in xpu
+    input  wire block_rx_dma_to_ps_valid, // if addr filter is on in xpu
+    input wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_lock_by_sig_valid,
+    input wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_lock_by_sig_valid,
+    input wire [(TSF_TIMER_WIDTH-1):0]  tsf_runtime_val,
+    input wire tsf_pulse_1M,
 
 		// Ports of Axi Slave Bus Interface S00_AXI
 		input wire  s00_axi_aclk,
@@ -115,7 +121,7 @@
 		input wire  m00_axis_tready
 	);
 
-	function integer clogb2 (input integer bit_depth);                                   
+	  function integer clogb2 (input integer bit_depth);                                   
       begin                                                                              
         for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                                      
           bit_depth = bit_depth >> 1;                                                    
@@ -158,29 +164,29 @@
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg31; // 
 
     //for direct loop back
-	wire  m00_axis_tvalid_inner;
-	wire [C_M00_AXIS_TDATA_WIDTH-1 : 0] m00_axis_tdata_inner;
-	wire [(C_M00_AXIS_TDATA_WIDTH/8)-1 : 0] m00_axis_tstrb_inner;
-	wire  m00_axis_tlast_inner;
+    wire  m00_axis_tvalid_inner;
+    wire [C_M00_AXIS_TDATA_WIDTH-1 : 0] m00_axis_tdata_inner;
+    wire [(C_M00_AXIS_TDATA_WIDTH/8)-1 : 0] m00_axis_tstrb_inner;
+    wire  m00_axis_tlast_inner;
     wire  m00_axis_tlast_auto_recover;
 
     wire emptyn_to_bb;
     wire [(ADC_PACK_DATA_WIDTH-1) : 0] ant_data_after_sel;
 
     wire [(IQ_DATA_WIDTH-1) : 0] rf_i0_to_acc;
-	wire [(IQ_DATA_WIDTH-1) : 0] rf_q0_to_acc;
+	  wire [(IQ_DATA_WIDTH-1) : 0] rf_q0_to_acc;
     wire [(IQ_DATA_WIDTH-1) : 0] rf_i1_to_acc;
-	wire [(IQ_DATA_WIDTH-1) : 0] rf_q1_to_acc;
+	  wire [(IQ_DATA_WIDTH-1) : 0] rf_q1_to_acc;
  
-	wire [(IQ_DATA_WIDTH-1):0] bw20_i0;
+	  wire [(IQ_DATA_WIDTH-1):0] bw20_i0;
     wire [(IQ_DATA_WIDTH-1):0] bw20_q0;
-	wire [(IQ_DATA_WIDTH-1):0] bw20_i1;
+	  wire [(IQ_DATA_WIDTH-1):0] bw20_i1;
     wire [(IQ_DATA_WIDTH-1):0] bw20_q1;
     wire bw20_iq_valid;
         
     wire [(4*IQ_DATA_WIDTH-1) : 0] rf_iq_loopback;
     
-	wire start_1trans_from_acc_to_m_axis;
+	  wire start_1trans_from_acc_to_m_axis;
     wire [(C_M00_AXIS_TDATA_WIDTH-1):0] data_from_acc_to_m_axis;
     wire data_ready_from_acc_to_m_axis;
     wire fulln_from_m_axis_to_acc;
@@ -206,7 +212,7 @@
     wire [(ADC_PACK_DATA_WIDTH-1) : 0] adc_data_after_sel;
 
     wire [(C_M00_AXIS_TDATA_WIDTH-1) : 0] data_from_acc;
-	wire data_ready_from_acc;
+	  wire data_ready_from_acc;
 
     wire fcs_valid;
     wire fcs_invalid;
@@ -216,9 +222,14 @@
     wire rx_pkt_sn_plus_one;
 
     // -------------debug purpose----------------
-    wire trigger_out_internal = 1;
-    assign trigger_out1 = slv_reg1[4];
-    assign trigger_out = (slv_reg1[0]&trigger_out_internal);
+    assign trigger_out0 = slv_reg1[0];
+    assign trigger_out1 = slv_reg1[1];
+    assign trigger_out2 = slv_reg1[2];
+    assign trigger_out3 = slv_reg1[3];
+    assign trigger_out4 = slv_reg1[4];
+    assign trigger_out5 = slv_reg1[5];
+    assign trigger_out6 = slv_reg1[6];
+    assign trigger_out7 = slv_reg1[7];
     // -------------debug purpose----------------
 
     assign sample0 = {rf_i0_to_acc,rf_q0_to_acc};
@@ -228,10 +239,10 @@
     assign sig_valid = (pkt_header_valid_strobe&pkt_header_valid);
     assign sig_invalid = (pkt_header_valid_strobe&(~pkt_header_valid));
 
-	assign m00_axis_tvalid = m00_axis_tvalid_inner;
-	assign m00_axis_tdata  = m00_axis_tdata_inner;
-	assign m00_axis_tstrb  = m00_axis_tstrb_inner;
-	assign m00_axis_tlast  = (m00_axis_tlast_inner|m00_axis_tlast_auto_recover);
+    assign m00_axis_tvalid = m00_axis_tvalid_inner;
+    assign m00_axis_tdata  = m00_axis_tdata_inner;
+    assign m00_axis_tstrb  = m00_axis_tstrb_inner;
+    assign m00_axis_tlast  = (m00_axis_tlast_inner|m00_axis_tlast_auto_recover);
 
     assign fcs_valid_internal = (slv_reg5[3]==0?fcs_valid:fcs_in_strobe);
     assign rx_pkt_intr = (slv_reg2[8]==0?intr_internal:slv_reg2[0]);
@@ -353,43 +364,39 @@
 		.SLV_REG2(slv_reg2),
 		.SLV_REG3(slv_reg3),
 		.SLV_REG4(slv_reg4),
-        .SLV_REG5(slv_reg5),
-        .SLV_REG6(slv_reg6),
-        .SLV_REG7(slv_reg7),
+    .SLV_REG5(slv_reg5),
+    .SLV_REG6(slv_reg6),
+    .SLV_REG7(slv_reg7),
 		.SLV_REG8(slv_reg8),
-        .SLV_REG9(slv_reg9),
-        .SLV_REG10(slv_reg10),
-        .SLV_REG11(slv_reg11),
-        .SLV_REG12(slv_reg12),
-        .SLV_REG13(slv_reg13),
-        //.SLV_REG14(slv_reg14),
-        //.SLV_REG15(slv_reg15),
+    .SLV_REG9(slv_reg9),
+    .SLV_REG10(slv_reg10),
+    .SLV_REG11(slv_reg11),
+    .SLV_REG12(slv_reg12),
+    .SLV_REG13(slv_reg13),
+    //.SLV_REG14(slv_reg14),
+    //.SLV_REG15(slv_reg15),
 		.SLV_REG16(slv_reg16)/*,
-        .SLV_REG17(slv_reg17),
-        .SLV_REG18(slv_reg18),
-        .SLV_REG19(slv_reg19),
-        .SLV_REG20(slv_reg20),
-        .SLV_REG21(slv_reg21),
-        .SLV_REG22(slv_reg22),
-        .SLV_REG23(slv_reg23),
+    .SLV_REG17(slv_reg17),
+    .SLV_REG18(slv_reg18),
+    .SLV_REG19(slv_reg19),
+    .SLV_REG20(slv_reg20),
+    .SLV_REG21(slv_reg21),
+    .SLV_REG22(slv_reg22),
+    .SLV_REG23(slv_reg23),
 		.SLV_REG24(slv_reg24),
-        .SLV_REG25(slv_reg25),
-        .SLV_REG26(slv_reg26),
-        .SLV_REG27(slv_reg27),
-        .SLV_REG28(slv_reg28),
-        .SLV_REG29(slv_reg29),
-        .SLV_REG30(slv_reg30),
-        .SLV_REG31(slv_reg31)*/
+    .SLV_REG25(slv_reg25),
+    .SLV_REG26(slv_reg26),
+    .SLV_REG27(slv_reg27),
+    .SLV_REG28(slv_reg28),
+    .SLV_REG29(slv_reg29),
+    .SLV_REG30(slv_reg30),
+    .SLV_REG31(slv_reg31)*/
 	);
 
     rx_iq_intf # (
         .C_S00_AXIS_TDATA_WIDTH(C_S00_AXIS_TDATA_WIDTH),
         .IQ_DATA_WIDTH(IQ_DATA_WIDTH)
     ) rx_iq_intf_i (
-        // ----------- debug purpose ---------------
-        //.trigger_out(trigger_out_internal),
-        // ----------- debug purpose ---------------
-
         .rstn(m00_axis_aresetn&(~slv_reg0[3])),
         .clk(m00_axis_aclk),
         .bw20_i0(bw20_i0),
@@ -438,17 +445,17 @@
         .clk(m00_axis_aclk),
         .rstn(m00_axis_aresetn&(~slv_reg0[8])),
 
-	    // port to xpu
-	    .block_rx_dma_to_ps(block_rx_dma_to_ps),
+        // port to xpu
+        .block_rx_dma_to_ps(block_rx_dma_to_ps),
         .block_rx_dma_to_ps_valid(block_rx_dma_to_ps_valid),
-	    .rssi_half_db_lock_by_sig_valid(rssi_half_db_lock_by_sig_valid),
-	    .gpio_status_lock_by_sig_valid(gpio_status_lock_by_sig_valid),
+        .rssi_half_db_lock_by_sig_valid(rssi_half_db_lock_by_sig_valid),
+        .gpio_status_lock_by_sig_valid(gpio_status_lock_by_sig_valid),
 	    
         // to m_axis and PS
         .start_1trans_to_m_axis(start_1trans_from_acc_to_m_axis),
         .data_to_m_axis_out(data_from_acc_to_m_axis),
         .data_ready_to_m_axis_out(data_ready_from_acc_to_m_axis),
-	    .monitor_num_dma_symbol_to_ps(monitor_num_dma_symbol_to_ps),
+	      .monitor_num_dma_symbol_to_ps(monitor_num_dma_symbol_to_ps),
         .m_axis_rst(m_axis_rst),
         .m_axis_tlast(m00_axis_tlast_inner),
         .m_axis_tlast_auto_recover(m00_axis_tlast_auto_recover),
@@ -474,11 +481,11 @@
         .data_from_acc(data_from_acc),
         .data_ready_from_acc(data_ready_from_acc),
         .pkt_rate(pkt_rate),
-	    .pkt_len(pkt_len),
+	      .pkt_len(pkt_len),
         .sig_valid(sig_valid),
-		.ht_aggr(ht_aggr),
-		.ht_aggr_last(ht_aggr_last),
-	    .ht_sgi(ht_sgi),
+        .ht_aggr(ht_aggr),
+        .ht_aggr_last(ht_aggr_last),
+	      .ht_sgi(ht_sgi),
         .ht_unsupport(ht_unsupport),
         .fcs_valid(fcs_valid),
         
@@ -505,11 +512,11 @@
 		.M_AXIS_NUM_DMA_SYMBOL(num_dma_symbol_to_ps),
 		.start_1trans(start_1trans_from_acc_to_m_axis),
 		
-        .endless_mode(slv_reg5[9]),
-        .DATA_FROM_ACC(data_from_acc_to_m_axis),
-        .ACC_DATA_READY(data_ready_from_acc_to_m_axis),
-        .data_count(m_axis_fifo_data_count),
-        .FULLN_TO_ACC(fulln_from_m_axis_to_acc)
+    .endless_mode(slv_reg5[9]),
+    .DATA_FROM_ACC(data_from_acc_to_m_axis),
+    .ACC_DATA_READY(data_ready_from_acc_to_m_axis),
+    .data_count(m_axis_fifo_data_count),
+    .FULLN_TO_ACC(fulln_from_m_axis_to_acc)
 	);
 
 	endmodule
