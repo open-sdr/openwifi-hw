@@ -305,6 +305,9 @@ module xpu #
   wire tx_core_is_ongoing;
   wire tx_chain_on;
 
+  wire eifs_trigger_by_last_rx_fail;
+  wire eifs_trigger_by_last_tx_fail;
+  
   wire [(RSSI_HALF_DB_WIDTH-1):0] rssi_half_db_th;
   wire nav_enable;
   wire difs_enable;
@@ -383,6 +386,9 @@ module xpu #
   assign max_num_retrans = slv_reg11[3:0];
   assign ack_tx_disable = slv_reg11[4];
   assign ack_rx_disable = slv_reg11[5];
+
+  assign eifs_trigger_by_last_rx_fail = (~slv_reg6[27]);
+  assign eifs_trigger_by_last_tx_fail = (~slv_reg6[26]);
 
   `ifndef XPU_DISCONNECT_LED
   edge_to_flip cycle_start_i (
@@ -470,10 +476,14 @@ module xpu #
     .signal_len(pkt_len),
     .fcs_in_strobe(fcs_in_strobe),
     .fcs_valid(fcs_valid),
+    .tx_try_complete(tx_try_complete),
+    .tx_status(tx_status),
 
     .nav_enable(nav_enable),
     .difs_enable(difs_enable),
     .eifs_enable(eifs_enable),
+    .eifs_trigger_by_last_rx_fail(eifs_trigger_by_last_rx_fail),
+    .eifs_trigger_by_last_tx_fail(eifs_trigger_by_last_tx_fail),
     .cw_exp_used(cw_exp_used),
     .preamble_sig_time(preamble_sig_time),
     .ofdm_symbol_time(ofdm_symbol_time),
@@ -506,6 +516,8 @@ module xpu #
     // .increase_cw(increase_cw),
     .cw_exp_log_dl(cw_exp_log),
     .ch_idle_final_for_trace(ch_idle_final),
+    .last_rx_fail_for_trace(last_rx_fail),
+    .last_tx_fail_for_trace(last_tx_fail),
     .backoff_done(backoff_done)
   );
 

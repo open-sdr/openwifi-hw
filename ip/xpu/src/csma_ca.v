@@ -28,9 +28,14 @@
     `DEBUG_PREFIX input  wire fcs_in_strobe,
     `DEBUG_PREFIX input  wire fcs_valid,
 
+    input wire        tx_try_complete,
+    input wire [79:0] tx_status,
+
     input wire nav_enable,
     input wire difs_enable,
     input wire eifs_enable,
+    input wire eifs_trigger_by_last_rx_fail,
+    input wire eifs_trigger_by_last_tx_fail,
     `DEBUG_PREFIX input wire [3:0] cw_exp_used,
     input wire [6:0] preamble_sig_time,
     input wire [4:0] ofdm_symbol_time,
@@ -63,6 +68,8 @@
     // `DEBUG_PREFIX output reg increase_cw,
     `DEBUG_PREFIX output reg [3:0] cw_exp_log_dl,
     output wire       ch_idle_final_for_trace,
+    output wire       last_rx_fail_for_trace,
+    output wire       last_tx_fail_for_trace,
     `DEBUG_PREFIX output wire backoff_done
 	);
 
@@ -101,7 +108,9 @@
     wire [11:0] longest_ack_time;
     wire [11:0] difs_time;
     wire [11:0] eifs_time;
-    `DEBUG_PREFIX reg last_fcs_valid;
+    `DEBUG_PREFIX reg last_rx_fail;
+    `DEBUG_PREFIX reg rx_len_14_or_32; //802.11-2020: p1682:  the PPDU that causes the EIFS contains a single MPDU with a length equal to 14 or 32 octets, EIFS is equal to DIFS
+    `DEBUG_PREFIX reg last_tx_fail;
     `DEBUG_PREFIX reg take_new_random_number;
     `DEBUG_PREFIX reg [9:0]  num_slot_random;
     reg [31:0] random_number = 32'h0b00a001;
@@ -275,7 +284,9 @@
       if ( (!rstn) || reset_backoff ) begin
         backoff_timer<=0;
         backoff_wait_timer<=0;
-        last_fcs_valid<=0;
+        last_rx_fail<=0;
+        rx_len_14_or_32 <= 0;
+        last_tx_fail<=0;
         take_new_random_number<=0;
         backoff_state<=IDLE;
         num_slot_random_log<=0 ;
@@ -286,7 +297,9 @@
         cw_exp_log_dl_int<=0;
         cw_exp_log_dl<=0;
       end else begin
-        last_fcs_valid <= (fcs_in_strobe?fcs_valid:last_fcs_valid);
+        last_rx_fail <= ((fcs_in_strobe?(~fcs_valid):last_rx_fail)&eifs_trigger_by_last_rx_fail);
+        rx_len_14_or_32 <= (fcs_in_strobe?((signal_len==14)||(signal_len==32)):rx_len_14_or_32);
+        last_tx_fail <= ((tx_try_complete?(tx_status[79:16]==0):last_tx_fail)&eifs_trigger_by_last_tx_fail);
         cw_exp_log_dl_int <= cw_exp_log;
         cw_exp_log_dl <= cw_exp_log_dl_int; // dl cw used flag by two clock pulses, to insure cw is logged correctly if quit_retrans issued
         num_slot_random_log_dl_int<=num_slot_random_log;
@@ -301,19 +314,19 @@
               if((high_trigger ==1) || (quit_retrans==1)) begin
                 backoff_state<=BACKOFF_WAIT_1;
                 // increase_cw<=0;
-                if (last_fcs_valid) begin
-                  backoff_wait_timer<=(difs_time==0?0:(difs_time - difs_advance));
-                end else begin
+                if ( (last_rx_fail && (~rx_len_14_or_32)) || last_tx_fail ) begin
                   backoff_wait_timer<=(eifs_time==0?0:(eifs_time - difs_advance));
-                end              
+                end else begin
+                  backoff_wait_timer<=(difs_time==0?0:(difs_time - difs_advance));
+                end
               end else if (retrans_trigger==1) begin
                 backoff_state<=BACKOFF_WAIT_2;
                 // increase_cw<=(cw_used?1:0);
-                if (last_fcs_valid) begin
-                  backoff_wait_timer<=(difs_time==0?0:(difs_time - difs_advance));
-                end else begin
+                if ( (last_rx_fail && (~rx_len_14_or_32)) || last_tx_fail ) begin
                   backoff_wait_timer<=(eifs_time==0?0:(eifs_time - difs_advance));
-                end                
+                end else begin
+                  backoff_wait_timer<=(difs_time==0?0:(difs_time - difs_advance));
+                end
               end
             end else begin
               if((high_trigger==1) || (retrans_trigger==1) || (quit_retrans==1)) begin
@@ -334,10 +347,10 @@
               backoff_wait_timer<=0;
               backoff_state<=backoff_state;
             end else begin
-              if (last_fcs_valid) begin
-                backoff_wait_timer <= (difs_time==0?0:(difs_time - difs_advance));
+              if ( (last_rx_fail && (~rx_len_14_or_32)) || last_tx_fail ) begin
+                backoff_wait_timer<=(eifs_time==0?0:(eifs_time - difs_advance));
               end else begin
-                backoff_wait_timer <= (eifs_time==0?0:(eifs_time - difs_advance));
+                backoff_wait_timer<=(difs_time==0?0:(difs_time - difs_advance));
               end
               backoff_state<=BACKOFF_WAIT_2;
             end 
@@ -402,10 +415,10 @@
               // increase_cw<=0;
               if(quit_retrans==1) begin
                 backoff_state<=BACKOFF_WAIT_1;
-                if (last_fcs_valid) begin
-                  backoff_wait_timer<=(backoff_timer>difs_time?(difs_time==0?0:(difs_time - difs_advance)):backoff_timer);
-                end else begin
+                if ( (last_rx_fail && (~rx_len_14_or_32)) || last_tx_fail ) begin
                   backoff_wait_timer<=(backoff_timer>eifs_time?(eifs_time==0?0:(eifs_time - difs_advance)):backoff_timer);
+                end else begin
+                  backoff_wait_timer<=(backoff_timer>difs_time?(difs_time==0?0:(difs_time - difs_advance)):backoff_timer);
                 end
               end else begin
                 backoff_wait_timer<=backoff_wait_timer;
@@ -436,10 +449,10 @@
             if (ch_idle_final) begin
               if(quit_retrans==1) begin
                 backoff_state<=BACKOFF_WAIT_1;
-                if (last_fcs_valid) begin
-                  backoff_wait_timer<=(backoff_timer>difs_time?(difs_time==0?0:(difs_time - difs_advance)):backoff_timer);
-                end else begin
+                if ( (last_rx_fail && (~rx_len_14_or_32)) || last_tx_fail ) begin
                   backoff_wait_timer<=(backoff_timer>eifs_time?(eifs_time==0?0:(eifs_time - difs_advance)):backoff_timer);
+                end else begin
+                  backoff_wait_timer<=(backoff_timer>difs_time?(difs_time==0?0:(difs_time - difs_advance)):backoff_timer);
                 end
               end else begin
                 backoff_state<=BACKOFF_RUN;
