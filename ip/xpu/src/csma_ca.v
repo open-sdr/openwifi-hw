@@ -120,7 +120,7 @@
     
     assign longest_ack_time = 44;
     assign difs_time = ( difs_enable?(sifs_time + 2*slot_time):0 );
-    assign eifs_time = ( eifs_enable?(sifs_time + difs_time + longest_ack_time):0 );
+    assign eifs_time = ( eifs_enable?(sifs_time + difs_time + longest_ack_time):(sifs_time + 2*slot_time) );
 
     assign ch_idle_final = (ch_idle&&(nav_for_mac==0));
     assign backoff_done =   (backoff_state==BACKOFF_WAIT_FOR_OWN);
