@@ -44,6 +44,10 @@ if {$BOARD_NAME=="zed_fmcs2"} {
    set ultra_scale_flag 0
    set part_string xc7z020clg400-1
    set fpga_size_flag 0
+} elseif {$BOARD_NAME=="e310v2"} {
+   set ultra_scale_flag 0
+   set part_string xc7z020clg400-1
+   set fpga_size_flag 0
 } else {
    set ultra_scale_flag []
    set part_string []
