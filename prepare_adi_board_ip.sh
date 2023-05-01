@@ -1,4 +1,3 @@
-  
 #!/bin/bash
 if [ "$#" -ne 2 ]; then
     echo "You must enter exactly 2 arguments: \$XILINX_DIR \$BOARD_NAME"
