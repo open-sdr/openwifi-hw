@@ -9,7 +9,7 @@ print_usage () {
   echo "Need at least 2 arguments: \$XILINX_DIR \$TCL_FILENAME"
   echo "More arguments (max 7) will be passed as arguments to the .tcl script to create ip_name_pre_def.v"
   echo "Among these max 7 arguments:"
-  echo "- the 1st:     BOARD_NAME (antsdr antsdr_e200 sdrpi zc706_fmcs2 zed_fmcs2 zc702_fmcs2 adrv9361z7035 adrv9364z7020 zcu102_fmcs2 neptunesdr)"
+  echo "- the 1st:     BOARD_NAME (antsdr antsdr_e200 e310v2 sdrpi zc706_fmcs2 zed_fmcs2 zc702_fmcs2 adrv9361z7035 adrv9364z7020 zcu102_fmcs2 neptunesdr)"
   echo "- the 2nd:     NUM_CLK_PER_US (for example: input 100 for 100MHz)"
   echo "- the 3rd-7th: User pre defines (assume it is ABC) for conditional compiling. Will be \`define IP_NAME_ABC in ip_name_pre_def.v"
   echo "  - the 3rd exception: in the case of openofdm_rx, it indicates SAMPLE_FILE for simulation. Can be changed later in openofdm_rx_pre_def.v"
