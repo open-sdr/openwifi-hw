@@ -153,7 +153,7 @@ set_property -name "sim.use_ip_compiled_libs" -value "1" -objects $obj
 set_property -name "simulator.activehdl_gcc_install_dir" -value "" -objects $obj
 set_property -name "simulator.activehdl_install_dir" -value "" -objects $obj
 set_property -name "simulator.ies_gcc_install_dir" -value "" -objects $obj
-set_property -name "simulator.ies_install_dir" -value "" -objects $obj
+# set_property -name "simulator.ies_install_dir" -value "" -objects $obj
 set_property -name "simulator.modelsim_gcc_install_dir" -value "" -objects $obj
 set_property -name "simulator.modelsim_install_dir" -value "" -objects $obj
 set_property -name "simulator.questa_gcc_install_dir" -value "" -objects $obj
