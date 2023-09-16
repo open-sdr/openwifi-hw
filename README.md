@@ -11,6 +11,8 @@
 [[Migrate openwifi to new ADI release and Vivado](#Migrate-openwifi-to-new-ADI-release-and-Vivado)]
 [[GPIO/LED definitions](gpio_led.md)]
 
+[[**Tips for Windows users**](https://github.com/open-sdr/openwifi/discussions/341)]
+
 ## Introduction
 
 This repository includes Hardware/FPGA design. To be used together with **openwifi** repository (driver and software tools).
