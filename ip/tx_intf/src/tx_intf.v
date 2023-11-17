@@ -300,7 +300,7 @@ module tx_intf #
     .dac_ready(dac_ready),
     
     .ant_flag(slv_reg16[1]), //slv_reg16[3:0]: 1: first antenna; 2: second antenna
-    .simple_cdd_flag(slv_reg16[4]), 
+    .simple_cdd_flag(slv_reg16[5:4]), 
 
     .acc_clk(s00_axi_aclk),
     .acc_rstn(s00_axi_aresetn&(~slv_reg0[5])),
