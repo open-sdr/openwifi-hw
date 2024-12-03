@@ -271,6 +271,8 @@ module tx_intf #
 
   assign tx_queue_idx_to_xpu = tx_queue_idx;
 
+  assign slv_reg21[31] = 1'b0; // 0 to indicate this old tx_intf and openofdm_tx support a/g/n
+
 `ifndef TX_INTF_DISCONNECT_LED
   edge_to_flip edge_to_flip_tx_itrpt_i (
     .clk(s00_axi_aclk),
