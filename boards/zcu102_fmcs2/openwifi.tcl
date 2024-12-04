@@ -200,10 +200,6 @@ add_files -norecurse -fileset $obj $files
 set files [list \
  [file normalize "$origin_dir/src/system.bd"]\
  [file normalize "$origin_dir/src/system_top.v"]\
- [file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_8.mem"]\
- [file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_16.mem"]\
- [file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_32.mem"]\
- [file normalize "$origin_dir/ip_repo/openofdm_tx/src/icmem_64.mem"]\
  [file normalize "$origin_dir/ip_repo/openofdm_rx/src/atan_lut.coe"]\
  [file normalize "$origin_dir/ip_repo/openofdm_rx/src/deinter_lut.coe"]\
  [file normalize "$origin_dir/ip_repo/openofdm_rx/src/rot_lut.coe"]\
@@ -291,53 +287,53 @@ set_property -name "used_in_implementation" -value "1" -objects $file_obj
 set_property -name "used_in_simulation" -value "1" -objects $file_obj
 set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "icmem_8.mem"
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-# set_property -name "scoped_to_cells" -value "" -objects $file_obj
-# set_property -name "scoped_to_ref" -value "" -objects $file_obj
-# set_property -name "used_in" -value "" -objects $file_obj
-# set_property -name "used_in_simulation" -value "0" -objects $file_obj
-# set_property -name "used_in_synthesis" -value "0" -objects $file_obj
+# set file "icmem_8.mem"
+# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+# set_property -name "is_enabled" -value "1" -objects $file_obj
+# set_property -name "is_global_include" -value "0" -objects $file_obj
+# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+# # set_property -name "scoped_to_cells" -value "" -objects $file_obj
+# # set_property -name "scoped_to_ref" -value "" -objects $file_obj
+# # set_property -name "used_in" -value "" -objects $file_obj
+# # set_property -name "used_in_simulation" -value "0" -objects $file_obj
+# # set_property -name "used_in_synthesis" -value "0" -objects $file_obj
 
-set file "icmem_16.mem"
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-# set_property -name "scoped_to_cells" -value "" -objects $file_obj
-# set_property -name "scoped_to_ref" -value "" -objects $file_obj
-# set_property -name "used_in" -value "" -objects $file_obj
-# set_property -name "used_in_simulation" -value "0" -objects $file_obj
-# set_property -name "used_in_synthesis" -value "0" -objects $file_obj
+# set file "icmem_16.mem"
+# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+# set_property -name "is_enabled" -value "1" -objects $file_obj
+# set_property -name "is_global_include" -value "0" -objects $file_obj
+# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+# # set_property -name "scoped_to_cells" -value "" -objects $file_obj
+# # set_property -name "scoped_to_ref" -value "" -objects $file_obj
+# # set_property -name "used_in" -value "" -objects $file_obj
+# # set_property -name "used_in_simulation" -value "0" -objects $file_obj
+# # set_property -name "used_in_synthesis" -value "0" -objects $file_obj
 
-set file "icmem_32.mem"
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-# set_property -name "scoped_to_cells" -value "" -objects $file_obj
-# set_property -name "scoped_to_ref" -value "" -objects $file_obj
-# set_property -name "used_in" -value "" -objects $file_obj
-# set_property -name "used_in_simulation" -value "0" -objects $file_obj
-# set_property -name "used_in_synthesis" -value "0" -objects $file_obj
+# set file "icmem_32.mem"
+# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+# set_property -name "is_enabled" -value "1" -objects $file_obj
+# set_property -name "is_global_include" -value "0" -objects $file_obj
+# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+# # set_property -name "scoped_to_cells" -value "" -objects $file_obj
+# # set_property -name "scoped_to_ref" -value "" -objects $file_obj
+# # set_property -name "used_in" -value "" -objects $file_obj
+# # set_property -name "used_in_simulation" -value "0" -objects $file_obj
+# # set_property -name "used_in_synthesis" -value "0" -objects $file_obj
 
-set file "icmem_64.mem"
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "is_enabled" -value "1" -objects $file_obj
-set_property -name "is_global_include" -value "0" -objects $file_obj
-set_property -name "library" -value "xil_defaultlib" -objects $file_obj
-set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
-# set_property -name "scoped_to_cells" -value "" -objects $file_obj
-# set_property -name "scoped_to_ref" -value "" -objects $file_obj
-# set_property -name "used_in" -value "" -objects $file_obj
-# set_property -name "used_in_simulation" -value "0" -objects $file_obj
-# set_property -name "used_in_synthesis" -value "0" -objects $file_obj
+# set file "icmem_64.mem"
+# set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+# set_property -name "is_enabled" -value "1" -objects $file_obj
+# set_property -name "is_global_include" -value "0" -objects $file_obj
+# set_property -name "library" -value "xil_defaultlib" -objects $file_obj
+# set_property -name "path_mode" -value "RelativeFirst" -objects $file_obj
+# # set_property -name "scoped_to_cells" -value "" -objects $file_obj
+# # set_property -name "scoped_to_ref" -value "" -objects $file_obj
+# # set_property -name "used_in" -value "" -objects $file_obj
+# # set_property -name "used_in_simulation" -value "0" -objects $file_obj
+# # set_property -name "used_in_synthesis" -value "0" -objects $file_obj
 
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
