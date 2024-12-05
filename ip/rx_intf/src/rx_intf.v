@@ -161,7 +161,7 @@
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg28; // 
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg29; // 
     // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg30; // 
-    // wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg31; // 
+    wire [(C_S00_AXI_DATA_WIDTH-1):0] slv_reg31;
 
     //for direct loop back
     wire  m00_axis_tvalid_inner;
@@ -262,6 +262,8 @@
     assign bw20_i1 = (slv_reg3[8]?iq1_from_tx_intf[  (IQ_DATA_WIDTH-1) :             0]:ant_data_after_sel[(3*IQ_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)]);
     assign bw20_q1 = (slv_reg3[8]?iq1_from_tx_intf[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH]:ant_data_after_sel[(4*IQ_DATA_WIDTH-1) : (3*IQ_DATA_WIDTH)]);
     assign bw20_iq_valid = (slv_reg3[8]?iq_valid_from_tx_intf:emptyn_to_bb);
+
+    assign slv_reg31[31] = 1'b0; // 0 to indicate this old rx_intf and openofdm_rx support a/g/n
     
 // ---------------------------fro mute_adc_out_to_bb control from acc domain to adc domain-------------------------------------
     xpm_cdc_array_single #(
@@ -375,7 +377,7 @@
     .SLV_REG13(slv_reg13),
     //.SLV_REG14(slv_reg14),
     //.SLV_REG15(slv_reg15),
-		.SLV_REG16(slv_reg16)/*,
+		.SLV_REG16(slv_reg16),/*,
     .SLV_REG17(slv_reg17),
     .SLV_REG18(slv_reg18),
     .SLV_REG19(slv_reg19),
@@ -389,8 +391,8 @@
     .SLV_REG27(slv_reg27),
     .SLV_REG28(slv_reg28),
     .SLV_REG29(slv_reg29),
-    .SLV_REG30(slv_reg30),
-    .SLV_REG31(slv_reg31)*/
+    .SLV_REG30(slv_reg30),*/
+    .SLV_REG31(slv_reg31)
 	);
 
     rx_iq_intf # (
