@@ -5226,7 +5226,8 @@
           "xpu_0_channel": {
             "ports": [
               "xpu_0/channel",
-              "tx_intf_0/channel"
+              "tx_intf_0/channel",
+              "openofdm_rx_0/Fc_in_MHz"
             ]
           },
           "xpu_0_cw": {
