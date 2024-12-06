@@ -100,7 +100,7 @@ module xpu #
   input  wire cts_toself_rf_is_ongoing,//just need to cover the SIFS gap between cts tx and following packet tx
   input wire  [(WIFI_TX_BRAM_ADDR_WIDTH-1):0] bram_addr,
   output wire [3:0] band,
-  output wire [7:0] channel,
+  output wire [15:0] channel,
   input wire quit_retrans,
   input wire reset_backoff,
   output wire tx_control_state_idle,
