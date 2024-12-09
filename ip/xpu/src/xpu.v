@@ -103,6 +103,7 @@ module xpu #
   output wire [15:0] channel,
   input wire quit_retrans,
   input wire reset_backoff,
+  output wire [3:0] tx_control_state,
   output wire tx_control_state_idle,
   output wire [9:0] num_slot_random,
   output wire [3:0] cw,
@@ -591,6 +592,7 @@ module xpu #
     .qos_tid(qos_tid),
     .qos_ack_policy(qos_ack_policy),
     
+    .tx_control_state_out(tx_control_state),
     .tx_control_state_idle(tx_control_state_idle),
     .ack_cts_is_ongoing(ack_cts_is_ongoing),
     .retrans_in_progress(retrans_in_progress),

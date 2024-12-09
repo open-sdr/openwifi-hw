@@ -73,6 +73,7 @@
         input wire [3:0] qos_tid,
         input wire [1:0] qos_ack_policy,
 
+        output wire [3:0] tx_control_state_out,
         output wire tx_control_state_idle,
         output wire ack_cts_is_ongoing,
         `DEBUG_PREFIX output reg retrans_in_progress,
@@ -158,6 +159,7 @@
   reg [14:0] recv_ack_timeout_top_adj_scale;
   `DEBUG_PREFIX reg retrans_started;
 
+  assign tx_control_state_out  = tx_control_state;
   assign tx_control_state_idle =((tx_control_state==IDLE) && (~retrans_started));
 
   assign retrans_limit = (max_num_retrans[3]?max_num_retrans[2:0]:tx_pkt_retrans_limit);
