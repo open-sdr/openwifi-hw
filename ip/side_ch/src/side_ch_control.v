@@ -59,7 +59,7 @@
     `DEBUG_PREFIX input wire pkt_header_valid_strobe,
     
     // from xpu
-    input wire [3:0] tx_control_state,
+    `DEBUG_PREFIX input wire [3:0] tx_control_state,
 		input wire [31:0] FC_DI,
     `DEBUG_PREFIX input wire FC_DI_valid,
 		input wire [47:0] addr1,
@@ -94,6 +94,7 @@
 		input wire [(GPIO_STATUS_WIDTH-2):0] gain_th,
 		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] pre_trigger_len,
 		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] iq_len_target,
+    `DEBUG_PREFIX input wire [3:0]    tx_control_state_target,
 		input wire [15 : 0] FC_target,
 		input wire [C_S_AXI_DATA_WIDTH-1 : 0] addr1_target,
 		input wire [C_S_AXI_DATA_WIDTH-1 : 0] addr2_target,

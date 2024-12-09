@@ -363,6 +363,7 @@
 		.gain_th(slv_reg10[(GPIO_STATUS_WIDTH-2):0]),
 		.pre_trigger_len(slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),
 		.iq_len_target(slv_reg12[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),
+    .tx_control_state_target(slv_reg5[7:4]),
 		.FC_target(slv_reg5[15:0]),
 		.addr1_target(slv_reg6),
 		.addr2_target(slv_reg7),
