@@ -285,7 +285,8 @@
 	assign iq1_inner = (iq_source_select==0?iq1:(iq_source_select==1?openofdm_tx_iq1:tx_intf_iq1));
 	assign iq_strobe_inner = (iq_source_select==0?iq_strobe:(iq_source_select==1?openofdm_tx_iq_valid:tx_intf_iq_valid));
 
-	assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{5'd0,rssi_half_db,8'd0,gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+	// assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{5'd0,rssi_half_db,8'd0,gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{phy_tx_start,tx_control_state,rssi_half_db,pkt_header_valid,fcs_ok,FC_DI[7:2],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
 
 	assign side_info_fifo_wr_en = (capture_src_flag==0?csi_valid:(last_ofdm_symbol_flag?1:equalizer_valid));
 	assign side_info_fifo_din   = (capture_src_flag==0?csi:(last_ofdm_symbol_flag?0:equalizer));
