@@ -483,7 +483,7 @@
 					5'd13: begin  iq_trigger <= agc_unlock_to_lock;  end
 					5'd14: begin  iq_trigger <= gain_posedge;  end
 					5'd15: begin  iq_trigger <= gain_negedge;  end
-					5'd16: begin  iq_trigger <= phy_tx_started;  end
+					5'd16: begin  iq_trigger <= tx_control_state_hit;  end
 					5'd17: begin  iq_trigger <= phy_tx_done;  end
 					5'd18: begin  iq_trigger <= tx_bb_is_ongoing_posedge;  end
 					5'd19: begin  iq_trigger <= tx_bb_is_ongoing_negedge;  end
