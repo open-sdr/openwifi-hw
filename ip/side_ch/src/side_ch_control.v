@@ -57,6 +57,9 @@
 
 		`DEBUG_PREFIX input wire pkt_header_valid,
     `DEBUG_PREFIX input wire pkt_header_valid_strobe,
+    
+    // from xpu
+    input wire [3:0] tx_control_state,
 		input wire [31:0] FC_DI,
     `DEBUG_PREFIX input wire FC_DI_valid,
 		input wire [47:0] addr1,

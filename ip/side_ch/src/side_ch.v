@@ -68,6 +68,9 @@
 
 		input wire pkt_header_valid,
 		input wire pkt_header_valid_strobe,
+
+    // from xpu
+    input wire [3:0] tx_control_state,
 		input wire [31:0] FC_DI,
 		input wire FC_DI_valid,
 		input wire [47:0] addr1,
@@ -325,6 +328,8 @@
 
 		.pkt_header_valid(pkt_header_valid),
 		.pkt_header_valid_strobe(pkt_header_valid_strobe),
+
+    .tx_control_state(tx_control_state),
 		.FC_DI(FC_DI),
 		.FC_DI_valid(FC_DI_valid),
 		.addr1(addr1),
