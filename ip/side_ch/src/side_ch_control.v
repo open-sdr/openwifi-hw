@@ -202,9 +202,12 @@
 
 	reg [(TSF_TIMER_WIDTH-1):0] tsf_val_lock_by_sig;
 	reg demod_is_ongoing_reg;
+  reg demod_is_ongoing_reg_for_iq_capture;
 
   `DEBUG_PREFIX reg [3:0] tx_control_state_delay1;
   `DEBUG_PREFIX wire tx_control_state_hit;
+  `DEBUG_PREFIX reg pkt_header_and_fcs_strobe;
+  `DEBUG_PREFIX reg pkt_header_and_fcs_ok;
 
 	reg FC_DI_valid_reg;
 	reg addr1_valid_reg;
@@ -286,7 +289,7 @@
 	assign iq_strobe_inner = (iq_source_select==0?iq_strobe:(iq_source_select==1?openofdm_tx_iq_valid:tx_intf_iq_valid));
 
 	// assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{5'd0,rssi_half_db,8'd0,gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
-  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{phy_tx_start,tx_control_state,rssi_half_db,pkt_header_valid,fcs_ok,FC_DI[7:2],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{tx_rf_is_ongoing,tx_control_state,rssi_half_db,pkt_header_and_fcs_strobe,pkt_header_and_fcs_ok,FC_DI[7:2],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
 
 	assign side_info_fifo_wr_en = (capture_src_flag==0?csi_valid:(last_ofdm_symbol_flag?1:equalizer_valid));
 	assign side_info_fifo_din   = (capture_src_flag==0?csi:(last_ofdm_symbol_flag?0:equalizer));
@@ -426,6 +429,9 @@
 			gain_negedge <= 0;
 
       tx_control_state_delay1 <= 0;
+      pkt_header_and_fcs_strobe <= 0;
+      demod_is_ongoing_reg_for_iq_capture <= 0;
+      pkt_header_and_fcs_ok <= 0;
 
 			tx_bb_is_ongoing_reg <= 0;
 			tx_rf_is_ongoing_reg <= 0;
@@ -445,6 +451,19 @@
 		end else begin
       tx_control_state_delay1 <= tx_control_state;
 			tx_intf_iq0_reg <= tx_intf_iq0;
+      demod_is_ongoing_reg_for_iq_capture <= demod_is_ongoing;
+
+      if (pkt_header_valid_strobe) begin //raise it up when pkt header is out
+        pkt_header_and_fcs_strobe <= 1;
+      end else if (fcs_in_strobe || (demod_is_ongoing_reg_for_iq_capture==1 && demod_is_ongoing==0)) begin //pull it down when receiver finishes the work
+        pkt_header_and_fcs_strobe <= 0;
+      end
+
+      if (pkt_header_valid_strobe && pkt_header_valid==1) begin //raise it up when pkt header is OK
+        pkt_header_and_fcs_ok <= 1;
+      end else if ((fcs_in_strobe && fcs_ok==1) || long_preamble_detected) begin //pull it down when fcs is OK
+        pkt_header_and_fcs_ok <= 0;
+      end
 
 			if (iq_capture) begin
 				// keep writing dpram with incoming iq
