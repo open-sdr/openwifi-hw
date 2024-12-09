@@ -5356,6 +5356,12 @@
               "tx_intf_0/tx_bb_is_ongoing"
             ]
           },
+          "xpu_0_tx_control_state": {
+            "ports": [
+              "xpu_0/tx_control_state",
+              "side_ch_0/tx_control_state"
+            ]
+          },
           "xpu_0_tx_control_state_idle": {
             "ports": [
               "xpu_0/tx_control_state_idle",
