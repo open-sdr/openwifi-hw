@@ -202,6 +202,10 @@
 
 	reg [(TSF_TIMER_WIDTH-1):0] tsf_val_lock_by_sig;
 	reg demod_is_ongoing_reg;
+
+  `DEBUG_PREFIX reg [3:0] tx_control_state_delay1;
+  `DEBUG_PREFIX wire tx_control_state_hit;
+
 	reg FC_DI_valid_reg;
 	reg addr1_valid_reg;
 	reg addr2_valid_reg;
@@ -296,6 +300,8 @@
 
 	assign rssi_th = rssi_or_iq_th[(RSSI_HALF_DB_WIDTH-1):0];
 	assign iq1_i_abs = (iq1[(IQ_DATA_WIDTH-1)]?(~iq1+1):iq1);
+
+  assign tx_control_state_hit = (tx_control_state != tx_control_state_delay1 && tx_control_state == tx_control_state_target);
 
 	assign tx_intf_iq0_non_zero = (tx_intf_iq0 != 0 && tx_intf_iq0_reg == 0);
 
@@ -418,6 +424,8 @@
 			gain_posedge <= 0;
 			gain_negedge <= 0;
 
+      tx_control_state_delay1 <= 0;
+
 			tx_bb_is_ongoing_reg <= 0;
 			tx_rf_is_ongoing_reg <= 0;
 			tx_bb_is_ongoing_posedge <= 0;
@@ -434,6 +442,7 @@
 
 			iq_state <= IQ_WAIT_FOR_CONDITION;
 		end else begin
+      tx_control_state_delay1 <= tx_control_state;
 			tx_intf_iq0_reg <= tx_intf_iq0;
 
 			if (iq_capture) begin
