@@ -57,6 +57,8 @@
 
 		`DEBUG_PREFIX input wire pkt_header_valid,
     `DEBUG_PREFIX input wire pkt_header_valid_strobe,
+
+    `DEBUG_PREFIX input wire [1:0] phy_type,
     
     // from xpu
     `DEBUG_PREFIX input wire [3:0] tx_control_state,
@@ -95,6 +97,7 @@
 		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] pre_trigger_len,
 		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] iq_len_target,
     `DEBUG_PREFIX input wire [3:0]    tx_control_state_target,
+    `DEBUG_PREFIX input wire [1:0]    phy_type_target,
 		input wire [15 : 0] FC_target,
 		input wire [C_S_AXI_DATA_WIDTH-1 : 0] addr1_target,
 		input wire [C_S_AXI_DATA_WIDTH-1 : 0] addr2_target,
@@ -209,6 +212,9 @@
   `DEBUG_PREFIX reg pkt_header_and_fcs_strobe;
   `DEBUG_PREFIX reg pkt_header_and_fcs_ok;
 
+  `DEBUG_PREFIX reg [1:0] phy_type_lock;
+  `DEBUG_PREFIX wire phy_type_hit;
+
 	reg FC_DI_valid_reg;
 	reg addr1_valid_reg;
 	reg addr2_valid_reg;
@@ -306,6 +312,7 @@
 	assign iq1_i_abs = (iq1[(IQ_DATA_WIDTH-1)]?(~iq1+1):iq1);
 
   assign tx_control_state_hit = (tx_control_state != tx_control_state_delay1 && tx_control_state == tx_control_state_target);
+  assign phy_type_hit = (phy_type_lock == phy_type_target);
 
 	assign tx_intf_iq0_non_zero = (tx_intf_iq0 != 0 && tx_intf_iq0_reg == 0);
 
@@ -433,6 +440,8 @@
       demod_is_ongoing_reg_for_iq_capture <= 0;
       pkt_header_and_fcs_ok <= 0;
 
+      phy_type_lock <= 0;
+
 			tx_bb_is_ongoing_reg <= 0;
 			tx_rf_is_ongoing_reg <= 0;
 			tx_bb_is_ongoing_posedge <= 0;
@@ -452,6 +461,8 @@
       tx_control_state_delay1 <= tx_control_state;
 			tx_intf_iq0_reg <= tx_intf_iq0;
       demod_is_ongoing_reg_for_iq_capture <= demod_is_ongoing;
+
+      phy_type_lock <= (fcs_in_strobe?phy_type:phy_type_lock);//lock the value to be part of condition together with tx_control_state
 
       if (pkt_header_valid_strobe) begin //raise it up when pkt header is out
         pkt_header_and_fcs_strobe <= 1;
@@ -511,7 +522,7 @@
 					5'd21: begin  iq_trigger <= tx_rf_is_ongoing_negedge;  end
 					5'd22: begin  iq_trigger <= (phy_tx_started&tx_pkt_need_ack);  end
 					5'd23: begin  iq_trigger <= (phy_tx_done&tx_pkt_need_ack);  end
-					5'd24: begin  iq_trigger <= (tx_bb_is_ongoing_posedge&tx_pkt_need_ack);  end
+					5'd24: begin  iq_trigger <= (tx_control_state_hit&&phy_type_hit);  end
 					5'd25: begin  iq_trigger <= (tx_bb_is_ongoing_negedge&tx_pkt_need_ack);  end
 					5'd26: begin  iq_trigger <= (tx_rf_is_ongoing_posedge&tx_pkt_need_ack);  end
 					5'd27: begin  iq_trigger <= (tx_rf_is_ongoing_negedge&tx_pkt_need_ack);  end

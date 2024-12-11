@@ -69,6 +69,8 @@
 		input wire pkt_header_valid,
 		input wire pkt_header_valid_strobe,
 
+    input wire [1:0] phy_type,
+
     // from xpu
     input wire [3:0] tx_control_state,
 		input wire [31:0] FC_DI,
@@ -329,6 +331,8 @@
 		.pkt_header_valid(pkt_header_valid),
 		.pkt_header_valid_strobe(pkt_header_valid_strobe),
 
+    .phy_type(phy_type),
+
     .tx_control_state(tx_control_state),
 		.FC_DI(FC_DI),
 		.FC_DI_valid(FC_DI_valid),
@@ -364,6 +368,7 @@
 		.pre_trigger_len(slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),
 		.iq_len_target(slv_reg12[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),
     .tx_control_state_target(slv_reg5[7:4]),
+    .phy_type_target(slv_reg5[9:8]),
 		.FC_target(slv_reg5[15:0]),
 		.addr1_target(slv_reg6),
 		.addr2_target(slv_reg7),
