@@ -220,7 +220,7 @@ update_ip_catalog -rebuild
 #  "[file normalize "$origin_dir/src/side_ch_s_axis.v"]"
 set obj [get_filesets sources_1]
 set files [list \
- "[file normalize "$origin_dir/src/ram_2port.v"]"\
+ "[file normalize "$origin_dir/src/dpram.v"]"\
  "[file normalize "$origin_dir/src/side_ch_counter.v"]"\
  "[file normalize "$origin_dir/src/side_ch_counter_event_cfg.v"]"\
  "[file normalize "$origin_dir/src/side_ch_control.v"]"\
@@ -300,7 +300,7 @@ add_files -norecurse -fileset $obj $files
 # set_property -name "used_in_simulation" -value "1" -objects $file_obj
 # set_property -name "used_in_synthesis" -value "1" -objects $file_obj
 
-set file "$origin_dir/src/ram_2port.v"
+set file "$origin_dir/src/dpram.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog" -objects $file_obj
