@@ -400,19 +400,13 @@
   end
 
 	// dpram to buffer the iq, gpio_status, rssi_half_db before trigger
-	ram_2port  #(.DWIDTH(C_S_AXIS_TDATA_WIDTH), .AWIDTH(bit_num)) iq_buf (
-		.clka(clk),
-		.ena(iq_capture),
-		.wea(iq_strobe_inner),
-		.addra(iq_waddr),
-		.dia(side_info_iq_dpram_in),//rssi_half_db 9bit; gpio_status 8bit
-		.doa(),
-		.clkb(clk),
-		.enb(iq_capture),
-		.web(1'b0),
-		.addrb(iq_raddr),
-		.dib(32'hFFFF),
-		.dob(side_info_iq_dpram)
+	dpram  #(.DATA_WIDTH(C_S_AXIS_TDATA_WIDTH), .ADDRESS_WIDTH(bit_num)) iq_buf (
+		.clock(clk),
+		.write_enable(iq_strobe_inner),
+		.write_address(iq_waddr),
+		.write_data(side_info_iq_dpram_in),//rssi_half_db 9bit; gpio_status 8bit
+		.read_address(iq_raddr),
+		.read_data(side_info_iq_dpram)
 	);
 
 	// sequencer and state machin to stream iq from dpram to m axis by
