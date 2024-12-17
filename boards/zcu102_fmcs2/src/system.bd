@@ -7,8 +7,7 @@
       "name": "system",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2021.1",
-      "validated": "true"
+      "tool_version": "2021.1"
     },
     "design_tree": {
       "sys_ps8": "",
@@ -100,13 +99,7 @@
       "spi0_csn": {
         "direction": "O",
         "left": "2",
-        "right": "0",
-        "parameters": {
-          "PortWidth": {
-            "value": "3",
-            "value_src": "ip_prop"
-          }
-        }
+        "right": "0"
       },
       "spi0_sclk": {
         "direction": "O"
@@ -120,13 +113,7 @@
       "spi1_csn": {
         "direction": "O",
         "left": "2",
-        "right": "0",
-        "parameters": {
-          "PortWidth": {
-            "value": "3",
-            "value_src": "ip_prop"
-          }
-        }
+        "right": "0"
       },
       "spi1_sclk": {
         "direction": "O"
@@ -145,13 +132,7 @@
       "gpio_o": {
         "direction": "O",
         "left": "92",
-        "right": "0",
-        "parameters": {
-          "PortWidth": {
-            "value": "93",
-            "value_src": "ip_prop"
-          }
-        }
+        "right": "0"
       },
       "gpio_t": {
         "direction": "O",
@@ -4417,8 +4398,8 @@
           },
           "xlslice_2": {
             "vlnv": "xilinx.com:ip:xlslice:1.0",
-            "xci_name": "system_xlslice_2_1",
-            "xci_path": "ip/system_xlslice_2_1/system_xlslice_2_1.xci",
+            "xci_name": "system_xlslice_2_0",
+            "xci_path": "ip/system_xlslice_2_0/system_xlslice_2_0.xci",
             "inst_hier_path": "openwifi_ip/xlslice_2",
             "parameters": {
               "DIN_FROM": {
@@ -4437,8 +4418,8 @@
           },
           "xlconcat_1": {
             "vlnv": "xilinx.com:ip:xlconcat:2.1",
-            "xci_name": "system_xlconcat_0_2",
-            "xci_path": "ip/system_xlconcat_0_2/system_xlconcat_0_2.xci",
+            "xci_name": "system_xlconcat_1_0",
+            "xci_path": "ip/system_xlconcat_1_0/system_xlconcat_1_0.xci",
             "inst_hier_path": "openwifi_ip/xlconcat_1"
           },
           "xlconstant_0": {
@@ -5175,7 +5156,8 @@
           "xlconstant_0_dout": {
             "ports": [
               "xlconstant_0/dout",
-              "xlconcat_1/In1"
+              "xlconcat_1/In1",
+              "openofdm_rx_0/trigger_mode_setting_en"
             ]
           },
           "xlslice_0_Dout": {
@@ -5572,8 +5554,8 @@
       },
       "xlslice_2": {
         "vlnv": "xilinx.com:ip:xlslice:1.0",
-        "xci_name": "system_xlslice_2_0",
-        "xci_path": "ip/system_xlslice_2_0/system_xlslice_2_0.xci",
+        "xci_name": "system_xlslice_2_1",
+        "xci_path": "ip/system_xlslice_2_1/system_xlslice_2_1.xci",
         "inst_hier_path": "xlslice_2",
         "parameters": {
           "DIN_FROM": {
