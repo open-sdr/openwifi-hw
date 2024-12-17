@@ -53,11 +53,15 @@ module axi_fifo_bram
        wr_addr <= wr_addr + 1;
 
    dpram #(.DATA_WIDTH(WIDTH),.ADDRESS_WIDTH(SIZE))
-   ram (.clock(clk),
+   ram (
+    .clock(clk),
+    .enable_a(1),
 	  .write_enable(write),
 	  .write_address(wr_addr),
 	  .write_data(i_tdata),
+    .read_data_a(),
 
+    .enable_b((read_state==PRE_READ)|read_int),
 	  .read_address(rd_addr),
 	  .read_data(int_tdata));
 

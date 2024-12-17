@@ -24,10 +24,13 @@ module dpram
   parameter ADDRESS_WIDTH = 8) (
   input clock,
 
+  input enable_a,
+  input write_enable,
   input [ADDRESS_WIDTH-1:0] write_address,
   input [DATA_WIDTH-1:0] write_data,
-  input write_enable,
+  output reg [DATA_WIDTH-1:0] read_data_a,
 
+  input enable_b,
   input [ADDRESS_WIDTH-1:0] read_address,
   output reg [DATA_WIDTH-1:0] read_data
 );
@@ -35,9 +38,14 @@ module dpram
   reg [DATA_WIDTH-1:0] memory [(1<<ADDRESS_WIDTH)-1:0];
 
   always @ (posedge clock) begin
-    read_data <= memory[read_address];
-    if (write_enable) begin
-      memory[write_address] <= write_data;
+    if (enable_b) begin
+      read_data <= memory[read_address];
+    end
+    if (enable_a) begin
+      read_data_a <= memory[write_address];
+      if (write_enable) begin
+        memory[write_address] <= write_data;
+      end
     end
   end
 
