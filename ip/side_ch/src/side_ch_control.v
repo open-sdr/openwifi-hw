@@ -295,7 +295,8 @@
 	assign iq_strobe_inner = (iq_source_select==0?iq_strobe:(iq_source_select==1?openofdm_tx_iq_valid:tx_intf_iq_valid));
 
 	// assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{5'd0,rssi_half_db,8'd0,gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
-  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{tx_rf_is_ongoing,tx_control_state,rssi_half_db,pkt_header_and_fcs_strobe,pkt_header_and_fcs_ok,FC_DI[7:2],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+  // assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{tx_rf_is_ongoing,tx_control_state,rssi_half_db,pkt_header_and_fcs_strobe,pkt_header_and_fcs_ok,FC_DI[7:2],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{demod_is_ongoing,phase_offset_taken[11:8],rssi_half_db,phase_offset_taken[7:0],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
 
 	assign side_info_fifo_wr_en = (capture_src_flag==0?csi_valid:(last_ofdm_symbol_flag?1:equalizer_valid));
 	assign side_info_fifo_din   = (capture_src_flag==0?csi:(last_ofdm_symbol_flag?0:equalizer));
@@ -520,7 +521,7 @@
 					5'd22: begin  iq_trigger <= (phy_tx_started&tx_pkt_need_ack);  end
 					5'd23: begin  iq_trigger <= (phy_tx_done&tx_pkt_need_ack);  end
 					5'd24: begin  iq_trigger <= (tx_control_state_hit&&phy_type_hit);  end
-					5'd25: begin  iq_trigger <= (tx_bb_is_ongoing_negedge&tx_pkt_need_ack);  end
+					5'd25: begin  iq_trigger <= ( (addr2_valid == 1 && addr2_valid_reg==0) && (match_cfg[2]==0 || {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]} == addr2_target) && (match_cfg[1]==0 || {addr1[23:16],addr1[31:24],addr1[39:32],addr1[47:40]} == addr1_target) );  end
 					5'd26: begin  iq_trigger <= (tx_rf_is_ongoing_posedge&tx_pkt_need_ack);  end
 					5'd27: begin  iq_trigger <= (tx_rf_is_ongoing_negedge&tx_pkt_need_ack);  end
 					5'd28: begin  iq_trigger <= (tx_bb_is_ongoing_reg&(iq1_i_abs>rssi_or_iq_th)); end
