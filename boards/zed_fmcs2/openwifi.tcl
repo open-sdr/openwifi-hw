@@ -958,7 +958,7 @@ set_property -name "steps.post_place_power_opt_design.args.more options" -value 
 set_property -name "steps.phys_opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.phys_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.phys_opt_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.phys_opt_design.args.directive" -value "Explore" -objects $obj
+set_property -name "steps.phys_opt_design.args.directive" -value "AddRetime" -objects $obj
 set_property -name "steps.phys_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.route_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.route_design.tcl.post" -value "" -objects $obj
@@ -967,7 +967,7 @@ set_property -name "steps.route_design.args.more options" -value "-tns_cleanup" 
 set_property -name "steps.post_route_phys_opt_design.is_enabled" -value "1" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.pre" -value "" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.tcl.post" -value "" -objects $obj
-set_property -name "steps.post_route_phys_opt_design.args.directive" -value "Explore" -objects $obj
+set_property -name "steps.post_route_phys_opt_design.args.directive" -value "AddRetime" -objects $obj
 set_property -name "steps.post_route_phys_opt_design.args.more options" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.pre" -value "" -objects $obj
 set_property -name "steps.write_bitstream.tcl.post" -value "" -objects $obj
