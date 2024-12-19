@@ -309,30 +309,10 @@ module tx_intf #
 
     //from duc&ant_selection
     .data_valid_from_acc(ant_data_valid&(~slv_reg10[1])),
-`ifndef TX_BB_CLK_GEN_FROM_RF
-    .data_from_acc(ant_data),
-    .fulln_to_acc(fulln_from_dac_to_duc)
-`else
     .data_from_acc(wifi_iq_pack),
     .read_bb_fifo(wifi_iq_ready),
     .read_bb_fifo_delay(wifi_iq_ready_delay)
-`endif
   );
-
-`ifndef TX_BB_CLK_GEN_FROM_RF
-  duc_bank_core # (
-  ) duc_bank_core_i (
-    .clk(s00_axis_aclk),
-    .rstn(s00_axis_aresetn&(~slv_reg0[1])),
-    .ant_data_full_n(fulln_from_dac_to_duc),
-    .ant_data_wr_data(ant_data),
-    .ant_data_wr_en(ant_data_valid),
-    .cfg0(slv_reg1),
-    .bw20_data_tdata(wifi_iq_pack),
-    .bw20_data_tready(wifi_iq_ready),
-    .bw20_data_tvalid(wifi_iq_valid)
-  );
-`endif
 
 // Instantiation of Axi Bus Interface S00_AXI
 	tx_intf_s_axi # ( 
