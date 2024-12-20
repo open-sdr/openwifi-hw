@@ -39,6 +39,7 @@
     // ad9361 status and ctrl
     input  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_rf,
     output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb,
+    output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb_raw,
 
     // from ad9361_adc_pack
     input wire adc_clk,
@@ -314,6 +315,7 @@
         .bb_rstn(m00_axis_aresetn),
         .bb_clk(m00_axis_aclk),
         .bb_iq_valid(bw20_iq_valid),
+        .gpio_status_bb_raw(gpio_status_bb_raw),
         .gpio_status_bb(gpio_status_bb)
     );
 

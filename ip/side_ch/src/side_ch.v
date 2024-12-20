@@ -87,6 +87,7 @@
 		input wire fcs_ok,
 		input wire block_rx_dma_to_ps,
     input wire block_rx_dma_to_ps_valid,
+    input wire ch_idle_final,
 
 		// from tx
 		input wire phy_tx_start,
@@ -347,6 +348,7 @@
 		.fcs_ok(fcs_ok),
 		.block_rx_dma_to_ps(block_rx_dma_to_ps),
 		.block_rx_dma_to_ps_valid(block_rx_dma_to_ps_valid),
+    .ch_idle_final(ch_idle_final),
 
 		.phy_tx_start(phy_tx_start),
 		.tx_pkt_need_ack(tx_pkt_need_ack),
