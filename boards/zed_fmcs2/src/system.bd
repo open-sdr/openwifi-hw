@@ -6,7 +6,8 @@
       "name": "system",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "None",
-      "tool_version": "2021.1"
+      "tool_version": "2021.1",
+      "validated": "true"
     },
     "design_tree": {
       "axi_ad9361": "",
@@ -96,12 +97,68 @@
       "ddr": {
         "mode": "Master",
         "vlnv_bus_definition": "xilinx.com:interface:ddrx:1.0",
-        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0"
+        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0",
+        "parameters": {
+          "AXI_ARBITRATION_SCHEME": {
+            "value": "TDM",
+            "value_src": "default"
+          },
+          "BURST_LENGTH": {
+            "value": "8",
+            "value_src": "default"
+          },
+          "CAN_DEBUG": {
+            "value": "false",
+            "value_src": "default"
+          },
+          "CAS_LATENCY": {
+            "value": "11",
+            "value_src": "default"
+          },
+          "CAS_WRITE_LATENCY": {
+            "value": "11",
+            "value_src": "default"
+          },
+          "CS_ENABLED": {
+            "value": "true",
+            "value_src": "default"
+          },
+          "DATA_MASK_ENABLED": {
+            "value": "true",
+            "value_src": "default"
+          },
+          "DATA_WIDTH": {
+            "value": "8",
+            "value_src": "default"
+          },
+          "MEMORY_TYPE": {
+            "value": "COMPONENTS",
+            "value_src": "default"
+          },
+          "MEM_ADDR_MAP": {
+            "value": "ROW_COLUMN_BANK",
+            "value_src": "default"
+          },
+          "SLOT": {
+            "value": "Single",
+            "value_src": "default"
+          },
+          "TIMEPERIOD_PS": {
+            "value": "1250",
+            "value_src": "default"
+          }
+        }
       },
       "fixed_io": {
         "mode": "Master",
         "vlnv_bus_definition": "xilinx.com:display_processing_system7:fixedio:1.0",
-        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0"
+        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0",
+        "parameters": {
+          "CAN_DEBUG": {
+            "value": "false",
+            "value_src": "default"
+          }
+        }
       },
       "iic_fmc": {
         "mode": "Master",
@@ -177,7 +234,13 @@
       "gpio_o": {
         "direction": "O",
         "left": "63",
-        "right": "0"
+        "right": "0",
+        "parameters": {
+          "PortWidth": {
+            "value": "64",
+            "value_src": "ip_prop"
+          }
+        }
       },
       "gpio_t": {
         "direction": "O",
@@ -203,7 +266,25 @@
       },
       "i2s_mclk": {
         "type": "clk",
-        "direction": "O"
+        "direction": "O",
+        "parameters": {
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "FREQ_TOLERANCE_HZ": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default"
+          }
+        }
       },
       "iic_mux_scl_i": {
         "direction": "I",
@@ -232,7 +313,17 @@
         "direction": "O"
       },
       "otg_vbusoc": {
-        "direction": "I"
+        "direction": "I",
+        "parameters": {
+          "PortType": {
+            "value": "undef",
+            "value_src": "ip_prop"
+          },
+          "PortType.PROP_SRC": {
+            "value": "false",
+            "value_src": "ip_prop"
+          }
+        }
       },
       "spdif": {
         "direction": "O"
@@ -3340,7 +3431,12 @@
           "rx_intf_0_gpio_status_bb": {
             "ports": [
               "rx_intf_0/gpio_status_bb",
-              "xpu_0/gpio_status",
+              "xpu_0/gpio_status"
+            ]
+          },
+          "rx_intf_0_gpio_status_bb_raw": {
+            "ports": [
+              "rx_intf_0/gpio_status_bb_raw",
               "side_ch_0/gpio_status"
             ]
           },
@@ -3739,6 +3835,12 @@
               "xpu_0/block_rx_dma_to_ps_valid",
               "side_ch_0/block_rx_dma_to_ps_valid",
               "rx_intf_0/block_rx_dma_to_ps_valid"
+            ]
+          },
+          "xpu_0_ch_idle_final": {
+            "ports": [
+              "xpu_0/ch_idle_final",
+              "side_ch_0/ch_idle_final"
             ]
           },
           "xpu_0_channel": {
