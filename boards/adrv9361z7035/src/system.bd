@@ -74,7 +74,10 @@
         "xlslice_2": "",
         "xlslice_3": "",
         "xlslice_4": "",
-        "xlslice_5": ""
+        "xlslice_5": "",
+        "xlslice_6": "",
+        "xlconcat_1": "",
+        "xlconstant_0": ""
       },
       "GND_1": "",
       "axi_cpu_interconnect": {
@@ -4125,6 +4128,43 @@
                 "value": "1"
               }
             }
+          },
+          "xlslice_6": {
+            "vlnv": "xilinx.com:ip:xlslice:1.0",
+            "xci_name": "system_xlslice_6_0",
+            "xci_path": "ip/system_xlslice_6_0/system_xlslice_6_0.xci",
+            "inst_hier_path": "openwifi_ip/xlslice_6",
+            "parameters": {
+              "DIN_FROM": {
+                "value": "7"
+              },
+              "DIN_TO": {
+                "value": "7"
+              },
+              "DIN_WIDTH": {
+                "value": "8"
+              },
+              "DOUT_WIDTH": {
+                "value": "1"
+              }
+            }
+          },
+          "xlconcat_1": {
+            "vlnv": "xilinx.com:ip:xlconcat:2.1",
+            "xci_name": "system_xlconcat_1_1",
+            "xci_path": "ip/system_xlconcat_1_1/system_xlconcat_1_1.xci",
+            "inst_hier_path": "openwifi_ip/xlconcat_1"
+          },
+          "xlconstant_0": {
+            "vlnv": "xilinx.com:ip:xlconstant:1.1",
+            "xci_name": "system_xlconstant_0_0",
+            "xci_path": "ip/system_xlconstant_0_0/system_xlconstant_0_0.xci",
+            "inst_hier_path": "openwifi_ip/xlconstant_0",
+            "parameters": {
+              "CONST_VAL": {
+                "value": "0"
+              }
+            }
           }
         },
         "interface_nets": {
@@ -4468,7 +4508,8 @@
               "openofdm_rx_0/pkt_rate",
               "xpu_0/pkt_rate",
               "rx_intf_0/pkt_rate",
-              "side_ch_0/pkt_rate"
+              "side_ch_0/pkt_rate",
+              "xlslice_6/Din"
             ]
           },
           "openofdm_rx_0_short_preamble_detected": {
@@ -4560,7 +4601,12 @@
           "rx_intf_0_gpio_status_bb": {
             "ports": [
               "rx_intf_0/gpio_status_bb",
-              "xpu_0/gpio_status",
+              "xpu_0/gpio_status"
+            ]
+          },
+          "rx_intf_0_gpio_status_bb_raw": {
+            "ports": [
+              "rx_intf_0/gpio_status_bb_raw",
               "side_ch_0/gpio_status"
             ]
           },
@@ -4844,6 +4890,19 @@
               "side_ch_0/openofdm_tx_iq0"
             ]
           },
+          "xlconcat_1_dout": {
+            "ports": [
+              "xlconcat_1/dout",
+              "side_ch_0/phy_type"
+            ]
+          },
+          "xlconstant_0_dout": {
+            "ports": [
+              "xlconstant_0/dout",
+              "openofdm_rx_0/trigger_mode_setting_en",
+              "xlconcat_1/In1"
+            ]
+          },
           "xlslice_0_Dout": {
             "ports": [
               "xlslice_0/Dout",
@@ -4878,6 +4937,12 @@
             "ports": [
               "xlslice_5/Dout",
               "gpio3"
+            ]
+          },
+          "xlslice_6_Dout": {
+            "ports": [
+              "xlslice_6/Dout",
+              "xlconcat_1/In0"
             ]
           },
           "xpu_0_FC_DI": {
@@ -4966,10 +5031,17 @@
               "side_ch_0/block_rx_dma_to_ps_valid"
             ]
           },
+          "xpu_0_ch_idle_final": {
+            "ports": [
+              "xpu_0/ch_idle_final",
+              "side_ch_0/ch_idle_final"
+            ]
+          },
           "xpu_0_channel": {
             "ports": [
               "xpu_0/channel",
-              "tx_intf_0/channel"
+              "tx_intf_0/channel",
+              "openofdm_rx_0/Fc_in_MHz"
             ]
           },
           "xpu_0_cw": {
@@ -5111,6 +5183,12 @@
               "xpu_0/tx_bb_is_ongoing",
               "tx_intf_0/tx_bb_is_ongoing",
               "side_ch_0/tx_bb_is_ongoing"
+            ]
+          },
+          "xpu_0_tx_control_state": {
+            "ports": [
+              "xpu_0/tx_control_state",
+              "side_ch_0/tx_control_state"
             ]
           },
           "xpu_0_tx_control_state_idle": {
