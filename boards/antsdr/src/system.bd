@@ -6,8 +6,7 @@
       "name": "system",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "None",
-      "tool_version": "2021.1",
-      "validated": "true"
+      "tool_version": "2021.1"
     },
     "design_tree": {
       "sys_ps7": "",
@@ -73,7 +72,10 @@
         },
         "xlconcat_0": "",
         "xlslice_0": "",
-        "xlslice_1": ""
+        "xlslice_1": "",
+        "xlconstant_0": "",
+        "xlconcat_1": "",
+        "xlslice_2": ""
       },
       "GND_1": "",
       "axi_cpu_interconnect": {
@@ -95,57 +97,7 @@
       "ddr": {
         "mode": "Master",
         "vlnv_bus_definition": "xilinx.com:interface:ddrx:1.0",
-        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0",
-        "parameters": {
-          "AXI_ARBITRATION_SCHEME": {
-            "value": "TDM",
-            "value_src": "default"
-          },
-          "BURST_LENGTH": {
-            "value": "8",
-            "value_src": "default"
-          },
-          "CAN_DEBUG": {
-            "value": "false",
-            "value_src": "default"
-          },
-          "CAS_LATENCY": {
-            "value": "11",
-            "value_src": "default"
-          },
-          "CAS_WRITE_LATENCY": {
-            "value": "11",
-            "value_src": "default"
-          },
-          "CS_ENABLED": {
-            "value": "true",
-            "value_src": "default"
-          },
-          "DATA_MASK_ENABLED": {
-            "value": "true",
-            "value_src": "default"
-          },
-          "DATA_WIDTH": {
-            "value": "8",
-            "value_src": "default"
-          },
-          "MEMORY_TYPE": {
-            "value": "COMPONENTS",
-            "value_src": "default"
-          },
-          "MEM_ADDR_MAP": {
-            "value": "ROW_COLUMN_BANK",
-            "value_src": "default"
-          },
-          "SLOT": {
-            "value": "Single",
-            "value_src": "default"
-          },
-          "TIMEPERIOD_PS": {
-            "value": "1250",
-            "value_src": "default"
-          }
-        }
+        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0"
       },
       "iic_main": {
         "mode": "Master",
@@ -155,13 +107,7 @@
       "fixed_io": {
         "mode": "Master",
         "vlnv_bus_definition": "xilinx.com:display_processing_system7:fixedio:1.0",
-        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0",
-        "parameters": {
-          "CAN_DEBUG": {
-            "value": "false",
-            "value_src": "default"
-          }
-        }
+        "vlnv": "xilinx.com:display_processing_system7:fixedio_rtl:1.0"
       }
     },
     "ports": {
@@ -235,17 +181,7 @@
         "right": "0"
       },
       "otg_vbusoc": {
-        "direction": "I",
-        "parameters": {
-          "PortType": {
-            "value": "undef",
-            "value_src": "ip_prop"
-          },
-          "PortType.PROP_SRC": {
-            "value": "false",
-            "value_src": "ip_prop"
-          }
-        }
+        "direction": "I"
       },
       "enable": {
         "direction": "O"
@@ -4065,6 +4001,43 @@
                 "value": "16"
               }
             }
+          },
+          "xlconstant_0": {
+            "vlnv": "xilinx.com:ip:xlconstant:1.1",
+            "xci_name": "system_xlconstant_0_0",
+            "xci_path": "ip/system_xlconstant_0_0/system_xlconstant_0_0.xci",
+            "inst_hier_path": "openwifi_ip/xlconstant_0",
+            "parameters": {
+              "CONST_VAL": {
+                "value": "0"
+              }
+            }
+          },
+          "xlconcat_1": {
+            "vlnv": "xilinx.com:ip:xlconcat:2.1",
+            "xci_name": "system_xlconcat_1_0",
+            "xci_path": "ip/system_xlconcat_1_0/system_xlconcat_1_0.xci",
+            "inst_hier_path": "openwifi_ip/xlconcat_1"
+          },
+          "xlslice_2": {
+            "vlnv": "xilinx.com:ip:xlslice:1.0",
+            "xci_name": "system_xlslice_2_0",
+            "xci_path": "ip/system_xlslice_2_0/system_xlslice_2_0.xci",
+            "inst_hier_path": "openwifi_ip/xlslice_2",
+            "parameters": {
+              "DIN_FROM": {
+                "value": "7"
+              },
+              "DIN_TO": {
+                "value": "7"
+              },
+              "DIN_WIDTH": {
+                "value": "8"
+              },
+              "DOUT_WIDTH": {
+                "value": "1"
+              }
+            }
           }
         },
         "interface_nets": {
@@ -4408,7 +4381,8 @@
               "openofdm_rx_0/pkt_rate",
               "side_ch_0/pkt_rate",
               "rx_intf_0/pkt_rate",
-              "xpu_0/pkt_rate"
+              "xpu_0/pkt_rate",
+              "xlslice_2/Din"
             ]
           },
           "openofdm_rx_0_short_preamble_detected": {
@@ -4500,7 +4474,12 @@
           "rx_intf_0_gpio_status_bb": {
             "ports": [
               "rx_intf_0/gpio_status_bb",
-              "xpu_0/gpio_status",
+              "xpu_0/gpio_status"
+            ]
+          },
+          "rx_intf_0_gpio_status_bb_raw": {
+            "ports": [
+              "rx_intf_0/gpio_status_bb_raw",
               "side_ch_0/gpio_status"
             ]
           },
@@ -4778,6 +4757,19 @@
               "side_ch_0/openofdm_tx_iq0"
             ]
           },
+          "xlconcat_1_dout": {
+            "ports": [
+              "xlconcat_1/dout",
+              "side_ch_0/phy_type"
+            ]
+          },
+          "xlconstant_0_dout": {
+            "ports": [
+              "xlconstant_0/dout",
+              "openofdm_rx_0/trigger_mode_setting_en",
+              "xlconcat_1/In1"
+            ]
+          },
           "xlslice_0_Dout": {
             "ports": [
               "xlslice_0/Dout",
@@ -4788,6 +4780,12 @@
             "ports": [
               "xlslice_1/Dout",
               "xpu_0/ddc_q"
+            ]
+          },
+          "xlslice_2_Dout": {
+            "ports": [
+              "xlslice_2/Dout",
+              "xlconcat_1/In0"
             ]
           },
           "xpu_0_FC_DI": {
@@ -4876,10 +4874,17 @@
               "rx_intf_0/block_rx_dma_to_ps_valid"
             ]
           },
+          "xpu_0_ch_idle_final": {
+            "ports": [
+              "xpu_0/ch_idle_final",
+              "side_ch_0/ch_idle_final"
+            ]
+          },
           "xpu_0_channel": {
             "ports": [
               "xpu_0/channel",
-              "tx_intf_0/channel"
+              "tx_intf_0/channel",
+              "openofdm_rx_0/Fc_in_MHz"
             ]
           },
           "xpu_0_cw": {
@@ -4999,6 +5004,12 @@
               "xpu_0/tx_bb_is_ongoing",
               "side_ch_0/tx_bb_is_ongoing",
               "tx_intf_0/tx_bb_is_ongoing"
+            ]
+          },
+          "xpu_0_tx_control_state": {
+            "ports": [
+              "xpu_0/tx_control_state",
+              "side_ch_0/tx_control_state"
             ]
           },
           "xpu_0_tx_control_state_idle": {
