@@ -4863,7 +4863,12 @@
           "rx_intf_0_gpio_status_bb": {
             "ports": [
               "rx_intf_0/gpio_status_bb",
-              "xpu_0/gpio_status",
+              "xpu_0/gpio_status"
+            ]
+          },
+          "rx_intf_0_gpio_status_bb_raw": {
+            "ports": [
+              "rx_intf_0/gpio_status_bb_raw",
               "side_ch_0/gpio_status"
             ]
           },
@@ -5262,6 +5267,12 @@
               "xpu_0/block_rx_dma_to_ps_valid",
               "rx_intf_0/block_rx_dma_to_ps_valid",
               "side_ch_0/block_rx_dma_to_ps_valid"
+            ]
+          },
+          "xpu_0_ch_idle_final": {
+            "ports": [
+              "xpu_0/ch_idle_final",
+              "side_ch_0/ch_idle_final"
             ]
           },
           "xpu_0_channel": {
