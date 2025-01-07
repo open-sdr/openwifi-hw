@@ -341,6 +341,12 @@
       endcase
  	end
 
+  /*
+  // After check ila of these DEBUG signals, none of those abnormal things happen.
+  // So the issue https://github.ugent.be/xjiao/openwifi/issues/156  root causes actually are:
+  // 1. force_ht_smoothing is ON in our simulation/Matlab, but not (auto decided by packets from CMW). -- Check the issue comments.
+  // 2. Two other rare cases: https://github.ugent.be/xjiao/openwifi/issues/159 and https://github.ugent.be/xjiao/openwifi/issues/158 
+  // So the DEBUG code are not needed. Just keep them in case they are useful in the future.
   // DEBUG PER is higher in signaling mode. The failed IQ are successful in Matlab and Verilog sim
   // Try to capture 3 abnormal events:
   // 0. the width of iq_strobe -- normally should be 1 clk
@@ -408,6 +414,7 @@
       iq_change_to_iq_strobe_count <= (iq_change_to_iq_strobe_count_lock == 0?(iq_change_to_iq_strobe_count+1):iq_change_to_iq_strobe_count);
     end
   end
+  */
 
 	// state machine tracking the rx procedure and give the last ofdm symbol indicator
 	// 1. decode end; 2 header invalid; 3 ht unsupport
