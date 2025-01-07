@@ -341,6 +341,74 @@
       endcase
  	end
 
+  // DEBUG PER is higher in signaling mode. The failed IQ are successful in Matlab and Verilog sim
+  // Try to capture 3 abnormal events:
+  // 0. the width of iq_strobe -- normally should be 1 clk
+  // 1. the distance between two iq_strobes -- normally should be 5 clk
+  // 2. the distance from iq0 value change to iq_strobe
+  // The abnormal event will be cleared by fcs_in_strobe
+  `DEBUG_PREFIX reg iq_strobe_width_abnormal;
+  `DEBUG_PREFIX reg iq_strobe_distance_abnormal;
+  `DEBUG_PREFIX reg iq_strobe_distance_abnormal1;
+  `DEBUG_PREFIX reg [2:0] iq_strobe_width_count;
+  `DEBUG_PREFIX reg [4:0] iq_strobe_distance_count;
+  `DEBUG_PREFIX reg [4:0] iq_change_to_iq_strobe_count;
+
+  // somde delayed version of signals
+  reg iq_strobe_delay;
+  reg [(2*IQ_DATA_WIDTH-1):0] iq0_delay;
+  `DEBUG_PREFIX wire iq_strobe_falling_edge;
+  `DEBUG_PREFIX wire iq_change;
+  assign iq_strobe_falling_edge = (iq_strobe_delay==1 && iq_strobe==0);
+  assign iq_change = (iq0_delay!=iq0);
+  always @(posedge clk) begin
+    if (!rstn) begin
+      iq_strobe_delay <= 0;
+      iq0_delay <= 0;
+    end else begin
+      iq_strobe_delay <= iq_strobe;
+      iq0_delay <= iq0;
+    end
+  end
+
+  // capture abnormal event
+  always @(posedge clk) begin
+    if (fcs_in_strobe) begin
+      iq_strobe_width_abnormal <= 0;
+      iq_strobe_distance_abnormal <= 0;
+      iq_strobe_distance_abnormal1 <= 0;
+    end else begin
+      iq_strobe_width_abnormal <= (iq_strobe_width_count>1?1:iq_strobe_width_abnormal);
+      iq_strobe_distance_abnormal  <= (iq_strobe_distance_count>5?1:iq_strobe_distance_abnormal);
+      iq_strobe_distance_abnormal1 <= (iq_strobe_distance_count>4?1:iq_strobe_distance_abnormal1);
+    end
+  end
+
+  // Counter of iq_strobe width and iq_strobe distance
+  // Falling edge of iq_strobe resets the counter
+  // counter increases during iq_strobe 1
+  always @(posedge clk) begin
+    if (iq_strobe_falling_edge) begin
+      iq_strobe_width_count <= 0;
+      iq_strobe_distance_count <= 0;
+    end else begin
+      iq_strobe_width_count <= (iq_strobe?(iq_strobe_width_count+1):iq_strobe_width_count);
+      iq_strobe_distance_count <= (iq_strobe_distance_count+1);
+    end
+  end
+
+  // Counter from iq change to the falling edge of iq_strobe
+  `DEBUG_PREFIX reg iq_change_to_iq_strobe_count_lock;
+  always @(posedge clk) begin
+    if (iq_change) begin
+      iq_change_to_iq_strobe_count <= 0;
+      iq_change_to_iq_strobe_count_lock <= 0;
+    end else begin
+      iq_change_to_iq_strobe_count_lock <= (iq_strobe_falling_edge?1:iq_change_to_iq_strobe_count_lock);
+      iq_change_to_iq_strobe_count <= (iq_change_to_iq_strobe_count_lock == 0?(iq_change_to_iq_strobe_count+1):iq_change_to_iq_strobe_count);
+    end
+  end
+
 	// state machine tracking the rx procedure and give the last ofdm symbol indicator
 	// 1. decode end; 2 header invalid; 3 ht unsupport
   always @(posedge clk) begin
