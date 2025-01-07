@@ -77,24 +77,6 @@
     always @( bb_gain, data_to_acc_internal)
     begin
        case (bb_gain)
-          3'b000 : begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = data_to_acc_internal[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)];
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = data_to_acc_internal[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)];
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = data_to_acc_internal[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)];
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = data_to_acc_internal[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)];
-                   end
-          3'b001 : begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-2) : (0*IQ_DATA_WIDTH)], 1'd0};
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-2) : (1*IQ_DATA_WIDTH)], 1'd0};
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-2) : (2*IQ_DATA_WIDTH)], 1'd0};
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-2) : (3*IQ_DATA_WIDTH)], 1'd0};
-                   end
-          3'b010 : begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-3) : (0*IQ_DATA_WIDTH)], 2'd0};
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-3) : (1*IQ_DATA_WIDTH)], 2'd0};
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-3) : (2*IQ_DATA_WIDTH)], 2'd0};
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-3) : (3*IQ_DATA_WIDTH)], 2'd0};
-                   end
           3'b011 : begin
                         data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-4) : (0*IQ_DATA_WIDTH)], 3'd0};
                         data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-4) : (1*IQ_DATA_WIDTH)], 3'd0};
@@ -107,11 +89,23 @@
                         data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-5) : (2*IQ_DATA_WIDTH)], 4'd0};
                         data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-5) : (3*IQ_DATA_WIDTH)], 4'd0};
                    end
+          3'b101 : begin
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-6) : (0*IQ_DATA_WIDTH)], 5'd0};
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-6) : (1*IQ_DATA_WIDTH)], 5'd0};
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-6) : (2*IQ_DATA_WIDTH)], 5'd0};
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-6) : (3*IQ_DATA_WIDTH)], 5'd0};
+                   end
+          3'b110 : begin
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-7) : (0*IQ_DATA_WIDTH)], 6'd0};
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-7) : (1*IQ_DATA_WIDTH)], 6'd0};
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-7) : (2*IQ_DATA_WIDTH)], 6'd0};
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-7) : (3*IQ_DATA_WIDTH)], 6'd0};
+                   end
           default: begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = data_to_acc_internal[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)];
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = data_to_acc_internal[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)];
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = data_to_acc_internal[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)];
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = data_to_acc_internal[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)];
+                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-5) : (0*IQ_DATA_WIDTH)], 4'd0};
+                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-5) : (1*IQ_DATA_WIDTH)], 4'd0};
+                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-5) : (2*IQ_DATA_WIDTH)], 4'd0};
+                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-5) : (3*IQ_DATA_WIDTH)], 4'd0};
                    end
        endcase
     end
@@ -149,18 +143,18 @@
       .ECC_MODE("no_ecc"),       // String
       .FIFO_MEMORY_TYPE("auto"), // String
       .FIFO_READ_LATENCY(0),     // DECIMAL
-      .FIFO_WRITE_DEPTH(32),   // DECIMAL
+      .FIFO_WRITE_DEPTH(16),   // DECIMAL
       .FULL_RESET_VALUE(0),      // DECIMAL
-      .PROG_EMPTY_THRESH(10),    // DECIMAL
-      .PROG_FULL_THRESH(10),     // DECIMAL
-      .RD_DATA_COUNT_WIDTH(5),   // DECIMAL
+      .PROG_EMPTY_THRESH(4),    // DECIMAL
+      .PROG_FULL_THRESH(12),     // DECIMAL
+      .RD_DATA_COUNT_WIDTH(4),   // DECIMAL
       .READ_DATA_WIDTH(64),      // DECIMAL
       .READ_MODE("fwft"),         // String
       .RELATED_CLOCKS(0),        // DECIMAL
       .USE_ADV_FEATURES("0404"), // String
       .WAKEUP_TIME(0),           // DECIMAL
       .WRITE_DATA_WIDTH(64),     // DECIMAL
-      .WR_DATA_COUNT_WIDTH(5)    // DECIMAL
+      .WR_DATA_COUNT_WIDTH(4)    // DECIMAL
    )
    xpm_fifo_async_adc_intf (
       .almost_empty(),
