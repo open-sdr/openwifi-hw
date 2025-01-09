@@ -2,32 +2,122 @@
 
 `timescale 1 ns / 1 ps
 
-	module adc_intf #
-	(
-		parameter integer IQ_DATA_WIDTH = 16
-	)
-	(
-    input wire adc_rst,
-    input wire adc_clk,
-    input wire [(4*IQ_DATA_WIDTH-1) : 0] adc_data,
-    //input wire adc_sync,
-    input wire adc_valid,
-    input wire acc_clk,
-    input wire acc_rstn,
+module adc_intf #
+(
+  parameter integer IQ_DATA_WIDTH = 16
+)
+(
+  input wire adc_rst,
+  input wire adc_clk,
+  input wire [(4*IQ_DATA_WIDTH-1) : 0] adc_data,
+  input wire adc_data_valid,
 
-    input wire [2:0] bb_gain,
-    output reg [(4*IQ_DATA_WIDTH-1) : 0] data_to_bb,
-    output wire emptyn_to_bb,
-    input wire bb_ask_data
-	);
-    wire FULL_internal;
-    wire EMPTY_internal;
-   //  wire RST_internal;
-    wire [(4*IQ_DATA_WIDTH-1) : 0] data_to_acc_internal;
-    
-    reg [(4*IQ_DATA_WIDTH-1) : 0] adc_data_delay;
-    reg adc_valid_count;
-    wire adc_valid_decimate;
+  input wire acc_clk,
+  input wire acc_rstn,
+
+  input wire [2:0] bb_gain,
+  output wire [(4*IQ_DATA_WIDTH-1) : 0] data_to_bb,
+  output wire data_to_bb_valid
+);
+  reg [(4*IQ_DATA_WIDTH-1) : 0] adc_data_shift;
+  reg adc_valid_count;
+  wire adc_valid_decimate;
+  wire [2:0] bb_gain_in_rf_domain;
+
+  reg [(4*IQ_DATA_WIDTH-1) : 0] adc_data_shift_stage1;
+  reg [(4*IQ_DATA_WIDTH-1) : 0] adc_data_shift_stage2;
+  reg adc_valid_decimate_stage1;
+  reg adc_valid_decimate_stage2;
+  reg adc_valid_decimate_stage2_delay;
+
+  assign adc_valid_decimate = (adc_valid_count==0);
+
+  assign data_to_bb = adc_data_shift_stage2;
+  assign data_to_bb_valid = (adc_valid_decimate_stage2_delay==0 && adc_valid_decimate_stage2==1);
+
+  xpm_cdc_array_single #(
+    //Common module parameters
+    .DEST_SYNC_FF   (4), // integer; range: 2-10
+    .INIT_SYNC_FF   (0), // integer; 0=disable simulation init values, 1=enable simulation init values
+    .SIM_ASSERT_CHK (0), // integer; 0=disable simulation messages, 1=enable simulation messages
+    .SRC_INPUT_REG  (1), // integer; 0=do not register input, 1=register input
+    .WIDTH          (3)  // integer; range: 1-1024
+  ) xpm_cdc_array_single_inst_ant_flag (
+    .src_clk  (acc_clk),  // optional; required when SRC_INPUT_REG = 1
+    .src_in   (bb_gain),
+    .dest_clk (adc_clk),
+    .dest_out (bb_gain_in_rf_domain)
+  );
+
+  always @( posedge adc_clk )
+  begin
+    if ( adc_rst == 1 ) begin
+      adc_data_shift <= 0;
+    end else begin
+      if (adc_valid_decimate) begin
+        case (bb_gain_in_rf_domain)
+          3'b011 :  begin
+                      adc_data_shift[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] <= {adc_data[((1*IQ_DATA_WIDTH)-4) : (0*IQ_DATA_WIDTH)], 3'd0};
+                      adc_data_shift[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] <= {adc_data[((2*IQ_DATA_WIDTH)-4) : (1*IQ_DATA_WIDTH)], 3'd0};
+                      adc_data_shift[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] <= {adc_data[((3*IQ_DATA_WIDTH)-4) : (2*IQ_DATA_WIDTH)], 3'd0};
+                      adc_data_shift[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] <= {adc_data[((4*IQ_DATA_WIDTH)-4) : (3*IQ_DATA_WIDTH)], 3'd0};
+                    end
+          3'b100 :  begin
+                      adc_data_shift[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] <= {adc_data[((1*IQ_DATA_WIDTH)-5) : (0*IQ_DATA_WIDTH)], 4'd0};
+                      adc_data_shift[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] <= {adc_data[((2*IQ_DATA_WIDTH)-5) : (1*IQ_DATA_WIDTH)], 4'd0};
+                      adc_data_shift[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] <= {adc_data[((3*IQ_DATA_WIDTH)-5) : (2*IQ_DATA_WIDTH)], 4'd0};
+                      adc_data_shift[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] <= {adc_data[((4*IQ_DATA_WIDTH)-5) : (3*IQ_DATA_WIDTH)], 4'd0};
+                    end
+          3'b101 :  begin
+                      adc_data_shift[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] <= {adc_data[((1*IQ_DATA_WIDTH)-6) : (0*IQ_DATA_WIDTH)], 5'd0};
+                      adc_data_shift[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] <= {adc_data[((2*IQ_DATA_WIDTH)-6) : (1*IQ_DATA_WIDTH)], 5'd0};
+                      adc_data_shift[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] <= {adc_data[((3*IQ_DATA_WIDTH)-6) : (2*IQ_DATA_WIDTH)], 5'd0};
+                      adc_data_shift[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] <= {adc_data[((4*IQ_DATA_WIDTH)-6) : (3*IQ_DATA_WIDTH)], 5'd0};
+                    end
+          3'b110 :  begin
+                      adc_data_shift[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] <= {adc_data[((1*IQ_DATA_WIDTH)-7) : (0*IQ_DATA_WIDTH)], 6'd0};
+                      adc_data_shift[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] <= {adc_data[((2*IQ_DATA_WIDTH)-7) : (1*IQ_DATA_WIDTH)], 6'd0};
+                      adc_data_shift[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] <= {adc_data[((3*IQ_DATA_WIDTH)-7) : (2*IQ_DATA_WIDTH)], 6'd0};
+                      adc_data_shift[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] <= {adc_data[((4*IQ_DATA_WIDTH)-7) : (3*IQ_DATA_WIDTH)], 6'd0};
+                    end
+          default:  begin
+                      adc_data_shift[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {adc_data[((1*IQ_DATA_WIDTH)-5) : (0*IQ_DATA_WIDTH)], 4'd0};
+                      adc_data_shift[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {adc_data[((2*IQ_DATA_WIDTH)-5) : (1*IQ_DATA_WIDTH)], 4'd0};
+                      adc_data_shift[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {adc_data[((3*IQ_DATA_WIDTH)-5) : (2*IQ_DATA_WIDTH)], 4'd0};
+                      adc_data_shift[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {adc_data[((4*IQ_DATA_WIDTH)-5) : (3*IQ_DATA_WIDTH)], 4'd0};
+                    end
+        endcase
+      end
+    end
+  end
+
+  //for decimate
+  always @( posedge adc_clk )
+  begin
+    if ( adc_rst == 1 ) begin
+      adc_valid_count <= 0;
+    end else begin
+      if (adc_data_valid == 1)
+        adc_valid_count <= adc_valid_count + 1;
+    end
+  end
+
+  always @( posedge acc_clk )
+  begin
+    if ( acc_rstn == 0 ) begin
+      adc_data_shift_stage1 <= 0;
+      adc_data_shift_stage2 <= 0;
+      adc_valid_decimate_stage1 <= 0;
+      adc_valid_decimate_stage2 <= 0;
+      adc_valid_decimate_stage2_delay <= 0;
+    end else begin
+      adc_data_shift_stage1 <= adc_data_shift;
+      adc_data_shift_stage2 <= adc_data_shift_stage1;
+      adc_valid_decimate_stage1 <= adc_valid_decimate;
+      adc_valid_decimate_stage2 <= adc_valid_decimate_stage1;
+      adc_valid_decimate_stage2_delay <= adc_valid_decimate_stage2;
+    end
+  end
 
 // // ---------for debug purpose------------
 //     (* mark_debug = "true" *) reg adc_clk_in_bb_domain;
@@ -52,7 +142,7 @@
 //       end
 //       else begin
 //         adc_clk_in_bb_domain <= adc_clk;
-//         adc_valid_in_bb_domain <= adc_valid;
+//         adc_valid_in_bb_domain <= adc_data_valid;
 //         FULL_internal_in_bb_domain <= FULL_internal;
 //         adc_valid_decimate_reg <= adc_valid_decimate;
 //         valid_reg <= valid;
@@ -69,120 +159,4 @@
 //     end
 // // ------------end of debug----------
 
-    assign adc_valid_decimate = (adc_valid_count==1);
-
-   //  assign RST_internal = (!acc_rstn);
-    assign emptyn_to_bb = (!EMPTY_internal);
-
-    always @( bb_gain, data_to_acc_internal)
-    begin
-       case (bb_gain)
-          3'b011 : begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-4) : (0*IQ_DATA_WIDTH)], 3'd0};
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-4) : (1*IQ_DATA_WIDTH)], 3'd0};
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-4) : (2*IQ_DATA_WIDTH)], 3'd0};
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-4) : (3*IQ_DATA_WIDTH)], 3'd0};
-                   end
-          3'b100 : begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-5) : (0*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-5) : (1*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-5) : (2*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-5) : (3*IQ_DATA_WIDTH)], 4'd0};
-                   end
-          3'b101 : begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-6) : (0*IQ_DATA_WIDTH)], 5'd0};
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-6) : (1*IQ_DATA_WIDTH)], 5'd0};
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-6) : (2*IQ_DATA_WIDTH)], 5'd0};
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-6) : (3*IQ_DATA_WIDTH)], 5'd0};
-                   end
-          3'b110 : begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-7) : (0*IQ_DATA_WIDTH)], 6'd0};
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-7) : (1*IQ_DATA_WIDTH)], 6'd0};
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-7) : (2*IQ_DATA_WIDTH)], 6'd0};
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-7) : (3*IQ_DATA_WIDTH)], 6'd0};
-                   end
-          default: begin
-                        data_to_bb[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] = {data_to_acc_internal[((1*IQ_DATA_WIDTH)-5) : (0*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_bb[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] = {data_to_acc_internal[((2*IQ_DATA_WIDTH)-5) : (1*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_bb[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] = {data_to_acc_internal[((3*IQ_DATA_WIDTH)-5) : (2*IQ_DATA_WIDTH)], 4'd0};
-                        data_to_bb[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] = {data_to_acc_internal[((4*IQ_DATA_WIDTH)-5) : (3*IQ_DATA_WIDTH)], 4'd0};
-                   end
-       endcase
-    end
-
-    //decimate input by 2: 40Msps --> 20Msps
-    always @( posedge adc_clk )
-    begin
-      if ( adc_rst == 1 ) begin
-        adc_valid_count <= 0;
-        adc_data_delay    <= 0;
-      end
-      else begin
-        adc_data_delay <= adc_data;
-        if (adc_valid == 1)
-          adc_valid_count <= adc_valid_count + 1;
-      end
-    end
-
-    // fifo32_2clk_dep32 fifo32_2clk_dep32_i
-    //        (.DATAO(data_to_acc_internal),
-    //         .DI(adc_data_delay),
-    //         .EMPTY(EMPTY_internal),
-    //         .FULL(FULL_internal),
-    //         .RDCLK(acc_clk),
-    //         .RDEN(bb_ask_data),
-    //         .RD_DATA_COUNT(),
-    //         .RST(RST_internal),
-    //         .WRCLK(adc_clk),
-    //         .WREN(adc_valid_decimate),
-    //         .WR_DATA_COUNT());
-
-   xpm_fifo_async #(
-      .CDC_SYNC_STAGES(2),       // DECIMAL
-      .DOUT_RESET_VALUE("0"),    // String
-      .ECC_MODE("no_ecc"),       // String
-      .FIFO_MEMORY_TYPE("auto"), // String
-      .FIFO_READ_LATENCY(0),     // DECIMAL
-      .FIFO_WRITE_DEPTH(16),   // DECIMAL
-      .FULL_RESET_VALUE(0),      // DECIMAL
-      .PROG_EMPTY_THRESH(4),    // DECIMAL
-      .PROG_FULL_THRESH(12),     // DECIMAL
-      .RD_DATA_COUNT_WIDTH(4),   // DECIMAL
-      .READ_DATA_WIDTH(64),      // DECIMAL
-      .READ_MODE("fwft"),         // String
-      .RELATED_CLOCKS(0),        // DECIMAL
-      .USE_ADV_FEATURES("0404"), // String
-      .WAKEUP_TIME(0),           // DECIMAL
-      .WRITE_DATA_WIDTH(64),     // DECIMAL
-      .WR_DATA_COUNT_WIDTH(4)    // DECIMAL
-   )
-   xpm_fifo_async_adc_intf (
-      .almost_empty(),
-      .almost_full(),     // 1-bit output: Almost Full: When asserted, this signal indicates that
-      .data_valid(),       // 1-bit output: Read Data Valid: When asserted, this signal indicates
-      .dbiterr(),             // 1-bit output: Double Bit Error: Indicates that the ECC decoder detected
-      .dout(data_to_acc_internal),                   // READ_DATA_WIDTH-bit output: Read Data: The output data bus is driven
-      .empty(EMPTY_internal),                 // 1-bit output: Empty Flag: When asserted, this signal indicates that the
-      .full(FULL_internal),                   // 1-bit output: Full Flag: When asserted, this signal indicates that the
-      .overflow(),           // 1-bit output: Overflow: This signal indicates that a write request
-      .prog_empty(),       // 1-bit output: Programmable Empty: This signal is asserted when the
-      .prog_full(),         // 1-bit output: Programmable Full: This signal is asserted when the
-      .rd_data_count(), // RD_DATA_COUNT_WIDTH-bit output: Read Data Count: This bus indicates the
-      .rd_rst_busy(),     // 1-bit output: Read Reset Busy: Active-High indicator that the FIFO read
-      .sbiterr(),             // 1-bit output: Single Bit Error: Indicates that the ECC decoder detected
-      .underflow(),         // 1-bit output: Underflow: Indicates that the read request (rd_en) during
-      .wr_ack(),               // 1-bit output: Write Acknowledge: This signal indicates that a write
-      .wr_data_count(), // WR_DATA_COUNT_WIDTH-bit output: Write Data Count: This bus indicates
-      .wr_rst_busy(),     // 1-bit output: Write Reset Busy: Active-High indicator that the FIFO
-      .din(adc_data_delay),                     // WRITE_DATA_WIDTH-bit input: Write Data: The input data bus used when
-      .injectdbiterr(), // 1-bit input: Double Bit Error Injection: Injects a double bit error if
-      .injectsbiterr(), // 1-bit input: Single Bit Error Injection: Injects a single bit error if
-      .rd_clk(acc_clk),               // 1-bit input: Read clock: Used for read operation. rd_clk must be a free
-      .rd_en(bb_ask_data),                 // 1-bit input: Read Enable: If the FIFO is not empty, asserting this
-      .rst(adc_rst),                     // 1-bit input: Reset: Must be synchronous to wr_clk. The clock(s) can be
-      .sleep(),                 // 1-bit input: Dynamic power saving: If sleep is High, the memory/fifo
-      .wr_clk(adc_clk),               // 1-bit input: Write clock: Used for write operation. wr_clk must be a
-      .wr_en(adc_valid_decimate)                  // 1-bit input: Write Enable: If the FIFO is not full, asserting this
-   );
-
-	endmodule
+endmodule
