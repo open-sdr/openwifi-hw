@@ -171,7 +171,7 @@
     wire  m00_axis_tlast_inner;
     wire  m00_axis_tlast_auto_recover;
 
-    wire emptyn_to_bb;
+    wire data_to_bb_valid;
     wire [(ADC_PACK_DATA_WIDTH-1) : 0] ant_data_after_sel;
 
     wire [(IQ_DATA_WIDTH-1) : 0] rf_i0_to_acc;
@@ -262,7 +262,7 @@
     assign bw20_q0 = (slv_reg3[8]?iq0_from_tx_intf[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH]:ant_data_after_sel[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH]);
     assign bw20_i1 = (slv_reg3[8]?iq1_from_tx_intf[  (IQ_DATA_WIDTH-1) :             0]:ant_data_after_sel[(3*IQ_DATA_WIDTH-1) : (2*IQ_DATA_WIDTH)]);
     assign bw20_q1 = (slv_reg3[8]?iq1_from_tx_intf[(2*IQ_DATA_WIDTH-1) : IQ_DATA_WIDTH]:ant_data_after_sel[(4*IQ_DATA_WIDTH-1) : (3*IQ_DATA_WIDTH)]);
-    assign bw20_iq_valid = (slv_reg3[8]?iq_valid_from_tx_intf:emptyn_to_bb);
+    assign bw20_iq_valid = (slv_reg3[8]?iq_valid_from_tx_intf:data_to_bb_valid);
 
     assign slv_reg31[31] = 1'b0; // 0 to indicate this old rx_intf and openofdm_rx support a/g/n
     
@@ -305,36 +305,34 @@
 	);
 `endif
 
-    gpio_status_rf_to_bb # (
-        .GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH)        
-    ) gpio_status_rf_to_bb_i (
-        .rf_rst(adc_rst),
-        .rf_clk(adc_clk),
-        .gpio_status_rf(gpio_status_rf),
+  gpio_status_rf_to_bb # (
+    .GPIO_STATUS_WIDTH(GPIO_STATUS_WIDTH)        
+  ) gpio_status_rf_to_bb_i (
+    .rf_rst(adc_rst),
+    .rf_clk(adc_clk),
+    .gpio_status_rf(gpio_status_rf),
 
-        .bb_rstn(m00_axis_aresetn),
-        .bb_clk(m00_axis_aclk),
-        .bb_iq_valid(bw20_iq_valid),
-        .gpio_status_bb_raw(gpio_status_bb_raw),
-        .gpio_status_bb(gpio_status_bb)
-    );
+    .bb_rstn(m00_axis_aresetn),
+    .bb_clk(m00_axis_aclk),
+    .bb_iq_valid(bw20_iq_valid),
+    .gpio_status_bb_raw(gpio_status_bb_raw),
+    .gpio_status_bb(gpio_status_bb)
+  );
 
-    adc_intf # (
-        .IQ_DATA_WIDTH(IQ_DATA_WIDTH)        
-    ) adc_intf_i (
-        .adc_rst(adc_rst),
-        .adc_clk(adc_clk),
-        .adc_data(adc_data_internal),
-        //.adc_sync(adc_sync),
-        .adc_valid(adc_valid),
-        .acc_clk(m00_axis_aclk),
-        .acc_rstn(m00_axis_aresetn&(~slv_reg0[5])),
+  adc_intf # (
+    .IQ_DATA_WIDTH(IQ_DATA_WIDTH)        
+  ) adc_intf_i (
+    .adc_rst(adc_rst),
+    .adc_clk(adc_clk),
+    .adc_data(adc_data_internal),
+    .adc_data_valid(adc_valid),
+    .acc_clk(m00_axis_aclk),
+    .acc_rstn(m00_axis_aresetn&(~slv_reg0[5])),
 
-        .bb_gain(slv_reg11[2:0]), // number of bit shift to left
-        .data_to_bb(ant_data_after_sel),
-        .emptyn_to_bb(emptyn_to_bb),
-        .bb_ask_data(1'b1&(~slv_reg10[1]))
-    );
+    .bb_gain(slv_reg11[2:0]), // number of bit shift to left
+    .data_to_bb(ant_data_after_sel),
+    .data_to_bb_valid(data_to_bb_valid)
+  );
 
 // Instantiation of Axi Bus Interface S00_AXI
 	rx_intf_s_axi # ( 
