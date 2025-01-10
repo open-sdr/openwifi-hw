@@ -17,7 +17,7 @@ reg acc_rstn;
 
 wire [2:0] bb_gain;
 wire [(4*IQ_DATA_WIDTH-1) : 0] data_to_bb;
-wire emptyn_to_bb;
+wire data_to_bb_valid;
 
 initial begin
   // $dumpfile("adc_intf_tb.vcd");
@@ -60,15 +60,14 @@ adc_intf #(.IQ_DATA_WIDTH(IQ_DATA_WIDTH)) adc_intf_inst (
   .adc_rst(adc_rst),
   .adc_clk(adc_clk),
   .adc_data(adc_data),
-  .adc_valid(1),
+  .adc_data_valid(1),
 
   .acc_clk(acc_clk),
   .acc_rstn(acc_rstn),
 
   .bb_gain(bb_gain),
   .data_to_bb(data_to_bb),
-  .emptyn_to_bb(emptyn_to_bb),
-  .bb_ask_data(1)
+  .data_to_bb_valid(data_to_bb_valid)
 );
 
 endmodule
