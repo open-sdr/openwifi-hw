@@ -34,3 +34,8 @@ set_max_delay 10 -datapath_only -from [get_pins {i_system_wrapper/system_i/openw
 set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_ant_flag/syncstages_ff_reg[3][0]/C}]
 set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_simple_cdd_flag/syncstages_ff_reg[3][0]/C}]
 set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/tx_intf_0/inst/dac_intf_i/xpm_cdc_array_single_inst_read_bb_fifo/syncstages_ff_reg[3][0]/C}]
+
+# relax cross rf and bb domain control of adc_intf
+set_max_delay 10 -datapath_only -from [get_pins {i_system_wrapper/system_i/openwifi_ip/rx_intf_0/inst/adc_intf_i/adc_data_shift_reg[*]/C}] -to [get_pins {i_system_wrapper/system_i/openwifi_ip/rx_intf_0/inst/adc_intf_i/adc_data_shift_stage1_reg[*]/D}]
+set_max_delay 10 -datapath_only -from [get_pins i_system_wrapper/system_i/openwifi_ip/rx_intf_0/inst/adc_intf_i/adc_valid_count_reg_inv/C] -to [get_pins i_system_wrapper/system_i/openwifi_ip/rx_intf_0/inst/adc_intf_i/adc_valid_decimate_stage1_reg/D]
+set_false_path -through [get_pins {i_system_wrapper/system_i/openwifi_ip/rx_intf_0/inst/adc_intf_i/xpm_cdc_array_single_inst_ant_flag/syncstages_ff_reg[3][*]/C}]
