@@ -297,7 +297,7 @@
 
 	// assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{5'd0,rssi_half_db,8'd0,gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
   // assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{tx_rf_is_ongoing,tx_control_state,rssi_half_db,pkt_header_and_fcs_strobe,pkt_header_and_fcs_ok,FC_DI[7:2],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
-  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{demod_is_ongoing,tx_rf_is_ongoing,tx_bb_is_ongoing,phase_offset_taken[8:7],rssi_half_db,ch_idle_final,phase_offset_taken[6:0],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{demod_is_ongoing,tx_rf_is_ongoing,fcs_ok,phase_offset_taken[8:7],rssi_half_db,ch_idle_final,phase_offset_taken[6:0],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
 
 	assign side_info_fifo_wr_en = (capture_src_flag==0?csi_valid:(last_ofdm_symbol_flag?1:equalizer_valid));
 	assign side_info_fifo_din   = (capture_src_flag==0?csi:(last_ofdm_symbol_flag?0:equalizer));
