@@ -41,6 +41,11 @@ Environment variable **BOARD_NAME** options:
   * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado.
   * Ubuntu 18/20/22 LTS release (We test in these OS. Other OS might also work.)
   * Install required packages, such as `sudo apt install libtinfo5`
+    For Ubuntu 24 LTS, the default libtinfo6 won't work. You need to install libtinfo5 manually.
+    ```
+    wget http://be.archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libtinfo5_6.1-1ubuntu1.18.04.1_amd64.deb
+    sudo dpkg -i ./libtinfo5_6.1-1ubuntu1.18.04.1_amd64.deb
+    ```
 
 * Prepare Analgo Devices HDL library (only run once):
 ```
