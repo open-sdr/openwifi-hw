@@ -365,6 +365,8 @@
 		.iq_trigger_select(slv_reg8[4:0]),
 		.iq_trigger_free_run_flag(slv_reg5[0]),
 		.iq_source_select(slv_reg5[2:1]),
+		.disable_tx_pkt_need_ack_check(slv_reg4[4]),//for iq capture condition. reuse reg 4 for num_eq in CSI capture
+		.PPDU_FORMAT_target(slv_reg4[2:0]),//for iq capture condition (reserved for ax). reuse reg 4 for num_eq in CSI capture
 		.rssi_or_iq_th(slv_reg9[(IQ_DATA_WIDTH-1):0]),
 		.gain_th(slv_reg10[(GPIO_STATUS_WIDTH-2):0]),
 		.pre_trigger_len(slv_reg11[(MAX_BIT_NUM_DMA_SYMBOL-1):0]),

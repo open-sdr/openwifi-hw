@@ -93,6 +93,8 @@
 		`DEBUG_PREFIX input wire [4:0] iq_trigger_select,
 		input wire iq_trigger_free_run_flag,
 		`DEBUG_PREFIX input wire [1:0] iq_source_select,
+		input wire disable_tx_pkt_need_ack_check,
+		input wire [2:0] PPDU_FORMAT_target,
 		input wire [(IQ_DATA_WIDTH-1):0] rssi_or_iq_th,
 		input wire [(GPIO_STATUS_WIDTH-2):0] gain_th,
 		`DEBUG_PREFIX input wire [MAX_BIT_NUM_DMA_SYMBOL-1 : 0] pre_trigger_len,
@@ -594,16 +596,16 @@
 					5'd19: begin  iq_trigger <= tx_bb_is_ongoing_negedge;  end
 					5'd20: begin  iq_trigger <= tx_rf_is_ongoing_posedge;  end
 					5'd21: begin  iq_trigger <= tx_rf_is_ongoing_negedge;  end
-					5'd22: begin  iq_trigger <= (phy_tx_started&tx_pkt_need_ack);  end
-					5'd23: begin  iq_trigger <= (phy_tx_done&tx_pkt_need_ack);  end
+					5'd22: begin  iq_trigger <= (phy_tx_started&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check));  end
+					5'd23: begin  iq_trigger <= (phy_tx_done&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check));  end
 					5'd24: begin  iq_trigger <= (tx_control_state_hit&&phy_type_hit);  end
 					5'd25: begin  iq_trigger <= ( (addr2_valid == 1 && addr2_valid_reg==0) && (match_cfg[2]==0 || {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]} == addr2_target) && (match_cfg[1]==0 || {addr1[23:16],addr1[31:24],addr1[39:32],addr1[47:40]} == addr1_target) );  end
-					5'd26: begin  iq_trigger <= (tx_rf_is_ongoing_posedge&tx_pkt_need_ack);  end
-					5'd27: begin  iq_trigger <= (tx_rf_is_ongoing_negedge&tx_pkt_need_ack);  end
+					5'd26: begin  iq_trigger <= (tx_rf_is_ongoing_posedge&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check));  end
+					5'd27: begin  iq_trigger <= (tx_rf_is_ongoing_negedge&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check));  end
 					5'd28: begin  iq_trigger <= (tx_bb_is_ongoing_reg&(iq1_i_abs>rssi_or_iq_th)); end
 					5'd29: begin  iq_trigger <= (tx_rf_is_ongoing_reg&(iq1_i_abs>rssi_or_iq_th)); end
 					5'd30: begin  iq_trigger <= (phy_tx_start&(iq1_i_abs>rssi_or_iq_th)); end
-					5'd31: begin  iq_trigger <= (phy_tx_start&tx_pkt_need_ack&(iq1_i_abs>rssi_or_iq_th)); end
+					5'd31: begin  iq_trigger <= (phy_tx_start&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check)&(iq1_i_abs>rssi_or_iq_th)); end
 					default: begin  iq_trigger <=  fcs_in_strobe; end
 				endcase
 
