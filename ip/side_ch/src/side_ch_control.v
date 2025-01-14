@@ -297,7 +297,7 @@
 
 	// assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{5'd0,rssi_half_db,8'd0,gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
   // assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{tx_rf_is_ongoing,tx_control_state,rssi_half_db,pkt_header_and_fcs_strobe,pkt_header_and_fcs_ok,FC_DI[7:2],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
-  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{demod_is_ongoing,tx_rf_is_ongoing,fcs_ok,phase_offset_taken[8:7],rssi_half_db,ch_idle_final,phase_offset_taken[6:0],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{demod_is_ongoing,tx_rf_is_ongoing,pkt_header_and_fcs_ok,phase_offset_taken[8:7],rssi_half_db,ch_idle_final,phase_offset_taken[6:0],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
 
 	assign side_info_fifo_wr_en = (capture_src_flag==0?csi_valid:(last_ofdm_symbol_flag?1:equalizer_valid));
 	assign side_info_fifo_din   = (capture_src_flag==0?csi:(last_ofdm_symbol_flag?0:equalizer));
@@ -544,9 +544,9 @@
         pkt_header_and_fcs_strobe <= 0;
       end
 
-      if (pkt_header_valid_strobe && pkt_header_valid==1) begin //raise it up when pkt header is OK
+      if (fcs_in_strobe && fcs_ok==1) begin //raise it up when fcs is OK
         pkt_header_and_fcs_ok <= 1;
-      end else if ((fcs_in_strobe && fcs_ok==1) || long_preamble_detected) begin //pull it down when fcs is OK
+      end else if (long_preamble_detected) begin //pull it down when decoding start
         pkt_header_and_fcs_ok <= 0;
       end
 
