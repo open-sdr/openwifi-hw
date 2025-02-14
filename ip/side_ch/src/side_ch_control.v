@@ -84,6 +84,8 @@
 		`DEBUG_PREFIX input wire phy_tx_done,
 		input wire tx_bb_is_ongoing,
 		input wire tx_rf_is_ongoing,
+    input wire tx_pkt_iq_to_dac_ongoing,
+    input wire retrans_in_progress,
 
 		// from arm
 	 	input wire slv_reg_wren_signal, // to capture m axis num dma symbol write, so that auto trigger start
@@ -275,7 +277,7 @@
 	reg tx_rf_is_ongoing_posedge;
 	reg tx_rf_is_ongoing_negedge;
 
-	reg  [(2*IQ_DATA_WIDTH-1):0] tx_intf_iq0_reg;
+  reg tx_pkt_iq_to_dac_ongoing_reg;
 	wire tx_intf_iq0_non_zero;
 
 	reg [63:0] subcarrier_mask;
@@ -318,7 +320,7 @@
   assign tx_control_state_hit = (tx_control_state != tx_control_state_delay1 && tx_control_state == tx_control_state_target);
   assign phy_type_hit = (phy_type_lock == phy_type_target);
 
-	assign tx_intf_iq0_non_zero = (tx_intf_iq0 != 0 && tx_intf_iq0_reg == 0);
+	assign tx_intf_iq0_non_zero = (tx_pkt_iq_to_dac_ongoing != 0 && tx_pkt_iq_to_dac_ongoing_reg == 0);
 
 	always @( ht_flag, rate_mcs )
 	begin
@@ -525,7 +527,7 @@
 			tx_rf_is_ongoing_posedge <= 0;
 			tx_rf_is_ongoing_negedge <= 0;
 			
-			tx_intf_iq0_reg <= tx_intf_iq0;
+			tx_pkt_iq_to_dac_ongoing_reg <= tx_pkt_iq_to_dac_ongoing;
 
 			iq_trigger <= 0;
 
@@ -535,7 +537,7 @@
 			iq_state <= IQ_WAIT_FOR_CONDITION;
 		end else begin
       tx_control_state_delay1 <= tx_control_state;
-			tx_intf_iq0_reg <= tx_intf_iq0;
+			tx_pkt_iq_to_dac_ongoing_reg <= tx_pkt_iq_to_dac_ongoing;
       demod_is_ongoing_reg_for_iq_capture <= demod_is_ongoing;
 
       phy_type_lock <= (fcs_in_strobe?phy_type:phy_type_lock);//lock the value to be part of condition together with tx_control_state
@@ -577,7 +579,7 @@
 					5'd0:  begin  iq_trigger <= (fcs_in_strobe|iq_trigger_free_run_flag);  end
 					5'd1:  begin  iq_trigger <= (fcs_in_strobe&&(fcs_ok==1));  end
 					5'd2:  begin  iq_trigger <= (fcs_in_strobe&&(fcs_ok==0));  end
-					5'd3:  begin  iq_trigger <=  tx_intf_iq0_non_zero;  end
+					5'd3:  begin  iq_trigger <= (tx_intf_iq0_non_zero&&(retrans_in_progress==0));  end
 					5'd4:  begin  iq_trigger <= (pkt_header_valid_strobe&&(pkt_header_valid==1));  end
 					5'd5:  begin  iq_trigger <= (pkt_header_valid_strobe&&(pkt_header_valid==0));  end
 					5'd6:  begin  iq_trigger <= (pkt_header_valid_strobe&& ht_flag);  end
@@ -599,7 +601,7 @@
 					5'd22: begin  iq_trigger <= (phy_tx_started&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check));  end
 					5'd23: begin  iq_trigger <= (phy_tx_done&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check));  end
 					5'd24: begin  iq_trigger <= (tx_control_state_hit&&phy_type_hit);  end
-					5'd25: begin  iq_trigger <= ( (addr2_valid == 1 && addr2_valid_reg==0) && (match_cfg[2]==0 || {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]} == addr2_target) && (match_cfg[1]==0 || {addr1[23:16],addr1[31:24],addr1[39:32],addr1[47:40]} == addr1_target) );  end
+					5'd25: begin  iq_trigger <= ( (addr2_valid == 1 && addr2_valid_reg==0) && (match_cfg[0]==0 || phy_type == phy_type_target) && (match_cfg[2]==0 || {addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]} == addr2_target) && (match_cfg[1]==0 || {addr1[23:16],addr1[31:24],addr1[39:32],addr1[47:40]} == addr1_target) );  end
 					5'd26: begin  iq_trigger <= (tx_rf_is_ongoing_posedge&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check));  end
 					5'd27: begin  iq_trigger <= (tx_rf_is_ongoing_negedge&(tx_pkt_need_ack|disable_tx_pkt_need_ack_check));  end
 					5'd28: begin  iq_trigger <= (tx_bb_is_ongoing_reg&(iq1_i_abs>rssi_or_iq_th)); end
@@ -700,179 +702,179 @@
 		.wr_en(side_info_fifo_wr_en&(iq_capture==0))
 	);
 
-	// state machine to put captured side info to the fifo of m_axis
-    always @(posedge clk) begin
-		if (!rstn) begin
-			tsf_val_lock_by_sig <= 0;
-			demod_is_ongoing_reg <= 0;
-		 	FC_DI_valid_reg <= 0;
-			addr1_valid_reg <= 0;
-			addr2_valid_reg <= 0;
+	// state machine to put captured side info (CSI) to the fifo of m_axis
+  always @(posedge clk) begin
+  if (!rstn) begin
+    tsf_val_lock_by_sig <= 0;
+    demod_is_ongoing_reg <= 0;
+    FC_DI_valid_reg <= 0;
+    addr1_valid_reg <= 0;
+    addr2_valid_reg <= 0;
 
-			ht_flag_capture <= 0;
-			side_info_count <= 0;
-			num_eq_count <= 0;
+    ht_flag_capture <= 0;
+    side_info_count <= 0;
+    num_eq_count <= 0;
 
-			side_info_fifo_rd_en <= 0;
-			side_info_csi <= 0;
-			side_info_csi_valid <= 0;
-			subcarrier_mask <= HT_SUBCARRIER_MASK; // for pilot no matter it is HT or non HT there are 64 in the fifo
-			side_ch_state <= WAIT_FOR_CONDITION;
-			side_ch_state_old <= WAIT_FOR_CONDITION;
-		end else begin
-			if (iq_capture==0) begin
-				if (pkt_header_valid_strobe)
-					tsf_val_lock_by_sig<=tsf_runtime_val;
+    side_info_fifo_rd_en <= 0;
+    side_info_csi <= 0;
+    side_info_csi_valid <= 0;
+    subcarrier_mask <= HT_SUBCARRIER_MASK; // for pilot no matter it is HT or non HT there are 64 in the fifo
+    side_ch_state <= WAIT_FOR_CONDITION;
+    side_ch_state_old <= WAIT_FOR_CONDITION;
+  end else begin
+    if (iq_capture==0) begin
+      if (pkt_header_valid_strobe)
+        tsf_val_lock_by_sig<=tsf_runtime_val;
 
-				demod_is_ongoing_reg <= demod_is_ongoing;
-				FC_DI_valid_reg <= FC_DI_valid;
-				addr1_valid_reg <= addr1_valid;
-				addr2_valid_reg <= addr2_valid;
+      demod_is_ongoing_reg <= demod_is_ongoing;
+      FC_DI_valid_reg <= FC_DI_valid;
+      addr1_valid_reg <= addr1_valid;
+      addr2_valid_reg <= addr2_valid;
 
-				side_ch_state_old <= side_ch_state;
-				case (side_ch_state)
-					WAIT_FOR_CONDITION: begin
-						subcarrier_mask <= HT_SUBCARRIER_MASK;
-						ht_flag_capture <= 0;
-						side_info_count <= 0;
-						num_eq_count <= 0;
+      side_ch_state_old <= side_ch_state;
+      case (side_ch_state)
+        WAIT_FOR_CONDITION: begin
+          subcarrier_mask <= HT_SUBCARRIER_MASK;
+          ht_flag_capture <= 0;
+          side_info_count <= 0;
+          num_eq_count <= 0;
 
-						side_info_fifo_rd_en <= 0;
-						side_info_csi <= 0;
-						side_info_csi_valid <= 0;
-						if ( (FC_DI_valid == 1 && FC_DI_valid_reg==0) && (FC_DI[15 : 0] == FC_target || match_cfg[0]==0) ) begin
-							if (pkt_len >= 14) begin
-								ht_flag_capture <= ht_flag;
-								side_ch_state <= WAIT_FOR_CONDITION1;
-							end
-						end
-					end
+          side_info_fifo_rd_en <= 0;
+          side_info_csi <= 0;
+          side_info_csi_valid <= 0;
+          if ( (FC_DI_valid == 1 && FC_DI_valid_reg==0) && (FC_DI[15 : 0] == FC_target || match_cfg[0]==0) ) begin
+            if (pkt_len >= 14) begin
+              ht_flag_capture <= ht_flag;
+              side_ch_state <= WAIT_FOR_CONDITION1;
+            end
+          end
+        end
 
-					WAIT_FOR_CONDITION1: begin
-						if ( (addr1_valid == 1 && addr1_valid_reg==0) && ({addr1[23:16],addr1[31:24],addr1[39:32],addr1[47:40]} == addr1_target || match_cfg[1]==0) ) begin
-							if (pkt_len >= 20) begin
-								side_ch_state <= WAIT_FOR_CONDITION2;
-							end else begin
-								side_ch_state <= WAIT_FOR_CAPTURE_DONE;
-							end
-						end
-					end
+        WAIT_FOR_CONDITION1: begin
+          if ( (addr1_valid == 1 && addr1_valid_reg==0) && ({addr1[23:16],addr1[31:24],addr1[39:32],addr1[47:40]} == addr1_target || match_cfg[1]==0) ) begin
+            if (pkt_len >= 20) begin
+              side_ch_state <= WAIT_FOR_CONDITION2;
+            end else begin
+              side_ch_state <= WAIT_FOR_CAPTURE_DONE;
+            end
+          end
+        end
 
-					WAIT_FOR_CONDITION2: begin
-						if ( (addr2_valid == 1 && addr2_valid_reg==0) && ({addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]} == addr2_target || match_cfg[2]==0) ) begin
-							side_ch_state <= WAIT_FOR_CAPTURE_DONE;
-						end
-					end
+        WAIT_FOR_CONDITION2: begin
+          if ( (addr2_valid == 1 && addr2_valid_reg==0) && ({addr2[23:16],addr2[31:24],addr2[39:32],addr2[47:40]} == addr2_target || match_cfg[2]==0) ) begin
+            side_ch_state <= WAIT_FOR_CAPTURE_DONE;
+          end
+        end
 
-					WAIT_FOR_CAPTURE_DONE: begin
-						side_ch_state <= (last_ofdm_symbol_flag?PREPARE_TO_M_AXIS:side_ch_state);
-					end
+        WAIT_FOR_CAPTURE_DONE: begin
+          side_ch_state <= (last_ofdm_symbol_flag?PREPARE_TO_M_AXIS:side_ch_state);
+        end
 
-					PREPARE_TO_M_AXIS: begin
-						side_ch_state <= ((MAX_NUM_DMA_SYMBOL_UDP-m_axis_data_count)>=num_dma_symbol_per_trans?HEADER_TO_M_AXIS:WAIT_FOR_CONDITION);
-					end
+        PREPARE_TO_M_AXIS: begin
+          side_ch_state <= ((MAX_NUM_DMA_SYMBOL_UDP-m_axis_data_count)>=num_dma_symbol_per_trans?HEADER_TO_M_AXIS:WAIT_FOR_CONDITION);
+        end
 
-					HEADER_TO_M_AXIS: begin
-						side_info_csi <= tsf_val_lock_by_sig;
-						side_info_csi_valid <= 1;
+        HEADER_TO_M_AXIS: begin
+          side_info_csi <= tsf_val_lock_by_sig;
+          side_info_csi_valid <= 1;
 
-						side_ch_state <= HEADER1_TO_M_AXIS;
-					end
+          side_ch_state <= HEADER1_TO_M_AXIS;
+        end
 
-					HEADER1_TO_M_AXIS: begin
-						side_info_csi <= phase_offset_taken;
+        HEADER1_TO_M_AXIS: begin
+          side_info_csi <= phase_offset_taken;
 
-						side_info_fifo_rd_en <= 1;
-						side_ch_state <= CSI_INFO_TO_M_AXIS;
-					end
+          side_info_fifo_rd_en <= 1;
+          side_ch_state <= CSI_INFO_TO_M_AXIS;
+        end
 
-					CSI_INFO_TO_M_AXIS: begin //transfer CSI to fifo of m_axis
-						side_info_count <= (side_info_count==64?0:(side_info_count + 1));
-						side_info_csi <= {32'd0, side_info_fifo_dout};
+        CSI_INFO_TO_M_AXIS: begin //transfer CSI to fifo of m_axis
+          side_info_count <= (side_info_count==64?0:(side_info_count + 1));
+          side_info_csi <= {32'd0, side_info_fifo_dout};
 
-						subcarrier_mask <= {subcarrier_mask[0], subcarrier_mask[63:1]};
-						if (subcarrier_mask[0])
-							side_info_csi_valid <= 1;
-						else
-							side_info_csi_valid <= 0;
+          subcarrier_mask <= {subcarrier_mask[0], subcarrier_mask[63:1]};
+          if (subcarrier_mask[0])
+            side_info_csi_valid <= 1;
+          else
+            side_info_csi_valid <= 0;
 
-						side_ch_state <= (side_info_count==64?(num_eq==0?WAIT_FOR_CONDITION:EQ_INFO_TO_M_AXIS):side_ch_state);
-						side_info_fifo_rd_en <= (side_info_count==63?0:1);
-					end
+          side_ch_state <= (side_info_count==64?(num_eq==0?WAIT_FOR_CONDITION:EQ_INFO_TO_M_AXIS):side_ch_state);
+          side_info_fifo_rd_en <= (side_info_count==63?0:1);
+        end
 
-					EQ_INFO_TO_M_AXIS: begin //transfer equalizer result to fifo of m_axis
-						side_info_csi_valid <= 1;
+        EQ_INFO_TO_M_AXIS: begin //transfer equalizer result to fifo of m_axis
+          side_info_csi_valid <= 1;
 
-						side_info_count <= (side_info_count==(EQUALIZER_LEN-1)?0:(side_info_count + 1));
-						num_eq_count <= (side_info_count==(EQUALIZER_LEN-1)?(num_eq_count + 1):num_eq_count);
+          side_info_count <= (side_info_count==(EQUALIZER_LEN-1)?0:(side_info_count + 1));
+          num_eq_count <= (side_info_count==(EQUALIZER_LEN-1)?(num_eq_count + 1):num_eq_count);
 
-						if (ht_flag_capture==0) begin
-							if (side_info_count>=47 && side_info_count<51) begin
-								side_info_fifo_rd_en <= 0;
-							end else begin
-								side_info_fifo_rd_en <= 1;
-							end
-							if (side_info_count>47 && side_info_count<=51) begin
-								side_info_csi <= {32'd0, 16'd32767, 16'd32767};
-							end else begin
-								side_info_csi <= {32'd0, side_info_fifo_dout};
-							end
-						end else begin
-							side_info_csi <= {32'd0, side_info_fifo_dout};
-							side_info_fifo_rd_en <= 1;
-						end
+          if (ht_flag_capture==0) begin
+            if (side_info_count>=47 && side_info_count<51) begin
+              side_info_fifo_rd_en <= 0;
+            end else begin
+              side_info_fifo_rd_en <= 1;
+            end
+            if (side_info_count>47 && side_info_count<=51) begin
+              side_info_csi <= {32'd0, 16'd32767, 16'd32767};
+            end else begin
+              side_info_csi <= {32'd0, side_info_fifo_dout};
+            end
+          end else begin
+            side_info_csi <= {32'd0, side_info_fifo_dout};
+            side_info_fifo_rd_en <= 1;
+          end
 
-						side_ch_state <= ((num_eq_count==(num_eq-1) && side_info_count==(EQUALIZER_LEN-1))?WAIT_FOR_CONDITION:side_ch_state);
-					end
-				endcase
-			end
-		end
+          side_ch_state <= ((num_eq_count==(num_eq-1) && side_info_count==(EQUALIZER_LEN-1))?WAIT_FOR_CONDITION:side_ch_state);
+        end
+      endcase
     end
+  end
+  end
 
-	// for m_axis_start_auto_trigger. used by both csi and iq
-    always @(posedge clk) begin
-		if (!rstn) begin
-			num_dma_symbol_reg_wr_is_onging_reg <= 0;
-			num_dma_symbol_reg_wr_is_onging_reg1 <= 0;
-		end else begin
-			num_dma_symbol_reg_wr_is_onging_reg <= num_dma_symbol_reg_wr_is_onging;
-			num_dma_symbol_reg_wr_is_onging_reg1 <= num_dma_symbol_reg_wr_is_onging_reg;
-		end
-    end
+// for m_axis_start_auto_trigger. used by both csi and iq
+  always @(posedge clk) begin
+  if (!rstn) begin
+    num_dma_symbol_reg_wr_is_onging_reg <= 0;
+    num_dma_symbol_reg_wr_is_onging_reg1 <= 0;
+  end else begin
+    num_dma_symbol_reg_wr_is_onging_reg <= num_dma_symbol_reg_wr_is_onging;
+    num_dma_symbol_reg_wr_is_onging_reg1 <= num_dma_symbol_reg_wr_is_onging_reg;
+  end
+  end
 
-	// select data source and mode to m_axis
-    always @( m_axis_start_mode,m_axis_start_ext_trigger,S_AXIS_TLAST,emptyn_to_pl,data_to_pl,side_info,side_info_valid,m_axis_start_auto_trigger)//,data_transfer_control)
-    begin
-       case (m_axis_start_mode)
-          2'b00 : begin // loop back from s_axis
-                    m_axis_start_1trans_reg = S_AXIS_TLAST;
-                    data_to_ps_reg = data_to_pl;
-                    data_to_ps_valid_reg = emptyn_to_pl;
-                    pl_ask_data_reg = 1;
-                  end
-          2'b01 : begin
-                    m_axis_start_1trans_reg = m_axis_start_auto_trigger;
-                    data_to_ps_reg = side_info;
-                    data_to_ps_valid_reg = side_info_valid;
-                    pl_ask_data_reg = 0;
-                  end
-          2'b10 : begin
-                    m_axis_start_1trans_reg = m_axis_start_ext_trigger;
-                    data_to_ps_reg = side_info;
-                    data_to_ps_valid_reg = side_info_valid;
-                    pl_ask_data_reg = 0;
-                  end
-          2'b11 : begin
-                    // m_axis_start_1trans_reg = m_axis_start_ext_trigger;
-                    // data_to_ps_reg = data_to_pl;
-                    // data_to_ps_valid_reg = (pl_ask_data&emptyn_to_pl);
-                    // pl_ask_data_reg = data_transfer_control;
-                    m_axis_start_1trans_reg = 0;
-                    data_to_ps_reg = 0;
-                    data_to_ps_valid_reg = 0;
-                    pl_ask_data_reg = 0;
-                  end
-       endcase
-    end
+// select data source and mode to m_axis
+  always @( m_axis_start_mode,m_axis_start_ext_trigger,S_AXIS_TLAST,emptyn_to_pl,data_to_pl,side_info,side_info_valid,m_axis_start_auto_trigger)//,data_transfer_control)
+  begin
+      case (m_axis_start_mode)
+        2'b00 : begin // loop back from s_axis
+                  m_axis_start_1trans_reg = S_AXIS_TLAST;
+                  data_to_ps_reg = data_to_pl;
+                  data_to_ps_valid_reg = emptyn_to_pl;
+                  pl_ask_data_reg = 1;
+                end
+        2'b01 : begin
+                  m_axis_start_1trans_reg = m_axis_start_auto_trigger;
+                  data_to_ps_reg = side_info;
+                  data_to_ps_valid_reg = side_info_valid;
+                  pl_ask_data_reg = 0;
+                end
+        2'b10 : begin
+                  m_axis_start_1trans_reg = m_axis_start_ext_trigger;
+                  data_to_ps_reg = side_info;
+                  data_to_ps_valid_reg = side_info_valid;
+                  pl_ask_data_reg = 0;
+                end
+        2'b11 : begin
+                  // m_axis_start_1trans_reg = m_axis_start_ext_trigger;
+                  // data_to_ps_reg = data_to_pl;
+                  // data_to_ps_valid_reg = (pl_ask_data&emptyn_to_pl);
+                  // pl_ask_data_reg = data_transfer_control;
+                  m_axis_start_1trans_reg = 0;
+                  data_to_ps_reg = 0;
+                  data_to_ps_valid_reg = 0;
+                  pl_ask_data_reg = 0;
+                end
+      endcase
+  end
 
 	endmodule
