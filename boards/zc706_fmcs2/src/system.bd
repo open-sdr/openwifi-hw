@@ -3617,6 +3617,12 @@
               "tx_itrpt"
             ]
           },
+          "tx_intf_0_tx_pkt_iq_to_dac_ongoing": {
+            "ports": [
+              "tx_intf_0/tx_pkt_iq_to_dac_ongoing",
+              "side_ch_0/tx_pkt_iq_to_dac_ongoing"
+            ]
+          },
           "tx_intf_0_tx_pkt_need_ack": {
             "ports": [
               "tx_intf_0/tx_pkt_need_ack",
@@ -3828,7 +3834,8 @@
           "xpu_0_retrans_in_progress": {
             "ports": [
               "xpu_0/retrans_in_progress",
-              "tx_intf_0/retrans_in_progress"
+              "tx_intf_0/retrans_in_progress",
+              "side_ch_0/retrans_in_progress"
             ]
           },
           "xpu_0_rssi_half_db": {
