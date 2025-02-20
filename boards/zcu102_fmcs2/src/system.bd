@@ -7,7 +7,8 @@
       "name": "system",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2021.1"
+      "tool_version": "2021.1",
+      "validated": "true"
     },
     "design_tree": {
       "sys_ps8": "",
@@ -99,7 +100,13 @@
       "spi0_csn": {
         "direction": "O",
         "left": "2",
-        "right": "0"
+        "right": "0",
+        "parameters": {
+          "PortWidth": {
+            "value": "3",
+            "value_src": "ip_prop"
+          }
+        }
       },
       "spi0_sclk": {
         "direction": "O"
@@ -113,7 +120,13 @@
       "spi1_csn": {
         "direction": "O",
         "left": "2",
-        "right": "0"
+        "right": "0",
+        "parameters": {
+          "PortWidth": {
+            "value": "3",
+            "value_src": "ip_prop"
+          }
+        }
       },
       "spi1_sclk": {
         "direction": "O"
@@ -132,7 +145,13 @@
       "gpio_o": {
         "direction": "O",
         "left": "92",
-        "right": "0"
+        "right": "0",
+        "parameters": {
+          "PortWidth": {
+            "value": "93",
+            "value_src": "ip_prop"
+          }
+        }
       },
       "gpio_t": {
         "direction": "O",
@@ -5121,6 +5140,12 @@
               "led0"
             ]
           },
+          "tx_intf_0_tx_pkt_iq_to_dac_ongoing": {
+            "ports": [
+              "tx_intf_0/tx_pkt_iq_to_dac_ongoing",
+              "side_ch_0/tx_pkt_iq_to_dac_ongoing"
+            ]
+          },
           "tx_intf_0_tx_pkt_need_ack": {
             "ports": [
               "tx_intf_0/tx_pkt_need_ack",
@@ -5333,7 +5358,8 @@
           "xpu_0_retrans_in_progress": {
             "ports": [
               "xpu_0/retrans_in_progress",
-              "tx_intf_0/retrans_in_progress"
+              "tx_intf_0/retrans_in_progress",
+              "side_ch_0/retrans_in_progress"
             ]
           },
           "xpu_0_rssi_half_db": {
