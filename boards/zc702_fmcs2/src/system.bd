@@ -66,7 +66,9 @@
         "sys_rstgen1": "",
         "xlconcat_0": "",
         "xlslice_0": "",
-        "xlslice_1": ""
+        "xlslice_1": "",
+        "xlconstant_0": "",
+        "xlslice_2": ""
       },
       "GND_1": "",
       "axi_cpu_interconnect": {
@@ -2877,6 +2879,37 @@
                 "value": "16"
               }
             }
+          },
+          "xlconstant_0": {
+            "vlnv": "xilinx.com:ip:xlconstant:1.1",
+            "xci_name": "system_xlconstant_0_0",
+            "xci_path": "ip/system_xlconstant_0_0/system_xlconstant_0_0.xci",
+            "inst_hier_path": "openwifi_ip/xlconstant_0",
+            "parameters": {
+              "CONST_VAL": {
+                "value": "0"
+              }
+            }
+          },
+          "xlslice_2": {
+            "vlnv": "xilinx.com:ip:xlslice:1.0",
+            "xci_name": "system_xlslice_2_0",
+            "xci_path": "ip/system_xlslice_2_0/system_xlslice_2_0.xci",
+            "inst_hier_path": "openwifi_ip/xlslice_2",
+            "parameters": {
+              "DIN_FROM": {
+                "value": "7"
+              },
+              "DIN_TO": {
+                "value": "7"
+              },
+              "DIN_WIDTH": {
+                "value": "8"
+              },
+              "DOUT_WIDTH": {
+                "value": "1"
+              }
+            }
           }
         },
         "interface_nets": {
@@ -3220,7 +3253,8 @@
               "openofdm_rx_0/pkt_rate",
               "xpu_0/pkt_rate",
               "side_ch_0/pkt_rate",
-              "rx_intf_0/pkt_rate"
+              "rx_intf_0/pkt_rate",
+              "xlslice_2/Din"
             ]
           },
           "openofdm_rx_0_short_preamble_detected": {
@@ -3559,6 +3593,12 @@
               "tx_itrpt"
             ]
           },
+          "tx_intf_0_tx_pkt_iq_to_dac_ongoing": {
+            "ports": [
+              "tx_intf_0/tx_pkt_iq_to_dac_ongoing",
+              "side_ch_0/tx_pkt_iq_to_dac_ongoing"
+            ]
+          },
           "tx_intf_0_tx_pkt_need_ack": {
             "ports": [
               "tx_intf_0/tx_pkt_need_ack",
@@ -3590,6 +3630,12 @@
               "side_ch_0/openofdm_tx_iq0"
             ]
           },
+          "xlconstant_0_dout": {
+            "ports": [
+              "xlconstant_0/dout",
+              "openofdm_rx_0/trigger_mode_setting_en"
+            ]
+          },
           "xlslice_0_Dout": {
             "ports": [
               "xlslice_0/Dout",
@@ -3600,6 +3646,12 @@
             "ports": [
               "xlslice_1/Dout",
               "xpu_0/ddc_q"
+            ]
+          },
+          "xlslice_2_Dout": {
+            "ports": [
+              "xlslice_2/Dout",
+              "side_ch_0/phy_type"
             ]
           },
           "xpu_0_FC_DI": {
@@ -3688,10 +3740,17 @@
               "rx_intf_0/block_rx_dma_to_ps_valid"
             ]
           },
+          "xpu_0_ch_idle_final": {
+            "ports": [
+              "xpu_0/ch_idle_final",
+              "side_ch_0/ch_idle_final"
+            ]
+          },
           "xpu_0_channel": {
             "ports": [
               "xpu_0/channel",
-              "tx_intf_0/channel"
+              "tx_intf_0/channel",
+              "openofdm_rx_0/Fc_in_MHz"
             ]
           },
           "xpu_0_cw": {
@@ -3739,7 +3798,8 @@
           "xpu_0_retrans_in_progress": {
             "ports": [
               "xpu_0/retrans_in_progress",
-              "tx_intf_0/retrans_in_progress"
+              "tx_intf_0/retrans_in_progress",
+              "side_ch_0/retrans_in_progress"
             ]
           },
           "xpu_0_rssi_half_db": {
@@ -3811,6 +3871,12 @@
               "xpu_0/tx_bb_is_ongoing",
               "side_ch_0/tx_bb_is_ongoing",
               "tx_intf_0/tx_bb_is_ongoing"
+            ]
+          },
+          "xpu_0_tx_control_state": {
+            "ports": [
+              "xpu_0/tx_control_state",
+              "side_ch_0/tx_control_state"
             ]
           },
           "xpu_0_tx_control_state_idle": {
