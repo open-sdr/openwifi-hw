@@ -68,16 +68,16 @@ puts $BOARD_NAME
 # ------------end of get BOARD_NAME (for openofdm_rx) via the current dir-------
 
 # --------------------------------generate ip repo------------------------------
-set ultra_scale_flag 0
 set part_string xc7z020clg400-1
 set argc 4
 
 set ip_name openofdm_rx
+set ip_tcl_filename $ip_name\.tcl
 if {[file exists ./ip_config/$ip_name\_pre_def.v]==0} {file mkdir ip_config; exec echo "" > ./ip_config/$ip_name\_pre_def.v}
 exec rm -rf project_1
 set current_dir [pwd]
-set argv [list $ultra_scale_flag $current_dir/../../ip/$ip_name $current_dir/ip_repo/$ip_name $BOARD_NAME]
-source ../package_ip_openofdm_rx.tcl
+set argv [list $ip_tcl_filename $current_dir/../../ip/$ip_name $current_dir/ip_repo/$ip_name $BOARD_NAME]
+source ../package_ip_complex.tcl
 exec cat ./ip_config/$ip_name\_pre_def.v >> ./ip_repo/$ip_name/src/$ip_name\_pre_def.v
 exec rm -rf ./ip_repo/$ip_name/xgui
 
