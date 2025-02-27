@@ -56,6 +56,21 @@ module adc_intf #
     end else begin
       if (adc_valid_decimate) begin
         case (bb_gain_in_rf_domain)
+          3'b000 :  begin
+                      adc_data_shift <= adc_data;
+                    end
+          3'b001 :  begin
+                      adc_data_shift[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] <= {adc_data[((1*IQ_DATA_WIDTH)-2) : (0*IQ_DATA_WIDTH)], 1'd0};
+                      adc_data_shift[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] <= {adc_data[((2*IQ_DATA_WIDTH)-2) : (1*IQ_DATA_WIDTH)], 1'd0};
+                      adc_data_shift[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] <= {adc_data[((3*IQ_DATA_WIDTH)-2) : (2*IQ_DATA_WIDTH)], 1'd0};
+                      adc_data_shift[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] <= {adc_data[((4*IQ_DATA_WIDTH)-2) : (3*IQ_DATA_WIDTH)], 1'd0};
+                    end
+          3'b010 :  begin
+                      adc_data_shift[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] <= {adc_data[((1*IQ_DATA_WIDTH)-3) : (0*IQ_DATA_WIDTH)], 2'd0};
+                      adc_data_shift[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] <= {adc_data[((2*IQ_DATA_WIDTH)-3) : (1*IQ_DATA_WIDTH)], 2'd0};
+                      adc_data_shift[((3*IQ_DATA_WIDTH)-1) : (2*IQ_DATA_WIDTH)] <= {adc_data[((3*IQ_DATA_WIDTH)-3) : (2*IQ_DATA_WIDTH)], 2'd0};
+                      adc_data_shift[((4*IQ_DATA_WIDTH)-1) : (3*IQ_DATA_WIDTH)] <= {adc_data[((4*IQ_DATA_WIDTH)-3) : (3*IQ_DATA_WIDTH)], 2'd0};
+                    end
           3'b011 :  begin
                       adc_data_shift[((1*IQ_DATA_WIDTH)-1) : (0*IQ_DATA_WIDTH)] <= {adc_data[((1*IQ_DATA_WIDTH)-4) : (0*IQ_DATA_WIDTH)], 3'd0};
                       adc_data_shift[((2*IQ_DATA_WIDTH)-1) : (1*IQ_DATA_WIDTH)] <= {adc_data[((2*IQ_DATA_WIDTH)-4) : (1*IQ_DATA_WIDTH)], 3'd0};
