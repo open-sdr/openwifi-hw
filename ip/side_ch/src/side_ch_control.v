@@ -583,7 +583,7 @@
 					5'd0:  begin  iq_trigger <= (fcs_in_strobe|iq_trigger_free_run_flag);  end
 					5'd1:  begin  iq_trigger <= (fcs_in_strobe&&(fcs_ok==1));  end
 					5'd2:  begin  iq_trigger <= (fcs_in_strobe&&(fcs_ok==0));  end
-					5'd3:  begin  iq_trigger <= (tx_intf_iq0_non_zero&&(retrans_in_progress==0));  end
+					5'd3:  begin  iq_trigger <= (tx_intf_iq0_non_zero&&(retrans_in_progress==0)&&(tx_pkt_need_ack|(~disable_tx_pkt_need_ack_check)));  end
 					5'd4:  begin  iq_trigger <= (pkt_header_valid_strobe&&(pkt_header_valid==1));  end
 					5'd5:  begin  iq_trigger <= (pkt_header_valid_strobe&&(pkt_header_valid==0));  end
 					5'd6:  begin  iq_trigger <= (pkt_header_valid_strobe&& ht_flag);  end
