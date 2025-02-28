@@ -282,6 +282,8 @@
 
 	reg [63:0] subcarrier_mask;
 
+  wire [23:0] side_info_iq_24bit_tmp;
+
 	assign MAX_NUM_DMA_SYMBOL_UDP_debug = MAX_NUM_DMA_SYMBOL_UDP;
 	assign MAX_NUM_DMA_SYMBOL_debug = MAX_NUM_DMA_SYMBOL;
 
@@ -301,7 +303,9 @@
 
 	// assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{5'd0,rssi_half_db,8'd0,gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
   // assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{tx_rf_is_ongoing,tx_control_state,rssi_half_db,pkt_header_and_fcs_strobe,pkt_header_and_fcs_ok,FC_DI[7:2],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
-  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{demod_is_ongoing,tx_rf_is_ongoing,pkt_header_and_fcs_ok,phase_offset_taken[8:7],rssi_half_db,ch_idle_final,phase_offset_taken[6:0],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+  // assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{demod_is_ongoing,tx_rf_is_ongoing,pkt_header_and_fcs_ok,phase_offset_taken[8:7],rssi_half_db,ch_idle_final,phase_offset_taken[6:0],gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
+  assign side_info_iq_24bit_tmp = (iq_capture_cfg[1]==0?{demod_is_ongoing,tx_rf_is_ongoing,pkt_header_and_fcs_ok,phase_offset_taken[8:7],rssi_half_db,ch_idle_final,phase_offset_taken[6:0]}:{tx_rf_is_ongoing,tx_control_state,rssi_half_db,pkt_header_and_fcs_strobe,pkt_header_and_fcs_ok,FC_DI[7:2]});
+  assign side_info_iq_dpram_in = (iq_capture_cfg[0]==0?{side_info_iq_24bit_tmp,gpio_status,iq0_inner}:{iq1_inner,iq0_inner});
 
 	assign side_info_fifo_wr_en = (capture_src_flag==0?csi_valid:(last_ofdm_symbol_flag?1:equalizer_valid));
 	assign side_info_fifo_din   = (capture_src_flag==0?csi:(last_ofdm_symbol_flag?0:equalizer));
