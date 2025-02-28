@@ -37,7 +37,7 @@ close $fd
 # ---------end of generate fpga_scale.v--------------------
 
 # --------generate clock_speed.v for xpu/tx_intf/rx_intf---
-set NUM_CLK_PER_US 200
+set NUM_CLK_PER_US 100
 set  fd  [open  "./ip_repo/clock_speed.v"  w]
 puts $fd "`define NUM_CLK_PER_US $NUM_CLK_PER_US"
 if {$small_fpga == 1} {
