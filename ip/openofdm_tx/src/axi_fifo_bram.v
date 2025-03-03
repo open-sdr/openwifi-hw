@@ -55,6 +55,7 @@ module axi_fifo_bram
    dpram #(.DATA_WIDTH(WIDTH),.ADDRESS_WIDTH(SIZE))
    ram (
     .clock(clk),
+    .reset(reset),
     .enable_a(1),
 	  .write_enable(write),
 	  .write_address(wr_addr),

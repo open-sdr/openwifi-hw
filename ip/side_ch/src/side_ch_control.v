@@ -487,6 +487,7 @@
 	// dpram to buffer the iq, gpio_status, rssi_half_db before trigger
 	dpram  #(.DATA_WIDTH(C_S_AXIS_TDATA_WIDTH), .ADDRESS_WIDTH(bit_num)) iq_buf (
 		.clock(clk),
+    .reset(~rstn),
     .enable_a(iq_capture),
 		.write_enable(iq_strobe_inner),
 		.write_address(iq_waddr),
