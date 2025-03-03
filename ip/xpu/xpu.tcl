@@ -103,9 +103,16 @@ close $fd
 # ----end of generate openwifi_hw_git_rev.v---------------
 
 # ---------generate spi_command.v---------------------------
+# set grounded_rf_port 1 for port control, set 0 for lo control
+set grounded_rf_port 0
 set  fd  [open  "./src/spi_command.v"  w]
-puts $fd "`define SPI_HIGH 24'hC22001"
-puts $fd "`define SPI_LOW 24'hC02001"
+if {$grounded_rf_port == 1} {
+  puts $fd "`define SPI_HIGH 24'hC22001"
+  puts $fd "`define SPI_LOW 24'hC02001"
+} else {
+  puts $fd "`define SPI_HIGH 24'h088A01"
+  puts $fd "`define SPI_LOW 24'h008A01"
+}
 close $fd
 # ---------end of generate spi_command.v--------------------
 
