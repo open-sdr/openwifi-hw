@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Author: Xianjun jiao
-# SPDX-FileCopyrightText: 2022 UGent
+# SPDX-FileCopyrightText: 2025 UGent
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 print_usage () {
@@ -28,20 +28,20 @@ echo XILINX_DIR $XILINX_DIR
 echo TCL_FILENAME $TCL_FILENAME
 
 if [ -d "$XILINX_DIR/Vivado" ]; then
-    echo "\$XILINX_DIR is found!"
+    echo "$XILINX_DIR is found!"
 else
-    echo "\$XILINX_DIR is not correct. Please check!"
+    echo "$XILINX_DIR is not correct. Please check!"
     exit 1
 fi
 
 if [ -f "$TCL_FILENAME" ]; then
-    echo "\$TCL_FILENAME is found!"
+    echo "$TCL_FILENAME is found!"
 else
-    echo "\$TCL_FILENAME does NOT exist. Please check!"
+    echo "$TCL_FILENAME does NOT exist. Please check!"
     exit 1
 fi
 
-source $XILINX_DIR/Vivado/2021.1/settings64.sh
+source $XILINX_DIR/Vivado/2022.2/settings64.sh
 
 ARG1=""
 ARG2=""
