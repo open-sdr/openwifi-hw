@@ -70,6 +70,7 @@ module rx_intf #
   input  wire [15:0] byte_count,
   input  wire fcs_in_strobe,
   input  wire fcs_ok,
+  input wire signed [31:0] phase_offset_taken,
 
   // led
   output wire fcs_ok_led,
@@ -490,6 +491,7 @@ module rx_intf #
     .ht_sgi(ht_sgi),
     .ht_unsupport(ht_unsupport),
     .fcs_valid(fcs_valid),
+    .phase_offset_taken(phase_offset_taken),
     
     .rf_iq(rf_iq_loopback),
     .rf_iq_valid(sample_strobe),
