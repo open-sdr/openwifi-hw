@@ -4819,7 +4819,8 @@
           "openofdm_rx_0_phase_offset_taken": {
             "ports": [
               "openofdm_rx_0/phase_offset_taken",
-              "side_ch_0/phase_offset_taken"
+              "side_ch_0/phase_offset_taken",
+              "rx_intf_0/phase_offset_taken"
             ]
           },
           "openofdm_rx_0_phy_len_valid": {
