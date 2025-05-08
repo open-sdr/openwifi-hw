@@ -44,13 +44,13 @@ Environment variable **BOARD_NAME** options:
   * Ubuntu 18/20/22 LTS release (We test in these OS. Other OS might also work.)
   * Install required packages, such as `sudo apt install libtinfo5`
 
-* Prepare Analgo Devices HDL library (only run once):
+* Prepare Analog Devices HDL library (only run once):
 ```
 export XILINX_DIR=your_Xilinx_install_directory
 (Example: export XILINX_DIR=/opt/Xilinx. The Xilinx directory should include sth like: Downloads, SDK, Vivado, xic)
 ./prepare_adi_lib.sh $XILINX_DIR
 ```
-* Prepare Analgo Devices specific ip (only run once for each board you have):
+* Prepare Analog Devices specific ip (only run once for each board you have):
 ```
 export BOARD_NAME=your_board_name
 (Example: export BOARD_NAME=zc706_fmcs2)
