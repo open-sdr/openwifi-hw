@@ -33,7 +33,7 @@ if {$ARGUMENT2 eq ""} {
 source ../parse_board_name.tcl
 
 set MODULE_NAME SIDE_CH
-set  fd  [open  "./src/side_ch_pre_def.v"  w]
+set  fd  [open  "./src/side_ch_pre_def.v"  a]
 if {$ARGUMENT3 eq ""} {
   puts $fd " "
 } else {

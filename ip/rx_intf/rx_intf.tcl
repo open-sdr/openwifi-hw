@@ -48,7 +48,7 @@ if {$ARGUMENT2 eq ""} {
 source ../parse_board_name.tcl
 
 set MODULE_NAME RX_INTF
-set  fd  [open  "./src/rx_intf_pre_def.v"  w]
+set  fd  [open  "./src/rx_intf_pre_def.v"  a]
 if {$ARGUMENT3 eq ""} {
   puts $fd " "
 } else {
