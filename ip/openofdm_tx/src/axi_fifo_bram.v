@@ -52,20 +52,19 @@ module axi_fifo_bram
      else if(write)
        wr_addr <= wr_addr + 1;
 
-   ram_2port #(.DWIDTH(WIDTH),.AWIDTH(SIZE))
-     ram (.clka(clk),
-	  .ena(1'b1),
-	  .wea(write),
-	  .addra(wr_addr),
-	  .dia(i_tdata),
-	  .doa(),
+   dpram #(.DATA_WIDTH(WIDTH),.ADDRESS_WIDTH(SIZE))
+   ram (
+    .clock(clk),
+    .reset(reset),
+    .enable_a(1),
+	  .write_enable(write),
+	  .write_address(wr_addr),
+	  .write_data(i_tdata),
+    .read_data_a(),
 
-	  .clkb(clk),
-	  .enb((read_state==PRE_READ)|read_int),
-	  .web(1'b0),
-	  .addrb(rd_addr),
-	  .dib({WIDTH{1'b1}}),
-	  .dob(int_tdata));
+    .enable_b((read_state==PRE_READ)|read_int),
+	  .read_address(rd_addr),
+	  .read_data(int_tdata));
 
    always @(posedge clk)
      if(reset)

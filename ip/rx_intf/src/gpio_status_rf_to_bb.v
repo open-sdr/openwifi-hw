@@ -2,6 +2,14 @@
 
 `timescale 1 ns / 1 ps
 
+`include "rx_intf_pre_def.v"
+
+`ifdef RX_INTF_ENABLE_DBG
+`define DEBUG_PREFIX (*mark_debug="true",DONT_TOUCH="TRUE"*)
+`else
+`define DEBUG_PREFIX
+`endif
+
 	module gpio_status_rf_to_bb #
 	(
 		parameter integer GPIO_STATUS_WIDTH = 8
@@ -14,6 +22,7 @@
       input  wire bb_rstn,
       input  wire bb_clk,
       input  wire bb_iq_valid,
+      `DEBUG_PREFIX output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb_raw,
       output wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb
 	);
 // -----------for debug-----------------------------
@@ -24,7 +33,7 @@
    assign gpio_status_lock = gpio_status_rf[GPIO_STATUS_WIDTH-1];
 // ----------end of for debug-----------------------
    
-   wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_tmp;
+  //  wire [(GPIO_STATUS_WIDTH-1):0] gpio_status_bb_raw;
    wire [(GPIO_STATUS_WIDTH-1):0] agc_gain_mv_avg;
    wire [1:0] agc_lock_mv_avg;
 
@@ -54,7 +63,7 @@
       .almost_full(),     // 1-bit output: Almost Full: When asserted, this signal indicates that
       .data_valid(),       // 1-bit output: Read Data Valid: When asserted, this signal indicates
       .dbiterr(),             // 1-bit output: Double Bit Error: Indicates that the ECC decoder detected
-      .dout(gpio_status_tmp),                   // READ_DATA_WIDTH-bit output: Read Data: The output data bus is driven
+      .dout(gpio_status_bb_raw),                   // READ_DATA_WIDTH-bit output: Read Data: The output data bus is driven
       .empty(),                 // 1-bit output: Empty Flag: When asserted, this signal indicates that the
       .full(),                   // 1-bit output: Full Flag: When asserted, this signal indicates that the
       .overflow(),           // 1-bit output: Overflow: This signal indicates that a write request
@@ -82,8 +91,8 @@
       .clk(bb_clk),
       .rstn(bb_rstn),
 
-      .data_in0({1'b0, gpio_status_tmp[(GPIO_STATUS_WIDTH-2):0]}),
-      .data_in1({1'b0, ~gpio_status_tmp[GPIO_STATUS_WIDTH-1]}),
+      .data_in0({1'b0, gpio_status_bb_raw[(GPIO_STATUS_WIDTH-2):0]}),
+      .data_in1({1'b0, ~gpio_status_bb_raw[GPIO_STATUS_WIDTH-1]}),
       .data_in_valid(bb_iq_valid),
 
       .data_out0(agc_gain_mv_avg),
@@ -95,7 +104,7 @@
    //    .clk(bb_clk),
    //    .rstn(bb_rstn),
 
-   //    .data_in({1'b0, gpio_status_tmp[(GPIO_STATUS_WIDTH-2):0]}),
+   //    .data_in({1'b0, gpio_status_bb_raw[(GPIO_STATUS_WIDTH-2):0]}),
    //    .data_in_valid(bb_iq_valid),
    //    .data_out(agc_gain_mv_avg),
    //    .data_out_valid()
@@ -104,7 +113,7 @@
    //    .clk(bb_clk),
    //    .rstn(bb_rstn),
 
-   //    .data_in({1'b0, ~gpio_status_tmp[GPIO_STATUS_WIDTH-1]}),
+   //    .data_in({1'b0, ~gpio_status_bb_raw[GPIO_STATUS_WIDTH-1]}),
    //    .data_in_valid(bb_iq_valid),
    //    .data_out(agc_lock_mv_avg),
    //    .data_out_valid()

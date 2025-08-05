@@ -47,8 +47,8 @@
         input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG27,
         input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG28,
         input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG29,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG30,
-        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG31,*/
+        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG30,*/
+        input  wire [C_S_AXI_DATA_WIDTH-1:0] SLV_REG31,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -167,8 +167,8 @@
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg27;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg28;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg29;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg30;
-	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg31;*/
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg30;*/
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg31;
 	wire	 slv_reg_rden;
 	wire	 slv_reg_wren;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	 reg_data_out;
@@ -535,14 +535,14 @@
 	                // Respective byte enables are asserted as per write strobes 
 	                // Slave register 30
 	                //slv_reg30[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-	              end  
+	              end  */
 	          5'h1F:
 	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
 	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
 	                // Respective byte enables are asserted as per write strobes 
 	                // Slave register 31
 	                //slv_reg31[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-	              end  */
+	              end  
 	          default : begin
 	                      slv_reg0 <= slv_reg0;
 	                      slv_reg1 <= slv_reg1;
@@ -714,8 +714,8 @@
 	        5'h1B   : reg_data_out <= slv_reg27;
 	        5'h1C   : reg_data_out <= slv_reg28;
 	        5'h1D   : reg_data_out <= slv_reg29;
-	        5'h1E   : reg_data_out <= slv_reg30;
-	        5'h1F   : reg_data_out <= slv_reg31;*/
+	        5'h1E   : reg_data_out <= slv_reg30; */
+	        5'h1F   : reg_data_out <= slv_reg31;
 	        default : reg_data_out <= 0;
 	      endcase
 	end
@@ -739,11 +739,11 @@
 	    end
 	end    
 
-	// // Add user logic here
-    // always @( posedge S_AXI_ACLK )
-    // begin
-    //   if ( S_AXI_ARESETN == 1'b0 )
-    //     begin
+	// Add user logic here
+    always @( posedge S_AXI_ACLK )
+    begin
+      if ( S_AXI_ARESETN == 1'b0 )
+        begin
     //       slv_reg20 <= 32'h0;
     //       slv_reg21 <= 32'h0;
     //       slv_reg22 <= 32'h0;
@@ -755,10 +755,10 @@
     //       slv_reg28 <= 32'h0;
     //       slv_reg29 <= 32'h0;
     //       slv_reg30 <= 32'h0;
-    //       slv_reg31 <= 32'h0;
-    //     end 
-    //   else
-    //     begin
+          slv_reg31 <= 32'h0;
+        end 
+      else
+        begin
     //       slv_reg20 <= SLV_REG20;
     //       slv_reg21 <= SLV_REG21;
     //       slv_reg22 <= SLV_REG22;
@@ -770,9 +770,9 @@
     //       slv_reg28 <= SLV_REG28;
     //       slv_reg29 <= SLV_REG29;
     //       slv_reg30 <= SLV_REG30;
-    //       slv_reg31 <= SLV_REG31;
-    //     end 
-    // end       
+          slv_reg31 <= SLV_REG31;
+        end 
+    end       
     
 	// User logic ends
 

@@ -26,19 +26,31 @@ start_to_write=0
 mkdir -p ip_config
 rm -rf ip_config/*
 
+BOARD_NAME=${PWD##*/}
+echo $BOARD_NAME
+
+XILINX_ENV_FILE=$XILINX_DIR/Vitis/2022.2/settings64.sh
+echo "Expect env file $XILINX_ENV_FILE"
+
+if [ -f "$XILINX_ENV_FILE" ]; then
+    echo "$XILINX_ENV_FILE is found!"
+else
+    echo "$XILINX_ENV_FILE is not correct. Please check!"
+    exit 1
+fi
+
 IP_NAME_ALL="xpu tx_intf rx_intf openofdm_tx openofdm_rx side_ch"
 for IP_NAME in $IP_NAME_ALL
 do
     filename_to_write=ip_config/$IP_NAME"_pre_def.v"
     echo "//Naming pre_def.v differently for all IPs." > $filename_to_write
     echo "//Multiple pre_def.v with different content for different IP are not allowed in the final signle Vivado project!" >> $filename_to_write
+    echo "\`define $BOARD_NAME" >> $filename_to_write
 done
 
 MODULE_NAME=""
 for ARGUMENT in "$@"
 do
-    # echo "$ARGUMENT"
-    
     if [ "$ARGUMENT" = "xpu" ] || [ "$ARGUMENT" = "tx_intf" ] || [ "$ARGUMENT" = "rx_intf" ] || [ "$ARGUMENT" = "openofdm_tx" ] || [ "$ARGUMENT" = "openofdm_rx" ] || [ "$ARGUMENT" = "side_ch" ]; then
         start_to_write=1
     fi
@@ -60,8 +72,8 @@ do
     fi
 done
 
-source $XILINX_DIR/Vivado/2021.1/settings64.sh
+source $XILINX_ENV_FILE
 
 set -x
-vivado -source ./ip_repo_gen.tcl
+vivado -source ../ip_repo_gen.tcl
 set +x

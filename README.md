@@ -38,11 +38,16 @@ Environment variable **BOARD_NAME** options:
 ## Build FPGA
 
 * Pre-conditions: 
-  * Vivado 2021.1 with Vitis. You should have: your_Xilinx_install_directory/Vitis (NOT Vitis_HLS!)
-    * You can add Vitis by running "Xilinx Design Tools --> Add Design Tools for Devices 2021.1" from Xilinx program group/menu in your OS start menu, or Help menu of Vivado.
+  * Vivado 2022.2 with Vitis. You should have: your_Xilinx_install_directory/Vitis (NOT Vitis_HLS!)
+    * You can add Vitis by running "Xilinx Design Tools --> Add Design Tools for Devices 2022.2" from Xilinx program group/menu in your OS start menu, or Help menu of Vivado.
   * Install the evaluation license of [Xilinx Viterbi Decoder](https://www.xilinx.com/products/intellectual-property/viterbi_decoder.html) into Vivado.
   * Ubuntu 18/20/22 LTS release (We test in these OS. Other OS might also work.)
   * Install required packages, such as `sudo apt install libtinfo5`
+    * For Ubuntu 24 LTS, the default libtinfo6 won't work. You need to install libtinfo5 manually.
+      ```
+      wget http://be.archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libtinfo5_6.1-1ubuntu1.18.04.1_amd64.deb
+      sudo dpkg -i ./libtinfo5_6.1-1ubuntu1.18.04.1_amd64.deb
+      ```
 
 * Prepare Analgo Devices HDL library (only run once):
 ```
@@ -66,13 +71,16 @@ export BOARD_NAME=your_board_name
 cd openwifi-hw/boards/$BOARD_NAME/
 ../create_ip_repo.sh $XILINX_DIR
 ```
+When encountering an issue with Vitis HLS "ERROR: '2xxxxxxxxx' is an invalid argument. Please specify an integer value", apply the patch as described here: https://support.xilinx.com/s/article/76960.
+
 * In the Vivado
 ```
-source ./openwifi.tcl
+source ../openwifi.tcl
 Click "Generate Bitstream" in the Vivado GUI.
 (Will take a while)
 File --> Export --> Export Hardware --> Next --> Include bitstream --> Next --> Next --> Finish
 ```
+(This step is invoked automatically by previous create_ip_repo.sh)
 * In Linux, store the FPGA files to a specific directory:
 ```
 cd openwifi-hw/boards

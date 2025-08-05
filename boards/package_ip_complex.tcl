@@ -2,7 +2,7 @@
 # // SPDX-FileCopyrightText: 2022 UGent
 # // SPDX-License-Identifier: AGPL-3.0-or-later
 
-set ultra_scale_flag [lindex $argv 0]
+set ip_tcl_filename [lindex $argv 0]
 set src_dir [lindex $argv 1]
 set ip_dir [lindex $argv 2]
 set BOARD_NAME [lindex $argv 3]
@@ -15,7 +15,7 @@ cd $src_dir/
 
 set argc 1
 set argv [list $BOARD_NAME]
-source ./openofdm_rx.tcl
+source ./$ip_tcl_filename
 
 update_compile_order -fileset sources_1
 update_compile_order -fileset sources_1
