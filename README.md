@@ -26,6 +26,7 @@ Environment variable **BOARD_NAME** options:
 - **zc702_fmcs2** ([Xilinx ZC702 board](https://www.xilinx.com/products/boards-and-kits/ek-z7-zc702-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html)) -- Vivado license **NOT** needed
 - **antsdr** ([MicroPhase](https://github.com/MicroPhase/) enhanced ADALM-PLUTO SDR. [Notes](boards/antsdr/notes.md)) -- Vivado license **NOT** needed
 - **sdrpi** ([HexSDR](https://github.com/hexsdr/) Powerful SDR in Raspberry Pi size [Notes](boards/sdrpi/notes.md))-- Vivado license **NOT** needed
+- **skyrsdr** ([HexSDR](https://github.com/guoli11/) lowcost SDR [Notes](boards/skyrsdr/notes.md))-- Vivado license **NOT** needed
 - **zcu102_fmcs2** ([Xilinx ZCU102 board](https://www.xilinx.com/products/boards-and-kits/ek-u1-zcu102-g.html) + [FMCOMMS2/3/4](https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/eval-ad-fmcomms2.html))
 
 ## Build FPGA
