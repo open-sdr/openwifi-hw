@@ -28,6 +28,12 @@ if {$BOARD_NAME=="zed_fmcs2"} {
    set board_part_string []
    set board_id_string "zc702"
    set fpga_size_flag 0
+} elseif {$BOARD_NAME=="plutosky_r2"} {
+   set ultra_scale_flag 0
+   set part_string "xc7z020clg484-2"
+   set board_part_string []
+   set board_id_string []
+   set fpga_size_flag 0
 } elseif {$BOARD_NAME=="antsdr"} {
    set ultra_scale_flag 0
    set part_string "xc7z020clg400-1"

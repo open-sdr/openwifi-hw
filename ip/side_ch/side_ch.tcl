@@ -3,6 +3,12 @@
 # Based on Xilinx vivado exported .tcl
 #*****************************************************************************************
 
+# Vivado names its synthesis and implementation flows after the release year.
+# Derive it from the running tool instead of pinning one release, so an IP can
+# be packaged with whichever Vivado a board needs. On Vivado 2022.2 this
+# evaluates to the same flow names as before.
+set openwifi_flow_year [lindex [split [version -short] .] 0]
+
 #-----------process arguments (if exist)-------
 # set argv [] before source this .tcl to not having any arguments
 # set argv [list ARGUMENT1 ARGUMENT2 ...] to before source this .tcl to have arguments
@@ -320,10 +326,10 @@ set_property -name "xsim.simulate.xsim.more_options" -value "" -objects $obj
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-    create_run -name synth_1 -part $part_string -flow {Vivado Synthesis 2022} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
+    create_run -name synth_1 -part $part_string -flow "Vivado Synthesis $openwifi_flow_year" -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
 } else {
   set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
-  set_property flow "Vivado Synthesis 2022" [get_runs synth_1]
+  set_property flow "Vivado Synthesis $openwifi_flow_year" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
 set_property set_report_strategy_name 1 $obj
@@ -349,7 +355,7 @@ set_property -name "options.more_options" -value "" -objects $obj
 set obj [get_runs synth_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
 set_property -name "description" -value "Vivado Synthesis Defaults" -objects $obj
-set_property -name "flow" -value "Vivado Synthesis 2022" -objects $obj
+set_property -name "flow" -value "Vivado Synthesis $openwifi_flow_year" -objects $obj
 set_property -name "name" -value "synth_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
 set_property -name "srcset" -value "sources_1" -objects $obj
@@ -385,10 +391,10 @@ current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-    create_run -name impl_1 -part $part_string -flow {Vivado Implementation 2022} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+    create_run -name impl_1 -part $part_string -flow "Vivado Implementation $openwifi_flow_year" -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Vivado Implementation Defaults" [get_runs impl_1]
-  set_property flow "Vivado Implementation 2022" [get_runs impl_1]
+  set_property flow "Vivado Implementation $openwifi_flow_year" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
 set_property set_report_strategy_name 1 $obj
@@ -735,7 +741,7 @@ set_property -name "options.more_options" -value "" -objects $obj
 set obj [get_runs impl_1]
 set_property -name "constrset" -value "constrs_1" -objects $obj
 set_property -name "description" -value "Default settings for Implementation." -objects $obj
-set_property -name "flow" -value "Vivado Implementation 2022" -objects $obj
+set_property -name "flow" -value "Vivado Implementation $openwifi_flow_year" -objects $obj
 set_property -name "name" -value "impl_1" -objects $obj
 set_property -name "needs_refresh" -value "0" -objects $obj
 set_property -name "pr_configuration" -value "" -objects $obj

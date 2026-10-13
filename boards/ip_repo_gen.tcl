@@ -6,7 +6,7 @@
 set_param gui.addressMap 0
 
 # Set board specific variables
-set BOARD_NAME [lindex [split [exec pwd] /] end]
+set BOARD_NAME [file tail [pwd]]
 puts "ip_repo_gen.tcl BOARD_NAME $BOARD_NAME"
 source ../../ip/parse_board_name.tcl
 
@@ -17,7 +17,7 @@ exec cp ../../ip/board_def.v ./ip_repo/ -f
 
 # -----------generate git rev info------------------------
 set  fd  [open  "./ip_repo/openwifi_hw_git_rev.v"  w]
-set HASHCODE [exec ../../get_git_rev.sh]
+set HASHCODE [exec bash ../../get_git_rev.sh]
 puts $fd "`define OPENWIFI_HW_GIT_REV (32'h$HASHCODE)"
 close $fd
 # ----end of generate generate git rev info---------------

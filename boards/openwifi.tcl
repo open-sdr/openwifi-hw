@@ -13,7 +13,7 @@ set origin_dir "."
 source ./set_files.tcl
 
 # Set board specific variables
-set BOARD_NAME [lindex [split [exec pwd] /] end]
+set BOARD_NAME [file tail [pwd]]
 puts "openwifi.tcl BOARD_NAME $BOARD_NAME"
 source ../../ip/parse_board_name.tcl
 
@@ -31,7 +31,7 @@ exec cp ./ip_repo/clock_speed.v ./ip_repo/xpu/src/ -f
 
 # -----------generate git rev info (overwrite ip_repo_gen.tcl)---
 set  fd  [open  "./ip_repo/xpu/src/openwifi_hw_git_rev.v"  w]
-set HASHCODE [exec ../../get_git_rev.sh]
+set HASHCODE [exec bash ../../get_git_rev.sh]
 puts $fd "`define OPENWIFI_HW_GIT_REV (32'h$HASHCODE)"
 close $fd
 # ----end of generate generate git rev info----------------------
@@ -112,7 +112,10 @@ set proj_dir [get_property directory [current_project]]
 set obj [current_project]
 set_property -name "board_part_repo_paths" -value "$board_part_repos" -objects $obj
 set_property -name "board_part" -value "$board_part_string" -objects $obj
-set_property -name "classic_soc_boot" -value "0" -objects $obj
+# classic_soc_boot does not exist in Vivado 2020.2 and earlier.
+if {[lsearch -nocase -exact [list_property $obj] classic_soc_boot] >= 0} {
+  set_property -name "classic_soc_boot" -value "0" -objects $obj
+}
 set_property -name "compxlib.activehdl_compiled_library_dir" -value "$proj_dir/${_xil_proj_name_}.cache/compile_simlib/activehdl" -objects $obj
 set_property -name "compxlib.funcsim" -value "1" -objects $obj
 set_property -name "compxlib.ies_compiled_library_dir" -value "$proj_dir/${_xil_proj_name_}.cache/compile_simlib/ies" -objects $obj
@@ -150,7 +153,10 @@ set_property -name "platform.slrconstraintmode" -value "0" -objects $obj
 set_property -name "preferred_sim_model" -value "rtl" -objects $obj
 set_property -name "project_type" -value "Default" -objects $obj
 set_property -name "pr_flow" -value "0" -objects $obj
-set_property -name "revised_directory_structure" -value "1" -objects $obj
+# revised_directory_structure does not exist in Vivado 2020.2 and earlier.
+if {[lsearch -nocase -exact [list_property $obj] revised_directory_structure] >= 0} {
+  set_property -name "revised_directory_structure" -value "1" -objects $obj
+}
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "sim.use_ip_compiled_libs" -value "1" -objects $obj
@@ -195,6 +201,12 @@ update_ip_catalog -rebuild
 set obj [get_filesets sources_1]
 # Add local files from the original project (-no_copy_sources specified)
 add_files -norecurse -fileset $obj $files
+
+# Optional per-board hook: applied after the sources are added, so a board
+# can retarget the shared block design without forking this script.
+if {[file exists ./retarget_system.tcl]} {
+  source ./retarget_system.tcl
+}
 
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
