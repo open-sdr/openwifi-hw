@@ -55,13 +55,13 @@ LibreSDR|[Low cost Zynq 7020 + AD9361 board (Unofficial!)](https://github.com/pa
       sudo dpkg -i ./libtinfo5_6.1-1ubuntu1.18.04.1_amd64.deb
       ```
 
-* Prepare Analgo Devices HDL library (only run once):
+* Prepare Analog Devices HDL library (only run once):
 ```
 export XILINX_DIR=your_Xilinx_install_directory
 (Example: export XILINX_DIR=/opt/Xilinx. The Xilinx directory should include sth like: Downloads, SDK, Vivado, xic)
 ./prepare_adi_lib.sh $XILINX_DIR
 ```
-* Prepare Analgo Devices specific ip (only run once for each board you have):
+* Prepare Analog Devices specific ip (only run once for each board you have):
 ```
 export BOARD_NAME=your_board_name
 (Example: export BOARD_NAME=zc706_fmcs2)
